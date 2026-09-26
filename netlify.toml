@@ -1,0 +1,33 @@
+[build]
+  publish = "site"
+  functions = "netlify/functions"
+  # No build step: the site is plain HTML/JS and the data is refreshed by GitHub Actions.
+  command = "echo 'static site, data refreshed by GitHub Actions'"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Data files change hourly: let browsers and the CDN revalidate often.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Netlify-CDN-Cache-Control = "public, s-maxage=300, stale-while-revalidate=3600"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
+
+# Single-page app: every route serves index.html (static files and /api functions match first).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keystone · Australian property investment intelligence</title>
+  <meta name="description" content="Every Australian suburb scored for investors: prices, rents, yields, growth, the best home loan rates from 90+ lenders updated hourly, and a deal analyser with stamp duty, land tax and the 2026 negative gearing and CGT rules." />
+  <meta name="theme-color" content="#0E6B5C" />
+  <link rel="icon" href="/assets/keystone.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="/assets/app.css" />
+  <script>
+    try { const t = localStorage.getItem('keystone.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="/" data-link aria-label="Keystone home">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg>
+        <span>Keystone</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="/live" data-link>Live</a>
+        <a href="/markets" data-link>Markets</a>
+        <a href="/suburbs" data-link>Suburbs</a>
+        <a href="/new-builds" data-link>New builds</a>
+        <a href="/analyse" data-link>Analyse</a>
+        <a href="/rates" data-link>Rates</a>
+        <a href="/listings" data-link>Listings</a>
+        <a href="/news" data-link>News</a>
+        <a href="/guide" data-link>Guide</a>
+      </nav>
+      <div class="top-tools">
+        <form class="quick" role="search" autocomplete="off">
+          <input id="q" type="search" placeholder="Suburb or postcode" aria-label="Search suburb or postcode" />
+          <div class="ac" id="ac" hidden></div>
+        </form>
+        <button class="icon-btn" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <button class="icon-btn menu-btn" id="menu" aria-label="Menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ticker" id="ticker" aria-live="polite"></div>
+  </header>
+
+  <main id="main" class="wrap"><div class="loading">Loading Keystone…</div></main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div>
+        <div class="brand small"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg><span>Keystone</span></div>
+        <p class="muted">Australian property investment intelligence. Rates, market figures and news refresh every hour from public sources.</p>
+      </div>
+      <div class="foot-links">
+        <a href="/weekly" data-link>Weekly report &amp; register</a>
+        <a href="/compare" data-link>Compare suburbs</a>
+        <a href="/watchlist" data-link>Watchlist</a>
+        <a href="/borrowing" data-link>Borrowing power</a>
+        <a href="/methodology" data-link>Data &amp; methodology</a>
+        <a href="https://github.com/LAZARZEC18/keystone-property" rel="noopener">Source on GitHub</a>
+      </div>
+      <p class="fine">General information only, not financial, tax or legal advice. Keystone doesn't know your circumstances: get independent advice before you buy. Estimates are modelled and can be wrong; figures from third parties are credited on each page. Rates are advertised rates from lenders' Consumer Data Right feeds and may not reflect the rate you're offered.</p>
+    </div>
+  </footer>
+
+  <!-- Static copy of the registration form so Netlify Forms can detect it at deploy time -->
+  <form name="register" data-netlify="true" netlify-honeypot="company" hidden>
+    <input name="company"><input name="name"><input name="email" type="email"><select name="type"></select><input name="suburbs"><input name="budget"><input type="checkbox" name="consent">
+  </form>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>

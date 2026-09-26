@@ -1,0 +1,52 @@
+name: Rebuild suburb dataset
+
+# State governments publish suburb sales and rent data quarterly; check on the 5th of every month.
+on:
+  schedule:
+    - cron: '30 20 5 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pip install --quiet pandas openpyxl xlrd numpy shapely pyshp
+      - name: Cache ABS Census and boundary files
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/c21
+            data/raw/c16
+            data/raw/b_*
+          key: abs-static-v1
+      - name: Download the latest official sales and rent files
+        run: python scripts/fetch_raw.py
+      - name: Build suburbs
+        run: python scripts/build_suburbs.py
+      - run: node scripts/sitemap.mjs
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+      - name: Commit
+        run: |
+          git config user.name "keystone-bot"
+          git config user.email "keystone-bot@users.noreply.github.com"
+          git add site/data site/sitemap.xml
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "data: rebuild suburb dataset $(date -u +'%Y-%m-%d')"
+          git pull --rebase --autostash origin main
+          git push

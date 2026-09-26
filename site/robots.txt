@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://keystone-property.netlify.app/sitemap.xml

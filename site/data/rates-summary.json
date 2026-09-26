@@ -1,0 +1,848 @@
+{
+ "updated": "2026-09-26T12:06:29.194Z",
+ "lenders": 90,
+ "rows": 7739,
+ "best": {
+  "INV_PI_variable": [
+   {
+    "lender": "Northern Inland Credit Union Limited",
+    "product": "Value Home Loan - Investment",
+    "rate": 5.94,
+    "comparison": 5.98,
+    "lvrMax": null,
+    "url": "https://www.nicu.com.au/home-loans/home-loan-enquiry"
+   },
+   {
+    "lender": "Easy Street",
+    "product": "STREET SMART VARIABLE HOME LOAN SPECIAL - INVESTMENT (Principal and Interest)",
+    "rate": 5.95,
+    "comparison": 6,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/support/applying-for-a-loan"
+   },
+   {
+    "lender": "Northern Inland Credit Union Limited",
+    "product": "Dream Home Loan New Borrowing INV",
+    "rate": 5.99,
+    "comparison": 6.33,
+    "lvrMax": null,
+    "url": "https://www.nicu.com.au/home-loans/home-loan-enquiry"
+   },
+   {
+    "lender": "CommFCU",
+    "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Principal and Interest)",
+    "rate": 5.99,
+    "comparison": 6.37,
+    "lvrMax": null,
+    "url": "https://www.communityfirst.com.au/applying-for-a-loan"
+   },
+   {
+    "lender": "Virgin Money",
+    "product": "Virgin Money Lite Home Loan",
+    "rate": 5.99,
+    "comparison": 6.01,
+    "lvrMax": 80,
+    "url": "https://virginmoney.com.au/home-loans"
+   }
+  ],
+  "INV_PI_fixed1": [
+   {
+    "lender": "Coastline Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.24,
+    "comparison": 6.39,
+    "lvrMax": 80,
+    "url": "https://apply.coastline.com.au/cip/coastline/p/coastline/consumercredit/application.html?a=UDIYMN06R7P6YVQ7&s=APPLICATION::UDIYMN06R7P6YVQ7"
+   },
+   {
+    "lender": "Laboratories Credit Union",
+    "product": "Intelligent Mortgage Investment Loan 1 Year Fixed Rate",
+    "rate": 6.25,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://lending.lcu.com.au/loans"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.49,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.49,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.49,
+    "lvrMax": 95,
+    "url": null
+   }
+  ],
+  "INV_PI_fixed2": [
+   {
+    "lender": "CommFCU",
+    "product": "BOOST PACKAGE HOME LOAN - 2 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
+    "rate": 6.24,
+    "comparison": 6.65,
+    "lvrMax": null,
+    "url": "https://www.communityfirst.com.au/applying-for-a-loan"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.51,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.51,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.51,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.51,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "INV_PI_fixed3": [
+   {
+    "lender": "Police Bank",
+    "product": "Police Value Home Loan",
+    "rate": 5.99,
+    "comparison": 6.21,
+    "lvrMax": 80,
+    "url": "https://www.policebank.com.au/forms/apply-for-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Customs Value Home Loan",
+    "rate": 5.99,
+    "comparison": 6.21,
+    "lvrMax": 80,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Police Bank",
+    "product": "Goldrate Home Loan",
+    "rate": 6.09,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://www.policebank.com.au/forms/investment-goldrate-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Goldrate Home Loan",
+    "rate": 6.09,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "CommFCU",
+    "product": "BOOST PACKAGE HOME LOAN - 3 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
+    "rate": 6.19,
+    "comparison": 6.63,
+    "lvrMax": null,
+    "url": "https://www.communityfirst.com.au/applying-for-a-loan"
+   }
+  ],
+  "INV_PI_fixed5": [
+   {
+    "lender": "IMB Bank",
+    "product": "5 year Fixed Rate Home Loan",
+    "rate": 6.49,
+    "comparison": 6.6,
+    "lvrMax": 90,
+    "url": "https://apply.online.imb.com.au/apply/applications/new/homeLoans/initialApplication/initialApplicationType"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.63,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.63,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.63,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.63,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "INV_IO_variable": [
+   {
+    "lender": "The Mac",
+    "product": "GOVT LOW DEP VARIABLE OOC PI",
+    "rate": 5.92,
+    "comparison": 5.98,
+    "lvrMax": null,
+    "url": "https://forms.unpz.au/form?id=f55b07eacc715dc0c69222d5acab5603:40da5165-abb0-48ec-8295-959438b34c58"
+   },
+   {
+    "lender": "Bank of China",
+    "product": "Discount Plus Investment Home Loan (with Interest Only Repayment)",
+    "rate": 6.13,
+    "comparison": 6.51,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "Bank of China",
+    "product": "Discount Investment Home Loan (with Interest Only Repayment)",
+    "rate": 6.13,
+    "comparison": 6.33,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "CommFCU",
+    "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Interest Only)",
+    "rate": 6.14,
+    "comparison": 6.57,
+    "lvrMax": null,
+    "url": "https://www.communityfirst.com.au/applying-for-a-loan"
+   },
+   {
+    "lender": "Queensland Country Bank",
+    "product": "Home Loan-Package",
+    "rate": 6.19,
+    "comparison": 6.2,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "INV_IO_fixed1": [
+   {
+    "lender": "ANZ",
+    "product": "ANZ Fixed Rate home loan",
+    "rate": 6.39,
+    "comparison": 7.69,
+    "lvrMax": 80,
+    "url": "https://www.anz.com.au/personal/home-loans/get-started/apply-home-loan/?CID=af:obank:hl"
+   },
+   {
+    "lender": "P&N Bank",
+    "product": "Fixed Home Loan Inv IO LVR<80",
+    "rate": 6.42,
+    "comparison": 6.51,
+    "lvrMax": null,
+    "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Investment",
+    "rate": 6.44,
+    "comparison": 8.2,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "IMB Bank",
+    "product": "1 year Fixed Rate Home Loan",
+    "rate": 6.44,
+    "comparison": 6.6,
+    "lvrMax": 90,
+    "url": "https://apply.online.imb.com.au/apply/applications/new/homeLoans/initialApplication/initialApplicationType"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 1 Year Interest Only Investment",
+    "rate": 6.49,
+    "comparison": 8.06,
+    "lvrMax": null,
+    "url": null
+   }
+  ],
+  "INV_IO_fixed2": [
+   {
+    "lender": "ME Bank - ME Go",
+    "product": "ME Bank CompleteME Home Loan",
+    "rate": 6.39,
+    "comparison": 6.72,
+    "lvrMax": 80,
+    "url": "https://www.mebank.com.au/home-loans/"
+   },
+   {
+    "lender": "ME Bank - ME Go",
+    "product": "ME Bank EconoME Home Loan",
+    "rate": 6.39,
+    "comparison": 6.32,
+    "lvrMax": 80,
+    "url": "https://www.mebank.com.au/home-loans/"
+   },
+   {
+    "lender": "P&N Bank",
+    "product": "Fixed Home Loan Inv IO LVR<80",
+    "rate": 6.39,
+    "comparison": 6.5,
+    "lvrMax": null,
+    "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
+   },
+   {
+    "lender": "Bank of Queensland Limited",
+    "product": "BOQ Essential Home Loan",
+    "rate": 6.39,
+    "comparison": 6.24,
+    "lvrMax": 80,
+    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+   },
+   {
+    "lender": "Bank of Queensland Limited",
+    "product": "Fixed Rate Home Loan",
+    "rate": 6.39,
+    "comparison": 6.43,
+    "lvrMax": 80,
+    "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   }
+  ],
+  "INV_IO_fixed3": [
+   {
+    "lender": "Police Bank",
+    "product": "Police Value Home Loan",
+    "rate": 6.09,
+    "comparison": 6.23,
+    "lvrMax": 80,
+    "url": "https://www.policebank.com.au/forms/apply-for-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Customs Value Home Loan",
+    "rate": 6.09,
+    "comparison": 6.23,
+    "lvrMax": 80,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Police Bank",
+    "product": "Goldrate Home Loan",
+    "rate": 6.19,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://www.policebank.com.au/forms/investment-goldrate-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Goldrate Home Loan",
+    "rate": 6.19,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "ME Bank - ME Go",
+    "product": "ME Bank CompleteME Home Loan",
+    "rate": 6.44,
+    "comparison": 6.73,
+    "lvrMax": 80,
+    "url": "https://www.mebank.com.au/home-loans/"
+   }
+  ],
+  "INV_IO_fixed5": [
+   {
+    "lender": "ANZ",
+    "product": "ANZ Fixed Rate home loan",
+    "rate": 6.64,
+    "comparison": 7.32,
+    "lvrMax": 80,
+    "url": "https://www.anz.com.au/personal/home-loans/get-started/apply-home-loan/?CID=af:obank:hl"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.68,
+    "comparison": 6.72,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.68,
+    "comparison": 6.72,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.68,
+    "comparison": 6.72,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.68,
+    "comparison": 6.72,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "OO_PI_variable": [
+   {
+    "lender": "Easy Street",
+    "product": "STREET SMART VARIABLE HOME LOAN SPECIAL - OWNER-OCCUPIED REFINANCE  (Principal and Interest)",
+    "rate": 5.79,
+    "comparison": 5.8,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/support/applying-for-a-loan"
+   },
+   {
+    "lender": "Maitland Mutual Limited",
+    "product": "Budget Home Loan",
+    "rate": 5.79,
+    "comparison": 5.79,
+    "lvrMax": null,
+    "url": "https://themutual.apply-online.com.au/#/f04c5c6c-140b-425f-a101-59b52002nf9wbd"
+   },
+   {
+    "lender": "Maitland Mutual Limited",
+    "product": "Budget Home Loan",
+    "rate": 5.79,
+    "comparison": 5.79,
+    "lvrMax": null,
+    "url": "https://themutual.apply-online.com.au/#/f04c5c6c-140b-425f-a101-59b52002nf9wbd"
+   },
+   {
+    "lender": "Unity Bank",
+    "product": "Essential Worker Home Loan - Owner Occupier",
+    "rate": 5.8,
+    "comparison": 5.85,
+    "lvrMax": null,
+    "url": "https://www.unity.bank/help/apply-online/apply-online/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
+    "rate": 5.84,
+    "comparison": 5.85,
+    "lvrMax": null,
+    "url": null
+   }
+  ],
+  "OO_PI_fixed1": [
+   {
+    "lender": "Northern Inland Credit Union Limited",
+    "product": "Value Fixed Home Loan 12M",
+    "rate": 5.99,
+    "comparison": 5.87,
+    "lvrMax": null,
+    "url": "https://www.nicu.com.au/home-loans/home-loan-enquiry"
+   },
+   {
+    "lender": "TMCU",
+    "product": "1 YEAR FIXED RATE LOAN",
+    "rate": 5.99,
+    "comparison": 6.09,
+    "lvrMax": null,
+    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.3,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.3,
+    "lvrMax": 95,
+    "url": null
+   }
+  ],
+  "OO_PI_fixed2": [
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.31,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.31,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.31,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.31,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "LJH 5STAR HOME LOAN",
+    "rate": 6.09,
+    "comparison": 6.31,
+    "lvrMax": 95,
+    "url": null
+   }
+  ],
+  "OO_PI_fixed3": [
+   {
+    "lender": "Police Bank",
+    "product": "First Home Loan",
+    "rate": 5.84,
+    "comparison": 5.91,
+    "lvrMax": 98,
+    "url": "https://www.policebank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Police Bank",
+    "product": "Police Value Home Loan",
+    "rate": 5.84,
+    "comparison": 6.02,
+    "lvrMax": 90,
+    "url": "https://www.policebank.com.au/forms/apply-for-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "First Home Loan",
+    "rate": 5.84,
+    "comparison": 5.91,
+    "lvrMax": 98,
+    "url": "https://www.borderbank.com.au/loans/home-loans/home-guarantee-scheme"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Customs Value Home Loan",
+    "rate": 5.84,
+    "comparison": 6.02,
+    "lvrMax": 90,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "CommFCU",
+    "product": "GO BASIC 3 YEAR FIXED HOME LOAN - OWNER-OCCUPIED LVR 80% (Principal and Interest)",
+    "rate": 5.85,
+    "comparison": 5.98,
+    "lvrMax": null,
+    "url": "https://www.communityfirst.com.au/applying-for-a-loan"
+   }
+  ],
+  "OO_PI_fixed5": [
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.44,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.44,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.44,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.44,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "LJH 5STAR HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.44,
+    "lvrMax": 95,
+    "url": null
+   }
+  ],
+  "OO_IO_variable": [
+   {
+    "lender": "Police Bank",
+    "product": "First Home Loan",
+    "rate": 5.84,
+    "comparison": 5.91,
+    "lvrMax": 98,
+    "url": "https://www.policebank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "First Home Loan",
+    "rate": 5.84,
+    "comparison": 5.91,
+    "lvrMax": 98,
+    "url": "https://www.borderbank.com.au/loans/home-loans/home-guarantee-scheme"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
+    "rate": 5.94,
+    "comparison": 5.89,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "Queensland Country Bank",
+    "product": "Home Loan-Package",
+    "rate": 5.99,
+    "comparison": 6,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 5.99,
+    "comparison": null,
+    "lvrMax": null,
+    "url": null
+   }
+  ],
+  "OO_IO_fixed1": [
+   {
+    "lender": "P&N Bank",
+    "product": "Fixed Home Loan (IO) LVR <80",
+    "rate": 6.27,
+    "comparison": 6.32,
+    "lvrMax": null,
+    "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.32,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.32,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.32,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.32,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "OO_IO_fixed2": [
+   {
+    "lender": "P&N Bank",
+    "product": "Fixed Home Loan (IO) LVR <80",
+    "rate": 6.27,
+    "comparison": 6.31,
+    "lvrMax": null,
+    "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.35,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.35,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.35,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.29,
+    "comparison": 6.35,
+    "lvrMax": 80,
+    "url": null
+   }
+  ],
+  "OO_IO_fixed3": [
+   {
+    "lender": "Police Bank",
+    "product": "First Home Loan",
+    "rate": 5.99,
+    "comparison": 5.95,
+    "lvrMax": 98,
+    "url": "https://www.policebank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Police Bank",
+    "product": "Police Value Home Loan",
+    "rate": 5.99,
+    "comparison": 6.06,
+    "lvrMax": 90,
+    "url": "https://www.policebank.com.au/forms/apply-for-home-loan"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "First Home Loan",
+    "rate": 5.99,
+    "comparison": 5.95,
+    "lvrMax": 98,
+    "url": "https://www.borderbank.com.au/loans/home-loans/home-guarantee-scheme"
+   },
+   {
+    "lender": "Border Bank",
+    "product": "Customs Value Home Loan",
+    "rate": 5.99,
+    "comparison": 6.06,
+    "lvrMax": 90,
+    "url": "https://www.borderbank.com.au/loans/home-loans"
+   },
+   {
+    "lender": "Police Bank",
+    "product": "Goldrate Home Loan",
+    "rate": 6.09,
+    "comparison": 6.12,
+    "lvrMax": 80,
+    "url": "https://www.policebank.com.au/forms/investment-goldrate-home-loan"
+   }
+  ],
+  "OO_IO_fixed5": [
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 95,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "PREMIUM HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 80,
+    "url": "https://sccu.apply-online.com.au/#/0923jvo2-fewf-4be3-89e7-mkfin2fbffj2"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "BROKER HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "LJH 5STAR HOME LOAN",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 95,
+    "url": null
+   }
+  ]
+ },
+ "medianInvestorVariable": 6.64
+}

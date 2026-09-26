@@ -1,0 +1,53 @@
+import { aud, pct, setMeta } from '../ui.js';
+import { load } from '../data.js';
+import { borrowingPower, repayment, stampDuty } from '../engine.js';
+import { STATES } from '../rules.js';
+
+export default async function borrowingPage(main) {
+  setMeta({ title: 'How much can I borrow for an investment property?', description: 'Estimate your borrowing power the way Australian lenders do: 3-point serviceability buffer, 80% of rental income, living costs and existing debts.' });
+  const rs = await load('rates-summary');
+  const rate = rs.best.INV_PI_variable?.[0]?.rate || 6.2;
+  main.innerHTML = `
+  <div class="page-head"><div class="eyebrow">Borrowing power</div><h1>How much could you borrow?</h1>
+  <p>Lenders don't test you at today's rate. APRA expects them to check you could still pay at 3 percentage points higher, and they count only about 80% of rental income. This calculator follows the same logic.</p></div>
+  <div class="grid g2">
+    <div class="card"><div class="fields">
+      <label class="field">Gross income, all borrowers ($/yr)<input id="b-inc" type="number" step="5000" value="130000"></label>
+      <label class="field">Borrowers<select id="b-couple"><option value="0">Single</option><option value="1">Couple</option></select></label>
+      <label class="field">Dependants<input id="b-dep" type="number" min="0" max="8" value="0"></label>
+      <label class="field">Existing rent received ($/yr)<input id="b-rent0" type="number" step="1000" value="0"></label>
+      <label class="field">Rent from the new property ($/wk)<input id="b-rent" type="number" step="10" value="650"></label>
+      <label class="field">Other debt repayments ($/month)<input id="b-debt" type="number" step="50" value="0"><span class="help">Car loans, other mortgages, HECS, credit card limits (≈3.8% of the limit)</span></label>
+      <label class="field">Living costs ($/month)<input id="b-live" type="number" step="100" placeholder="Benchmark"><span class="help">Leave blank to use a conservative benchmark</span></label>
+      <label class="field">Interest rate (%)<input id="b-rate" type="number" step="0.05" value="${rate}"></label>
+      <label class="field">Deposit and savings ($)<input id="b-sav" type="number" step="10000" value="180000"></label>
+      <label class="field">State<select id="b-state">${Object.keys(STATES).map((s) => `<option>${s}</option>`).join('')}</select></label>
+    </div></div>
+    <div class="card" id="b-out"></div>
+  </div>`;
+  const $ = (x) => main.querySelector(x);
+  const run = () => {
+    const bp = borrowingPower({
+      grossIncome: +$('#b-inc').value, couple: $('#b-couple').value === '1', dependants: +$('#b-dep').value, existingRentIncome: +$('#b-rent0').value,
+      newRentWeekly: +$('#b-rent').value, otherDebtMonthly: +$('#b-debt').value, livingCostsMonthly: $('#b-live').value ? +$('#b-live').value : undefined, ratePct: +$('#b-rate').value,
+    });
+    const sav = +$('#b-sav').value;
+    const state = $('#b-state').value;
+    // Largest price where savings cover 20% deposit + duty + $2.5k costs, and the loan fits borrowing power
+    let price = 100000;
+    for (let p = 100000; p <= 5000000; p += 5000) {
+      const need = p * 0.2 + stampDuty(state, p).duty + 2500;
+      if (need > sav || p * 0.8 > bp.amount) break;
+      price = p;
+    }
+    const m = repayment(bp.amount, +$('#b-rate').value, 30);
+    $('#b-out').innerHTML = `<div class="stat"><span class="k">Estimated maximum loan</span><span class="v xl">${aud(bp.amount)}</span><span class="s">Assessed at ${pct(bp.assessRate, 2)} · monthly surplus at that rate ${aud(bp.surplus)}</span></div>
+    <div class="hr"></div>
+    <div class="kv"><span>Repayment at ${pct(+$('#b-rate').value, 2)}</span><span>${aud(m)}/month</span>
+    <span>Price you could buy with 20% down (${state})</span><span>${aud(price)}</span>
+    <span>Stamp duty at that price</span><span>${aud(stampDuty(state, price).duty)}</span></div>
+    <p class="note" style="margin-top:12px">An estimate only. Each lender uses its own living-expense model (usually the Household Expenditure Measure), rental shading and treatment of other debts, so results can differ by 10-20% between banks. A broker can compare lenders' calculators for you.</p>`;
+  };
+  main.querySelectorAll('input,select').forEach((el) => el.addEventListener('input', run));
+  run();
+}

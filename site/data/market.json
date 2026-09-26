@@ -1,0 +1,479 @@
+{
+ "asOf": "2026-09-26",
+ "note": "Headline market figures from the monthly index providers. Checked each month against the original releases; the RBA, ABS and lender-rate figures elsewhere on the site update automatically.",
+ "cashRate": {
+  "target": 4.35,
+  "lastChange": "2026-05-06",
+  "nextMeeting": "2026-09-29"
+ },
+ "regions": {
+  "SYD": {
+   "name": "Sydney",
+   "state": "NSW",
+   "capital": true,
+   "medianDwelling": 1222718,
+   "medianHouse": 1494878,
+   "medianUnit": 878176,
+   "monthPct": -1.44,
+   "quarterPct": -4.7,
+   "annualPct": -4.61,
+   "yield": 3.3,
+   "houseYield": 2.9,
+   "unitYield": 4.4,
+   "rentAnnualPct": 4.8,
+   "vacancy": 1.7,
+   "dom": 45,
+   "domYearAgo": 32,
+   "rentHouse": 1128.83,
+   "rentUnit": 759.76,
+   "rentAll": 909.53,
+   "houseMonthPct": -1.83,
+   "houseAnnualPct": -5.48,
+   "unitMonthPct": -0.44,
+   "unitAnnualPct": -2.34
+  },
+  "MEL": {
+   "name": "Melbourne",
+   "state": "VIC",
+   "capital": true,
+   "medianDwelling": 786718,
+   "medianHouse": 920432,
+   "medianUnit": 629054,
+   "monthPct": -1.11,
+   "quarterPct": -3.9,
+   "annualPct": -4.71,
+   "yield": 4,
+   "houseYield": 3.5,
+   "unitYield": 5.1,
+   "rentAnnualPct": 5,
+   "vacancy": 1.8,
+   "dom": 43,
+   "domYearAgo": 30,
+   "rentHouse": 821.58,
+   "rentUnit": 603.22,
+   "rentAll": 695.18,
+   "houseMonthPct": -1.39,
+   "houseAnnualPct": -5.72,
+   "unitMonthPct": -0.51,
+   "unitAnnualPct": -2.5
+  },
+  "BNE": {
+   "name": "Brisbane",
+   "state": "QLD",
+   "capital": true,
+   "medianDwelling": 1080142,
+   "medianHouse": 1180552,
+   "medianUnit": 854721,
+   "monthPct": -0.96,
+   "quarterPct": -2.7,
+   "annualPct": 10.78,
+   "yield": 3.4,
+   "houseYield": 3.3,
+   "unitYield": 4.1,
+   "rentAnnualPct": 6.4,
+   "vacancy": 0.9,
+   "dom": 35,
+   "domYearAgo": 19,
+   "rentHouse": 845.17,
+   "rentUnit": 647.67,
+   "rentAll": 756.15,
+   "houseMonthPct": -0.96,
+   "houseAnnualPct": 10.25,
+   "unitMonthPct": -0.95,
+   "unitAnnualPct": 13.2
+  },
+  "PER": {
+   "name": "Perth",
+   "state": "WA",
+   "capital": true,
+   "medianDwelling": 999987,
+   "medianHouse": 1043478,
+   "medianUnit": 733223,
+   "monthPct": -0.76,
+   "quarterPct": -3.2,
+   "annualPct": 15.6,
+   "yield": 3.9,
+   "houseYield": 3.8,
+   "unitYield": 5,
+   "rentAnnualPct": 8,
+   "vacancy": 0.6,
+   "dom": 22,
+   "domYearAgo": 12,
+   "rentHouse": 896.54,
+   "rentUnit": 666.38,
+   "rentAll": 801.73,
+   "houseMonthPct": -0.74,
+   "houseAnnualPct": 15.56,
+   "unitMonthPct": -1,
+   "unitAnnualPct": 16
+  },
+  "ADL": {
+   "name": "Adelaide",
+   "state": "SA",
+   "capital": true,
+   "medianDwelling": 937207,
+   "medianHouse": 999091,
+   "medianUnit": 684469,
+   "monthPct": -0.82,
+   "quarterPct": -1.6,
+   "annualPct": 8.64,
+   "yield": 3.6,
+   "houseYield": 3.4,
+   "unitYield": 4.4,
+   "rentAnnualPct": 5.8,
+   "vacancy": 0.6,
+   "dom": 33,
+   "domYearAgo": 32,
+   "rentHouse": 691.18,
+   "rentUnit": 550.85,
+   "rentAll": 644.04,
+   "houseMonthPct": -0.84,
+   "houseAnnualPct": 8.59,
+   "unitMonthPct": -0.7,
+   "unitAnnualPct": 8.98
+  },
+  "HBA": {
+   "name": "Hobart",
+   "state": "TAS",
+   "capital": true,
+   "medianDwelling": 752397,
+   "medianHouse": 798156,
+   "medianUnit": 599373,
+   "monthPct": -0.19,
+   "quarterPct": -0.2,
+   "annualPct": 8.06,
+   "yield": 4.4,
+   "houseYield": 4.3,
+   "unitYield": 4.7,
+   "rentAnnualPct": 7.9,
+   "vacancy": 0.6,
+   "dom": 31,
+   "domYearAgo": 27,
+   "rentHouse": 622.82,
+   "rentUnit": 583.97,
+   "rentAll": 607.37,
+   "houseMonthPct": -0.43,
+   "houseAnnualPct": 7.93,
+   "unitMonthPct": 0.89,
+   "unitAnnualPct": 8.67
+  },
+  "CBR": {
+   "name": "Canberra",
+   "state": "ACT",
+   "capital": true,
+   "medianDwelling": 864998,
+   "medianHouse": 1007652,
+   "medianUnit": 585937,
+   "monthPct": -1.09,
+   "quarterPct": -2.8,
+   "annualPct": -0.45,
+   "yield": 4.3,
+   "houseYield": 3.9,
+   "unitYield": 5.4,
+   "rentAnnualPct": 3.2,
+   "vacancy": 2.1,
+   "dom": 51,
+   "domYearAgo": 52,
+   "rentHouse": 792.12,
+   "rentUnit": 603.45,
+   "rentAll": 687.88,
+   "houseMonthPct": -1.25,
+   "houseAnnualPct": -0.37,
+   "unitMonthPct": -0.63,
+   "unitAnnualPct": -0.9
+  },
+  "DRW": {
+   "name": "Darwin",
+   "state": "NT",
+   "capital": true,
+   "medianDwelling": 647259,
+   "medianHouse": 755296,
+   "medianUnit": 478713,
+   "monthPct": 0.55,
+   "quarterPct": 0.9,
+   "annualPct": 14.6,
+   "yield": 6.3,
+   "houseYield": 5.8,
+   "unitYield": 7.4,
+   "rentAnnualPct": 11.4,
+   "vacancy": 0.4,
+   "dom": 34,
+   "domYearAgo": 44,
+   "rentHouse": 803.34,
+   "rentUnit": 663.13,
+   "rentAll": 720.65,
+   "houseMonthPct": 0.57,
+   "houseAnnualPct": 13.09,
+   "unitMonthPct": 0.5,
+   "unitAnnualPct": 18.04
+  },
+  "RNSW": {
+   "name": "Regional NSW",
+   "state": "NSW",
+   "capital": false,
+   "medianDwelling": 830938,
+   "monthPct": -0.5,
+   "quarterPct": -1.6,
+   "annualPct": 5.3,
+   "yield": 4.1,
+   "rentAnnualPct": 5.2,
+   "dom": 49
+  },
+  "RVIC": {
+   "name": "Regional Victoria",
+   "state": "VIC",
+   "capital": false,
+   "medianDwelling": 633907,
+   "monthPct": -0.5,
+   "quarterPct": -1.4,
+   "annualPct": 4.6,
+   "yield": 4.3,
+   "rentAnnualPct": 3.8,
+   "dom": 45
+  },
+  "RQLD": {
+   "name": "Regional Queensland",
+   "state": "QLD",
+   "capital": false,
+   "medianDwelling": 844803,
+   "monthPct": -0.5,
+   "quarterPct": -1.3,
+   "annualPct": 9.1,
+   "yield": 4.2,
+   "rentAnnualPct": 6.5,
+   "dom": 37
+  },
+  "RSA": {
+   "name": "Regional SA",
+   "state": "SA",
+   "capital": false,
+   "medianDwelling": 570005,
+   "monthPct": 0.6,
+   "quarterPct": 2.3,
+   "annualPct": 11.4,
+   "yield": 4.4,
+   "rentAnnualPct": 5.3,
+   "dom": 43
+  },
+  "RWA": {
+   "name": "Regional WA",
+   "state": "WA",
+   "capital": false,
+   "medianDwelling": 720940,
+   "monthPct": 0.1,
+   "quarterPct": -0.2,
+   "annualPct": 16.7,
+   "yield": 5.1,
+   "rentAnnualPct": 7.5,
+   "dom": 23
+  },
+  "RTAS": {
+   "name": "Regional Tasmania",
+   "state": "TAS",
+   "capital": false,
+   "medianDwelling": 616076,
+   "monthPct": -0.1,
+   "quarterPct": 0.7,
+   "annualPct": 12.7,
+   "yield": 4.4,
+   "rentAnnualPct": 9.7,
+   "dom": 41
+  },
+  "RNT": {
+   "name": "Regional NT",
+   "state": "NT",
+   "capital": false,
+   "medianDwelling": 457342,
+   "medianHouse": 457342,
+   "monthPct": 0.8,
+   "quarterPct": 2.8,
+   "annualPct": 4.8,
+   "yield": 7.9,
+   "rentAnnualPct": 4.4,
+   "dom": 83,
+   "note": "Houses only; Cotality does not publish a dwelling series for regional NT."
+  }
+ },
+ "national": {
+  "medianDwelling": 912885,
+  "medianHouse": 995600,
+  "medianUnit": 736252,
+  "monthPct": -0.9,
+  "quarterPct": -3.1,
+  "annualPct": 2.7,
+  "fromPeakPct": -3.6,
+  "yield": 3.79,
+  "rentAnnualPct": 5.7,
+  "vacancyCotality": 1.9,
+  "vacancySQM": 1.3,
+  "dom": 39,
+  "domYearAgo": 28,
+  "rentAll": 701.53,
+  "rentHouse": 776,
+  "rentUnit": 615
+ },
+ "combinedCapitals": {
+  "medianDwelling": 990394,
+  "medianHouse": 1123772,
+  "medianUnit": 748268,
+  "monthPct": -1.1,
+  "quarterPct": -3.7,
+  "annualPct": 1.1,
+  "yield": 3.6,
+  "rentAnnualPct": 5.7,
+  "dom": 37
+ },
+ "combinedRegionals": {
+  "medianDwelling": 764020,
+  "monthPct": -0.4,
+  "quarterPct": -1.2,
+  "annualPct": 7.7,
+  "yield": 4.3,
+  "rentAnnualPct": 5.8,
+  "dom": 42
+ },
+ "proptrack": {
+  "period": "August 2026",
+  "national": {
+   "medianDwelling": 886000,
+   "monthPct": -0.2,
+   "annualPct": 1.8,
+   "fromPeakPct": -2.7
+  },
+  "SYD": {
+   "medianDwelling": 1194000,
+   "annualPct": -3.6
+  },
+  "MEL": {
+   "medianDwelling": 823000,
+   "annualPct": -4.3
+  },
+  "BNE": {
+   "medianDwelling": 1046000,
+   "annualPct": 7.5
+  },
+  "PER": {
+   "medianDwelling": 980000,
+   "annualPct": 10.4
+  },
+  "ADL": {
+   "medianDwelling": 928000,
+   "annualPct": 8
+  },
+  "HBA": {
+   "medianDwelling": 729000,
+   "annualPct": 6.7
+  },
+  "CBR": {
+   "medianDwelling": 849000,
+   "annualPct": -2.1
+  },
+  "DRW": {
+   "medianDwelling": 639000,
+   "annualPct": 14.1
+  }
+ },
+ "abs": {
+  "dwellingsQuarter": "June quarter 2026 (preliminary)",
+  "meanPrice": {
+   "NSW": 1304900,
+   "VIC": 918400,
+   "QLD": 1130600,
+   "SA": 979600,
+   "WA": 1123700,
+   "TAS": 733200,
+   "NT": 614400,
+   "ACT": 981700,
+   "AUS": 1100400
+  },
+  "dwellingsThousands": {
+   "NSW": 3550.3,
+   "VIC": 3043,
+   "QLD": 2319.9,
+   "SA": 846.5,
+   "WA": 1203.2,
+   "TAS": 270.3,
+   "NT": 91.1,
+   "ACT": 206.8,
+   "AUS": 11531.1
+  },
+  "totalValueBn": 12688.9,
+  "populationPeriod": "Year to 31 March 2026",
+  "populationGrowthPct": {
+   "NSW": 1.1,
+   "VIC": 1.6,
+   "QLD": 1.6,
+   "SA": 1,
+   "WA": 2.1,
+   "TAS": 0.6,
+   "NT": 1.5,
+   "ACT": 1.3,
+   "AUS": 1.4
+  },
+  "population": 27921150,
+  "lending": {
+   "period": "June quarter 2026",
+   "investorBn": 37.1,
+   "investorQoQ": -10.2,
+   "investorYoY": 8.1,
+   "ownerOccBn": 60.5,
+   "ownerOccYoY": 6,
+   "fhbBn": 18.4,
+   "fhbYoY": 10
+  },
+  "cpi": {
+   "period": "12 months to July 2026",
+   "annualPct": 3.5,
+   "trimmedMean": 3.6,
+   "housingPct": 5
+  },
+  "unemployment": {
+   "period": "August 2026",
+   "rate": 4.6
+  }
+ },
+ "sources": [
+  {
+   "title": "Cotality Home Value Index, September 2026 release (August data)",
+   "url": "https://discover.cotality.com/hubfs/Article-Reports/COTALITY%20HVI%20SEP%202026%20FINAL%20(1).pdf"
+  },
+  {
+   "title": "Cotality Monthly Housing Chart Pack, September 2026",
+   "url": "https://discover.cotality.com/hubfs/202609_%20monthly%20chart%20pack.pdf"
+  },
+  {
+   "title": "PropTrack Home Price Report, August 2026",
+   "url": "https://www.realestate.com.au/insights/proptrack-home-price-index-august-2026/"
+  },
+  {
+   "title": "SQM Research National Vacancy Rates, August 2026",
+   "url": "https://sqmresearch.com.au/uploads/15-09-26-National-Vacancy-Rates-August-2026-2040.pdf"
+  },
+  {
+   "title": "ABS Total Value of Dwellings, June quarter 2026",
+   "url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/total-value-dwellings/latest-release"
+  },
+  {
+   "title": "ABS National, state and territory population, March 2026",
+   "url": "https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/latest-release"
+  },
+  {
+   "title": "ABS Lending Indicators, June quarter 2026",
+   "url": "https://www.abs.gov.au/statistics/economy/finance/lending-indicators/latest-release"
+  },
+  {
+   "title": "ABS Consumer Price Index, July 2026",
+   "url": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release"
+  },
+  {
+   "title": "ABS Labour Force, August 2026",
+   "url": "https://www.abs.gov.au/statistics/labour/employment-and-unemployment/labour-force-australia/latest-release"
+  }
+ ],
+ "caveats": [
+  "Vacancy rates are SQM Research (capital cities); Cotality uses a different method, so the two aren't mixed.",
+  "Capital-city weekly rents are SQM Research asking rents (week ending 4 September 2026).",
+  "Regional days on market were read from chart labels and are approximate."
+ ],
+ "indexMonth": "31 August 2026"
+}

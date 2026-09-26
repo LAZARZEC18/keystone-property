@@ -1,0 +1,126 @@
+// Housing news: headlines and links (never article text) from public RSS/Atom feeds,
+// filtered to Australian property, rates and rent, de-duplicated and tagged.
+import { writeFile, mkdir } from 'node:fs/promises';
+import { getText, pool } from './lib/http.mjs';
+
+export const FEEDS = [
+  { source: 'RBA', url: 'https://www.rba.gov.au/rss/rss-cb-media-releases.xml', all: true },
+  { source: 'realestate.com.au', url: 'https://www.realestate.com.au/news/feed/', all: true },
+  { source: 'PropTrack', url: 'https://www.realestate.com.au/insights/feed/', all: true },
+  { source: 'The Conversation', url: 'https://theconversation.com/au/topics/housing-1109/articles.atom', all: true },
+  { source: 'The Guardian', url: 'https://www.theguardian.com/australia-news/housing/rss', all: true },
+  { source: 'ABC News', url: 'https://www.abc.net.au/news/feed/51892/rss.xml' },
+  { source: 'ABC News', url: 'https://www.abc.net.au/news/feed/2942460/rss.xml' },
+  { source: 'The Guardian', url: 'https://www.theguardian.com/australia-news/rss' },
+  { source: 'Broker News', url: 'https://www.brokernews.com.au/rss' },
+  { source: 'SBS News', url: 'https://www.sbs.com.au/news/topic/australia/feed' },
+  {
+    source: 'Google News',
+    url: 'https://news.google.com/rss/search?q=(australia+house+prices)+OR+(australia+property+market)+OR+(RBA+interest+rates)+OR+(australia+rents)+when:3d&hl=en-AU&gl=AU&ceid=AU:en',
+    all: true,
+    aggregator: true,
+  },
+];
+
+const RELEVANT =
+  /\b(housing|house prices?|home ?loans?|homes?|home ?buyers?|property|properties|real estate|mortgages?|rents?|rental|renters?|tenants?|landlords?|interest rates?|cash rate|RBA|reserve bank|APRA|auctions?|dwellings?|apartments?|first[- ]home|stamp duty|negative gearing|capital gains|land tax|suburbs?|affordab\w*|investors?|lending|borrow\w*|CPI|inflation|construction|building approvals|vacancy|vacancies)\b/i;
+
+const TAGS = [
+  ['Rates', /interest rate|cash rate|\bRBA\b|reserve bank|mortgage rate|rate (cut|hike|rise|hold)|fixed rate|variable rate|lender|refinanc/i],
+  ['Prices', /price|value|index|auction|clearance|boom|slump|fall|growth|median|market/i],
+  ['Rents', /rent|tenant|landlord|vacanc|lease/i],
+  ['Policy', /tax|stamp duty|negative gearing|budget|government|policy|scheme|grant|regulat|apra|council|zoning|planning/i],
+  ['Supply', /construction|build|approval|supply|developer|apartment|land release|housing target/i],
+  ['Lending', /loan|lending|credit|borrow|serviceab|deposit|broker|bank/i],
+];
+
+const decode = (s = '') =>
+  s
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;|&#8217;|&rsquo;/g, '’')
+    .replace(/&#8216;|&lsquo;/g, '‘')
+    .replace(/&#8220;|&ldquo;/g, '“')
+    .replace(/&#8221;|&rdquo;/g, '”')
+    .replace(/&#8211;|&ndash;/g, '–')
+    .replace(/&#8212;|&mdash;/g, '—')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const tag = (xml, name) => {
+  const m = xml.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, 'i'));
+  return m ? m[1] : '';
+};
+
+/** Parse RSS 2.0 <item> or Atom <entry> into {title, link, date}. */
+export function parseFeed(xml) {
+  const items = [];
+  const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) || xml.match(/<entry[\s>][\s\S]*?<\/entry>/gi) || [];
+  for (const b of blocks) {
+    const title = decode(tag(b, 'title'));
+    let link = decode(tag(b, 'link'));
+    if (!link) {
+      const m = b.match(/<link[^>]*href="([^"]+)"/i);
+      link = m ? m[1] : '';
+    }
+    const dateStr = decode(tag(b, 'pubDate') || tag(b, 'published') || tag(b, 'updated') || tag(b, 'dc:date'));
+    const d = dateStr ? new Date(dateStr) : null;
+    const publisher = decode(tag(b, 'source'));
+    if (title && link) items.push({ title, link, date: d && !Number.isNaN(+d) ? d.toISOString() : null, publisher });
+  }
+  return items;
+}
+
+const norm = (t) => t.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+
+export async function collectNews({ now = Date.now() } = {}) {
+  const results = await pool(FEEDS, 6, async (f) => {
+    const r = await getText(f.url, { accept: 'application/rss+xml, application/atom+xml, text/xml' }, { timeout: 15000 });
+    if (!r?.ok) return { feed: f, items: [], error: r?.status };
+    return { feed: f, items: parseFeed(r.text) };
+  });
+  const seen = new Set();
+  const out = [];
+  for (const { feed, items } of results) {
+    for (const it of items) {
+      let title = it.title;
+      let source = feed.source;
+      if (feed.aggregator) {
+        // Google News titles end with " - Publisher"; credit the publisher.
+        const m = title.match(/^(.*) - ([^-]{2,60})$/);
+        if (m) {
+          title = m[1];
+          source = it.publisher || m[2];
+        }
+      }
+      if (/[\u0400-\u04FF\u0600-\u06FF\u3040-\u9FFF]/.test(source + title)) continue; // non-English mirrors
+      if (!feed.all && !RELEVANT.test(title)) continue;
+      if (feed.all && feed.source === 'SBS News' && !RELEVANT.test(title)) continue;
+      const age = it.date ? now - Date.parse(it.date) : 0;
+      if (age > 14 * 864e5) continue; // two weeks
+      const key = norm(title).slice(0, 70);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const tags = TAGS.filter(([, re]) => re.test(title)).map(([t]) => t).slice(0, 2);
+      out.push({ title, link: it.link, source, date: it.date, tags });
+    }
+  }
+  out.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  return {
+    updated: new Date(now).toISOString(),
+    feeds: results.map((r) => ({ source: r.feed.source, ok: !r.error, count: r.items.length })),
+    items: out.slice(0, 120),
+  };
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const d = await collectNews();
+  await mkdir(new URL('../site/data/', import.meta.url), { recursive: true });
+  await writeFile(new URL('../site/data/news.json', import.meta.url), JSON.stringify(d));
+  console.log(d.items.length, 'items;', d.feeds.map((f) => `${f.source}:${f.ok ? f.count : 'x'}`).join(' '));
+}
