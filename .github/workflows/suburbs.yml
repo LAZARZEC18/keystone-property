@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: pip install --quiet pandas openpyxl xlrd numpy shapely pyshp
@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.name "keystone-bot"
           git config user.email "keystone-bot@users.noreply.github.com"
-          git add site/data site/sitemap.xml
+          git add site/data site/sitemap.xml data/official
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
           git commit -m "data: rebuild suburb dataset $(date -u +'%Y-%m-%d')"
           git pull --rebase --autostash origin main

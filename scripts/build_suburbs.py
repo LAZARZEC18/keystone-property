@@ -26,6 +26,7 @@ from shapely.strtree import STRtree
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.environ.get('KEYSTONE_RAW', os.path.join(ROOT, 'data', 'raw'))
 OUT = os.path.join(ROOT, 'site', 'data')
+OFFICIAL = os.path.join(ROOT, 'data', 'official')  # state sales/rent files, committed so a blocked download never breaks a rebuild
 MARKET = json.load(open(os.path.join(ROOT, 'data', 'market.json')))
 
 STATE_ABBR = {'1': 'NSW', '2': 'VIC', '3': 'QLD', '4': 'SA', '5': 'WA', '6': 'TAS', '7': 'NT', '8': 'ACT', '9': 'OT'}
@@ -249,7 +250,7 @@ def vic_timeseries(path):
 
 
 def sa_medians():
-    files = sorted(glob.glob(os.path.join(RAW, 'sa_*.xlsx')))
+    files = sorted(glob.glob(os.path.join(OFFICIAL, 'sa_*.xlsx')))
     agg = defaultdict(lambda: {'now_w': 0, 'now_s': 0, 'ago_w': 0, 'ago_s': 0})
     for f in files:
         x = pd.read_excel(f, header=0)
@@ -316,13 +317,13 @@ def main():
     geo = build_geography()
     c, old = census()
     log('suburbs:', len(geo))
-    PERIODS['VIC'] = vic_period(os.path.join(RAW, 'vic_house_q4_2025.xls'))
-    vic_h = vic_quarterly(os.path.join(RAW, 'vic_house_q4_2025.xls'))
-    vic_u = vic_quarterly(os.path.join(RAW, 'vic_unit_q4_2025.xls'))
-    vic_ts = vic_timeseries(os.path.join(RAW, 'vic_house_ts_wb.xlsx'))
+    PERIODS['VIC'] = vic_period(os.path.join(OFFICIAL, 'vic_house_q4_2025.xls'))
+    vic_h = vic_quarterly(os.path.join(OFFICIAL, 'vic_house_q4_2025.xls'))
+    vic_u = vic_quarterly(os.path.join(OFFICIAL, 'vic_unit_q4_2025.xls'))
+    vic_ts = vic_timeseries(os.path.join(OFFICIAL, 'vic_house_ts_wb.xlsx'))
     sa, sa_files = sa_medians()
-    nsw_s = nsw_postcode(os.path.join(RAW, 'nsw_sales.xlsx'), 'sales')
-    nsw_r = nsw_postcode(os.path.join(RAW, 'nsw_rent.xlsx'), 'rent')
+    nsw_s = nsw_postcode(os.path.join(OFFICIAL, 'nsw_sales.xlsx'), 'sales')
+    nsw_r = nsw_postcode(os.path.join(OFFICIAL, 'nsw_rent.xlsx'), 'rent')
     log(f'official: VIC houses {len(vic_h)}, units {len(vic_u)}, ts {len(vic_ts)}; SA {len(sa)} ({sa_files} qtrs); NSW sales pcs {len(nsw_s)}, rent pcs {len(nsw_r)}')
 
     regions = MARKET['regions']

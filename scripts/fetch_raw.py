@@ -8,6 +8,7 @@ import json, os, re, sys, urllib.request, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.environ.get('KEYSTONE_RAW', os.path.join(ROOT, 'data', 'raw'))
+OFFICIAL = os.path.join(ROOT, 'data', 'official')
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126 KeystoneBot'}
 ASGS = 'https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/'
 STATIC = {
@@ -28,8 +29,8 @@ def get(url, timeout=300):
         return r.read()
 
 
-def save(name, data):
-    p = os.path.join(RAW, name)
+def save(name, data, folder=None):
+    p = os.path.join(folder or RAW, name)
     with open(p, 'wb') as fh:
         fh.write(data)
     print(f'  {name}: {len(data) / 1e6:.1f} MB')
@@ -63,37 +64,59 @@ def main():
         zipfile.ZipFile(p).extractall(dest)
         os.remove(p)
 
-    print('SA: last four quarters of metro median house sales')
-    res = ckan('https://data.sa.gov.au/data', 'metro-median-house-sales')['resources']
-    quarterly = []
-    for r in res:
-        m = re.search(r'Q(\d) (\d{4})', r['name'])
-        if m and r['url'].endswith(('.xlsx', '.xls')):
-            quarterly.append((int(m.group(2)), int(m.group(1)), r['url']))
-    for f in os.listdir(RAW):
-        if f.startswith('sa_') and f.endswith('.xlsx'):
-            os.remove(os.path.join(RAW, f))
-    for y, q, url in sorted(quarterly)[-4:]:
-        save(f'sa_{y}q{q}.xlsx', get(url))
+    os.makedirs(OFFICIAL, exist_ok=True)
+    ok = 0
 
-    print('VIC: latest quarterly house and unit medians + house time series')
-    for pkg, out in [('victorian-property-sales-report-median-house-by-suburb', 'vic_house_q4_2025.xls'),
-                     ('victorian-property-sales-report-median-unit-by-suburb', 'vic_unit_q4_2025.xls'),
-                     ('victorian-property-sales-report-median-house-by-suburb-time-series', 'vic_house_ts_wb.xlsx')]:
-        res = ckan('https://discover.data.vic.gov.au', pkg)['resources']
-        url = res[-1]['url'].split('/https://')[-1]
-        url = url if url.startswith('http') else 'https://' + url
-        # file names are kept stable so the build script doesn't change each quarter
-        save(out, get_with_archive(url))
+    def attempt(label, fn):
+        nonlocal ok
+        print(label)
+        try:
+            fn()
+            ok += 1
+        except Exception as e:  # keep the previous committed file
+            print('  kept previous files:', e)
 
-    print('NSW: DCJ rent and sales tables (by postcode)')
-    page = get('https://dcj.nsw.gov.au/about-us/families-and-communities-statistics/housing-rent-and-sales/rent-and-sales-report.html').decode('utf-8', 'ignore')
-    for kind in ('rent', 'sales'):
-        m = re.search(rf'href="([^"]*{kind}-tables-[^"]+\.xlsx)"', page)
-        if not m:
-            raise RuntimeError(f'NSW {kind} table link not found')
-        url = m.group(1) if m.group(1).startswith('http') else 'https://dcj.nsw.gov.au' + m.group(1)
-        save(f'nsw_{kind}.xlsx', get(url))
+    def sa():
+        res = ckan('https://data.sa.gov.au/data', 'metro-median-house-sales')['resources']
+        quarterly = []
+        for r in res:
+            m = re.search(r'Q(\d) (\d{4})', r['name'])
+            if m and r['url'].endswith(('.xlsx', '.xls')):
+                quarterly.append((int(m.group(2)), int(m.group(1)), r['url']))
+        files = [(f'sa_{y}q{q}.xlsx', get(url)) for y, q, url in sorted(quarterly)[-4:]]
+        if len(files) < 4 or any(d[:2] != b'PK' for _, d in files):
+            raise RuntimeError('SA files incomplete')
+        for f in os.listdir(OFFICIAL):
+            if f.startswith('sa_'):
+                os.remove(os.path.join(OFFICIAL, f))
+        for name, d in files:
+            save(name, d, OFFICIAL)
+
+    def vic():
+        for pkg, out in [('victorian-property-sales-report-median-house-by-suburb', 'vic_house_q4_2025.xls'),
+                         ('victorian-property-sales-report-median-unit-by-suburb', 'vic_unit_q4_2025.xls'),
+                         ('victorian-property-sales-report-median-house-by-suburb-time-series', 'vic_house_ts_wb.xlsx')]:
+            res = ckan('https://discover.data.vic.gov.au', pkg)['resources']
+            url = res[-1]['url'].split('/https://')[-1]
+            url = url if url.startswith('http') else 'https://' + url
+            save(out, get_with_archive(url), OFFICIAL)  # stable file names across quarters
+
+    def nsw():
+        page = get('https://dcj.nsw.gov.au/about-us/families-and-communities-statistics/housing-rent-and-sales/rent-and-sales-report.html').decode('utf-8', 'ignore')
+        for kind in ('rent', 'sales'):
+            m = re.search(rf'href="([^"]*{kind}-tables-[^"]+\.xlsx)"', page)
+            if not m:
+                raise RuntimeError(f'NSW {kind} table link not found')
+            url = m.group(1) if m.group(1).startswith('http') else 'https://dcj.nsw.gov.au' + m.group(1)
+            d = get(url)
+            if d[:2] != b'PK':
+                raise RuntimeError(f'NSW {kind} not an xlsx')
+            save(f'nsw_{kind}.xlsx', d, OFFICIAL)
+
+    attempt('SA: last four quarters of metro median house sales', sa)
+    attempt('VIC: latest quarterly house and unit medians + house time series', vic)
+    attempt('NSW: DCJ rent and sales tables (by postcode)', nsw)
+    print(f'official sources refreshed: {ok}/3')
     print('done')
 
 
