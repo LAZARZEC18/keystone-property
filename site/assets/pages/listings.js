@@ -1,10 +1,11 @@
-import { esc, aud, pct, setMeta, date } from '../ui.js';
+import { esc, aud, pct, setMeta, scoreBadge } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load } from '../data.js';
 import { analyse, verdict, suburbScore, valueEstimate } from '../engine.js';
+import { reaSearch } from './find.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
 import { listingLinks } from '../insights.js';
-import { attachSearch } from '../app.js';
+import { attachSearch, navigate } from '../app.js';
 
 const BED_FACTOR_H = { 1: 0.7, 2: 0.82, 3: 1, 4: 1.14, 5: 1.28, 6: 1.38 };
 const BED_FACTOR_U = { 0: 0.62, 1: 0.78, 2: 1, 3: 1.22, 4: 1.4 };
@@ -44,6 +45,25 @@ export function valueCall(gap) {
   return { key: 'over', label: 'Overpriced', cls: 'down', note: 'Well above the estimate: check recent sales before offering near this figure.' };
 }
 
+/** "Rate a listing you've found": address + asking price -> full valuation and grade. */
+export function rateBox(s) {
+  return `<div class="card flat tint rate-box"><b>Rate a listing you've found</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Keystone values that home, tells you whether the price is good value, and grades it as an investment.</p>
+    <form class="fields rb-form" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;align-items:end" onsubmit="return false">
+      <label class="field">Address<input name="addr" type="search" placeholder="${s ? `e.g. 12 Example Street, ${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}` : 'e.g. 12 Example Street, Morley WA 6062'}" required></label>
+      <label class="field">Asking price<input name="price" type="number" step="5000" placeholder="e.g. 850000"></label>
+      <button class="btn primary" type="submit">Value and rate</button>
+    </form></div>`;
+}
+export function wireRateBox(el, s) {
+  const f = el.querySelector('.rb-form');
+  f?.addEventListener('submit', () => {
+    let a = f.addr.value.trim();
+    if (!a) return f.addr.focus();
+    if (s && !new RegExp(cleanName(s.n), 'i').test(a)) a += `, ${cleanName(s.n)} ${s.s} ${s.pc || ''}`;
+    navigate(`/property?q=${encodeURIComponent(a.trim())}${+f.price.value ? `&asking=${+f.price.value}` : ''}`);
+  });
+}
+
 export async function liveListings(el, s, { compact = false, mode = 'buy', filters = {}, mapEl = null } = {}) {
   el.innerHTML = '<p class="note">Checking live listings…</p>';
   const q = new URLSearchParams({ suburb: cleanName(s.n), state: s.s, postcode: s.pc || '', mode: mode === 'rent' ? 'rent' : 'sale', size: compact ? 8 : 24, ...filters });
@@ -57,7 +77,8 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
   }
   const links = listingLinks(s);
   if (res.configured === false) {
-    el.innerHTML = `<div class="callout"><b>Live listings inside Keystone switch on with a Domain API key.</b> Domain's official API is the licensed way to show Australian listings, and once it's connected every listing here gets a Keystone value estimate, a value call against the asking price and an investment grade. Until then, the buttons above open the current listings for ${esc(cleanName(s.n))}; paste any asking price into the <a href="/property" data-link>valuation</a> or <a href="/analyse?suburb=${s.id}" data-link>analyser</a> to get the same rating.</div>`;
+    el.innerHTML = rateBox(s);
+    wireRateBox(el, s);
     return;
   }
   if (res.error) {
@@ -127,24 +148,29 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
 }
 
 export default async function listingsPage(main, _p, query) {
-  setMeta({ title: 'Live property listings, scored for investors', description: 'Search Australian property for sale and see estimated rent, yield, holding cost and an investment grade for every listing.' });
+  setMeta({ title: 'Rate any property for sale: value, rent and investment grade', description: 'Paste the address and asking price of any Australian listing to see its estimated value, whether the price is good value, rent, yield, holding cost and an investment grade.' });
   const { byId } = await suburbs();
   let chosen = query.suburb ? byId.get(query.suburb) : null;
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Listings</div><h1>Property for sale, valued and rated</h1>
-  <p>Pick a suburb and Keystone rates every live listing: an independent value estimate for that home, whether the asking price is good value, estimated rent and yield, weekly holding cost after tax, a 10-year return and an investment grade. Listings come from Domain's official API.</p></div>
-  <div class="card flat tint">
-    <div class="fields">
-      <label class="field" style="position:relative">Suburb or postcode<input id="ls" type="search" placeholder="e.g. Bayswater WA" value="${chosen ? esc(`${cleanName(chosen.n)} ${chosen.s} ${chosen.pc}`) : ''}"><div class="ac" id="lac" hidden style="top:62px;left:0;right:auto"></div></label>
-      <label class="field">Type<select id="lt"><option value="">Any</option><option value="House">House</option><option value="ApartmentUnitFlat">Apartment / unit</option><option value="Townhouse">Townhouse</option></select></label>
-      <label class="field">Min beds<select id="lb"><option value="">Any</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
-      <label class="field">Max price<input id="lm" type="number" step="50000" placeholder="Any"></label>
-      <label class="field">Include surrounding<select id="lsur"><option value="0">This suburb only</option><option value="1">Plus surrounding suburbs</option></select></label>
+  <div class="page-head"><div class="eyebrow">Listings</div><h1>Listings, valued and rated</h1>
+  <p>Found a property for sale? Paste its address and asking price and Keystone gives you an independent value estimate for that home, whether the price is good value, estimated rent and yield, weekly holding cost after tax, a 10-year return and an A–D investment grade.</p></div>
+  <div id="rb"></div>
+  <section class="section">
+    <h2>Browse what's for sale</h2>
+    <div class="card flat tint">
+      <div class="fields">
+        <label class="field" style="position:relative">Suburb or postcode<input id="ls" type="search" placeholder="e.g. Bayswater WA" value="${chosen ? esc(`${cleanName(chosen.n)} ${chosen.s} ${chosen.pc}`) : ''}"><div class="ac" id="lac" hidden style="top:62px;left:0;right:auto"></div></label>
+        <label class="field">Type<select id="lt"><option value="">Any</option><option value="h">House</option><option value="u">Unit / apartment / townhouse</option></select></label>
+        <label class="field">Min beds<select id="lb"><option value="">Any</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        <label class="field">Max price<input id="lm" type="number" step="50000" placeholder="Any"></label>
+      </div>
+      <p class="fine" style="margin-top:10px">Opens the matching listings on realestate.com.au and Domain in a new tab, with your filters applied. Bring any address back here to rate it.</p>
+      <div id="res" style="margin-top:12px"></div>
     </div>
-    <div class="row" style="margin-top:12px"><button class="btn primary" id="go">Search listings</button><span id="sel" class="note"></span></div>
-  </div>
-  <div id="res" class="section"></div>`;
+  </section>`;
   const $ = (x) => main.querySelector(x);
+  $('#rb').innerHTML = rateBox(null);
+  wireRateBox($('#rb'), null);
   attachSearch($('#ls'), $('#lac'), (s) => {
     chosen = s;
     $('#ls').value = `${cleanName(s.n)} ${s.s} ${s.pc}`;
@@ -152,20 +178,16 @@ export default async function listingsPage(main, _p, query) {
   });
   const run = () => {
     if (!chosen) {
-      $('#res').innerHTML = '<p class="note">Choose a suburb from the list first.</p>';
+      $('#res').innerHTML = '<p class="note">Choose a suburb from the list.</p>';
       return;
     }
-    $('#sel').innerHTML = `<a href="${suburbUrl(chosen)}" data-link>${esc(cleanName(chosen.n))} suburb profile →</a>`;
-    const f = {};
-    if ($('#lt').value) f.types = $('#lt').value;
-    if ($('#lb').value) f.beds = $('#lb').value;
-    if ($('#lm').value) f.max = $('#lm').value;
-    if ($('#lsur').value === '1') f.surrounding = '1';
+    const t = $('#lt').value;
+    const p = { beds: +$('#lb').value || undefined, maxPrice: +$('#lm').value || undefined };
     const links = listingLinks(chosen);
-    $('#res').innerHTML = `<div class="row" style="margin-bottom:12px"><a class="btn sm" href="${links.reaBuy}" target="_blank" rel="noopener">realestate.com.au</a><a class="btn sm" href="${links.domainBuy}" target="_blank" rel="noopener">Domain</a><a class="btn sm" href="${links.reaSold}" target="_blank" rel="noopener">Sold</a></div><div id="lmap" class="map short" hidden style="margin-bottom:14px"></div><div id="lv"></div>`;
-    liveListings($('#lv'), chosen, { filters: f, mapEl: $('#lmap') });
+    const e = valueEstimate(chosen, { type: t || chosen.pt, beds: p.beds });
+    $('#res').innerHTML = `<div class="spread"><div><b>${esc(cleanName(chosen.n))} ${chosen.s} ${chosen.pc || ''}</b> ${scoreBadge(suburbScore(chosen.sc))}<div class="note">${e ? `Typical ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'} about <b>${aud(e.value, { compact: true })}</b> · rent ${aud(e.rent)}/wk · ${pct(e.yield, 1)} yield` : ''} · <a href="${suburbUrl(chosen)}" data-link>suburb report</a></div></div>
+      <div class="row"><a class="btn primary sm" href="${reaSearch(chosen, t, p)}" target="_blank" rel="noopener">realestate.com.au ↗</a><a class="btn sm" href="${links.domainBuy}" target="_blank" rel="noopener">Domain ↗</a><a class="btn sm ghost" href="${links.reaSold}" target="_blank" rel="noopener">Recently sold ↗</a></div></div>`;
   };
-  $('#go').addEventListener('click', run);
+  ['#lt', '#lb', '#lm'].forEach((x) => $(x).addEventListener('change', run));
   if (chosen) run();
-  main.insertAdjacentHTML('beforeend', `<p class="fine">Listing data © Domain Holdings Australia, shown under Domain's API terms. Rent estimates are Keystone's. Checked ${date(new Date().toISOString())}.</p>`);
 }

@@ -51,8 +51,8 @@ export default async function home(main) {
 
   const products = [
     ['/property', 'Property valuation', 'Enter any address for an estimated value and range, rent, yield, holding cost after tax, an investment grade and a value call against the asking price.', 'Any Australian address'],
-    ['/map', 'Best buys map', 'The highest-rated suburbs for growth, cash flow or a first home, on one map, priced for the home you want, with each suburb\'s live listings graded.', best ? `No. 1 now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
-    ['/listings', 'Listings, valued and rated', 'Every property for sale gets a Keystone value, a good-value or overpriced call, estimated rent and an A–D investment grade.', 'Powered by Domain'],
+    ['/map', 'Best buys map', 'The highest-rated suburbs for growth, cash flow or a first home, on one map, priced for the home you want, with each suburb\'s typical price, rent and yield.', best ? `No. 1 now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
+    ['/listings', 'Listings, valued and rated', 'Paste any listing\'s address and asking price for a Keystone value, a good-value or overpriced call, estimated rent and an A–D investment grade.', 'Works with any listing'],
     ['/suburbs', 'Suburb intelligence', 'Prices, rents, yields, growth, demand, supply, demographics and the investment case for every suburb, postcode and council.', `${sub.list.length.toLocaleString()} suburb reports`],
     ['/afford', 'Affordability analyst', 'Your deposit, income and debts turned into a buying ceiling in every state, then the best suburbs you can buy in today.', 'Lender-style 3% buffer'],
     ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, 10-year cash flow, after-tax return and a buy or pass verdict, with the 2026 tax changes built in.', 'All 8 states'],
@@ -170,11 +170,11 @@ export default async function home(main) {
   <section class="section">
     <h2>How Keystone rates a property</h2>
     <div class="grid g3 howto">
-      <div class="card flat"><span class="step-n">1</span><h3>Official data, refreshed hourly</h3><p class="muted">State valuer-general and government sales medians, the ABS Census and building approvals, Cotality's daily index, RBA and Open Banking lending data, and live listings.</p></div>
+      <div class="card flat"><span class="step-n">1</span><h3>Official data, refreshed hourly</h3><p class="muted">State valuer-general and government sales medians, the ABS Census and building approvals, Cotality's daily index, and RBA and Open Banking lending data.</p></div>
       <div class="card flat"><span class="step-n">2</span><h3>A value for the exact home</h3><p class="muted">A suburb price model (R² 0.75 against official medians) sets the typical value, then each home is adjusted for bedrooms, bathrooms, land, condition and the market's movement since.</p></div>
       <div class="card flat"><span class="step-n">3</span><h3>A rating you can check</h3><p class="muted">Six scored components per suburb and a full 10-year after-tax model per property produce an A–D grade, with every reason and risk listed so you can challenge it.</p></div>
     </div>
-    <div class="sources"><span class="muted">Data from</span><span>Cotality</span><span>ABS</span><span>RBA</span><span>Open Banking (CDR)</span><span>Valuer-General Victoria</span><span>NSW DCJ</span><span>SA Land Services</span><span>SQM Research</span><span>PropTrack</span><span>Domain</span><span>OpenStreetMap</span></div>
+    <div class="sources"><span class="muted">Data from</span><span>Cotality</span><span>ABS</span><span>RBA</span><span>Open Banking (CDR)</span><span>Valuer-General Victoria</span><span>NSW DCJ</span><span>SA Land Services</span><span>SQM Research</span><span>PropTrack</span><span>OpenStreetMap</span></div>
   </section>
 
   <section class="section">

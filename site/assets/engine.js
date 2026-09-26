@@ -450,10 +450,11 @@ export function valueEstimate(s, spec = {}) {
   if (!base) return null;
   const adj = [];
   const typicalBeds = (type === 'u' ? s.bu : s.bh) || (type === 'u' ? 2 : 3.3);
-  const beds = spec.beds ?? Math.round(typicalBeds);
+  // no bedrooms given: price the suburb's typical home as-is and label it with its usual bedroom count
+  const beds = spec.beds ?? Math.floor(typicalBeds + 0.4);
   // bedrooms: ~11% per bedroom for houses, ~17% for units (studio to 1 bed to 2 bed are big steps)
   const perBed = type === 'u' ? 0.17 : 0.11;
-  const bedAdj = Math.max(-0.45, Math.min(0.5, (beds - typicalBeds) * perBed));
+  const bedAdj = spec.beds == null ? 0 : Math.max(-0.45, Math.min(0.5, (beds - typicalBeds) * perBed));
   if (Math.abs(bedAdj) > 0.005) adj.push({ label: `${beds} bedrooms vs ${typicalBeds.toFixed(1)} typical here`, pct: bedAdj });
   if (spec.baths) {
     const typicalBaths = type === 'u' ? (beds >= 2 ? 1.6 : 1) : beds >= 4 ? 2.1 : 1.6;

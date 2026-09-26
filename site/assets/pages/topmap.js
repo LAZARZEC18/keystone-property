@@ -25,7 +25,7 @@ export default async function topMap(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Best buys map</div><h1>Where the best-rated property is right now</h1>
-  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its live listings, each valued and graded.</p></div>
+  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings.</p></div>
   <form class="card flat tint" id="mf" onsubmit="return false">
     <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
@@ -122,7 +122,7 @@ export default async function topMap(main, _p, query) {
         <div class="stat"><span class="k">Distance to CBD</span><span class="v">${r.s.cbd != null ? `${Math.round(r.s.cbd)} km` : '—'}</span><span class="s">${r.s.cst != null ? `${r.s.cst.toFixed(1)} km to the water` : ''}</span></div>
       </div>
       <div class="row" style="margin-top:14px"><a class="btn primary" href="/analyse?suburb=${r.s.id}&price=${r.e.value}&rent=${r.e.rent}&type=${r.t}" data-link>Analyse a typical purchase</a><a class="btn" href="${reaSearch(r.s, r.t)}" target="_blank" rel="noopener">realestate.com.au ↗</a><a class="btn ghost" href="${links.domainBuy}" target="_blank" rel="noopener">Domain ↗</a></div>
-      <h3 style="margin-top:20px">For sale now, valued and graded</h3><div id="mselmap" class="map short" hidden style="margin-bottom:14px"></div><div id="msellist"></div>`;
+      <h3 style="margin-top:20px">For sale now</h3><div id="mselmap" class="map short" hidden style="margin-bottom:14px"></div><div id="msellist"></div>`;
     liveListings(box.querySelector('#msellist'), r.s, { compact: true, filters: r.t === 'u' ? { types: 'ApartmentUnitFlat,Townhouse' } : { types: 'House' }, mapEl: box.querySelector('#mselmap') });
   };
 
