@@ -437,3 +437,57 @@ export function suburbScore(sc, weights = PROFILES.balanced) {
   }
   return w ? Math.round(t / w) : null;
 }
+
+/**
+ * Keystone estimate for one specific home, built up from the suburb's typical price.
+ * s: suburb index row (h/u typical prices, bh/bu typical bedrooms, conf)
+ * spec: {type:'h'|'u', beds, baths, land (m²), cars, condition:'new'|'renovated'|'average'|'original'|'needs-work', pool, liveFactor}
+ * Returns {value, low, high, rent, adjustments:[{label, pct}], basis}
+ */
+export function valueEstimate(s, spec = {}) {
+  const type = spec.type === 'u' ? 'u' : 'h';
+  const base = (type === 'u' ? s.u : s.h) * (spec.liveFactor || 1);
+  if (!base) return null;
+  const adj = [];
+  const typicalBeds = (type === 'u' ? s.bu : s.bh) || (type === 'u' ? 2 : 3.3);
+  const beds = spec.beds ?? Math.round(typicalBeds);
+  // bedrooms: ~11% per bedroom for houses, ~17% for units (studio to 1 bed to 2 bed are big steps)
+  const perBed = type === 'u' ? 0.17 : 0.11;
+  const bedAdj = Math.max(-0.45, Math.min(0.5, (beds - typicalBeds) * perBed));
+  if (Math.abs(bedAdj) > 0.005) adj.push({ label: `${beds} bedrooms vs ${typicalBeds.toFixed(1)} typical here`, pct: bedAdj });
+  if (spec.baths) {
+    const typicalBaths = type === 'u' ? (beds >= 2 ? 1.6 : 1) : beds >= 4 ? 2.1 : 1.6;
+    const b = Math.max(-0.08, Math.min(0.12, (spec.baths - typicalBaths) * 0.045));
+    if (Math.abs(b) > 0.005) adj.push({ label: `${spec.baths} bathroom${spec.baths > 1 ? 's' : ''}`, pct: b });
+  }
+  if (type === 'h' && spec.land) {
+    const typicalLand = s.cbd === null || s.cbd === undefined ? 850 : s.cbd < 8 ? 380 : s.cbd < 15 ? 560 : s.cbd < 30 ? 650 : 750;
+    const l = Math.max(-0.3, Math.min(0.45, Math.log(spec.land / typicalLand) * 0.3));
+    if (Math.abs(l) > 0.005) adj.push({ label: `${Math.round(spec.land)} m² land vs ~${typicalLand} m² typical`, pct: l });
+  }
+  if (type === 'u' && spec.cars !== undefined && spec.cars !== null) {
+    const c = spec.cars === 0 ? -0.06 : spec.cars >= 2 ? 0.05 : 0;
+    if (c) adj.push({ label: spec.cars === 0 ? 'No car space' : '2+ car spaces', pct: c });
+  }
+  const cond = { new: 0.1, renovated: 0.07, average: 0, original: -0.07, 'needs-work': -0.18 }[spec.condition || 'average'] || 0;
+  if (cond) adj.push({ label: { new: 'Brand new', renovated: 'Renovated', original: 'Original condition', 'needs-work': 'Needs work' }[spec.condition], pct: cond });
+  if (spec.pool && type === 'h') adj.push({ label: 'Pool', pct: 0.035 });
+  const factor = adj.reduce((f, a) => f * (1 + a.pct), 1);
+  const value = Math.round((base * factor) / 5000) * 5000;
+  const band = { high: 0.1, medium: 0.13, 'medium-low': 0.16, low: 0.2 }[s.conf] ?? 0.15;
+  const spread = band + (spec.land || spec.beds ? 0 : 0.03);
+  const rentBase = type === 'u' ? s.ru : s.rh;
+  const rent = rentBase ? Math.round((rentBase * (1 + bedAdj * 0.75) * (1 + cond * 0.4)) / 5) * 5 : null;
+  return {
+    value,
+    low: Math.round((value * (1 - spread)) / 5000) * 5000,
+    high: Math.round((value * (1 + spread)) / 5000) * 5000,
+    rent,
+    yield: rent ? (rent * 52 * 100) / value : null,
+    adjustments: adj,
+    basis: base,
+    type,
+    beds,
+    spread,
+  };
+}

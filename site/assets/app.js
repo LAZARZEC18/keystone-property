@@ -1,6 +1,7 @@
 // Keystone single-page app: router, global search, ticker, theme.
 import { $, $$, esc, aud, pct, ago } from './ui.js';
 import { load, suburbs, searchSuburbs, cleanName, suburbUrl } from './data.js';
+import { looksLikeAddress } from './intent.js';
 
 const routes = [
   [/^\/$/, () => import('./pages/home.js')],
@@ -22,6 +23,9 @@ const routes = [
   [/^\/watchlist\/?$/, () => import('./pages/watchlist.js')],
   [/^\/borrowing\/?$/, () => import('./pages/borrowing.js')],
   [/^\/methodology\/?$/, () => import('./pages/methodology.js')],
+  [/^\/find\/?$/, () => import('./pages/find.js')],
+  [/^\/property\/?$/, () => import('./pages/property.js')],
+  [/^\/map\/?$/, () => import('./pages/topmap.js')],
 ];
 
 let current = null;
@@ -86,8 +90,19 @@ $('#menu').addEventListener('click', () => {
   $('#menu').setAttribute('aria-expanded', nav.classList.contains('open'));
 });
 
-// ---- suburb search (header + reusable)
+// ---- search (header, hero + reusable suburb pickers)
+const DESCRIPTIVE = /\b(bed|beds|bedroom|under|below|between|near|close to|within|yield|cash ?flow|growth|house|houses|home|unit|units|apartment|townhouse|first home|beach|coast|cbd|city|regional|budget|cheap|affordable|invest)\b|\$|\d+\s*k\b/i;
+/** Where free text typed into a smart search box should go: an address, a described search, or a suburb. */
+export function routeQuery(q, items = []) {
+  const t = q.trim();
+  if (!t) return null;
+  if (looksLikeAddress(t)) return `/property?q=${encodeURIComponent(t)}`;
+  if (DESCRIPTIVE.test(t) || !items.length) return `/find?q=${encodeURIComponent(t)}`;
+  return suburbUrl(items[0]);
+}
+
 export function attachSearch(input, box, onPick) {
+  const smart = !onPick;
   let items = [];
   let sel = -1;
   const show = async () => {
@@ -97,11 +112,21 @@ export function attachSearch(input, box, onPick) {
       return;
     }
     const { list } = await suburbs();
-    items = searchSuburbs(list, q, 10);
+    items = searchSuburbs(list, q, smart ? 8 : 10);
     sel = -1;
-    box.innerHTML = items.length
-      ? items.map((s, i) => `<a href="${suburbUrl(s)}" data-i="${i}"><span>${esc(cleanName(s.n))} <span class="muted">${s.s} ${s.pc || ''}</span></span><small>${aud(s.pt === 'u' ? s.u : s.h, { compact: true })} · ${pct(s.y, 1)}</small></a>`).join('')
-      : `<div class="note" style="padding:10px 12px">No suburb matches "${esc(q)}".</div>`;
+    let head = '';
+    if (smart) {
+      const enc = encodeURIComponent(q.trim());
+      if (looksLikeAddress(q)) head = `<a href="/property?q=${enc}" data-x="1" class="ac-act"><span><b>Value this property</b> <span class="muted">${esc(q.trim())}</span></span><small>Address →</small></a>`;
+      else if (DESCRIPTIVE.test(q) || q.trim().split(/\s+/).length >= 3) head = `<a href="/find?q=${enc}" data-x="1" class="ac-act"><span><b>Smart search</b> <span class="muted">"${esc(q.trim())}"</span></span><small>Search →</small></a>`;
+    }
+    box.innerHTML =
+      head +
+      (items.length
+        ? items.map((s, i) => `<a href="${suburbUrl(s)}" data-i="${i}"><span>${esc(cleanName(s.n))} <span class="muted">${s.s} ${s.pc || ''}</span></span><small>${aud(s.pt === 'u' ? s.u : s.h, { compact: true })} · ${pct(s.y, 1)}</small></a>`).join('')
+        : head
+          ? ''
+          : `<div class="note" style="padding:10px 12px">No suburb matches "${esc(q)}".${smart ? ' Press Enter to run a smart search.' : ''}</div>`);
     box.hidden = false;
   };
   input.addEventListener('input', show);
@@ -110,23 +135,37 @@ export function attachSearch(input, box, onPick) {
     const links = $$('a', box);
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
+      if (!links.length) return;
       sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
       links.forEach((l, i) => l.classList.toggle('sel', i === sel));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      const pick = items[Math.max(0, sel)];
-      if (pick) {
-        box.hidden = true;
+      const chosen = sel >= 0 ? links[sel] : null;
+      box.hidden = true;
+      if (chosen && chosen.dataset.x) {
         input.blur();
-        if (onPick) onPick(pick);
-        else navigate(suburbUrl(pick));
+        return navigate(chosen.getAttribute('href'));
+      }
+      const pick = chosen ? items[+chosen.dataset.i] : null;
+      if (onPick) {
+        const p = pick || items[0];
+        if (p) {
+          input.blur();
+          onPick(p);
+        }
+        return;
+      }
+      const url = pick ? suburbUrl(pick) : routeQuery(input.value, items);
+      if (url) {
+        input.blur();
+        navigate(url);
       }
     } else if (e.key === 'Escape') box.hidden = true;
   });
   box.addEventListener('click', (e) => {
     const a = e.target.closest('a[data-i]');
-    if (!a) return;
     box.hidden = true;
+    if (!a) return;
     if (onPick) {
       e.preventDefault();
       e.stopPropagation();

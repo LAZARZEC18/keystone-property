@@ -177,6 +177,17 @@ def census():
     c['dwellings'] = g36['Total_PDs_Dwellings']
     c['occupied'] = g36['OPDs_Tot_OPDs_Dwellings'] / g36['Total_PDs_Dwellings'].replace(0, np.nan)
     c['unemp'] = g43['Percent_Unem_loyment_P']
+    # typical bedroom count for houses and for units (flats, plus townhouses where flats are rare)
+    g41 = rd('G41')
+    def avg_beds(prefix, six):
+        cols = [f'{prefix}_NofB_0_i_b' if prefix != 'Se_d_r_or_t_h_t_Tot' else f'{prefix}_NofB_0_ib'] + [f'{prefix}_NofB_{i}' for i in range(1, 6)] + [f'{prefix}_NofB_{six}']
+        w = [0, 1, 2, 3, 4, 5, 6]
+        tot = sum(g41[c_] for c_ in cols)
+        return sum(g41[c_] * wi for c_, wi in zip(cols, w)) / tot.replace(0, np.nan), tot
+    c['bh'], _ = avg_beds('Separate_house', '6_or_m')
+    fb, fn = avg_beds('Flt_apart_Tot', '6_or_m')
+    sb, sn = avg_beds('Se_d_r_or_t_h_t_Tot', '6_m')
+    c['bu'] = np.where(fn >= 20, fb, (fb.fillna(0) * fn + sb.fillna(0) * sn) / (fn + sn).replace(0, np.nan))
 
     # 2016 State Suburbs, matched on normalised name + state
     geo16 = pd.read_excel(os.path.join(RAW, 'c16', 'Metadata', '2016Census_geog_desc_1st_and_2nd_release.xlsx'),
@@ -337,7 +348,7 @@ def main():
             continue
         r = dict(g)
         for k in ['pop', 'age', 'mort', 'rent21', 'hhinc', 'hhsize', 'ownOutright', 'ownMortgage', 'renters',
-                  'socialHousing', 'houses', 'flats', 'dwellings', 'occupied', 'unemp']:
+                  'socialHousing', 'houses', 'flats', 'dwellings', 'occupied', 'unemp', 'bh', 'bu']:
             r[k] = num(row[k])
         o = old.get((norm_name(g['name']), g['state']))
         if o:
@@ -578,6 +589,7 @@ def main():
             'own%': rnd(pct(r['ownOutright']), 1), 'soc%': rnd(pct(r['socialHousing']), 1),
             'hou%': rnd(pct(r['houses']), 1), 'fla%': rnd(pct(r['flats']), 1), 'dw': int(r['dwellings'] or 0),
             'sup': supply(r['lgc']),
+            'bh': rnd(r['bh'], 1), 'bu': rnd(r['bu'], 1), 'cst': rnd(r['coast_km'], 1), 'cbd': rnd(r['cbd_km'], 1),
             'conf': conf, 'pt': 'u' if (r['flats'] or 0) >= 0.5 else 'h',
             'hist': o.get('history'),
             'off': {k: v for k, v in (o or {}).items() if k in ('house', 'unit', 'rent')} or None,
@@ -602,7 +614,7 @@ def main():
     }
     os.makedirs(OUT, exist_ok=True)
     # Index: what the explorer, map and ranker need for every suburb (loaded once).
-    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5']
+    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5']
     comp = ['cash', 'momentum', 'growth', 'demand', 'afford', 'stability']
     rows = [[s_[c] for c in index_cols] + [s_['sc'][k] for k in comp] for s_ in scored]
     with open(os.path.join(OUT, 'suburbs.json'), 'w') as fh:

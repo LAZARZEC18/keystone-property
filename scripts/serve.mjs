@@ -7,12 +7,16 @@ import { extname, join, normalize } from 'node:path';
 const ROOT = new URL('../site/', import.meta.url).pathname;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.txt': 'text/plain', '.xml': 'application/xml' };
 const port = Number(process.env.PORT || 8788);
-const { default: listings } = await import('../netlify/functions/listings.mjs');
+const fns = {
+  '/api/listings': (await import('../netlify/functions/listings.mjs')).default,
+  '/api/geocode': (await import('../netlify/functions/geocode.mjs')).default,
+  '/api/property': (await import('../netlify/functions/property.mjs')).default,
+};
 
 createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`);
-  if (url.pathname === '/api/listings') {
-    const r = await listings(new Request(url));
+  if (fns[url.pathname]) {
+    const r = await fns[url.pathname](new Request(url));
     res.writeHead(r.status, Object.fromEntries(r.headers));
     res.end(await r.text());
     return;
