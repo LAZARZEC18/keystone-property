@@ -49,9 +49,10 @@ export default async function home(main) {
         <div class="ac" id="hac" hidden></div>
       </form>
       <div class="hero-links">
-        <a class="btn primary" href="/suburbs" data-link>Find the best suburbs</a>
+        <a class="btn primary" href="/afford" data-link>What can I afford?</a>
+        <a class="btn" href="/suburbs" data-link>Find the best suburbs</a>
         <a class="btn" href="/analyse" data-link>Analyse a property</a>
-        <a class="btn ghost" href="/guide" data-link>How to buy an investment property</a>
+        <a class="btn ghost" href="/guide" data-link>How to buy</a>
       </div>
     </div>
     <div class="hero-panel">

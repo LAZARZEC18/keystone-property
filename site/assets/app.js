@@ -13,6 +13,7 @@ const routes = [
   [/^\/postcode\/(?<pc>\d{3,4})\/?$/, () => import('./pages/postcode.js')],
   [/^\/council\/(?<state>[a-z]+)\/(?<lga>[a-z0-9-]+)\/?$/, () => import('./pages/council.js')],
   [/^\/analyse\/?$/, () => import('./pages/analyse.js')],
+  [/^\/afford\/?$/, () => import('./pages/afford.js')],
   [/^\/rates\/?$/, () => import('./pages/rates.js')],
   [/^\/listings\/?$/, () => import('./pages/listings.js')],
   [/^\/news\/?$/, () => import('./pages/news.js')],

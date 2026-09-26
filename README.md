@@ -37,7 +37,7 @@ Suburbs without official sales data get a calibrated model estimate: an OLS mode
 
 ## Setup
 
-1. **Netlify**: import this repo. There's no build command; the publish directory is `site`, as set in `netlify.toml`.
+1. **Netlify**: live at https://keystone-au.netlify.app. To recreate, import this repo. There's no build command; the publish directory is `site`, as set in `netlify.toml`.
 2. **Live listings (optional)**: get a free API key at [developer.domain.com.au](https://developer.domain.com.au) and add `DOMAIN_API_KEY` under Netlify → Site configuration → Environment variables.
 3. **Site URL for the sitemap**: add a repository variable `SITE_URL` (Settings → Secrets and variables → Actions → Variables) if you use a custom domain.
 4. **Registrations** from `/weekly` appear in Netlify → Forms.
