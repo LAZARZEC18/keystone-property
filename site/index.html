@@ -12,6 +12,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <link rel="stylesheet" href="/assets/app.css" />
+  <link rel="modulepreload" href="/assets/app.js" />
+  <link rel="modulepreload" href="/assets/ui.js" />
+  <link rel="modulepreload" href="/assets/data.js" />
+  <link rel="modulepreload" href="/assets/intent.js" />
   <script>
     try { const t = localStorage.getItem('keystone.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
@@ -53,13 +57,23 @@
     <div class="ticker" id="ticker" aria-live="polite"></div>
   </header>
 
-  <main id="main" class="wrap"><div class="loading">Loading Keystone…</div></main>
+  <main id="main" class="wrap">
+    <section class="hero" aria-busy="true">
+      <div>
+        <div class="eyebrow">Australian property intelligence</div>
+        <h1>Every property decision, <em>backed by the numbers.</em></h1>
+        <p class="lead">Keystone values any Australian home, rates every suburb and any listing you find, and tracks the market every hour, from official sales, census, approvals and lending data.</p>
+        <div class="hero-search"><input type="search" placeholder="Enter an address, suburb, postcode, or describe what you want" aria-label="Search" disabled /></div>
+      </div>
+      <div class="hero-panel skeleton-panel" aria-hidden="true"></div>
+    </section>
+  </main>
 
   <footer class="foot">
     <div class="wrap foot-in">
       <div>
         <div class="brand small"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg><span>Keystone</span></div>
-        <p class="muted">Australian property investment intelligence. Rates, market figures and news refresh every hour from public sources.</p>
+        <p class="muted">Independent Australian property research for home buyers and investors. Rates, market figures and news refresh every hour from public sources.</p>
       </div>
       <div class="foot-links">
         <a href="/find" data-link>Smart property search</a>
@@ -69,7 +83,10 @@
         <a href="/watchlist" data-link>Watchlist</a>
         <a href="/borrowing" data-link>Borrowing power</a>
         <a href="/methodology" data-link>Data &amp; methodology</a>
-        <a href="https://github.com/LAZARZEC18/keystone-property" rel="noopener">Source on GitHub</a>
+        <a href="/about" data-link>About</a>
+        <a href="/contact" data-link>Contact</a>
+        <a href="/privacy" data-link>Privacy</a>
+        <a href="/terms" data-link>Terms</a>
       </div>
       <p class="fine">General information only, not financial, tax or legal advice. Keystone doesn't know your circumstances: get independent advice before you buy. Estimates are modelled and can be wrong; figures from third parties are credited on each page. Rates are advertised rates from lenders' Consumer Data Right feeds and may not reflect the rate you're offered.</p>
     </div>
@@ -78,6 +95,9 @@
   <!-- Static copy of the registration form so Netlify Forms can detect it at deploy time -->
   <form name="register" data-netlify="true" netlify-honeypot="company" hidden>
     <input name="company"><input name="name"><input name="email" type="email"><select name="type"></select><input name="suburbs"><input name="budget"><input type="checkbox" name="consent">
+  </form>
+  <form name="contact" data-netlify="true" netlify-honeypot="company" hidden>
+    <input name="company"><input name="name"><input name="email" type="email"><select name="topic"></select><textarea name="message"></textarea>
   </form>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
   <script type="module" src="/assets/app.js"></script>

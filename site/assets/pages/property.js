@@ -110,6 +110,7 @@ export default async function propertyPage(main, _p, query) {
   const res = main.querySelector('#res');
   const invRate = Math.max(rs.best.INV_PI_variable?.[0]?.rate || 6, (rs.medianInvestorVariable || 6.5) - 0.4);
 
+  let edited = !!facts || !!spec.asking;
   function run() {
     const f = Object.fromEntries(new FormData(form));
     const sp = { type: f.type, beds: +f.beds, baths: +f.baths, cars: +f.cars, land: +f.land || null, condition: f.condition, pool: !!f.pool, liveFactor: lf };
@@ -121,14 +122,16 @@ export default async function propertyPage(main, _p, query) {
     const gap = asking ? (asking / e.value - 1) * 100 : null;
     const vc = valueCall(gap);
     const dEst = facts?.estimate?.mid;
+    const fhbDuty = stampDuty(s.s, price, { buyer: 'fhb', newBuild: f.condition === 'new' });
     res.innerHTML = `
       <div class="card">
         <div class="spread" style="align-items:flex-start">
-          <div><div class="eyebrow" style="margin:0">Keystone estimate · ${date(new Date().toISOString())}</div>
+          <div><div class="eyebrow" style="margin:0">${edited ? 'Keystone estimate' : 'Starting estimate: typical home'} · ${date(new Date().toISOString())}</div>
           <div class="big-num" style="margin:6px 0">${aud(e.value)}</div>
           <div class="note">Likely range ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })} · ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'}</div></div>
           <div style="text-align:right"><div class="grade grade-${v.grade}" style="width:64px;height:64px;font-size:32px;margin-left:auto">${v.grade}</div><div class="note" style="margin-top:4px">${esc(v.label)} as an investment</div></div>
         </div>
+        ${edited ? '' : `<div class="callout" style="margin-top:14px"><b>This is a typical ${e.beds}-bed, ${f.baths}-bath ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))}, not this property yet.</b> Enter its bedrooms, bathrooms, land size and condition on the left, plus the asking price if it's for sale, and the estimate, range and rating update for this home.</div>`}
         ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the estimate. ${esc(vc.note)}</div>` : ''}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Estimated rent</span><span class="v">${aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span></div>
@@ -145,10 +148,11 @@ export default async function propertyPage(main, _p, query) {
             <p class="fine" style="margin-top:6px">Suburb value includes ${esc(R?.name || '')} index movement to ${date(index.generated)} (${pct((lf - 1) * 100, 2, true)} since 31 Aug).</p></div>
           <div><h3 style="font-size:16px">Buying it</h3><div class="kv">
             <span>Stamp duty (investor)</span><span>${aud(stampDuty(s.s, price).duty)}</span>
-            <span>Stamp duty (first home)</span><span>${aud(stampDuty(s.s, price, { buyer: 'fhb', newBuild: f.condition === 'new' }).duty)}</span>
+            <span>Stamp duty (first home)</span><span>${aud(fhbDuty.duty)}</span>
             <span>Cash needed at 20% deposit</span><span>${aud(a.upfront.total)}</span>
-            <span>${esc(R?.name || '')} this week / 12 months</span><span>${pct(mv.week, 2, true)} / ${pct(mv.year ?? s.g1, 1, true)}</span>
+            <span>${esc(R?.name || '')} this week / past year (daily index)</span><span>${pct(mv.week, 2, true)} / ${pct(mv.year ?? s.g1, 1, true)}</span>
             <span>Suburb Keystone Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
+            ${fhbDuty.notes.length ? `<p class="fine" style="margin-top:6px">First home: ${esc(fhbDuty.notes.join(' '))}</p>` : ''}
             ${dEst ? `<p class="note" style="margin-top:8px">Domain's own estimate: <b>${aud(dEst)}</b> (${aud(facts.estimate.low, { compact: true })} – ${aud(facts.estimate.high, { compact: true })}, ${esc(facts.estimate.confidence || '')} confidence).</p>` : ''}
             ${facts?.sales?.length ? `<p class="note" style="margin-top:8px">Sale history: ${facts.sales.slice(0, 4).map((x) => `${aud(x.price, { compact: true })} (${new Date(x.date).getFullYear()})`).join(' · ')}</p>` : ''}
           </div>
@@ -158,13 +162,18 @@ export default async function propertyPage(main, _p, query) {
         <p class="fine" style="margin-top:10px">An automated estimate from suburb-level data and the features entered, not a formal valuation. Individual homes vary with position, aspect, quality and street. A bank valuation or a sales appraisal from a local agent is more precise.</p>
       </div>`;
 
-    // Better-value alternatives: nearby suburbs where the same home is cheaper and fundamentals are as good or better
-    const alts = nearby(idx.list, s, 40, 20)
+    // Comparable suburbs nearby for less: similar household incomes (a proxy for the kind of street and buyer),
+    // no weaker on Keystone Score or concentration risk, and cheaper for the same home by 4-20%.
+    const inc = (x) => (x.h && x.pti ? x.h / x.pti : null);
+    const myInc = inc(s);
+    const myScore = suburbScore(s.sc);
+    const alts = nearby(idx.list, s, 60, 15)
+      .filter((x) => x.pop >= 1000 && myInc && inc(x) && Math.abs(inc(x) / myInc - 1) <= 0.12 && (x.rsk ?? 0) <= (s.rsk ?? 0) + 10)
       .map((x) => ({ x, e: valueEstimate(x, sp) }))
-      .filter((o) => o.e && o.e.value < e.value * 0.95 && suburbScore(o.x.sc) >= suburbScore(s.sc) - 3)
-      .sort((a1, b1) => suburbScore(b1.x.sc) - suburbScore(a1.x.sc))
-      .slice(0, 7);
-    main.querySelector('#alts').innerHTML = `<h3>Same home, better value nearby</h3>${alts.length ? `<div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">Same home</th><th class="n">Saving</th><th class="n">Score</th></tr></thead><tbody>${alts.map((o) => `<tr><td><a href="${suburbUrl(o.x)}" data-link>${esc(cleanName(o.x.n))}</a></td><td class="n">${o.x.km.toFixed(1)}</td><td class="n">${aud(o.e.value, { compact: true })}</td><td class="n up">${aud(e.value - o.e.value, { compact: true })}</td><td class="n">${scoreBadge(suburbScore(o.x.sc))}</td></tr>`).join('')}</tbody></table></div>` : '<p class="note">No cheaper nearby suburb scores as well. This suburb is already good value for this kind of home.</p>'}`;
+      .filter((o) => o.e && o.e.value <= e.value * 0.96 && o.e.value >= e.value * 0.8 && suburbScore(o.x.sc) >= myScore - 2)
+      .sort((a1, b1) => suburbScore(b1.x.sc) - suburbScore(a1.x.sc) || a1.x.km - b1.x.km)
+      .slice(0, 6);
+    main.querySelector('#alts').innerHTML = `<h3>Comparable suburbs nearby for less</h3><p class="note" style="margin-top:-4px">Within 15 km, household incomes within 12% of ${esc(cleanName(s.n))}'s, rated as well or better, and 4–20% cheaper for this same home.</p>${alts.length ? `<div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">This home there</th><th class="n">Less by</th><th class="n">Score</th></tr></thead><tbody>${alts.map((o) => `<tr><td><a href="${suburbUrl(o.x)}" data-link>${esc(cleanName(o.x.n))}</a></td><td class="n">${o.x.km.toFixed(1)}</td><td class="n">${aud(o.e.value, { compact: true })}</td><td class="n up">${aud(e.value - o.e.value, { compact: true })}</td><td class="n">${scoreBadge(suburbScore(o.x.sc))}</td></tr>`).join('')}</tbody></table></div>` : `<p class="note">No nearby suburb with similar incomes is both cheaper and rated as well. For this kind of home, ${esc(cleanName(s.n))} is already fair value against its neighbours.</p>`}`;
 
     // Similar homes for sale: deep links + live listings (Domain) filtered to match
     const lo = Math.round((e.value * 0.85) / 10000) * 10000;
@@ -178,6 +187,7 @@ export default async function propertyPage(main, _p, query) {
     }
   }
   form.addEventListener('input', () => {
+    edited = true;
     clearTimeout(run.t);
     run.t = setTimeout(run, 200);
   });

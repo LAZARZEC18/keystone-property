@@ -1,6 +1,7 @@
 import { esc, aud, pct, date, ago, setMeta } from '../ui.js';
 import { load } from '../data.js';
 import { commentary } from './markets.js';
+import { rateWatchCard } from '../ratewatch.js';
 
 export default async function weeklyPage(main) {
   setMeta({ title: 'Weekly property market report', description: 'What moved in the Australian property market this week: values, rates and the headlines, plus a free weekly update.' });
@@ -22,13 +23,14 @@ export default async function weeklyPage(main) {
       <span>Lowest investor variable</span><span>${pct(cur?.bestInv?.rate, 2)} (${esc(cur?.bestInv?.lender || '')})${prev?.bestInv ? ` · last week ${pct(prev.bestInv.rate, 2)}` : ''}</span>
       <span>Median advertised investor variable</span><span>${pct(cur?.medianInv, 2)}</span></div>
       <p class="fine" style="margin-top:8px">Index moves: Cotality Daily Home Value Index, ${date(idx.generated)}.</p></div>
+      <div style="margin-top:16px">${rateWatchCard(rba)}</div>
       <div class="card" style="margin-top:16px"><h3>Headlines this week</h3><div class="news-list">${(cur?.headlines || []).map((x) => `<div class="news-item"><div><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.title)}</a><div class="meta">${esc(x.source)} · ${ago(x.date)}</div></div></div>`).join('')}</div></div>
       <div class="card" style="margin-top:16px"><h3>Archive</h3>${weekly.length > 1 ? `<div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">5 capitals</th><th class="n">Sydney</th><th class="n">Melbourne</th><th class="n">Brisbane</th><th class="n">Adelaide</th><th class="n">Perth</th><th class="n">Lowest rate</th></tr></thead><tbody>${[...weekly].reverse().map((x) => `<tr><td>${date(x.week)}</td>${['CAP5', 'SYD', 'MEL', 'BNEGC', 'ADL', 'PER'].map((k) => `<td class="n ${cls(x.index[k]?.week)}">${pct(x.index[k]?.week, 2, true)}</td>`).join('')}<td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="note">The first weekly snapshot was saved this week. Next week\'s will appear here too.</p>'}</div>
     </div>
     <div>
       <div class="card" id="reg">
         <h3>Register for updates</h3>
-        <p class="note">Get Keystone's weekly market update, and tell us which suburbs you're watching so we can flag big moves.</p>
+        <p class="note">Register for the weekly email edition (launching soon) and tell us which suburbs you're watching so we can flag big moves.</p>
         <form id="reg-form" name="register" method="POST" data-netlify="true" netlify-honeypot="company">
           <input type="hidden" name="form-name" value="register">
           <p hidden><label>Leave empty <input name="company"></label></p>

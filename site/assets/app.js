@@ -26,9 +26,11 @@ const routes = [
   [/^\/find\/?$/, () => import('./pages/find.js')],
   [/^\/property\/?$/, () => import('./pages/property.js')],
   [/^\/map\/?$/, () => import('./pages/topmap.js')],
+  [/^\/(?<page>about|privacy|terms|contact)\/?$/, () => import('./pages/about.js')],
 ];
 
 let current = null;
+let firstRender = true;
 
 async function render() {
   const path = location.pathname.replace(/\/+$/, '') || '/';
@@ -46,13 +48,16 @@ async function render() {
   const query = Object.fromEntries(new URLSearchParams(location.search));
   try {
     const mod = await match[1]();
-    main.innerHTML = '<div class="loading">Loading…</div>';
+    // keep the static home hero from index.html on screen until the live page is ready
+    if (!(firstRender && path === '/')) main.innerHTML = '<div class="loading">Loading…</div>';
+    firstRender = false;
     current = (await mod.default(main, params, query)) || null;
   } catch (e) {
     console.error(e);
     main.innerHTML = `<div class="empty"><h2>Something went wrong loading this page.</h2><p class="muted">${esc(e.message)}</p><p><a href="/" data-link>Back to the home page</a></p></div>`;
   }
   if (!location.hash) window.scrollTo({ top: 0 });
+  else document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
 }
 
 export function navigate(url, replace = false) {

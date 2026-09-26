@@ -1,6 +1,7 @@
 // Turns a suburb's numbers into a plain-English investment case: why buy, what to watch, who it suits.
 import { aud, pct } from './ui.js';
 import { cleanName } from './data.js';
+import { riskNote } from './engine.js';
 
 const med = (arr) => {
   const a = arr.filter((x) => x !== null && x !== undefined).sort((x, y) => x - y);
@@ -40,10 +41,14 @@ export function investmentCase(s, d, region, rs, market) {
   }
   // Momentum
   if (s.g1 !== null && s.g1 !== undefined) {
-    const src = s.g1s === 'region' ? `${R.name} values` : 'Values here';
-    if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over the last year: strong buyer demand.`);
-    else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over the last year. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
+    const src = String(s.g1s).startsWith('region') ? `${R.name} values (no suburb-level series here)` : 'Values here';
+    if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keystone holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
+    const per = String(s.g1s).startsWith('region') && market.indexMonth ? `the 12 months to ${market.indexMonth.replace(/^\d+ /, '')}` : 'the last year';
+    if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over ${per}: strong buyer demand.`);
+    else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over ${per}. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
   }
+  const rn = riskNote({ ...s, ...d });
+  if (rn) cons.unshift(rn);
   if (d.cagr !== undefined && d.cagr !== null) {
     if (d.cagr >= 6) pros.push(`Long-run house price growth of ${pct(d.cagr, 1)} a year (${d.cagrY}, Valuer-General Victoria).`);
     else if (d.cagr < 3) cons.push(`House prices grew only ${pct(d.cagr, 1)} a year over ${d.cagrY}, below inflation plus holding costs.`);

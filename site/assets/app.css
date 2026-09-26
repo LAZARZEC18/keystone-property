@@ -372,3 +372,17 @@ details.faq summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 1080px) { .band { grid-template-columns: repeat(3, minmax(0, 1fr)); } .band > div:nth-child(3) { border-right: 0; } .band > div:nth-child(-n+3) { border-bottom: 1px solid var(--line); } }
 @media (max-width: 700px) { .band { grid-template-columns: repeat(2, minmax(0, 1fr)); } .band > div { border-right: 0; border-bottom: 1px solid var(--line); } .band > div:nth-child(odd) { border-right: 1px solid var(--line); } .band b { font-size: 19px; } #mlist, #toplist { max-height: 380px !important; } }
 @media (max-width: 700px) { .rb-form { grid-template-columns: 1fr !important; } }
+
+.skeleton-panel { min-height: 360px; opacity: .92; }
+.prose h2 { font-size: 22px; margin: 28px 0 8px; }
+.prose p, .prose li { font-size: 16px; line-height: 1.65; }
+.prose ul { padding-left: 20px; }
+.rate-watch { margin: 0; }
+.register-band { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 24px; align-items: center; border-color: var(--accent); }
+@media (max-width: 1080px) { .register-band { grid-template-columns: 1fr; } #hreg .fields { grid-template-columns: 1fr !important; } }
+/* never let a grid child's intrinsic width push the page sideways */
+.grid > *, .split > *, .split-map > *, #livef > *, #af { min-width: 0; }
+.field select, .field input { max-width: 100%; }
+.kv > span { overflow-wrap: anywhere; }
+.guide-grid { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; }
+@media (max-width: 860px) { .guide-grid { grid-template-columns: 1fr; gap: 16px; } .guide-grid .toc { display: flex; flex-wrap: wrap; gap: 4px 12px; } }

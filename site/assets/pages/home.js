@@ -1,15 +1,15 @@
-import { esc, aud, pct, ago, scoreBadge, setMeta, lineChart, wireCharts, date } from '../ui.js';
-import { load, suburbs, suburbUrl, cleanName } from '../data.js';
-import { suburbScore, PROFILES } from '../engine.js';
+import { esc, aud, pct, ago, scoreBadge, setMeta, lineChart, wireCharts, date, growth12 } from '../ui.js';
+import { load, suburbUrl, cleanName } from '../data.js';
 import { attachSearch } from '../app.js';
 import { DAILY } from '../live.js';
+import { rateWatchCard } from '../ratewatch.js';
 import { baseTiles } from '../map.js';
 
 const TABS = { balanced: 'Balanced', growth: 'Growth', cashflow: 'Cash flow', under700: 'Under $700k' };
 
 export default async function home(main) {
-  setMeta({ title: 'Australian property values, ratings and live market data', description: 'Keystone values any Australian home, rates every suburb and live listing as an investment, and tracks prices, rates, approvals and news every hour.' });
-  const [market, rs, rba, news, sub, idx, appr] = await Promise.all([load('market'), load('rates-summary'), load('rba'), load('news'), suburbs(), load('index'), load('approvals').catch(() => null)]);
+  setMeta({ title: 'Australian property values, ratings and live market data', description: 'Keystone values any Australian home, rates every suburb and any listing as an investment, and tracks prices, rates, approvals and news every hour.' });
+  const [market, rs, rba, news, idx, hd] = await Promise.all([load('market'), load('rates-summary'), load('rba'), load('news'), load('index'), load('home')]);
   const n = market.national;
   const inv = rs.best.INV_PI_variable?.[0];
   const oo = rs.best.OO_PI_variable?.[0];
@@ -17,25 +17,12 @@ export default async function home(main) {
   const regs = Object.entries(market.regions).filter(([, r]) => !r.capital);
   const cap5 = idx.daily.CAP5;
   const cls = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
-  const postcodes = new Set(sub.list.map((s) => s.pc).filter(Boolean)).size;
-  const councils = new Set(sub.list.map((s) => `${s.s}|${s.lga}`).filter((x) => !x.endsWith('|'))).size;
-  const ausApprovals = appr?.states?.AUS?.total?.at(-1)?.[1] ?? null;
-  const apprMonth = appr ? new Date(`${appr.latestMonth}-01T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '';
-
-  // Top-ranked suburbs per strategy (3,000+ residents so every pick is investable)
-  const pool = sub.list.filter((s) => s.pop >= 3000 && s.h && s.lat);
-  const top = (profile, filt = () => true, k = 100) =>
-    pool
-      .filter(filt)
-      .map((s) => ({ s, v: suburbScore(s.sc, PROFILES[profile]) }))
-      .sort((a, b) => b.v - a.v)
-      .slice(0, k);
-  const lists = {
-    balanced: top('balanced'),
-    growth: top('growth'),
-    cashflow: top('cashflow'),
-    under700: top('balanced', (s) => (s.pt === 'u' ? s.u : s.h) <= 700000),
-  };
+  const { postcodes, councils } = hd.counts;
+  const sub = { list: { length: hd.counts.suburbs } };
+  const ausApprovals = hd.approvals?.total ?? null;
+  const apprMonth = hd.approvals ? new Date(`${hd.approvals.month}-01T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '';
+  // Top-ranked suburbs per strategy, precomputed hourly (scripts/home.mjs); 3,000+ residents so every pick is investable
+  const lists = Object.fromEntries(Object.entries(hd.lists).map(([k, rows]) => [k, rows.map((r) => { const o = Object.fromEntries(hd.cols.map((c, i) => [c, r[i]])); return { s: o, v: o.v }; })]));
   const best = lists.balanced[0];
 
   const liveCards = Object.entries(DAILY)
@@ -55,7 +42,7 @@ export default async function home(main) {
     ['/listings', 'Listings, valued and rated', 'Paste any listing\'s address and asking price for a Keystone value, a good-value or overpriced call, estimated rent and an A–D investment grade.', 'Works with any listing'],
     ['/suburbs', 'Suburb intelligence', 'Prices, rents, yields, growth, demand, supply, demographics and the investment case for every suburb, postcode and council.', `${sub.list.length.toLocaleString()} suburb reports`],
     ['/afford', 'Affordability analyst', 'Your deposit, income and debts turned into a buying ceiling in every state, then the best suburbs you can buy in today.', 'Lender-style 3% buffer'],
-    ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, 10-year cash flow, after-tax return and a buy or pass verdict, with the 2026 tax changes built in.', 'All 8 states'],
+    ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, 10-year cash flow, after-tax return and an A–D rating of the numbers, with the 2026 tax changes built in.', 'All 8 states'],
     ['/live', 'Live market', 'Daily home values for the five largest capitals: this week, this month, year to date and the past year.', cap5 ? `5 capitals ${pct(cap5.week, 2, true)} this week` : ''],
     ['/new-builds', 'New builds and supply', 'Monthly building approvals by state, council and area, and where new supply is heaviest relative to existing homes.', ausApprovals ? `${Math.round(ausApprovals).toLocaleString()} dwellings approved in ${apprMonth}` : ''],
     ['/rates', 'Home loan rates', 'Every advertised home loan rate from Open Banking feeds, ranked by loan type and deposit, with a rate history.', inv ? `Lowest investor variable ${pct(inv.rate, 2)}` : ''],
@@ -66,7 +53,7 @@ export default async function home(main) {
     <div>
       <div class="eyebrow">Australian property intelligence</div>
       <h1>Every property decision, <em>backed by the numbers.</em></h1>
-      <p class="lead">Keystone values any Australian home, rates every suburb and live listing as an investment, and tracks the market every hour. Official sales, census, approvals and lending data for ${sub.list.length.toLocaleString()} suburbs, in one place, for home buyers and investors.</p>
+      <p class="lead">Keystone values any Australian home, rates every suburb and any listing you find, and tracks the market every hour. Official sales, census, approvals and lending data for ${sub.list.length.toLocaleString()} suburbs, in one place, for home buyers and investors.</p>
       <form class="hero-search" autocomplete="off" onsubmit="return false">
         <input id="hq" type="search" placeholder="Enter an address, suburb, postcode, or describe what you want" aria-label="Search an address, suburb or postcode, or describe what you're looking for" />
         <div class="ac" id="hac" hidden></div>
@@ -103,6 +90,8 @@ export default async function home(main) {
     <div><b>Daily</b><span>home value index</span></div>
     <div><b>Hourly</b><span>data refresh</span></div>
   </section>
+
+  <section class="section" style="margin-top:20px">${rateWatchCard(rba, { compact: true })}</section>
 
   <section class="section">
     <div class="spread"><h2>The platform</h2><a href="/methodology" data-link>Data and methodology →</a></div>
@@ -178,6 +167,22 @@ export default async function home(main) {
   </section>
 
   <section class="section">
+    <div class="card register-band">
+      <div><div class="eyebrow">Weekly update · register early</div><h2 style="margin:0 0 6px">The market in five minutes, once a week</h2><p class="muted" style="margin:0">What moved in values and rates, the RBA outlook, new supply, and alerts when the suburbs you're watching move. The email edition is launching soon: register now to be first on the list. Until then, the <a href="/weekly" data-link>weekly report</a> is updated online.</p></div>
+      <form id="hreg" name="register" method="POST" data-netlify="true" netlify-honeypot="company">
+        <input type="hidden" name="form-name" value="register"><p hidden><label>Leave empty <input name="company"></label></p>
+        <div class="fields" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr)">
+          <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+          <label class="field">I'm a<select name="type"><option>First home buyer</option><option>Investor</option><option>Both</option><option>Industry</option></select></label>
+          <label class="field">Suburbs I'm watching<input name="suburbs" placeholder="e.g. Morley 6062"></label>
+        </div>
+        <input type="hidden" name="consent" value="on">
+        <div class="row" style="margin-top:10px"><button class="btn primary">Register</button><span class="fine" id="hreg-s">By signing up you agree to receive Keystone emails. <a href="/privacy" data-link>Privacy</a>.</span></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="callout">
       <b>The 2026 tax changes are law.</b> Established properties bought after 12 May 2026 can offset rental losses against other income only until 30 June 2027; after that, losses carry forward. From 1 July 2027 the 50% CGT discount is replaced by indexation plus a 30% minimum tax. New builds keep both. Every valuation and analysis on Keystone models this. <a href="/guide#tax-2026" data-link>What it means →</a>
     </div>
@@ -195,7 +200,7 @@ export default async function home(main) {
       const i = rows.findIndex((r) => r.s === s);
       L.circleMarker([s.lat, s.lng], { radius: i < 10 ? 9 : 6, weight: 1, color: '#0009', fillColor: col(v), fillOpacity: 0.92 })
         .addTo(layer)
-        .bindPopup(`<b>${i + 1}. <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> ${s.s}</b><br>Score ${v} · ${s.pt === 'u' ? 'unit' : 'house'} ${aud(typ(s), { compact: true })}<br>${pct(s.y, 1)} yield · ${pct(s.g1, 1, true)} 12m`);
+        .bindPopup(`<b>${i + 1}. <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> ${s.s}</b><br>Score ${v} · ${s.pt === 'u' ? 'unit' : 'house'} ${aud(typ(s), { compact: true })}<br>${pct(s.y, 1)} yield · ${growth12(s)}`);
     });
     map.fitBounds(L.latLngBounds(rows.map(({ s }) => [s.lat, s.lng])).pad(0.05), { maxZoom: 10 });
   };
@@ -204,7 +209,7 @@ export default async function home(main) {
     main.querySelector('#toplist').innerHTML = rows
       .slice(0, 25)
       .map(
-        ({ s, v }, i) => `<a class="mrow" href="${suburbUrl(s)}" data-link style="text-decoration:none"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(s.n))}</b> <span class="muted">${s.s} ${s.pc || ''}</span><span class="note" style="display:block">${aud(typ(s), { compact: true })} ${s.pt === 'u' ? 'unit' : 'house'} · ${pct(s.y, 1)} yield · ${pct(s.g1, 1, true)} 12m</span></span>${scoreBadge(v)}</a>`,
+        ({ s, v }, i) => `<a class="mrow" href="${suburbUrl(s)}" data-link style="text-decoration:none"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(s.n))}</b> <span class="muted">${s.s} ${s.pc || ''}</span><span class="note" style="display:block">${aud(typ(s), { compact: true })} ${s.pt === 'u' ? 'unit' : 'house'} · ${pct(s.y, 1)} yield · ${growth12(s)}</span></span>${scoreBadge(v)}</a>`,
       )
       .join('');
     drawMap(rows);
@@ -226,6 +231,17 @@ export default async function home(main) {
   };
   init();
   attachSearch(main.querySelector('#hq'), main.querySelector('#hac'));
+  const reg = main.querySelector('#hreg');
+  reg.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(reg)).toString() });
+      if (!r.ok) throw new Error(r.status);
+      reg.innerHTML = '<h3 style="margin:0">You\'re on the list.</h3><p class="note">We\'ll email you when the weekly edition launches.</p>';
+    } catch {
+      main.querySelector('#hreg-s').textContent = 'That didn\'t go through. Please try again.';
+    }
+  });
   wireCharts(main, (v) => `${v.toFixed(2)}%`);
   return { destroy: () => map?.remove() };
 }

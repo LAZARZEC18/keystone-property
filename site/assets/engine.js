@@ -63,8 +63,9 @@ export function stampDuty(state, price, { buyer = 'investor', newBuild = false }
         if (f.concessionRate) duty = Math.min(general, f.concessionRate * ceil100(price - f.exemptTo));
         else duty = (general * (price - f.exemptTo)) / (f.concessionTo - f.exemptTo);
         notes.push(`First home buyer concession between $${f.exemptTo.toLocaleString()} and $${f.concessionTo.toLocaleString()}.`);
-      }
+      } else notes.push(`Above the $${f.concessionTo.toLocaleString()} first home buyer cap, so no first home concession applies.`);
     } else if (R.note) notes.push(R.note);
+    if (duty >= general && !notes.some((n) => /cap|concession|exempt/i.test(n))) notes.push('No first home concession applies at this price.');
   }
   return { duty: Math.round(duty), general: Math.round(general), notes, source: R.source, label: R.label };
 }
@@ -414,7 +415,7 @@ export function verdict(result, suburb = null, market = null) {
   }
   const score = Math.max(0, Math.min(100, Math.round(pts)));
   const grade = score >= 72 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D';
-  const label = { A: 'Strong buy', B: 'Buy', C: 'Consider carefully', D: 'Pass' }[grade];
+  const label = { A: 'Strong numbers', B: 'Sound numbers', C: 'Marginal numbers', D: 'Weak numbers' }[grade];
   return { score, grade, label, reasons, risks };
 }
 
@@ -435,7 +436,23 @@ export function suburbScore(sc, weights = PROFILES.balanced) {
     t += v * wt;
     w += wt;
   }
-  return w ? Math.round(t / w) : null;
+  if (!w) return null;
+  // Concentration risk (mining dependence, one dominant employer, remoteness, shrinking population) costs up to 25 points:
+  // high yields in single-industry towns come with price and vacancy swings the other components can't see.
+  const risk = sc.risk ?? 0;
+  const penalty = risk > 20 ? Math.round((risk - 20) * 0.31) : 0;
+  return Math.max(0, Math.round(t / w) - penalty);
+}
+
+/** Plain-English reason for a suburb's concentration-risk penalty, or null. */
+export function riskNote(s) {
+  const r = s.rsk ?? s.sc?.risk ?? 0;
+  if (r < 40) return null;
+  const why = [];
+  if ((s['min%'] ?? 0) >= 10) why.push(`${Math.round(s['min%'])}% of local workers are in mining`);
+  if (/Remote/.test(s.ra || '')) why.push(`${(s.ra || '').toLowerCase()} location`);
+  if ((s.pg5 ?? 0) < -3) why.push(`population fell ${Math.abs(s.pg5).toFixed(1)}% over 5 years`);
+  return `Concentration risk${why.length ? `: ${why.join(', ')}` : ''}. Prices and rents in towns like this can swing sharply with one industry or employer.`;
 }
 
 /**

@@ -1,4 +1,4 @@
-import { esc, aud, pct, scoreBadge, setMeta, srcBadge } from '../ui.js';
+import { esc, aud, pct, scoreBadge, setMeta, srcBadge, growth12 } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine } from '../data.js';
 import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
 import { parseQuery, looksLikeAddress } from '../intent.js';
@@ -85,7 +85,7 @@ export default async function findPage(main, _p, query) {
       .map(
         (r, i) => `<div class="spread" style="padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start">
         <div><span class="faint mono">${i + 1}.</span> <a href="${suburbUrl(r.s)}" data-link><b>${esc(cleanName(r.s.n))}</b></a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>
-          <div class="note">${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} about <b>${aud(r.est.value, { compact: true })}</b> · rent ${aud(r.est.rent)}/wk · ${pct(r.est.yield, 1)} yield · ${pct(r.s.g1, 1, true)} 12m ${srcBadge(r.t === 'u' ? r.s.us : r.s.hs)}</div>
+          <div class="note">${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} about <b>${aud(r.est.value, { compact: true })}</b> · rent ${aud(r.est.rent)}/wk · ${pct(r.est.yield, 1)} yield · ${growth12(r.s)} ${srcBadge(r.t === 'u' ? r.s.us : r.s.hs)}</div>
           <div class="row" style="margin-top:6px"><a class="btn sm" href="/analyse?suburb=${r.s.id}&price=${r.est.value}&rent=${r.est.rent || ''}&type=${r.t}" data-link>Analyse</a><a class="btn sm ghost" href="${reaSearch(r.s, r.t, p)}" target="_blank" rel="noopener">Homes for sale ↗</a></div></div>
         ${scoreBadge(r.display)}</div>`,
       )

@@ -1,4 +1,4 @@
-import { esc, aud, pct, scoreBadge, setMeta } from '../ui.js';
+import { esc, aud, pct, scoreBadge, setMeta, growth12 } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
 import { liveFactor } from '../live.js';
@@ -71,7 +71,7 @@ export default async function topMap(main, _p, query) {
     main.querySelector('#mlist').innerHTML = rows.length
       ? rows
           .map(
-            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span><span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${pct(r.s.g1, 1, true)} 12m</span></span>${scoreBadge(r.v)}</button>`,
+            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span><span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${growth12(r.s)}</span></span>${scoreBadge(r.v)}</button>`,
           )
           .join('')
       : '<p class="note" style="padding:16px">No suburbs match. Raise the budget or widen the area.</p>';
@@ -118,7 +118,7 @@ export default async function topMap(main, _p, query) {
         <div class="stat"><span class="k">Typical ${r.t === 'u' ? 'unit' : 'house'}</span><span class="v">${aud(r.e.value, { compact: true })}</span><span class="s">${r.e.beds}-bed · ${aud(r.e.low, { compact: true })}–${aud(r.e.high, { compact: true })}</span></div>
         <div class="stat"><span class="k">Rent</span><span class="v">${aud(r.e.rent)}</span><span class="s">per week, estimated</span></div>
         <div class="stat"><span class="k">Gross yield</span><span class="v">${pct(r.e.yield, 2)}</span><span class="s">${esc(R?.name || '')} ${pct(R?.yield, 1)}</span></div>
-        <div class="stat"><span class="k">12-month change</span><span class="v ${r.s.g1 >= 0 ? 'up' : 'down'}">${pct(r.s.g1, 1, true)}</span><span class="s">5-yr ${pct(r.s.pg5, 1, true)} pop. growth</span></div>
+        <div class="stat"><span class="k">12-month change</span><span class="v">${growth12(r.s, { suffix: '', short: true })}</span><span class="s">5-yr ${pct(r.s.pg5, 1, true)} pop. growth</span></div>
         <div class="stat"><span class="k">Distance to CBD</span><span class="v">${r.s.cbd != null ? `${Math.round(r.s.cbd)} km` : '—'}</span><span class="s">${r.s.cst != null ? `${r.s.cst.toFixed(1)} km to the water` : ''}</span></div>
       </div>
       <div class="row" style="margin-top:14px"><a class="btn primary" href="/analyse?suburb=${r.s.id}&price=${r.e.value}&rent=${r.e.rent}&type=${r.t}" data-link>Analyse a typical purchase</a><a class="btn" href="${reaSearch(r.s, r.t)}" target="_blank" rel="noopener">realestate.com.au ↗</a><a class="btn ghost" href="${links.domainBuy}" target="_blank" rel="noopener">Domain ↗</a></div>

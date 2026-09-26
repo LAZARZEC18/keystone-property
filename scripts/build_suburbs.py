@@ -177,6 +177,14 @@ def census():
     c['dwellings'] = g36['Total_PDs_Dwellings']
     c['occupied'] = g36['OPDs_Tot_OPDs_Dwellings'] / g36['Total_PDs_Dwellings'].replace(0, np.nan)
     c['unemp'] = g43['Percent_Unem_loyment_P']
+    # industry of employment: mining share and the largest single industry's share (economic concentration)
+    g54c, g54d = rd('G54C'), rd('G54D')
+    inds = [k for k in g54c.columns if k.startswith('P_') and k.endswith('_Tot')] + ['P_Oth_scs_Tot']
+    ind = pd.concat([g54c[[k for k in inds if k in g54c.columns]], g54d[['P_Oth_scs_Tot']]], axis=1)
+    emp = ind.sum(axis=1).replace(0, np.nan)
+    c['mining'] = g54c['P_Mining_Tot'] / emp
+    c['topInd'] = ind.max(axis=1) / emp
+    c['employed'] = emp
     # typical bedroom count for houses and for units (flats, plus townhouses where flats are rare)
     g41 = rd('G41')
     def avg_beds(prefix, six):
@@ -348,7 +356,7 @@ def main():
             continue
         r = dict(g)
         for k in ['pop', 'age', 'mort', 'rent21', 'hhinc', 'hhsize', 'ownOutright', 'ownMortgage', 'renters',
-                  'socialHousing', 'houses', 'flats', 'dwellings', 'occupied', 'unemp', 'bh', 'bu']:
+                  'socialHousing', 'houses', 'flats', 'dwellings', 'occupied', 'unemp', 'bh', 'bu', 'mining', 'topInd', 'employed']:
             r[k] = num(row[k])
         o = old.get((norm_name(g['name']), g['state']))
         if o:
@@ -556,18 +564,10 @@ def main():
         elif house:
             # unit prices move ~0.45x as much as house prices across suburbs (fitted on VIC + NSW official medians)
             unit = anchor_unit(rg) * math.exp(UNIT_ELASTICITY * math.log(house / anchor_house(rg)))
-        # --- rents: official bonds (NSW) else Census 2021 rent scaled to today's regional rent level
-        rent_region_all = M.get('rentAll') or (M['yield'] / 100 * M['medianDwelling'] / 52)
-        rent_house_ratio = (M.get('rentHouse') / M['rentAll']) if M.get('rentHouse') and M.get('rentAll') else 1.08
-        rent_unit_ratio = (M.get('rentUnit') / M['rentAll']) if M.get('rentUnit') and M.get('rentAll') else 0.82
-        rent_all = None; src_rent = 'model'
-        if o.get('rent') and o['rent'].get('all'):
-            rent_all = o['rent']['all']; src_rent = 'NSW postcode'
-        elif r['rent21'] and r['rent21'] > 0 and reg[rg]['rent21']:
-            ratio = min(2.0, max(0.5, r['rent21'] / reg[rg]['rent21']))
-            rent_all = rent_region_all * ratio ** 0.85
-        rent_house = (o.get('rent') or {}).get('house') or (rent_all * rent_house_ratio if rent_all else None)
-        rent_unit = (o.get('rent') or {}).get('unit') or (rent_all * rent_unit_ratio if rent_all else None)
+        # --- rents are set after the loop by a model calibrated on official bond rents (see calibrate_rents)
+        o_rent = o.get('rent') or {}
+        rr21 = min(2.0, max(0.5, r['rent21'] / reg[rg]['rent21'])) if r['rent21'] and r['rent21'] > 0 and reg[rg]['rent21'] else None
+        rent_house = rent_unit = None; src_rent = 'model'
         # --- growth
         g1 = None; g1src = 'region'
         if o.get('house') and o['house'].get('annualPct') is not None:
@@ -576,8 +576,11 @@ def main():
             g1 = (o['house']['median'] / o['house']['medianYearAgo'] - 1) * 100; g1src = o['house']['source']
         if g1 is None or abs(g1) > 60:
             g1 = M['annualPct']; g1src = 'region'
+        elif abs(g1 - M['annualPct']) > GROWTH_CAP:
+            # small samples swing wildly (a few sales can move a median 40%): hold within the cap of the region and flag it
+            g1 = M['annualPct'] + math.copysign(GROWTH_CAP, g1 - M['annualPct']); g1src += ' capped'
         conf = 'high' if src_house != 'model' and 'postcode' not in src_house else ('medium' if src_house != 'model' else ('low' if r['pop'] < 1500 else 'medium-low'))
-        yld = (rent_house * 52 / house * 100) if house and rent_house else None
+        yld = None
         out.append({
             'id': r['code'][3:], 'n': r['name'], 's': r['state'], 'pc': r['poa'], 'rg': rg, 'lga': r['lga'], 'lgc': r['lgc'], 'sa2': r['sa2'], 'ra': r['ra'],
             'lat': r['lat'], 'lng': r['lng'], 'pop': int(r['pop']),
@@ -591,9 +594,15 @@ def main():
             'sup': supply(r['lgc']),
             'bh': rnd(r['bh'], 1), 'bu': rnd(r['bu'], 1), 'cst': rnd(r['coast_km'], 1), 'cbd': rnd(r['cbd_km'], 1),
             'conf': conf, 'pt': 'u' if (r['flats'] or 0) >= 0.5 else 'h',
+            'min%': rnd(pct(r['mining']), 1), 'top%': rnd(pct(r['topInd']), 1),
+            '_rr21': rr21, '_orent': o_rent, '_dw': float(r['dwellings'] or 0),
             'hist': o.get('history'),
             'off': {k: v for k, v in (o or {}).items() if k in ('house', 'unit', 'rent')} or None,
         })
+    calibrate_rents(out, regions)
+    for x in out:
+        for k in ('_rr21', '_orent', '_dw'):
+            x.pop(k, None)
     scored = score(out)
     meta = {
         'built': pd.Timestamp.now('UTC').isoformat(),
@@ -614,7 +623,7 @@ def main():
     }
     os.makedirs(OUT, exist_ok=True)
     # Index: what the explorer, map and ranker need for every suburb (loaded once).
-    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5']
+    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra']
     comp = ['cash', 'momentum', 'growth', 'demand', 'afford', 'stability']
     rows = [[s_[c] for c in index_cols] + [s_['sc'][k] for k in comp] for s_ in scored]
     with open(os.path.join(OUT, 'suburbs.json'), 'w') as fh:
@@ -640,6 +649,102 @@ def rnd(x, d):
     return int(v) if d <= 0 else v
 
 
+def wmed(v, w):
+    m = ~(v.isna() | w.isna())
+    v, w = v[m].values, w[m].values
+    if not len(v):
+        return np.nan
+    o = np.argsort(v); v, w = v[o], w[o]
+    cw = np.cumsum(w)
+    return v[np.searchsorted(cw, cw[-1] / 2)]
+
+
+GROWTH_CAP = 12.0  # max percentage points a suburb's 12-month change may sit from its region's
+
+
+def region_rent(M):
+    """Typical current weekly rent for a house and a unit in a region, from Cotality's typical-value yields
+    (rent / value on the same stock), not listing asking rents, which skew high."""
+    all_ = M['yield'] / 100 * M['medianDwelling'] / 52
+    house = M['houseYield'] / 100 * M['medianHouse'] / 52 if M.get('houseYield') and M.get('medianHouse') else all_ * 1.04
+    unit = M['unitYield'] / 100 * M['medianUnit'] / 52 if M.get('unitYield') and M.get('medianUnit') else all_ * 0.8
+    return house, unit
+
+
+def calibrate_rents(rows, regions):
+    """Suburb rents relative to their region, fitted on NSW's official bond medians by postcode (new leases, Apr-Jun 2026):
+    log(rent / region median) ~ a + b1*log(Census 2021 rent ratio) + b2*log(price ratio). Applied everywhere else,
+    re-centred so each region's dwelling-weighted median equals its current typical rent."""
+    def anchor(rg, t):
+        M = regions[rg]
+        if t == 'h':
+            return M.get('medianHouse') or M['medianDwelling'] * 1.04
+        return M.get('medianUnit') or M['medianDwelling'] * 0.72
+    coefs = {}
+    for t, key, price in (('h', 'house', 'h'), ('u', 'unit', 'u')):
+        pts = [x for x in rows if x['s'] == 'NSW' and x['_orent'].get(key) and x['_rr21'] and x[price]]
+        seen, uniq = set(), []
+        for x in pts:
+            if x['pc'] in seen:
+                continue
+            seen.add(x['pc']); uniq.append(x)
+        med = {}
+        for rg in {x['rg'] for x in uniq}:
+            g = [x for x in uniq if x['rg'] == rg]
+            med[rg] = wmed(pd.Series([x['_orent'][key] for x in g]), pd.Series([max(1, x['_dw']) for x in g]))
+        y = np.array([math.log(x['_orent'][key] / med[x['rg']]) for x in uniq])
+        X = np.column_stack([np.ones(len(uniq)), [math.log(x['_rr21']) for x in uniq], [math.log(x[price] / anchor(x['rg'], t)) for x in uniq]])
+        b, *_ = np.linalg.lstsq(X, y, rcond=None)
+        pred = X @ b
+        r2 = 1 - ((y - pred) ** 2).sum() / ((y - y.mean()) ** 2).sum()
+        mape = float(np.median(np.abs(np.exp(pred - y) - 1)) * 100)
+        coefs[t] = b
+        log(f'rent model ({key}s): n={len(uniq)} b={np.round(b, 3).tolist()} r2={r2:.2f} median error {mape:.1f}%')
+    for t, key, price, out_key in (('h', 'house', 'h', 'rh'), ('u', 'unit', 'u', 'ru')):
+        b = coefs[t]
+        for x in rows:
+            x['_p' + t] = None
+            if x['_rr21'] and x[price]:
+                x['_p' + t] = b[1] * math.log(x['_rr21']) + b[2] * math.log(x[price] / anchor(x['rg'], t))
+        for rg in {x['rg'] for x in rows}:
+            g = [x for x in rows if x['rg'] == rg and x['_p' + t] is not None]
+            if not g:
+                continue
+            centre = wmed(pd.Series([x['_p' + t] for x in g]), pd.Series([max(1, x['_dw']) for x in g]))
+            base = region_rent(regions[rg])[0 if t == 'h' else 1]
+            for x in g:
+                x['_r' + t] = base * math.exp(min(0.6, max(-0.6, x['_p' + t] - centre)))
+    for x in rows:
+        o = x['_orent']
+        if o.get('house') or o.get('unit'):
+            x['rs'] = 'NSW postcode'
+        x['rh'] = rnd(o.get('house') or x.get('_rh'), 0)
+        ru = o.get('unit') or x.get('_ru')
+        if ru and not o.get('unit') and x['rh']:
+            ru = min(ru, x['rh'] * 0.92)  # a suburb's typical unit or townhouse rents for less than its typical house
+        x['ru'] = rnd(ru, 0)
+        x['y'] = rnd(x['rh'] * 52 / x['h'] * 100, 2) if x['rh'] and x['h'] else None
+        for k in ('_ph', '_pu', '_rh', '_ru'):
+            x.pop(k, None)
+
+
+RA_RISK = {'Major Cities': 0, 'Inner Regional': 10, 'Outer Regional': 30, 'Remote': 60, 'Very Remote': 80}
+
+
+def risk_index(r):
+    """0-100 concentration and liquidity risk: mining dependence, one dominant industry, remoteness, shrinking population."""
+    parts = []
+    m = (r.get('min%') or 0)
+    parts.append(max(0, min(100, (m - 4) / 22 * 100)))  # 4% of workers in mining -> 0, 26%+ -> 100
+    t = (r.get('top%') or 0)
+    parts.append(max(0, min(100, (t - 22) / 20 * 100)))  # largest industry 22% -> 0, 42%+ -> 100
+    parts.append(RA_RISK.get(r.get('ra'), 20))
+    pg = r.get('pg5')
+    if pg is not None and pg < 0:
+        parts.append(min(100, -pg * 6))  # -5% over 5 years -> 30, -17% -> 100
+    return round(max(parts))
+
+
 def score(rows):
     """Percentile components (0-100) that the site weights into the Keystone Score.
     Higher is always better for the investor."""
@@ -659,16 +764,18 @@ def score(rows):
         r['pti'] = round(r['h'] / (r['inc'] * 52), 1) if r['h'] and r['inc'] else None
     raff = ranker('pti', invert=True)
     for r in rows:
+        r['rsk'] = risk_index(r)
+    for r in rows:
         from_market = MARKET['regions'][r['rg']]
         vac = from_market.get('vacancy')
         dom = from_market.get('dom')
         comps = {
             'cash': ry(r['y']),
-            'momentum': rg1(r['g1']),
+            'momentum': rg1(r['g1']) if not (str(r['g1s']).startswith('region') or 'capped' in str(r['g1s'])) else (None if rg1(r['g1']) is None else round(50 + (rg1(r['g1']) - 50) * 0.5)),
             'growth': avg([rpg(r['pg5']), rig(r['ig5']), rrg(r['rg5'])]),
             'demand': avg([vac_score(vac), dom_score(dom), rune(r['une'])]),
             'afford': raff(r['pti']),
-            'stability': avg([rune(r['une']), rsoc(r['soc%']), size_score(r['pop'])]),
+            'stability': avg([rune(r['une']), rsoc(r['soc%']), size_score(r['pop']), 100 - r['rsk'], 100 - r['rsk']]),
         }
         r['sc'] = comps
     return rows

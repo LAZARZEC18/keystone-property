@@ -1,4 +1,4 @@
-import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict } from '../engine.js';
@@ -186,7 +186,7 @@ export default async function suburbPage(main, params) {
         <tr><td>Typical unit</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${aud(R.medianUnit, { compact: true })}</td></tr>
         <tr><td>House rent</td><td class="n">${aud(s.rh)}</td><td class="n">${aud(R.rentHouse)}</td></tr>
         <tr><td>Gross yield</td><td class="n">${pct(ic.yld, 2)}</td><td class="n">${pct(R.yield, 1)}</td></tr>
-        <tr><td>12-month change</td><td class="n">${pct(s.g1, 1, true)}</td><td class="n">${pct(R.annualPct, 1, true)}</td></tr>
+        <tr><td>12-month change</td><td class="n">${growth12(s, { suffix: '', short: true })}</td><td class="n">${pct(R.annualPct, 1, true)}</td></tr>
         <tr><td>Vacancy</td><td class="n">—</td><td class="n">${pct(R.vacancy, 1)}</td></tr>
         <tr><td>Days on market</td><td class="n">—</td><td class="n">${R.dom ?? '—'}</td></tr>
       </tbody></table></div>

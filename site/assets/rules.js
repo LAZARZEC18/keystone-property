@@ -222,3 +222,34 @@ export const STATES = {
   NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland', WA: 'Western Australia',
   SA: 'South Australia', TAS: 'Tasmania', ACT: 'Australian Capital Territory', NT: 'Northern Territory',
 };
+
+/**
+ * Australian Government 5% Deposit Scheme (First Home Guarantee), from 1 October 2025:
+ * no income caps, unlimited places, 5% deposit with no LMI (government guarantees the rest to 80%).
+ * Price caps: capital city and regional centres / rest of state. Confirm with a participating lender.
+ * Source: Housing Australia via MFAA, "Changes to the Australian Government 5% Deposit Scheme".
+ */
+export const HOME_GUARANTEE = {
+  caps: { NSW: [1500000, 800000], VIC: [950000, 650000], QLD: [1000000, 700000], WA: [850000, 600000], SA: [900000, 500000], TAS: [700000, 550000], ACT: [1000000, 1000000], NT: [600000, 600000] },
+  // regional centres that take the capital-city cap
+  centres: ['Newcastle', 'Lake Macquarie', 'Wollongong', 'Shellharbour', 'Kiama', 'Greater Geelong', 'Gold Coast', 'Sunshine Coast'],
+  capitals: ['SYD', 'MEL', 'BNE', 'PER', 'ADL', 'HBA', 'CBR', 'DRW'],
+  source: 'https://www.mfaa.com.au/news/changes-to-the-australian-government-5-deposit-scheme-what-brokers-need-to-know',
+};
+
+/** 5% Deposit Scheme price cap for a suburb (index row with s, rg, lga). */
+export function guaranteeCap(s) {
+  const c = HOME_GUARANTEE.caps[s.s];
+  if (!c) return 0;
+  const metro = HOME_GUARANTEE.capitals.includes(s.rg) || HOME_GUARANTEE.centres.some((n) => (s.lga || '').startsWith(n));
+  return metro ? c[0] : c[1];
+}
+
+/** RBA Monetary Policy Board decision days (announced 2.30pm AEST/AEDT on the second day). Source: RBA media release 25-02. */
+export const RBA_DECISIONS = ['2026-02-03', '2026-03-17', '2026-05-05', '2026-06-16', '2026-08-11', '2026-09-29', '2026-11-03', '2026-12-08'];
+/** Optional outlook for the next decision; shown only until that date passes. */
+export const RBA_OUTLOOK = {
+  date: '2026-09-29',
+  text: 'Markets and the major banks expect a 0.25-point rise to 4.60% (about 90% priced by markets as of late September, after the July inflation figures).',
+  source: 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html',
+};

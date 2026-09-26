@@ -24,7 +24,7 @@ export async function suburbs() {
   const list = d.rows.map((r) => {
     const o = {};
     d.cols.forEach((c, i) => (o[c] = r[i]));
-    o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability };
+    o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0 };
     o.slug = slug(o);
     o.key = `${o.n} ${o.s} ${o.pc || ''}`.toLowerCase();
     return o;

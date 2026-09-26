@@ -1,4 +1,4 @@
-import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge, growth12 } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { suburbScore } from '../engine.js';
 import { STATES } from '../rules.js';
@@ -8,7 +8,7 @@ export function suburbTable(rows) {
   return `<div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">Score</th><th class="n">House</th><th class="n">Unit</th><th class="n">House rent</th><th class="n">Yield</th><th class="n">12m</th><th class="n">Population</th><th>Data</th></tr></thead><tbody>
   ${rows
     .map(
-      (s) => `<tr><td><a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> <span class="muted">${s.pc || ''}</span></td><td class="n">${scoreBadge(suburbScore(s.sc))}</td><td class="n">${aud(s.h, { compact: true })}</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${aud(s.rh)}</td><td class="n">${pct(s.y, 2)}</td><td class="n ${s.g1 >= 0 ? 'up' : 'down'}">${pct(s.g1, 1, true)}</td><td class="n">${num(s.pop)}</td><td>${srcBadge(s.hs)}</td></tr>`,
+      (s) => `<tr><td><a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> <span class="muted">${s.pc || ''}</span></td><td class="n">${scoreBadge(suburbScore(s.sc))}</td><td class="n">${aud(s.h, { compact: true })}</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${aud(s.rh)}</td><td class="n">${pct(s.y, 2)}</td><td class="n ${s.g1 >= 0 ? 'up' : 'down'}">${growth12(s, { suffix: '', short: true })}</td><td class="n">${num(s.pop)}</td><td>${srcBadge(s.hs)}</td></tr>`,
     )
     .join('')}</tbody></table></div>`;
 }

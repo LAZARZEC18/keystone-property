@@ -38,7 +38,7 @@ jobs:
         run: python scripts/fetch_raw.py
       - name: Build suburbs
         run: python scripts/build_suburbs.py
-      - run: node scripts/sitemap.mjs
+      - run: node scripts/sitemap.mjs && node scripts/home.mjs
         env:
           SITE_URL: ${{ vars.SITE_URL }}
       - name: Commit

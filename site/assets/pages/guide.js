@@ -2,9 +2,10 @@ import { esc, aud, pct, setMeta } from '../ui.js';
 import { load } from '../data.js';
 import { stampDuty, landTax, lmi, repayment } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
+import { HOME_GUARANTEE } from '../rules.js';
 
 export default async function guidePage(main) {
-  setMeta({ title: 'How to buy an investment property in Australia (2026 guide)', description: 'Step-by-step guide to buying an investment or first home in Australia: costs, stamp duty by state, loans, inspections, settlement, tax, and the 2026 negative gearing and CGT reforms.' });
+  setMeta({ title: 'How to buy property in Australia: first home and investment (2026 guide)', description: 'Step-by-step guide to buying an investment or first home in Australia: costs, stamp duty by state, loans, inspections, settlement, tax, and the 2026 negative gearing and CGT reforms.' });
   const [rs, market] = await Promise.all([load('rates-summary'), load('market')]);
   const prices = [500000, 750000, 1000000, 1500000];
   const sts = Object.keys(STATES);
@@ -13,6 +14,7 @@ export default async function guidePage(main) {
 
   const toc = [
     ['before', 'Before you start'],
+    ['fhb', 'Buying your first home'],
     ['strategy', 'Pick a strategy'],
     ['finance', 'Get your finance ready'],
     ['research', 'Research the market'],
@@ -23,14 +25,14 @@ export default async function guidePage(main) {
     ['duty', 'Stamp duty by state'],
     ['landtax', 'Land tax by state'],
     ['tax-2026', 'The 2026 tax changes'],
-    ['fhb', 'First home buyers'],
     ['mistakes', 'Common mistakes'],
     ['faq', 'Questions'],
   ];
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Guide</div><h1>How to buy an investment property in Australia</h1>
-  <p>The whole process in order, what each step costs, and the numbers to check before you sign. Updated for the 2026-27 tax year and the negative gearing and capital gains tax changes.</p></div>
-  <div class="grid" style="grid-template-columns:220px minmax(0,1fr);gap:32px">
+  <div class="page-head"><div class="eyebrow">Guide</div><h1>How to buy property in Australia</h1>
+  <p>The whole process in order, what each step costs, and the numbers to check before you sign, for first home buyers and investors. Updated for the 2026-27 tax year, the 5% Deposit Scheme and the negative gearing and capital gains tax changes.</p>
+  <div class="grid g2" style="margin-top:16px;max-width:820px"><a class="card product" href="#fhb"><h3>Buying your first home</h3><p class="muted">The 5% Deposit Scheme, duty concessions, choosing where to live, and each step to settlement.</p></a><a class="card product" href="#strategy"><h3>Buying an investment</h3><p class="muted">Strategy, finance, cash flow, tax (including the 2026 changes), and owning a rental.</p></a></div></div>
+  <div class="grid guide-grid">
     <nav class="toc" aria-label="Guide contents">${toc.map(([id, t]) => `<a href="#${id}">${t}</a>`).join('')}</nav>
     <article>
       <section id="before" class="section" style="margin-top:0"><h2>1. Before you start</h2>
@@ -42,7 +44,38 @@ export default async function guidePage(main) {
         </div>
       </section>
 
-      <section id="strategy" class="section"><h2>2. Pick a strategy</h2>
+      <section id="fhb" class="section"><h2>2. Buying your first home</h2>
+        <p>Buying a home to live in is a different decision from buying an investment. Location, commute and the kind of street you want matter more than yield, and first home buyers get help that investors don't.</p>
+        <h3>The 5% Deposit Scheme</h3>
+        <p>Since 1 October 2025 the federal 5% Deposit Scheme has no income caps and no limit on places. Eligible first home buyers can buy with a 5% deposit and pay no lenders mortgage insurance, which saves roughly $10,000 to $30,000 on a typical loan. The home must be under the price cap for its area:</p>
+        <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Capital city and regional centres</th><th class="n">Rest of state</th></tr></thead><tbody>
+          ${Object.entries(HOME_GUARANTEE.caps).map(([st, [a, b]]) => `<tr><td>${st}</td><td class="n">${aud(a)}</td><td class="n">${st === 'ACT' || st === 'NT' ? '—' : aud(b)}</td></tr>`).join('')}
+        </tbody></table></div>
+        <p class="fine">Regional centres on the capital-city cap: Newcastle and Lake Macquarie, the Illawarra, Geelong, the Gold Coast and the Sunshine Coast. Confirm the cap for a specific postcode with a participating lender.</p>
+        <h3>Stamp duty concessions</h3>
+        <ul class="pros">
+          <li><b>NSW</b>: no duty up to $800,000 and a concession to $1,000,000 (new and existing homes).</li>
+          <li><b>VIC</b>: no duty up to $600,000 and a concession to $750,000.</li>
+          <li><b>QLD</b>: no duty on new homes of any value (contracts from 1 May 2025); no duty on established homes to $700,000, phasing out by $800,000.</li>
+          <li><b>WA</b>: from 7 May 2026, no duty up to $600,000 and a concessional rate to $800,000.</li>
+          <li><b>SA</b>: no duty on new homes, off-the-plan and vacant land of any value; no relief on established homes.</li>
+          <li><b>ACT</b>: the Home Buyer Concession Scheme's price and income caps were removed from 1 July 2026 (other eligibility rules apply).</li>
+          <li><b>TAS</b>: the 100% established-home exemption ended for settlements after 30 June 2026.</li>
+        </ul>
+        <p>Every state also pays a First Home Owner Grant on new homes; amounts and price caps vary, so check your state revenue office.</p>
+        <h3>First home, step by step</h3>
+        <ol>
+          <li><b>Set a budget you can live with.</b> Keep repayments under about 30% of take-home pay, and test them at 2 points above today's rate. The <a href="/afford?buyer=fhb" data-link>affordability analyst</a> does this for every state, using the 5% Deposit Scheme and your state's duty concessions.</li>
+          <li><b>Choose where to live.</b> Start from where you work and how far you're willing to travel, then look at the local economy, services and price trend. Enter your workplace in the affordability analyst to rank suburbs within your commute.</li>
+          <li><b>Get pre-approval.</b> A broker or lender confirms what you can borrow and whether you qualify for the 5% Deposit Scheme.</li>
+          <li><b>Check value before you offer.</b> Put the address and asking price into <a href="/property" data-link>Keystone's valuation</a> and look at recent sales in the street.</li>
+          <li><b>Inspect properly.</b> Building and pest inspection for houses; strata report for units and townhouses.</li>
+          <li><b>Exchange and settle.</b> Your conveyancer handles contracts, duty and settlement (sections 6 and 7 below apply to you too).</li>
+        </ol>
+        <p class="note">Live, then invest: if you buy a home to live in first, you get the owner-occupier concessions and rates. If you later rent it out, check the six-year main-residence CGT rule with your accountant.</p>
+      </section>
+
+      <section id="strategy" class="section"><h2>3. Pick a strategy</h2>
         <div class="tbl-wrap"><table><thead><tr><th>Strategy</th><th>Looks like</th><th>Pros</th><th>Cons</th></tr></thead><tbody>
           <tr><td><b>Capital growth</b></td><td>Houses on land in established, supply-constrained suburbs near jobs</td><td>Land drives long-run growth; easier to sell</td><td>Low yields (3-4%), negative cash flow, bigger deposit</td></tr>
           <tr><td><b>Cash flow</b></td><td>Regional towns and outer suburbs, yields 5%+</td><td>Rent covers more of the loan; lower entry price</td><td>Slower or patchier growth; mining-town and single-employer risk</td></tr>
@@ -53,7 +86,7 @@ export default async function guidePage(main) {
         <p class="note" style="margin-top:10px">Keystone's <a href="/suburbs" data-link>suburb explorer</a> has a strategy switch that re-ranks all 11,000+ suburbs for growth, cash flow or first-home affordability.</p>
       </section>
 
-      <section id="finance" class="section"><h2>3. Get your finance ready</h2>
+      <section id="finance" class="section"><h2>4. Get your finance ready</h2>
         <div class="steps">
           <div class="card step"><h3>Check your borrowing power</h3><p>Lenders test your repayments at the loan rate plus 3 percentage points and usually count only about 80% of rent. Use the <a href="/borrowing" data-link>borrowing power calculator</a> to get a realistic ceiling.</p></div>
           <div class="card step"><h3>Save the deposit and costs</h3><p>At 20% deposit you avoid lenders mortgage insurance (LMI). At 10% you'll pay LMI: on a ${aud(630000)} loan for a ${aud(700000)} property in Victoria that's about <b>${aud(lmi(630000, 700000, 'VIC').premium)}</b>. On top of the deposit, budget for stamp duty (see below) and about $2,000-3,500 of legal, inspection and government fees.</p></div>
@@ -62,7 +95,7 @@ export default async function guidePage(main) {
         </div>
       </section>
 
-      <section id="research" class="section"><h2>4. Research the market</h2>
+      <section id="research" class="section"><h2>5. Research the market</h2>
         <p>The biggest decision is <i>where</i>. Check these for every suburb on your shortlist (each Keystone suburb page shows all of them):</p>
         <ul class="pros">
           <li><b>Yield</b>: annual rent ÷ price. Above your region's average means lower holding costs.</li>
@@ -75,7 +108,7 @@ export default async function guidePage(main) {
         </ul>
       </section>
 
-      <section id="buy" class="section"><h2>5. Find, inspect and buy</h2>
+      <section id="buy" class="section"><h2>6. Find, inspect and buy</h2>
         <div class="steps">
           <div class="card step"><h3>Shortlist properties</h3><p>Use listing sites, and pull each suburb's recent sales to know what things really sell for. Keystone's <a href="/listings" data-link>listings page</a> grades every listing on yield, cash flow and return.</p></div>
           <div class="card step"><h3>Run the numbers</h3><p>Put each serious contender through the <a href="/analyse" data-link>deal analyser</a>: all costs, the weekly shortfall after tax, a rate-rise stress test and the 10-year return. Walk away if it only works in the bull case.</p></div>
@@ -86,18 +119,18 @@ export default async function guidePage(main) {
         </div>
       </section>
 
-      <section id="settle" class="section"><h2>6. Settlement</h2>
+      <section id="settle" class="section"><h2>7. Settlement</h2>
         <p>Settlement usually happens 30-90 days after exchange. Before it: lock in the loan, arrange building insurance from exchange (or the date risk passes in your state), and do a pre-settlement inspection. Stamp duty is generally due at or before settlement. On the day, the lender pays the balance, the title transfers electronically (PEXA), and you get the keys. Appoint a property manager before settlement so a tenant can move in straight away. Management fees run about 5.5-9% of rent, plus letting fees.</p>
       </section>
 
-      <section id="own" class="section"><h2>7. Owning an investment property</h2>
+      <section id="own" class="section"><h2>8. Owning an investment property</h2>
         <div class="grid g2">
           <div class="card flat tint"><h3>Tax deductions</h3><p class="note">Interest, council rates, water, strata, insurance, management fees, repairs, land tax and depreciation are deductible. Building depreciation is 2.5% a year of construction cost for buildings built after September 1987. Plant and equipment is only deductible if the property is new. Get a quantity surveyor's depreciation schedule (about $600-800). Improvements are capital, not repairs.</p></div>
           <div class="card flat tint"><h3>Ongoing costs</h3><p class="note">Budget for council rates, water, landlord insurance, strata if applicable, maintenance (about 0.5-1% of the value a year), property management, land tax above your state's threshold, and a few weeks of vacancy each year.</p></div>
         </div>
       </section>
 
-      <section id="costs" class="section"><h2>8. Every cost, in one place</h2>
+      <section id="costs" class="section"><h2>9. Every cost, in one place</h2>
         <p>Using a ${aud(750000)} house bought by an investor with 20% down, a ${pct(rate, 2)} loan and ${aud(620)}/wk rent:</p>
         <div class="tbl-wrap"><table><thead><tr><th>Cost</th>${sts.map((s) => `<th class="n">${s}</th>`).join('')}</tr></thead><tbody>
           <tr><td>Deposit (20%)</td>${sts.map(() => `<td class="n">${aud(150000)}</td>`).join('')}</tr>
@@ -109,7 +142,7 @@ export default async function guidePage(main) {
         </tbody></table></div>
       </section>
 
-      <section id="duty" class="section"><h2>9. Stamp duty by state</h2>
+      <section id="duty" class="section"><h2>10. Stamp duty by state</h2>
         <p>Stamp (transfer) duty is the biggest up-front cost after the deposit. Investors pay general rates; owner-occupiers and first home buyers may get concessions.</p>
         <div class="tbl-wrap"><table><thead><tr><th>Price</th>${sts.map((s) => `<th class="n">${s}</th>`).join('')}</tr></thead><tbody>
         ${prices.map((p) => `<tr><td>${aud(p)} investor</td>${sts.map((s) => `<td class="n">${aud(stampDuty(s, p).duty)}</td>`).join('')}</tr><tr><td class="muted">${aud(p)} first home (established)</td>${sts.map((s) => `<td class="n muted">${aud(stampDuty(s, p, { buyer: 'fhb' }).duty)}</td>`).join('')}</tr>`).join('')}
@@ -117,7 +150,7 @@ export default async function guidePage(main) {
         <p class="fine" style="margin-top:8px">Sources: ${sts.map((s) => `<a href="${RULES.duty[s].source}" target="_blank" rel="noopener">${s}</a>`).join(' · ')}. Rules checked ${esc(RULES.asOf)}. Eligibility conditions apply to every concession. Foreign buyer surcharges are extra.</p>
       </section>
 
-      <section id="landtax" class="section"><h2>10. Land tax by state</h2>
+      <section id="landtax" class="section"><h2>11. Land tax by state</h2>
         <p>Land tax is charged every year on the land value of investment properties (your home is exempt). It's based on the total land you hold in each state, so a second or third property in the same state can push you into higher brackets.</p>
         <div class="tbl-wrap"><table><thead><tr><th>Land value</th>${sts.map((s) => `<th class="n">${s}</th>`).join('')}</tr></thead><tbody>
         ${[300000, 500000, 800000, 1200000, 2000000].map((v) => `<tr><td>${aud(v)}</td>${sts.map((s) => `<td class="n">${aud(landTax(s, v).tax)}</td>`).join('')}</tr>`).join('')}
@@ -125,7 +158,7 @@ export default async function guidePage(main) {
         <p class="fine" style="margin-top:8px">Individual owners, general rates. Tax-free thresholds: NSW $1,075,000, VIC $50,000, QLD $600,000, WA $300,000, SA $936,000, TAS $125,000, ACT none (every rented property pays), NT no land tax. WA metro adds the Metropolitan Region Improvement Tax. ACT figures are approximate.</p>
       </section>
 
-      <section id="tax-2026" class="section"><h2>11. The 2026 tax changes: what they mean for you</h2>
+      <section id="tax-2026" class="section"><h2>12. The 2026 tax changes: what they mean for you</h2>
         <div class="callout"><b>In force from 1 July 2027 (Treasury Laws Amendment (Tax Reform No. 1) Act 2026).</b> ${esc(RULES.reform.summary)}</div>
         <div class="tbl-wrap"><table><thead><tr><th>You bought…</th><th>Negative gearing</th><th>Capital gains tax on sale</th></tr></thead><tbody>
           <tr><td>Before 7:30pm AEST 12 May 2026</td><td>Continues, grandfathered</td><td>50% discount on gains to 30 June 2027; indexation + 30% minimum on gains after</td></tr>
@@ -137,19 +170,6 @@ export default async function guidePage(main) {
         <p class="fine">Sources: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a> · <a href="${RULES.reform.factsheet}" target="_blank" rel="noopener">Budget factsheet</a>. General information only. See a registered tax agent about your situation.</p>
       </section>
 
-      <section id="fhb" class="section"><h2>12. First home buyers</h2>
-        <ul class="pros">
-          <li><b>NSW</b>: no duty up to $800,000 and a concession to $1,000,000 (new and existing homes).</li>
-          <li><b>VIC</b>: no duty up to $600,000 and a concession to $750,000.</li>
-          <li><b>QLD</b>: no duty on new homes of any value (contracts from 1 May 2025); no duty on established homes to $700,000, phasing out by $800,000.</li>
-          <li><b>WA</b>: from 7 May 2026, no duty up to $600,000 and a concessional rate to $800,000.</li>
-          <li><b>SA</b>: no duty on new homes, off-the-plan and vacant land of any value; no relief on established homes.</li>
-          <li><b>ACT</b>: the Home Buyer Concession Scheme's price and income caps were removed from 1 July 2026 (other eligibility rules apply).</li>
-          <li><b>TAS</b>: the 100% established-home exemption ended for settlements after 30 June 2026.</li>
-          <li><b>Federal</b>: the 5% Deposit Scheme lets eligible first home buyers buy with a 5% deposit and no LMI.</li>
-        </ul>
-        <p class="note">Live, then invest: if you buy a home to live in first, you get the owner-occupier concessions and rates. If you later rent it out, check the six-year main-residence CGT rule with your accountant.</p>
-      </section>
 
       <section id="mistakes" class="section"><h2>13. Common mistakes</h2>
         <ul class="cons">

@@ -7,7 +7,7 @@ import { attachSearch } from '../app.js';
 const SCEN = { bear: { growth: 2, rentGrowth: 2.5 }, base: { growth: 5, rentGrowth: 4 }, bull: { growth: 7, rentGrowth: 5 } };
 
 export default async function analysePage(main, _p, query) {
-  setMeta({ title: 'Investment property analyser', description: 'Stamp duty, LMI, land tax, cash flow, after-tax return and a buy or pass verdict for any Australian property, with the 2026 negative gearing and CGT rules.' });
+  setMeta({ title: 'Investment property analyser', description: 'Stamp duty, LMI, land tax, cash flow, after-tax return and an A–D rating of the numbers for any Australian property, with the 2026 negative gearing and CGT rules.' });
   const [idx, market, rs, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba')]);
   let sub = query.suburb ? idx.byId.get(query.suburb) : null;
   const best = rs.best.INV_PI_variable?.[0];
@@ -49,7 +49,7 @@ export default async function analysePage(main, _p, query) {
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Deal analyser</div><h1>Should you buy it?</h1>
-  <p>Enter a property and Keystone works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and gives a verdict with its reasons.</p></div>
+  <p>Enter a property and Keystone works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and rates the numbers A to D with every reason listed. It is general information, not a recommendation to buy or not buy.</p></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -159,7 +159,7 @@ export default async function analysePage(main, _p, query) {
     $('#out').innerHTML = `
       <div class="card">
         <div class="verdict"><div class="grade grade-${v.grade}">${v.grade}</div>
-          <div><div class="eyebrow" style="margin:0">Keystone verdict · ${v.score}/100</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
+          <div><div class="eyebrow" style="margin:0">Keystone rating of the numbers · ${v.score}/100</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
           <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)}</div></div></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>

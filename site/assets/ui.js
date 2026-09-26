@@ -12,7 +12,7 @@ export const aud = (v, { compact = false, dp = 0 } = {}) => {
   if (compact) {
     const a = Math.abs(v);
     if (a >= 1e9) return `${v < 0 ? '-' : ''}$${(a / 1e9).toFixed(1)}b`;
-    if (a >= 1e6) return `${v < 0 ? '-' : ''}$${(a / 1e6).toFixed(a >= 1e7 ? 1 : 2)}m`;
+    if (a >= 999500) return `${v < 0 ? "-" : ""}$${(a / 1e6).toFixed(a >= 9995000 ? 1 : 2)}m`;
     if (a >= 1e4) return `${v < 0 ? '-' : ''}$${Math.round(a / 1e3)}k`;
   }
   return `${v < 0 ? '-' : ''}$${Math.abs(v).toLocaleString('en-AU', { minimumFractionDigits: dp, maximumFractionDigits: dp })}`;
@@ -200,4 +200,18 @@ export function sortable(table, onSort) {
       onSort(k, asc);
     }),
   );
+}
+
+const REGION_SHORT = { SYD: 'Sydney', MEL: 'Melbourne', BNE: 'Brisbane', PER: 'Perth', ADL: 'Adelaide', HBA: 'Hobart', DRW: 'Darwin', CBR: 'Canberra', RNSW: 'Regional NSW', RVIC: 'Regional Vic', RQLD: 'Regional Qld', RWA: 'Regional WA', RSA: 'Regional SA', RTAS: 'Regional Tas', RNT: 'Regional NT' };
+/** 12-month change, honest about its source: suburb-level where official sales exist, otherwise labelled as the city/region index. */
+export function growth12(s, { suffix = ' 12m', short = false } = {}) {
+  if (s.g1 === null || s.g1 === undefined) return '—';
+  const src = String(s.g1s || '');
+  const cls = s.g1 >= 0 ? 'up' : 'down';
+  if (src.startsWith('region')) {
+    const name = REGION_SHORT[s.rg] || 'Region';
+    return `<span class="muted" title="No suburb-level sales series for this suburb. This is the ${name} index over 12 months.">${short ? '' : `${name} `}${pct(s.g1, 1, true)}${short ? '<sup>r</sup>' : ''}${suffix}</span>`;
+  }
+  if (src.includes('capped')) return `<span class="${cls}" title="Small number of sales: the suburb figure was held to within 12 points of the region's.">${pct(s.g1, 1, true)}*${suffix}</span>`;
+  return `<span class="${cls}">${pct(s.g1, 1, true)}${suffix}</span>`;
 }

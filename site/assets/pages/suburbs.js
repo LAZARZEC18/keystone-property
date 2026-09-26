@@ -1,4 +1,4 @@
-import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { suburbScore, PROFILES } from '../engine.js';
@@ -123,7 +123,7 @@ export default async function explorer(main, _p, query) {
           <td><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span></td>
           <td class="muted">${esc(r.s.lga || '')}</td><td class="n">${scoreBadge(r.score)}</td>
           <td class="n">${aud(r.price, { compact: true })} <span class="faint">${r.type === 'u' ? 'unit' : 'house'}</span></td><td class="n">${aud(r.rent)}</td>
-          <td class="n">${pct(r.yld, 2)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${pct(r.s.g1, 1, true)}${r.s.g1s === 'region' ? '<span class="faint">ʳ</span>' : ''}</td>
+          <td class="n">${pct(r.yld, 2)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${growth12(r.s, { suffix: '', short: true })}</td>
           <td class="n">${pct(r.s.pg5, 1, true)}</td><td class="n">${r.s.pti ?? '—'}×</td><td class="n">${num(r.s.pop)}</td><td>${srcBadge(r.type === 'u' ? r.s.us : r.s.hs)}</td></tr>`,
         )
         .join('')}
@@ -149,7 +149,7 @@ export default async function explorer(main, _p, query) {
     const pts = rows.slice(0, 3000);
     for (const r of pts) {
       L.circleMarker([r.s.lat, r.s.lng], { radius: 5.5, weight: 1, color: '#0008', fillColor: col(r.score), fillOpacity: 0.9 })
-        .bindPopup(`<b><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a></b> ${r.s.s} ${r.s.pc || ''}<br>Score <b>${r.score}</b> · ${aud(r.price, { compact: true })} ${r.type === 'u' ? 'unit' : 'house'}<br>Rent ${aud(r.rent)}/wk · yield ${pct(r.yld, 2)} · 12m ${pct(r.s.g1, 1, true)}`)
+        .bindPopup(`<b><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a></b> ${r.s.s} ${r.s.pc || ''}<br>Score <b>${r.score}</b> · ${aud(r.price, { compact: true })} ${r.type === 'u' ? 'unit' : 'house'}<br>Rent ${aud(r.rent)}/wk · yield ${pct(r.yld, 2)} · 12m ${growth12(r.s)}`)
         .addTo(layer);
     }
     if (pts.length) {
