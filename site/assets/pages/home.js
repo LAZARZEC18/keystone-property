@@ -70,6 +70,7 @@ export default async function home(main) {
         <a href="/property?q=${encodeURIComponent('7 Russell Street, Morley WA 6062')}" data-link>7 Russell Street, Morley WA 6062</a>
         <a href="/find?q=${encodeURIComponent('3 bed house under $800k near the beach in Perth')}" data-link>3 bed house under $800k near the beach in Perth</a>
         <a href="/find?q=${encodeURIComponent('Cash flow investment in regional QLD')}" data-link>Cash flow investment in regional QLD</a>
+        <a href="/why" data-link><b>▶ Watch the 90-second tour</b></a>
       </div>
     </div>
     <div class="hero-panel">

@@ -438,3 +438,16 @@ details.faq summary { cursor: pointer; font-weight: 600; }
 .glossary dt { font-weight: 600; margin-top: 12px; }
 .glossary dd { margin: 4px 0 0; color: var(--muted); }
 abbr[title] { text-decoration: underline dotted; cursor: help; }
+/* why page */
+.why-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; padding: 24px 0 8px; }
+.why-hero h1 em { font-style: italic; color: var(--accent); }
+.why-video { margin: 0; }
+.why-video video { width: 100%; border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow); background: #000; aspect-ratio: 16 / 9; }
+.why-row { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: center; margin: 26px 0; }
+.why-row.flip > :first-child { order: 2; }
+.why-row h3 { font-size: 22px; margin: 0 0 8px; }
+.why-shot img { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); box-shadow: var(--shadow); display: block; }
+.why-cmp td.ks { font-weight: 600; color: var(--accent); }
+.why-cmp td, .why-cmp th { white-space: normal; min-width: 130px; }
+.why-cmp td:first-child { min-width: 220px; }
+@media (max-width: 900px) { .why-hero, .why-row { grid-template-columns: 1fr; } .why-row.flip > :first-child { order: 0; } }
