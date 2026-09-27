@@ -1,12 +1,22 @@
 // Data loading and lookups shared by every page.
 const cache = new Map();
 
-export async function load(name) {
-  if (cache.has(name)) return cache.get(name);
-  const p = fetch(`/data/${name}.json`, { cache: 'no-cache' }).then((r) => {
+// Served live by a Netlify function (cached up to an hour), falling back to the stored file.
+const LIVE = new Set(['index', 'news']);
+const getStatic = (name) =>
+  fetch(`/data/${name}.json`, { cache: 'no-cache' }).then((r) => {
     if (!r.ok) throw new Error(`${name}: ${r.status}`);
     return r.json();
   });
+
+export async function load(name) {
+  if (cache.has(name)) return cache.get(name);
+  const p = LIVE.has(name)
+    ? fetch(`/api/live-${name}`, { signal: AbortSignal.timeout(6000) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
+        .then((d) => (d && !d.error ? d : Promise.reject(new Error('live'))))
+        .catch(() => getStatic(name))
+    : getStatic(name);
   cache.set(name, p);
   try {
     return await p;

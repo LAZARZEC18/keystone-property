@@ -10,7 +10,7 @@ const rows = d.rows.map((r) => {
   o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0 };
   return o;
 });
-const keep = ['id', 'n', 's', 'pc', 'rg', 'lat', 'lng', 'pt', 'h', 'u', 'y', 'g1', 'g1s'];
+const keep = ['id', 'n', 's', 'pc', 'rg', 'lat', 'lng', 'pt', 'h', 'u', 'y', 'g1', 'g1s', 'hs', 'conf'];
 const pool = rows.filter((s) => s.pop >= 3000 && s.h && s.lat);
 const top = (profile, filt = () => true) =>
   pool

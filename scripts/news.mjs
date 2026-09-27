@@ -78,9 +78,9 @@ export function parseFeed(xml) {
 
 const norm = (t) => t.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
 
-export async function collectNews({ now = Date.now() } = {}) {
-  const results = await pool(FEEDS, 6, async (f) => {
-    const r = await getText(f.url, { accept: 'application/rss+xml, application/atom+xml, text/xml' }, { timeout: 15000 });
+export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
+  const results = await pool(FEEDS, 8, async (f) => {
+    const r = await getText(f.url, { accept: 'application/rss+xml, application/atom+xml, text/xml' }, { timeout, retries: timeout < 10000 ? 0 : undefined });
     if (!r?.ok) return { feed: f, items: [], error: r?.status };
     return { feed: f, items: parseFeed(r.text) };
   });

@@ -64,6 +64,22 @@ def main():
         zipfile.ZipFile(p).extractall(dest)
         os.remove(p)
 
+    # open-ocean coastline (Natural Earth, public domain) for 'near the beach' distances
+    for ext in ('shp', 'shx', 'dbf'):
+        dest = os.path.join(RAW, f'ne_10m_coastline.{ext}')
+        if not os.path.exists(dest):
+            save(f'ne_10m_coastline.{ext}', get(f'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/10m_physical/ne_10m_coastline.{ext}'))
+    # ABS Regional Population: SA2 estimated resident population time series (latest release)
+    try:
+        page = get('https://www.abs.gov.au/statistics/people/population/regional-population/latest-release').decode('utf-8', 'ignore')
+        m = re.search(r'href="([^"]*32180DS0003_2001-\d\d\.xlsx)"', page)
+        if m:
+            name = 'abs_regpop_ds3_' + os.path.basename(m.group(1))
+            if not os.path.exists(os.path.join(RAW, name)):
+                save(name, get('https://www.abs.gov.au' + m.group(1)))
+    except Exception as e:  # keep going with Census population growth
+        print('  ABS regional population unavailable:', e)
+
     os.makedirs(OFFICIAL, exist_ok=True)
     ok = 0
 

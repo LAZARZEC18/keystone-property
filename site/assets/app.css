@@ -386,3 +386,47 @@ details.faq summary { cursor: pointer; font-weight: 600; }
 .kv > span { overflow-wrap: anywhere; }
 .guide-grid { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; }
 @media (max-width: 860px) { .guide-grid { grid-template-columns: 1fr; gap: 16px; } .guide-grid .toc { display: flex; flex-wrap: wrap; gap: 4px 12px; } }
+.tag-conf { font-size: 9.5px; padding: 1px 5px; margin-left: 4px; }
+.tag-conf-h { background: var(--accent-soft); color: var(--accent); }
+.tag-conf-m { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.tag-conf-l { background: transparent; color: var(--faint, var(--muted)); border: 1px dashed var(--line-2); }
+
+/* grouped navigation */
+.nav { align-items: center; }
+.nav-group { position: relative; }
+.nav-top, .nav-link { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; cursor: pointer; font: inherit; color: var(--muted); padding: 7px 11px; border-radius: 8px; font-size: 14.5px; font-weight: 500; white-space: nowrap; }
+.nav-top svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.nav-top:hover, .nav-link:hover, .nav-group:focus-within .nav-top, .nav-group.on .nav-top, .nav-link.on { color: var(--ink); background: var(--surface-2); text-decoration: none; }
+.nav-menu { display: none; position: absolute; top: 100%; left: 0; min-width: 320px; padding: 8px; margin-top: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); z-index: 70; }
+.nav-menu::before { content: ''; position: absolute; top: -8px; left: 0; right: 0; height: 8px; }
+.nav-group:hover .nav-menu, .nav-group:focus-within .nav-menu, .nav-group.open .nav-menu { display: block; }
+.nav-menu a { display: flex; flex-direction: column; gap: 1px; padding: 9px 12px; border-radius: 9px; color: var(--ink); white-space: normal; }
+.nav-menu a:hover, .nav-menu a.on { background: var(--surface-2); text-decoration: none; }
+.nav-menu a b { font-size: 14px; font-weight: 600; }
+.nav-menu a span { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 1080px) {
+  .nav { align-items: stretch; max-height: calc(100vh - 70px); overflow: auto; }
+  .nav-top { width: 100%; justify-content: space-between; padding: 12px 8px; font-size: 15.5px; color: var(--ink); }
+  .nav-link { padding: 12px 8px; font-size: 15.5px; color: var(--ink); }
+  .nav-menu { position: static; display: none; box-shadow: none; border: 0; margin: 0 0 6px; padding: 0 0 0 8px; min-width: 0; }
+  .nav-group:hover .nav-menu { display: none; }
+  .nav-group.open .nav-menu { display: block; }
+}
+.group-h { font-size: 13px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .07em; color: var(--brass); margin: 18px 0 10px; font-weight: 500; }
+
+/* printable reports (suburb report: browser "Save as PDF") */
+.print-only { display: none; }
+@media print {
+  @page { margin: 14mm; }
+  :root, :root[data-theme='dark'] { --bg: #fff; --surface: #fff; --surface-2: #f4f2ec; --ink: #111; --muted: #555; --line: #ddd; }
+  body { background: #fff !important; color: #111; font-size: 11pt; }
+  .top, .ticker, footer, .foot, #print, #watch, .btn, .map, .leaflet-container, .ac, form, .hero-search, .skip { display: none !important; }
+  .print-only { display: block; }
+  .report-head { font-family: var(--mono); font-size: 9pt; color: #555; margin-bottom: 6px; }
+  .card { box-shadow: none !important; break-inside: avoid; border-color: #ddd; }
+  .grid { gap: 10px !important; }
+  a { color: #111; text-decoration: none; }
+  main::after { content: 'General information only, not financial advice. Estimates are modelled from public data and can be wrong. Sources are listed at keystone-au.netlify.app/methodology.'; display: block; margin-top: 16px; font-size: 8.5pt; color: #666; }
+}
+@media (max-width: 1080px) { .top-in { position: relative; z-index: 3; } .nav { z-index: 90; } }
+@media (max-width: 1080px) { .nav .nav-link { color: var(--ink); padding: 12px 8px; font-size: 15.5px; } }

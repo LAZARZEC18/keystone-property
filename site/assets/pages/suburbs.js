@@ -40,10 +40,10 @@ export default async function explorer(main, _p, query) {
       <label class="field">State<select id="f-state"><option value="">All of Australia</option>${STATES.map((s) => `<option ${st.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
       <label class="field">Market<select id="f-region"><option value="">All markets</option>${regions.map(([c, r]) => `<option value="${c}" ${st.region === c ? 'selected' : ''}>${r.name}</option>`).join('')}</select></label>
       <label class="field">Property type<select id="f-type"><option value="auto">Main type in suburb</option><option value="h" ${st.type === 'h' ? 'selected' : ''}>Houses</option><option value="u" ${st.type === 'u' ? 'selected' : ''}>Units</option></select></label>
-      <label class="field">Max price<input id="f-max" type="number" step="50000" placeholder="Any" value="${st.max}"></label>
-      <label class="field">Min price<input id="f-min" type="number" step="50000" placeholder="Any" value="${st.min}"></label>
+      <label class="field">Max price<input id="f-max" type="number" step="1" placeholder="Any" value="${st.max}"></label>
+      <label class="field">Min price<input id="f-min" type="number" step="1" placeholder="Any" value="${st.min}"></label>
       <label class="field">Min gross yield %<input id="f-yield" type="number" step="0.1" placeholder="Any" value="${st.yieldMin}"></label>
-      <label class="field">Min population<input id="f-pop" type="number" step="500" value="${st.popMin}"></label>
+      <label class="field">Min population<input id="f-pop" type="number" step="1" value="${st.popMin}"></label>
       <label class="field">Strategy<select id="f-profile">
         <option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow / yield</option><option value="firsthome">First home / affordability</option>
       </select></label>

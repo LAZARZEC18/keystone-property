@@ -93,11 +93,11 @@ export function investmentCase(s, d, region, rs, market) {
 
 export const COMPONENT_HELP = {
   cash: 'Gross rental yield ranked against every Australian suburb. Higher means rent covers more of your costs.',
-  momentum: 'Price change over the last 12 months (official sales where available, otherwise the regional index).',
-  growth: 'Growth drivers: population, household income and rent growth between the 2016 and 2021 Censuses.',
-  demand: 'Rental demand: market vacancy rate, days on market, and local unemployment.',
+  momentum: 'Price change over the last 12 months: official suburb or postcode sales in VIC, SA and NSW, weighted toward the region when sales are few; elsewhere the city or regional index, which counts half.',
+  growth: 'Growth drivers: population growth of the surrounding area 2020-25 (ABS estimates), plus household income and rent growth between the 2016 and 2021 Censuses.',
+  demand: 'Rental demand: the city-wide vacancy rate and days on market (not suburb-level), plus local unemployment.',
   afford: 'Price relative to local household income. Affordable areas have a deeper pool of future buyers.',
-  stability: 'Low unemployment, low share of social housing, and a large enough market to buy and sell easily.',
+  stability: 'Low unemployment, low share of social housing, a large enough market to buy and sell easily, and low concentration risk (mining or single-industry dependence, remoteness, shrinking population).',
 };
 
 export const COMPONENT_NAMES = { cash: 'Yield', momentum: 'Momentum', growth: 'Growth drivers', demand: 'Rental demand', afford: 'Affordability', stability: 'Stability' };

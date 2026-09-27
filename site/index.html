@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Keystone · Australian property investment intelligence</title>
-  <meta name="description" content="Every Australian suburb scored for investors: prices, rents, yields, growth, the best home loan rates from 90+ lenders updated hourly, and a deal analyser with stamp duty, land tax and the 2026 negative gearing and CGT rules." />
+  <title>Keystone · Australian property values, suburbs and rates for home buyers and investors</title>
+  <meta name="description" content="Value any Australian home, compare every suburb, see what you can afford (including the 5% Deposit Scheme), track live home values and compare every home loan rate. Independent research for home buyers and investors." />
   <meta name="theme-color" content="#0E6B5C" />
   <link rel="icon" href="/assets/keystone.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,17 +29,44 @@
         <span>Keystone</span>
       </a>
       <nav class="nav" aria-label="Main">
-        <a href="/markets" data-link>Markets</a>
-        <a href="/live" data-link>Live</a>
-        <a href="/map" data-link>Best buys</a>
-        <a href="/suburbs" data-link>Suburbs</a>
-        <a href="/property" data-link>Valuation</a>
-        <a href="/listings" data-link>Listings</a>
-        <a href="/afford" data-link>Afford</a>
-        <a href="/analyse" data-link>Analyse</a>
-        <a href="/new-builds" data-link>New builds</a>
-        <a href="/rates" data-link>Rates</a>
-        <a href="/guide" data-link>Guide</a>
+        <div class="nav-group">
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Buy a home<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <div class="nav-menu">
+            <a href="/afford?buyer=fhb" data-link><b>What can I afford?</b><span>Your ceiling in every state, with the 5% Deposit Scheme</span></a>
+            <a href="/property" data-link><b>Value a property</b><span>Any address: value, cash needed, repayments</span></a>
+            <a href="/find" data-link><b>Search by what you want</b><span>"3 bed near the beach in Perth under $800k"</span></a>
+            <a href="/guide#fhb" data-link><b>First home guide</b><span>Grants, schemes, duty concessions, step by step</span></a>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Invest<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <div class="nav-menu">
+            <a href="/analyse" data-link><b>Deal analyser</b><span>10-year after-tax numbers with the 2026 rules</span></a>
+            <a href="/map" data-link><b>Best buys map</b><span>Top-rated suburbs for growth or cash flow</span></a>
+            <a href="/borrowing" data-link><b>Borrowing power</b><span>How lenders assess investors</span></a>
+            <a href="/compare" data-link><b>Compare suburbs</b><span>Side by side, up to four</span></a>
+            <a href="/guide#strategy" data-link><b>Investor guide</b><span>Strategy, tax and owning a rental</span></a>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Suburbs<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <div class="nav-menu">
+            <a href="/suburbs" data-link><b>Suburb explorer</b><span>Rank all 11,000 suburbs by your criteria</span></a>
+            <a href="/map" data-link><b>Best buys map</b><span>The highest-rated places on one map</span></a>
+            <a href="/new-builds" data-link><b>New builds and supply</b><span>Building approvals by council and area</span></a>
+            <a href="/watchlist" data-link><b>Your watchlist</b><span>Suburbs you have saved</span></a>
+          </div>
+        </div>
+        <a class="nav-link" href="/rates" data-link>Rates</a>
+        <div class="nav-group">
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Market<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <div class="nav-menu">
+            <a href="/markets" data-link><b>Market dashboard</b><span>Every capital and region</span></a>
+            <a href="/live" data-link><b>Live daily index</b><span>This week, month, year to date</span></a>
+            <a href="/weekly" data-link><b>Weekly report</b><span>What moved, plus the RBA outlook</span></a>
+            <a href="/news" data-link><b>Housing news</b><span>Headlines, refreshed hourly</span></a>
+          </div>
+        </div>
       </nav>
       <div class="top-tools">
         <form class="quick" role="search" autocomplete="off">
@@ -73,18 +100,12 @@
     <div class="wrap foot-in">
       <div>
         <div class="brand small"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg><span>Keystone</span></div>
-        <p class="muted">Independent Australian property research for home buyers and investors. Rates, market figures and news refresh every hour from public sources.</p>
+        <p class="muted">Independent Australian property research for home buyers and investors. The home value index and news refresh hourly, loan rates several times a day, all from public sources.</p>
       </div>
       <div class="foot-links">
-        <a href="/find" data-link>Smart property search</a>
-        <a href="/news" data-link>Housing news</a>
-        <a href="/weekly" data-link>Weekly report &amp; register</a>
-        <a href="/compare" data-link>Compare suburbs</a>
-        <a href="/watchlist" data-link>Watchlist</a>
-        <a href="/borrowing" data-link>Borrowing power</a>
-        <a href="/methodology" data-link>Data &amp; methodology</a>
         <a href="/about" data-link>About</a>
         <a href="/contact" data-link>Contact</a>
+        <a href="/methodology" data-link>Methodology</a>
         <a href="/privacy" data-link>Privacy</a>
         <a href="/terms" data-link>Terms</a>
       </div>

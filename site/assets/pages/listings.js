@@ -25,8 +25,8 @@ export function rateListing(s, it, { market, index, rate }) {
   const t = unit ? 'u' : 'h';
   const est = valueEstimate(s, { type: t, beds: it.beds ?? undefined, baths: it.baths ?? undefined, cars: it.cars ?? undefined, land: t === 'h' && it.land > 50 ? it.land : null, condition: it.isNew ? 'new' : 'average', liveFactor: liveFactor(s.rg, index) });
   const rent = est?.rent || estimateRent(s, it);
-  const gap = it.price && est ? (it.price / est.value - 1) * 100 : null;
-  const value = valueCall(gap);
+  const value = valueCall(it.price, est);
+  const gap = value ? value.gap : null;
   let a = null;
   let v = null;
   if (it.price && rent) {
@@ -37,12 +37,13 @@ export function rateListing(s, it, { market, index, rate }) {
 }
 
 /** Value call from the gap between asking price and Keystone's estimate (percent). */
-export function valueCall(gap) {
-  if (gap === null || gap === undefined || !Number.isFinite(gap)) return null;
-  if (gap <= -8) return { key: 'great', label: 'Great value', cls: 'up', note: 'Asking well below the estimate: check why (condition, position, a motivated seller).' };
-  if (gap <= 3) return { key: 'fair', label: 'Fair price', cls: 'up', note: 'Asking in line with the estimate.' };
-  if (gap <= 10) return { key: 'high', label: 'Slightly high', cls: 'warn', note: 'Above the estimate: room to negotiate.' };
-  return { key: 'over', label: 'Overpriced', cls: 'down', note: 'Well above the estimate: check recent sales before offering near this figure.' };
+export function valueCall(asking, est) {
+  if (!asking || !est) return null;
+  const gap = (asking / est.value - 1) * 100;
+  // Only call a price high or low when it falls outside the estimate's likely range; inside it the estimate can't tell.
+  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, note: 'The asking price is under Keystone\'s range for this home. Find out why before offering: condition, position, or a seller who needs to move.' };
+  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, note: 'The asking price is over Keystone\'s range for this home. Check recent sales in the street before offering near it.' };
+  return { key: 'within', label: 'Within the likely range', cls: '', gap, note: 'Inside the estimate\'s range, the estimate can\'t say whether it\'s cheap or dear. Recent sales in the same street will.' };
 }
 
 /** "Rate a listing you've found": address + asking price -> full valuation and grade. */
@@ -50,7 +51,7 @@ export function rateBox(s) {
   return `<div class="card flat tint rate-box"><b>Rate a listing you've found</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Keystone values that home, tells you whether the price is good value, and grades it as an investment.</p>
     <form class="fields rb-form" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;align-items:end" onsubmit="return false">
       <label class="field">Address<input name="addr" type="search" placeholder="${s ? `e.g. 12 Example Street, ${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}` : 'e.g. 12 Example Street, Morley WA 6062'}" required></label>
-      <label class="field">Asking price<input name="price" type="number" step="5000" placeholder="e.g. 850000"></label>
+      <label class="field">Asking price<input name="price" type="number" step="1" placeholder="e.g. 850000"></label>
       <button class="btn primary" type="submit">Value and rate</button>
     </form></div>`;
 }
@@ -94,7 +95,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
   const rated = res.items.map((it) => ({ it, r: mode === 'rent' ? { rent: estimateRent(s, it) } : rateListing(s, it, { market, index, rate }) }));
   const rank = { A: 0, B: 1, C: 2, D: 3 };
   if (mode !== 'rent') rated.sort((x, y) => (rank[x.r.v?.grade] ?? 4) - (rank[y.r.v?.grade] ?? 4) || (x.r.gap ?? 99) - (y.r.gap ?? 99));
-  const below = rated.filter((x) => x.r.gap !== null && x.r.gap !== undefined && x.r.gap <= 3).length;
+  const below = rated.filter((x) => x.r.value?.key === 'below').length;
   const priced = rated.filter((x) => x.r.gap !== null && x.r.gap !== undefined).length;
   const cards = rated.map(({ it, r }, i) => {
     const { rent, a, v, est, value, gap } = r;
@@ -117,7 +118,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
     </div>`;
   });
   el.innerHTML = `<div class="spread" style="margin-bottom:10px"><span class="badge-live">Live listings${res.total ? ` · ${res.total.toLocaleString()} found` : ''}</span><span class="powered">Listings powered by <a href="https://www.domain.com.au" target="_blank" rel="noopener"><b>Domain</b></a></span></div>
-  ${mode !== 'rent' && priced ? `<p class="note" style="margin:0 0 10px"><b>${below} of ${priced}</b> priced listings are at or below Keystone's estimate. Sorted best investment grade first, then best value.</p>` : ''}
+  ${mode !== 'rent' && priced ? `<p class="note" style="margin:0 0 10px"><b>${below} of ${priced}</b> priced listings are below Keystone's likely range. Sorted best investment grade first, then best value.</p>` : ''}
   <div class="grid">${cards.join('')}</div><p class="fine" style="margin-top:8px">Value estimates use the suburb's sales data adjusted for each home's bedrooms, bathrooms, land and newness, moved forward with the daily index. Grades assume a 20% deposit, a $120k salary and estimated rent. Open a listing in Value or Analyse to use your own numbers.</p>`;
 
   if (mapEl) {
@@ -162,7 +163,7 @@ export default async function listingsPage(main, _p, query) {
         <label class="field" style="position:relative">Suburb or postcode<input id="ls" type="search" placeholder="e.g. Bayswater WA" value="${chosen ? esc(`${cleanName(chosen.n)} ${chosen.s} ${chosen.pc}`) : ''}"><div class="ac" id="lac" hidden style="top:62px;left:0;right:auto"></div></label>
         <label class="field">Type<select id="lt"><option value="">Any</option><option value="h">House</option><option value="u">Unit / apartment / townhouse</option></select></label>
         <label class="field">Min beds<select id="lb"><option value="">Any</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
-        <label class="field">Max price<input id="lm" type="number" step="50000" placeholder="Any"></label>
+        <label class="field">Max price<input id="lm" type="number" step="1" placeholder="Any"></label>
       </div>
       <p class="fine" style="margin-top:10px">Opens the matching listings on realestate.com.au and Domain in a new tab, with your filters applied. Bring any address back here to rate it.</p>
       <div id="res" style="margin-top:12px"></div>

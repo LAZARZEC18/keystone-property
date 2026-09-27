@@ -107,6 +107,60 @@ def coastline():
     return unary_union([p.exterior for p in polys])
 
 
+def sa2_population():
+    """ABS Regional Population (latest release): estimated resident population by SA2, 2001 onward.
+    Returns {sa2_code: (erp five years before latest, erp latest, latest year)}."""
+    files = sorted(glob.glob(os.path.join(RAW, 'abs_regpop_ds3*.xlsx')))
+    if not files:
+        return {}
+    x = pd.read_excel(files[-1], sheet_name='Table 1', header=None)
+    years = x.iloc[4].tolist()
+    ycols = {int(v): i for i, v in enumerate(years) if isinstance(v, (int, float)) and not pd.isna(v) and 2000 < v < 2100}
+    last = max(ycols)
+    out = {}
+    for _, r in x.iloc[6:].iterrows():
+        code = r[8]
+        if pd.isna(code):
+            continue
+        a, b = num(r[ycols[last - 5]]), num(r[ycols[last]])
+        if a and b:
+            out[str(int(code))] = (a, b, last)
+    log(f'ABS SA2 population: {len(out)} areas to {last}')
+    return out
+
+
+def ocean_distances(rows):
+    """Distance (km) from each suburb's boundary to the open-ocean coastline (Natural Earth 10m), so rivers and
+    estuaries (the Swan, the Yarra, Port Adelaide's inlets) don't count as 'near the beach'."""
+    from shapely.ops import nearest_points
+    from shapely.geometry import box
+    path = os.path.join(RAW, 'ne_10m_coastline')
+    if not os.path.exists(path + '.shp'):
+        log('ocean coastline missing: skipping ocean distances')
+        return
+    r = shapefile.Reader(path)
+    aus = box(108, -46, 157, -8)
+    lines = []
+    for sr in r.iterShapes():
+        g = shape(sr.__geo_interface__)
+        if g.intersects(aus):
+            g = g.intersection(aus)
+            lines.extend(list(g.geoms) if hasattr(g, 'geoms') else [g])
+    tree = STRtree(lines)
+    for x in rows:
+        poly = x.get('geom') or x['pt']
+        i = tree.nearest(poly)
+        a, b = nearest_points(poly, lines[i])
+        x['ocean_km'] = 0.0 if poly.intersects(lines[i]) else hav(a.y, a.x, b.y, b.x)
+
+
+def hav(la1, lo1, la2, lo2):
+    R = 6371
+    p1, p2 = math.radians(la1), math.radians(la2)
+    dp, dl = p2 - p1, math.radians(lo2 - lo1)
+    return 2 * R * math.asin(math.sqrt(math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+
+
 def build_geography():
     log('geography: SAL')
     r = shapefile.Reader(os.path.join(RAW, 'b_SAL', 'SAL_2021_AUST_GDA2020'))
@@ -124,7 +178,7 @@ def build_geography():
             g = g.buffer(0)
         pt = g.representative_point()
         rows.append({'code': 'SAL' + code, 'name': name, 'state': STATE_ABBR.get(rec['STE_CODE21'], 'OT'),
-                     'area': round(rec['AREASQKM21'] or 0, 3), 'pt': pt})
+                     'area': round(rec['AREASQKM21'] or 0, 3), 'pt': pt, 'geom': g.simplify(0.0005)})
     pts = [x['pt'] for x in rows]
     for label, path, fields in [
         ('poa', 'b_POA/POA_2021_AUST_GDA2020', ['POA_CODE21']),
@@ -143,6 +197,10 @@ def build_geography():
     coast = coastline()
     for x in rows:
         x['coast_km'] = coast.distance(x['pt']) * 100  # degrees -> ~km (good enough as a log feature)
+    log('geography: ocean coastline')
+    ocean_distances(rows)
+    for x in rows:
+        x.pop('geom', None)
     for x in rows:
         x['lat'] = round(x['pt'].y, 5)
         x['lng'] = round(x['pt'].x, 5)
@@ -253,6 +311,12 @@ def vic_timeseries(path):
     x = pd.read_excel(path, header=None)
     hdr = x.iloc[1].tolist()
     year_cols = [(i, int(v)) for i, v in enumerate(hdr) if isinstance(v, (int, float)) and not pd.isna(v) and 2000 < v < 2100]
+    # the latest year is preliminary and labelled 'Prelim' with the year one row down
+    for i, v in enumerate(hdr):
+        if isinstance(v, str) and v.strip().lower().startswith('prelim'):
+            y2 = x.iloc[2, i]
+            if isinstance(y2, (int, float)) and not pd.isna(y2) and 2000 < y2 < 2100:
+                year_cols.append((i, int(y2)))
     out = {}
     for _, r in x.iloc[4:].iterrows():
         nm = r[0]
@@ -339,6 +403,7 @@ def main():
     PERIODS['VIC'] = vic_period(os.path.join(OFFICIAL, 'vic_house_q4_2025.xls'))
     vic_h = vic_quarterly(os.path.join(OFFICIAL, 'vic_house_q4_2025.xls'))
     vic_u = vic_quarterly(os.path.join(OFFICIAL, 'vic_unit_q4_2025.xls'))
+    erp = sa2_population()
     vic_ts = vic_timeseries(os.path.join(OFFICIAL, 'vic_house_ts_wb.xlsx'))
     sa, sa_files = sa_medians()
     nsw_s = nsw_postcode(os.path.join(OFFICIAL, 'nsw_sales.xlsx'), 'sales')
@@ -366,6 +431,11 @@ def main():
             r['incGrowth5'] = (r['hhinc'] / i16 - 1) * 100 if i16 and r['hhinc'] else None
             t16 = num(o['rent16'])
             r['rentGrowth5'] = (r['rent21'] / t16 - 1) * 100 if t16 and r['rent21'] else None
+        e = erp.get(str(g.get('sa2')))
+        if e and e[0] >= 500:
+            # current population trend of the surrounding SA2 (ABS estimates), more recent than Census 2016-21
+            r['popGrowth5'] = (e[1] / e[0] - 1) * 100
+            r['popSrc'] = f'SA2 {e[2] - 5}-{str(e[2])[2:]}'
         key = norm_name(g['name'])
         off = {}
         if g['state'] == 'VIC':
@@ -568,17 +638,20 @@ def main():
         o_rent = o.get('rent') or {}
         rr21 = min(2.0, max(0.5, r['rent21'] / reg[rg]['rent21'])) if r['rent21'] and r['rent21'] > 0 and reg[rg]['rent21'] else None
         rent_house = rent_unit = None; src_rent = 'model'
-        # --- growth
-        g1 = None; g1src = 'region'
-        if o.get('house') and o['house'].get('annualPct') is not None:
-            g1 = o['house']['annualPct']; g1src = o['house']['source']
+        # --- growth: raw official change here; shrunk toward the region after the loop (see shrink_growth)
+        g1raw = None; g1n = 0; g1src = 'region'
+        ts = o.get('history') and dict(o['history'])
+        if r['state'] == 'VIC' and ts and ts.get(max(ts)) and ts.get(max(ts) - 1) and max(ts) >= 2025:
+            y1 = max(ts)
+            g1raw = (ts[y1] / ts[y1 - 1] - 1) * 100  # full-year medians: far more sales than one quarter
+            g1n = (o.get('house') or {}).get('salesYear') or 0; g1src = 'VIC'
+        elif o.get('house') and o['house'].get('annualPct') is not None:
+            g1raw = o['house']['annualPct']; g1n = o['house'].get('sales') or 0; g1src = o['house']['source'] + (' postcode' if o['house'].get('postcode') else '')
         elif o.get('house') and o['house'].get('medianYearAgo'):
-            g1 = (o['house']['median'] / o['house']['medianYearAgo'] - 1) * 100; g1src = o['house']['source']
-        if g1 is None or abs(g1) > 60:
-            g1 = M['annualPct']; g1src = 'region'
-        elif abs(g1 - M['annualPct']) > GROWTH_CAP:
-            # small samples swing wildly (a few sales can move a median 40%): hold within the cap of the region and flag it
-            g1 = M['annualPct'] + math.copysign(GROWTH_CAP, g1 - M['annualPct']); g1src += ' capped'
+            g1raw = (o['house']['median'] / o['house']['medianYearAgo'] - 1) * 100; g1n = o['house'].get('sales') or o['house'].get('salesYear') or 0; g1src = o['house']['source']
+        if g1raw is not None and (abs(g1raw) > 60 or g1n < 8):
+            g1raw = None; g1src = 'region'
+        g1 = M['annualPct']
         conf = 'high' if src_house != 'model' and 'postcode' not in src_house else ('medium' if src_house != 'model' else ('low' if r['pop'] < 1500 else 'medium-low'))
         yld = None
         out.append({
@@ -587,21 +660,22 @@ def main():
             'h': rnd(house, -3), 'u': rnd(unit, -3), 'hs': src_house, 'us': src_unit,
             'rh': rnd(rent_house, 0), 'ru': rnd(rent_unit, 0), 'rs': src_rent,
             'y': rnd(yld, 2), 'g1': rnd(g1, 1), 'g1s': g1src, 'cagr': rnd(o.get('cagr'), 1), 'cagrY': o.get('cagrYears'),
-            'pg5': rnd(r.get('popGrowth5'), 1), 'ig5': rnd(r.get('incGrowth5'), 1), 'rg5': rnd(r.get('rentGrowth5'), 1),
+            'pg5': rnd(r.get('popGrowth5'), 1), 'pgS': r.get('popSrc') if isinstance(r.get('popSrc'), str) else 'Census 2016-21', 'ig5': rnd(r.get('incGrowth5'), 1), 'rg5': rnd(r.get('rentGrowth5'), 1),
             'inc': rnd(r['hhinc'], 0), 'age': r['age'], 'une': rnd(r['unemp'], 1), 'rent%': rnd(pct(r['renters']), 1),
             'own%': rnd(pct(r['ownOutright']), 1), 'soc%': rnd(pct(r['socialHousing']), 1),
             'hou%': rnd(pct(r['houses']), 1), 'fla%': rnd(pct(r['flats']), 1), 'dw': int(r['dwellings'] or 0),
             'sup': supply(r['lgc']),
-            'bh': rnd(r['bh'], 1), 'bu': rnd(r['bu'], 1), 'cst': rnd(r['coast_km'], 1), 'cbd': rnd(r['cbd_km'], 1),
+            'bh': rnd(r['bh'], 1), 'bu': rnd(r['bu'], 1), 'cst': rnd(r['coast_km'], 1), 'ocn': rnd(r.get('ocean_km'), 1), 'cbd': rnd(r['cbd_km'], 1),
             'conf': conf, 'pt': 'u' if (r['flats'] or 0) >= 0.5 else 'h',
             'min%': rnd(pct(r['mining']), 1), 'top%': rnd(pct(r['topInd']), 1),
-            '_rr21': rr21, '_orent': o_rent, '_dw': float(r['dwellings'] or 0),
+            '_rr21': rr21, '_orent': o_rent, '_dw': float(r['dwellings'] or 0), '_g1raw': g1raw, '_g1n': g1n,
             'hist': o.get('history'),
             'off': {k: v for k, v in (o or {}).items() if k in ('house', 'unit', 'rent')} or None,
         })
     calibrate_rents(out, regions)
+    shrink_growth(out, regions)
     for x in out:
-        for k in ('_rr21', '_orent', '_dw'):
+        for k in ('_rr21', '_orent', '_dw', '_g1raw', '_g1n'):
             x.pop(k, None)
     scored = score(out)
     meta = {
@@ -623,7 +697,7 @@ def main():
     }
     os.makedirs(OUT, exist_ok=True)
     # Index: what the explorer, map and ranker need for every suburb (loaded once).
-    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra']
+    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'ocn', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra']
     comp = ['cash', 'momentum', 'growth', 'demand', 'afford', 'stability']
     rows = [[s_[c] for c in index_cols] + [s_['sc'][k] for k in comp] for s_ in scored]
     with open(os.path.join(OUT, 'suburbs.json'), 'w') as fh:
@@ -659,7 +733,26 @@ def wmed(v, w):
     return v[np.searchsorted(cw, cw[-1] / 2)]
 
 
-GROWTH_CAP = 12.0  # max percentage points a suburb's 12-month change may sit from its region's
+GROWTH_CAP = 9.0  # max percentage points a suburb's 12-month change may sit from its region's
+GROWTH_K = 40      # sales at which a suburb's own deviation gets half weight
+
+
+def shrink_growth(rows, regions):
+    """Suburb 12-month change = region's current change + the suburb's measured deviation from its region
+    (same source and period), shrunk by sample size: n / (n + 40). A town with 20 sales keeps a third of its
+    deviation; one with 400 keeps 91%. Removes small-sample spikes without the identical capped values."""
+    groups = defaultdict(list)
+    for x in rows:
+        if x['_g1raw'] is not None:
+            groups[(x['rg'], x['g1s'])].append(x)
+    for (rg, src), g in groups.items():
+        centre = float(np.median([x['_g1raw'] for x in g]))
+        M = regions[rg]
+        for x in g:
+            w = x['_g1n'] / (x['_g1n'] + GROWTH_K)
+            # soft limit: large deviations are squeezed smoothly (tanh), so no two places land on the same capped value
+            dev = GROWTH_CAP * math.tanh((x['_g1raw'] - centre) * w / GROWTH_CAP)
+            x['g1'] = rnd(M['annualPct'] + dev, 1)
 
 
 def region_rent(M):

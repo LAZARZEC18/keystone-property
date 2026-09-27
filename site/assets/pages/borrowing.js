@@ -5,22 +5,23 @@ import { STATES } from '../rules.js';
 
 export default async function borrowingPage(main) {
   setMeta({ title: 'How much can I borrow for an investment property?', description: 'Estimate your borrowing power the way Australian lenders do: 3-point serviceability buffer, 80% of rental income, living costs and existing debts.' });
-  const rs = await load('rates-summary');
-  const rate = rs.best.INV_PI_variable?.[0]?.rate || 6.2;
+  const [rs, rba] = await Promise.all([load('rates-summary'), load('rba')]);
+  // what investors actually pay on new variable loans (RBA), not the cheapest advertised rate
+  const rate = rba.actual?.newInvVariable?.at(-1)?.[1] || Math.max(rs.best.INV_PI_variable?.[0]?.rate || 6.2, 6.4);
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Borrowing power</div><h1>How much could you borrow?</h1>
   <p>Lenders don't test you at today's rate. APRA expects them to check you could still pay at 3 percentage points higher, and they count only about 80% of rental income. This calculator follows the same logic.</p></div>
   <div class="grid g2">
     <div class="card"><div class="fields">
-      <label class="field">Gross income, all borrowers ($/yr)<input id="b-inc" type="number" step="5000" value="130000"></label>
+      <label class="field">Gross income, all borrowers ($/yr)<input id="b-inc" type="number" step="1" value="130000"></label>
       <label class="field">Borrowers<select id="b-couple"><option value="0">Single</option><option value="1">Couple</option></select></label>
       <label class="field">Dependants<input id="b-dep" type="number" min="0" max="8" value="0"></label>
-      <label class="field">Existing rent received ($/yr)<input id="b-rent0" type="number" step="1000" value="0"></label>
-      <label class="field">Rent from the new property ($/wk)<input id="b-rent" type="number" step="10" value="650"></label>
-      <label class="field">Other debt repayments ($/month)<input id="b-debt" type="number" step="50" value="0"><span class="help">Car loans, other mortgages, HECS, credit card limits (≈3.8% of the limit)</span></label>
-      <label class="field">Living costs ($/month)<input id="b-live" type="number" step="100" placeholder="Benchmark"><span class="help">Leave blank to use a conservative benchmark</span></label>
+      <label class="field">Existing rent received ($/yr)<input id="b-rent0" type="number" step="1" value="0"></label>
+      <label class="field">Rent from the new property ($/wk)<input id="b-rent" type="number" step="1" value="650"></label>
+      <label class="field">Other debt repayments ($/month)<input id="b-debt" type="number" step="1" value="0"><span class="help">Car loans, other mortgages, HECS, credit card limits (≈3.8% of the limit)</span></label>
+      <label class="field">Living costs ($/month)<input id="b-live" type="number" step="1" placeholder="Benchmark"><span class="help">Leave blank to use a conservative benchmark</span></label>
       <label class="field">Interest rate (%)<input id="b-rate" type="number" step="0.05" value="${rate}"></label>
-      <label class="field">Deposit and savings ($)<input id="b-sav" type="number" step="10000" value="180000"></label>
+      <label class="field">Deposit and savings ($)<input id="b-sav" type="number" step="1" value="180000"></label>
       <label class="field">State<select id="b-state">${Object.keys(STATES).map((s) => `<option>${s}</option>`).join('')}</select></label>
     </div></div>
     <div class="card" id="b-out"></div>

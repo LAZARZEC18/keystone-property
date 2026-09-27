@@ -1,4 +1,4 @@
-import { esc, aud, pct, scoreBadge, setMeta, growth12 } from '../ui.js';
+import { esc, aud, pct, scoreBadge, setMeta, growth12, confBadge } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
 import { liveFactor } from '../live.js';
@@ -31,7 +31,7 @@ export default async function topMap(main, _p, query) {
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
       <label class="field">Area<select name="area"><option value="AU">All of Australia</option><optgroup label="States">${STATES.map((x) => `<option value="${x}">${x}</option>`).join('')}</optgroup><optgroup label="Markets">${regionOpts}</optgroup></select></label>
       <label class="field">Property<select name="type"><option value="">Most common type</option><option value="h">Houses</option><option value="u">Units</option></select></label>
-      <label class="field">Max typical price<input name="max" type="number" step="50000" placeholder="Any" value="${st.max}"></label>
+      <label class="field">Max typical price<input name="max" type="number" step="1" placeholder="Any" value="${st.max}"></label>
       <label class="field">Min population<select name="pop"><option value="500">500+</option><option value="2000">2,000+</option><option value="5000">5,000+</option><option value="10000">10,000+</option></select></label>
       <label class="field">Show<select name="n"><option value="50">Top 50</option><option value="100">Top 100</option><option value="250">Top 250</option></select></label>
     </div>
@@ -39,7 +39,7 @@ export default async function topMap(main, _p, query) {
   <div class="split-map section" style="margin-top:16px">
     <div class="card" style="padding:6px 0 0"><div class="spread" style="padding:8px 16px 6px"><b id="mcount"></b><a class="fine" id="mcsv" href="#">Download CSV</a></div><div id="mlist" style="max-height:640px;overflow:auto;border-top:1px solid var(--line)"></div></div>
     <div><div class="card" style="padding:10px"><div id="bmap" class="map tall"></div>
-      <div class="map-legend"><span><i style="background:var(--sc-a)"></i>75+ excellent</span><span><i style="background:var(--sc-b)"></i>60–74 strong</span><span><i style="background:var(--sc-c)"></i>45–59 average</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Larger dot = higher rank</span></div></div></div>
+      <div class="map-legend"><span><i style="background:var(--sc-a)"></i>75+ excellent</span><span><i style="background:var(--sc-b)"></i>60–74 strong</span><span><i style="background:var(--sc-c)"></i>45–59 average</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Larger dot = higher rank</span></div><p class="fine" style="margin-top:6px">Badges show how much of each ranking rests on official sales: <b>Measured</b>, <b>Partly measured</b> or <b>Modelled</b>. Outside NSW, Victoria and SA, most suburbs share their city's growth figure, so rankings there lean on yield, affordability, population trend and stability.</p></div></div>
   </div>
   <section class="section card" id="msel" hidden></section>`;
 
@@ -71,7 +71,7 @@ export default async function topMap(main, _p, query) {
     main.querySelector('#mlist').innerHTML = rows.length
       ? rows
           .map(
-            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span><span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${growth12(r.s)}</span></span>${scoreBadge(r.v)}</button>`,
+            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>${confBadge(r.s)}<span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${growth12(r.s)}</span></span>${scoreBadge(r.v)}</button>`,
           )
           .join('')
       : '<p class="note" style="padding:16px">No suburbs match. Raise the budget or widen the area.</p>';
@@ -119,7 +119,7 @@ export default async function topMap(main, _p, query) {
         <div class="stat"><span class="k">Rent</span><span class="v">${aud(r.e.rent)}</span><span class="s">per week, estimated</span></div>
         <div class="stat"><span class="k">Gross yield</span><span class="v">${pct(r.e.yield, 2)}</span><span class="s">${esc(R?.name || '')} ${pct(R?.yield, 1)}</span></div>
         <div class="stat"><span class="k">12-month change</span><span class="v">${growth12(r.s, { suffix: '', short: true })}</span><span class="s">5-yr ${pct(r.s.pg5, 1, true)} pop. growth</span></div>
-        <div class="stat"><span class="k">Distance to CBD</span><span class="v">${r.s.cbd != null ? `${Math.round(r.s.cbd)} km` : '—'}</span><span class="s">${r.s.cst != null ? `${r.s.cst.toFixed(1)} km to the water` : ''}</span></div>
+        <div class="stat"><span class="k">Distance to CBD</span><span class="v">${r.s.cbd != null ? `${Math.round(r.s.cbd)} km` : '—'}</span><span class="s">${r.s.ocn != null ? `${r.s.ocn.toFixed(1)} km to the ocean` : ''}</span></div>
       </div>
       <div class="row" style="margin-top:14px"><a class="btn primary" href="/analyse?suburb=${r.s.id}&price=${r.e.value}&rent=${r.e.rent}&type=${r.t}" data-link>Analyse a typical purchase</a><a class="btn" href="${reaSearch(r.s, r.t)}" target="_blank" rel="noopener">realestate.com.au ↗</a><a class="btn ghost" href="${links.domainBuy}" target="_blank" rel="noopener">Domain ↗</a></div>
       <h3 style="margin-top:20px">For sale now</h3><div id="mselmap" class="map short" hidden style="margin-bottom:14px"></div><div id="msellist"></div>`;

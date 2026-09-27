@@ -52,9 +52,12 @@ function search(opts, top) {
 
 export default async function affordPage(main, _p, query) {
   setMeta({ title: 'What can I afford? Find the best property you can buy', description: 'Enter your deposit and income. Keystone works out your maximum price in every state (stamp duty, LMI, lender buffers) and ranks the best suburbs you can afford.' });
-  const [{ list }, rs, market] = await Promise.all([suburbs(), load('rates-summary'), load('market')]);
-  const bestOO = rs.best.OO_PI_variable?.[0]?.rate || 6;
-  const bestInv = rs.best.INV_PI_variable?.[0]?.rate || 6.3;
+  const [{ list }, rs, market, rba] = await Promise.all([suburbs(), load('rates-summary'), load('market'), load('rba')]);
+  const lowOO = rs.best.OO_PI_variable?.[0]?.rate || 6;
+  const lowInv = rs.best.INV_PI_variable?.[0]?.rate || 6.3;
+  // default to what borrowers are actually paying on new loans (RBA F6), not the single cheapest advertised rate
+  const bestOO = rba.actual?.newOOVariable?.at(-1)?.[1] || Math.max(lowOO, 6.2);
+  const bestInv = rba.actual?.newInvVariable?.at(-1)?.[1] || Math.max(lowInv, 6.4);
   const q = (k, d) => (query[k] !== undefined ? query[k] : d);
 
   main.innerHTML = `
@@ -65,14 +68,14 @@ export default async function affordPage(main, _p, query) {
       <h3>Your situation</h3>
       <div class="fields" style="grid-template-columns:1fr 1fr">
         <label class="field" style="grid-column:1/-1">I'm buying as<select name="buyer"><option value="fhb">First home buyer (to live in)</option><option value="owner">Owner-occupier (not first home)</option><option value="investor">Investor</option></select></label>
-        <label class="field" style="grid-column:1/-1">Savings for deposit + costs ($)<input name="savings" type="number" step="5000" value="${esc(q('savings', 120000))}"></label>
-        <label class="field">Gross income ($/yr)<input name="income" type="number" step="5000" value="${esc(q('income', 110000))}"></label>
-        <label class="field">Partner income<input name="income2" type="number" step="5000" value="${esc(q('income2', 0))}"></label>
+        <label class="field" style="grid-column:1/-1">Savings for deposit + costs ($)<input name="savings" type="number" step="1" value="${esc(q('savings', 120000))}"></label>
+        <label class="field">Gross income ($/yr)<input name="income" type="number" step="1" value="${esc(q('income', 110000))}"></label>
+        <label class="field">Partner income<input name="income2" type="number" step="1" value="${esc(q('income2', 0))}"></label>
         <label class="field">Dependants<input name="deps" type="number" min="0" max="8" value="${esc(q('deps', 0))}"></label>
-        <label class="field">Other debts ($/mth)<input name="debts" type="number" step="50" value="${esc(q('debts', 0))}"></label>
+        <label class="field">Other debts ($/mth)<input name="debts" type="number" step="1" value="${esc(q('debts', 0))}"></label>
         <label class="field" style="grid-column:1/-1">Deposit strategy<select name="lvr"><option value="0.8">20% deposit (no LMI)</option><option value="0.9" selected>As low as 10% (LMI added to loan)</option><option value="0.95">As low as 5% (LMI)</option><option value="0.95g">5% deposit, no LMI (5% Deposit Scheme, first home buyers)</option></select></label>
         <label class="field">Interest rate (%)<input name="rate" type="number" step="0.05" value="${esc(q('rate', bestOO))}"></label>
-        <label class="field">Max weekly repayment ($)<input name="maxWeekly" type="number" step="50" placeholder="Lender limit"></label>
+        <label class="field">Max weekly repayment ($)<input name="maxWeekly" type="number" step="1" placeholder="Lender limit"></label>
         <label class="field">Property type<select name="type"><option value="any">House or unit</option><option value="h">House</option><option value="u">Unit / apartment</option></select></label>
         <div id="livef" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <label class="field" style="grid-column:1/-1;position:relative">Where do you work? (optional)<input id="work" type="search" placeholder="Suburb, e.g. Perth or Osborne Park" value=""><div class="ac" id="wac" hidden style="top:62px;left:0;right:auto"></div></label>
@@ -80,10 +83,10 @@ export default async function affordPage(main, _p, query) {
         </div>
         <label class="field">Rank by<select name="profile"><option value="live">Best place to live</option><option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow</option><option value="firsthome">Affordability / first home</option></select></label>
         <label class="field">Where<select name="where"><option value="">Anywhere in Australia</option>${Object.keys(STATES).map((s) => `<option value="s:${s}">${STATES[s]}</option>`).join('')}${Object.entries(market.regions).map(([c, r]) => `<option value="r:${c}">${r.name}</option>`).join('')}</select></label>
-        <label class="field">Min population<input name="pop" type="number" step="1000" value="${esc(q('pop', 3000))}"></label>
+        <label class="field">Min population<input name="pop" type="number" step="1" value="${esc(q('pop', 3000))}"></label>
       </div>
       <button class="btn primary" style="margin-top:14px;width:100%" id="go">Find what I can afford</button>
-      <p class="fine" style="margin-top:8px">Rates: lowest advertised owner-occupier variable ${pct(bestOO, 2)}, investor ${pct(bestInv, 2)} (updated hourly). Estimates only: a lender or broker will assess you properly.</p>
+      <p class="fine" style="margin-top:8px">Default rate is the average rate on new variable loans (RBA): ${pct(bestOO, 2)} owner-occupier, ${pct(bestInv, 2)} investor. The lowest advertised rates are ${pct(lowOO, 2)} and ${pct(lowInv, 2)} (checked several times a day); use one if you'll qualify for it. Estimates only: a lender or broker will assess you properly.</p>
     </form>
     <div id="out"></div>
   </div>`;
@@ -314,8 +317,8 @@ function verdictText({ matches, stateRows, capitals, savings, income, buyer, tak
   else if (canUnit.length) s += `A median house is out of reach in every capital, but a median unit is within budget in ${canUnit.join(', ')}. `;
   else s += 'Median capital-city prices are above your current ceiling, so the best options are in regional centres and outer suburbs. ';
   if (top) s += `The strongest suburb you can afford ${live ? 'to live in' : 'on this strategy'} is ${cleanName(top.s.n)} (${top.s.s}), a ${top.t === 'u' ? 'unit' : 'house'} at about ${aud(top.price, { compact: true })}${live ? `, the best match for living in on commute, local economy, services and growth (${top.score}/100)` : ` with a Keystone Score of ${top.score}`}. `;
-  const cap = stateRows.reduce((a, r) => Math.max(a, r.max), 0);
-  const rep = (repayment(cap * maxLvr, rate, 30) * 12) / 52;
+  const top1 = [...stateRows].sort((a, b) => b.max - a.max)[0];
+  const rep = top1?.s ? (repayment(top1.s.loan, rate, 30) * 12) / 52 : 0;
   if (buyer !== 'investor' && rep > takeHome * 0.4) s += `At your ceiling, repayments of about ${aud(rep)}/wk would be over 40% of your take-home pay, which is mortgage stress. Aim lower for breathing room. `;
   if (maxLvr > 0.8 && !guarantee) s += 'Borrowing above 80% adds lenders mortgage insurance; it is included in these figures. ';
   return s.trim();

@@ -16,7 +16,7 @@ const routes = [
   [/^\/analyse\/?$/, () => import('./pages/analyse.js')],
   [/^\/afford\/?$/, () => import('./pages/afford.js')],
   [/^\/rates\/?$/, () => import('./pages/rates.js')],
-  [/^\/listings\/?$/, () => import('./pages/listings.js')],
+  [/^\/listings\/?$/, () => Promise.resolve({ default: () => navigate(`/property${location.search.includes('q=') ? location.search : ''}`, true) })],
   [/^\/news\/?$/, () => import('./pages/news.js')],
   [/^\/guide\/?$/, () => import('./pages/guide.js')],
   [/^\/compare\/?$/, () => import('./pages/compare.js')],
@@ -36,7 +36,16 @@ async function render() {
   const path = location.pathname.replace(/\/+$/, '') || '/';
   const main = $('#main');
   const match = routes.find(([re]) => re.test(path));
-  $$('.nav a').forEach((a) => a.classList.toggle('on', path.startsWith(a.getAttribute('href')) && a.getAttribute('href') !== '/'));
+  $$('.nav a').forEach((a) => {
+    const h = a.getAttribute('href').split(/[?#]/)[0];
+    a.classList.toggle('on', h !== '/' && (path === h || path.startsWith(`${h}/`)));
+  });
+  $$('.nav-group').forEach((g) => {
+    g.classList.toggle('on', !!g.querySelector('a.on'));
+    g.classList.remove('open');
+    g.querySelector('.nav-top')?.setAttribute('aria-expanded', 'false');
+  });
+  if (document.activeElement?.closest?.('.nav')) document.activeElement.blur();
   $('#menu').setAttribute('aria-expanded', 'false');
   $('.nav').classList.remove('open');
   if (current?.destroy) current.destroy();
@@ -88,6 +97,18 @@ $('#theme').addEventListener('click', () => {
     /* ignore */
   }
   window.dispatchEvent(new Event('themechange'));
+});
+$$('.nav-top').forEach((b) =>
+  b.addEventListener('click', () => {
+    const g = b.closest('.nav-group');
+    const open = !g.classList.contains('open');
+    $$('.nav-group').forEach((x) => x !== g && x.classList.remove('open'));
+    g.classList.toggle('open', open);
+    b.setAttribute('aria-expanded', String(open));
+  }),
+);
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.nav-group')) $$('.nav-group').forEach((x) => x.classList.remove('open'));
 });
 $('#menu').addEventListener('click', () => {
   const nav = $('.nav');

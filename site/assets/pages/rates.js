@@ -4,7 +4,7 @@ import { repayment } from '../engine.js';
 import { rateWatchCard } from '../ratewatch.js';
 
 export default async function ratesPage(main, _p, query) {
-  setMeta({ title: 'Best home loan rates in Australia, updated hourly', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and refreshed every hour. Investor and owner-occupier, variable and fixed.' });
+  setMeta({ title: 'Best home loan rates in Australia, checked daily', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
   const [R, rba, rs] = await Promise.all([rateRows(), load('rba'), load('rates-summary')]);
   const st = {
     purpose: query.purpose || 'INV',
@@ -24,7 +24,7 @@ export default async function ratesPage(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Rates</div><h1>Every home loan rate in Australia</h1>
-  <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each bank's public Consumer Data Right (Open Banking) product feed and refreshed every hour. Last refresh ${ago(R.updated)}.</p></div>
+  <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each bank's public Consumer Data Right (Open Banking) product feed, checked several times a day. Last check ${ago(R.updated)}.</p></div>
   <div style="margin-bottom:16px">${rateWatchCard(rba, { compact: true })}</div>
   <div class="grid g4">
     ${[['INV_PI_variable', 'Investor variable P&I'], ['INV_PI_fixed3', 'Investor 3-yr fixed'], ['OO_PI_variable', 'Owner-occupier variable'], ['OO_PI_fixed2', 'Owner-occupier 2-yr fixed']]
@@ -41,7 +41,7 @@ export default async function ratesPage(main, _p, query) {
       <label class="field">Rate type<select id="r-type"><option value="variable">Variable</option><option value="fixed">Fixed</option></select></label>
       <label class="field">Fixed term<select id="r-term"><option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option><option value="4">4 years</option><option value="5">5 years</option></select></label>
       <label class="field">Your LVR (%)<input id="r-lvr" type="number" min="10" max="100" step="5" value="${st.lvr}"></label>
-      <label class="field">Loan amount ($)<input id="r-loan" type="number" step="10000" value="${st.loan}"></label>
+      <label class="field">Loan amount ($)<input id="r-loan" type="number" step="1" value="${st.loan}"></label>
       <label class="field">Lender<input id="r-q" type="search" placeholder="e.g. ING"></label>
     </div>
     <div class="row" style="margin-top:12px">

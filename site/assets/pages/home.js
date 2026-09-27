@@ -1,5 +1,5 @@
-import { esc, aud, pct, ago, scoreBadge, setMeta, lineChart, wireCharts, date, growth12 } from '../ui.js';
-import { load, suburbUrl, cleanName } from '../data.js';
+import { esc, aud, pct, ago, scoreBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge } from '../ui.js';
+import { load, suburbUrl, cleanName, slug } from '../data.js';
 import { attachSearch } from '../app.js';
 import { DAILY } from '../live.js';
 import { rateWatchCard } from '../ratewatch.js';
@@ -22,7 +22,7 @@ export default async function home(main) {
   const ausApprovals = hd.approvals?.total ?? null;
   const apprMonth = hd.approvals ? new Date(`${hd.approvals.month}-01T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '';
   // Top-ranked suburbs per strategy, precomputed hourly (scripts/home.mjs); 3,000+ residents so every pick is investable
-  const lists = Object.fromEntries(Object.entries(hd.lists).map(([k, rows]) => [k, rows.map((r) => { const o = Object.fromEntries(hd.cols.map((c, i) => [c, r[i]])); return { s: o, v: o.v }; })]));
+  const lists = Object.fromEntries(Object.entries(hd.lists).map(([k, rows]) => [k, rows.map((r) => { const o = Object.fromEntries(hd.cols.map((c, i) => [c, r[i]])); o.slug = slug(o); return { s: o, v: o.v }; })]));
   const best = lists.balanced[0];
 
   const liveCards = Object.entries(DAILY)
@@ -36,16 +36,22 @@ export default async function home(main) {
   cashHist.push([Date.now(), rba.cashRate.current]);
   const invVar = rba.actual.newInvVariable.filter(([d]) => d >= '2010-01-01').map(([d, v]) => [Date.parse(d), v]);
 
-  const products = [
-    ['/property', 'Property valuation', 'Enter any address for an estimated value and range, rent, yield, holding cost after tax, an investment grade and a value call against the asking price.', 'Any Australian address'],
-    ['/map', 'Best buys map', 'The highest-rated suburbs for growth, cash flow or a first home, on one map, priced for the home you want, with each suburb\'s typical price, rent and yield.', best ? `No. 1 now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
-    ['/listings', 'Listings, valued and rated', 'Paste any listing\'s address and asking price for a Keystone value, a good-value or overpriced call, estimated rent and an A–D investment grade.', 'Works with any listing'],
-    ['/suburbs', 'Suburb intelligence', 'Prices, rents, yields, growth, demand, supply, demographics and the investment case for every suburb, postcode and council.', `${sub.list.length.toLocaleString()} suburb reports`],
-    ['/afford', 'Affordability analyst', 'Your deposit, income and debts turned into a buying ceiling in every state, then the best suburbs you can buy in today.', 'Lender-style 3% buffer'],
-    ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, 10-year cash flow, after-tax return and an A–D rating of the numbers, with the 2026 tax changes built in.', 'All 8 states'],
-    ['/live', 'Live market', 'Daily home values for the five largest capitals: this week, this month, year to date and the past year.', cap5 ? `5 capitals ${pct(cap5.week, 2, true)} this week` : ''],
-    ['/new-builds', 'New builds and supply', 'Monthly building approvals by state, council and area, and where new supply is heaviest relative to existing homes.', ausApprovals ? `${Math.round(ausApprovals).toLocaleString()} dwellings approved in ${apprMonth}` : ''],
-    ['/rates', 'Home loan rates', 'Every advertised home loan rate from Open Banking feeds, ranked by loan type and deposit, with a rate history.', inv ? `Lowest investor variable ${pct(inv.rate, 2)}` : ''],
+  const groups = [
+    ['Buying a home', [
+      ['/afford?buyer=fhb', 'What can I afford?', 'Your savings and income turned into a buying ceiling in every state, with the 5% Deposit Scheme and stamp duty concessions, then the best places to live near where you work.', 'First home buyers and upgraders'],
+      ['/property', 'Value a property', 'Any address: an estimated value and range, the cash you need, repayments against rent, and whether an asking price sits inside the likely range.', 'Any Australian address'],
+      ['/guide#fhb', 'First home guide', 'The 5% Deposit Scheme, Help to Buy, First Home Super Saver, grants and duty concessions by state, and every step to settlement.', 'Updated September 2026'],
+    ]],
+    ['Investing', [
+      ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, depreciation, 10-year after-tax cash flow and return, with the 2026 negative gearing and CGT rules built in.', 'All 8 states'],
+      ['/map', 'Best buys map', 'The highest-rated suburbs for growth or cash flow on one map, priced for the home you want, with how much of each ranking is measured.', best ? `No. 1 now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
+      ['/borrowing', 'Borrowing power', 'How lenders assess you: the 3-point buffer, 80% of rent, your debts and dependants.', 'Lender-style assessment'],
+    ]],
+    ['Suburbs and the market', [
+      ['/suburbs', 'Suburb explorer', 'Prices, rents, growth, supply, demographics and risks for every suburb, postcode and council.', `${sub.list.length.toLocaleString()} suburb reports`],
+      ['/live', 'Live market', 'Daily home values for the five largest capitals: this week, this month, year to date and the past year.', cap5 ? `5 capitals ${pct(cap5.week, 2, true)} this week` : ''],
+      ['/rates', 'Home loan rates', 'Every advertised home loan rate from Open Banking feeds, ranked by loan type and deposit, with the next RBA decision.', inv ? `Lowest investor variable ${pct(inv.rate, 2)}` : ''],
+    ]],
   ];
 
   main.innerHTML = `
@@ -88,23 +94,21 @@ export default async function home(main) {
     <div><b>${councils.toLocaleString()}</b><span>council areas</span></div>
     <div><b>${rs.rows.toLocaleString()}</b><span>loan rates from ${rs.lenders} lenders</span></div>
     <div><b>Daily</b><span>home value index</span></div>
-    <div><b>Hourly</b><span>data refresh</span></div>
+    <div><b>Hourly</b><span>index and news refresh</span></div>
   </section>
 
   <section class="section" style="margin-top:20px">${rateWatchCard(rba, { compact: true })}</section>
 
   <section class="section">
     <div class="spread"><h2>The platform</h2><a href="/methodology" data-link>Data and methodology →</a></div>
-    <div class="grid g3 products">${products
-      .map(([href, t, d, stat]) => `<a class="card product" href="${href}" data-link><h3>${t}</h3><p class="muted">${d}</p>${stat ? `<span class="product-stat">${stat}</span>` : ''}</a>`)
-      .join('')}</div>
+    ${groups.map(([title, items]) => `<h3 class="group-h">${title}</h3><div class="grid g3 products">${items.map(([href, t, d, stat]) => `<a class="card product" href="${href}" data-link><h3>${t}</h3><p class="muted">${d}</p>${stat ? `<span class="product-stat">${stat}</span>` : ''}</a>`).join('')}</div>`).join('')}
     <div class="row" style="margin-top:12px"><a class="pill" href="/find" data-link>Smart property search</a><a class="pill" href="/borrowing" data-link>Borrowing power</a><a class="pill" href="/compare" data-link>Compare suburbs</a><a class="pill" href="/weekly" data-link>Weekly market report</a><a class="pill" href="/guide" data-link>Buying guide</a><a class="pill" href="/news" data-link>Housing news</a></div>
   </section>
 
   <section class="section">
     <div class="spread"><h2><span class="badge-live" style="font-size:13px;vertical-align:middle">Live</span> Home values this week</h2><a href="/live" data-link>Day, week, month, YTD and year →</a></div>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${liveCards}</div>
-    <p class="fine" style="margin-top:8px">Cotality Daily Home Value Index to ${date(idx.generated)}. Checked every hour.</p>
+    <p class="fine" style="margin-top:8px">Cotality Daily Home Value Index to ${date(idx.generated)}. Refreshed hourly; last update ${ago(idx.updated || idx.generated)}.</p>
   </section>
 
   <section class="section">
@@ -116,7 +120,7 @@ export default async function home(main) {
       <div class="card" style="padding:4px 0 0"><div id="toplist" style="max-height:520px;overflow:auto"></div></div>
       <div class="card" style="padding:10px"><div id="hmap" class="map"></div><p class="fine" style="margin-top:8px">Top 100 suburbs for the selected strategy, coloured by Keystone Score. Click a dot for the numbers.</p></div>
     </div>
-    <p class="fine" style="margin-top:8px">Keystone Score blends yield, price momentum, long-run growth, rental demand, affordability and stability. Suburbs with 3,000+ residents. <a href="/methodology" data-link>How it works</a>.</p>
+    <p class="fine" style="margin-top:8px">Keystone Score blends yield, price momentum, growth drivers, rental demand, affordability and stability, less a penalty for concentration risk. Suburbs with 3,000+ residents. <b>Measured</b>, <b>partly measured</b> and <b>modelled</b> show how much of each ranking rests on official sales: outside NSW, Victoria and SA most suburbs are modelled and use their city or regional growth figure. <a href="/methodology" data-link>How it works</a>.</p>
   </section>
 
   <section class="section">
@@ -159,7 +163,7 @@ export default async function home(main) {
   <section class="section">
     <h2>How Keystone rates a property</h2>
     <div class="grid g3 howto">
-      <div class="card flat"><span class="step-n">1</span><h3>Official data, refreshed hourly</h3><p class="muted">State valuer-general and government sales medians, the ABS Census and building approvals, Cotality's daily index, and RBA and Open Banking lending data.</p></div>
+      <div class="card flat"><span class="step-n">1</span><h3>Official data, kept current</h3><p class="muted">State valuer-general and government sales medians, the ABS Census and building approvals, Cotality's daily index, and RBA and Open Banking lending data.</p></div>
       <div class="card flat"><span class="step-n">2</span><h3>A value for the exact home</h3><p class="muted">A suburb price model (R² 0.75 against official medians) sets the typical value, then each home is adjusted for bedrooms, bathrooms, land, condition and the market's movement since.</p></div>
       <div class="card flat"><span class="step-n">3</span><h3>A rating you can check</h3><p class="muted">Six scored components per suburb and a full 10-year after-tax model per property produce an A–D grade, with every reason and risk listed so you can challenge it.</p></div>
     </div>
@@ -209,7 +213,7 @@ export default async function home(main) {
     main.querySelector('#toplist').innerHTML = rows
       .slice(0, 25)
       .map(
-        ({ s, v }, i) => `<a class="mrow" href="${suburbUrl(s)}" data-link style="text-decoration:none"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(s.n))}</b> <span class="muted">${s.s} ${s.pc || ''}</span><span class="note" style="display:block">${aud(typ(s), { compact: true })} ${s.pt === 'u' ? 'unit' : 'house'} · ${pct(s.y, 1)} yield · ${growth12(s)}</span></span>${scoreBadge(v)}</a>`,
+        ({ s, v }, i) => `<a class="mrow" href="${suburbUrl(s)}" data-link style="text-decoration:none"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(s.n))}</b> <span class="muted">${s.s} ${s.pc || ''}</span>${confBadge(s)}<span class="note" style="display:block">${aud(typ(s), { compact: true })} ${s.pt === 'u' ? 'unit' : 'house'} · ${pct(s.y, 1)} yield · ${growth12(s)}</span></span>${scoreBadge(v)}</a>`,
       )
       .join('');
     drawMap(rows);

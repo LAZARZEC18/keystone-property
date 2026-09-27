@@ -83,9 +83,12 @@ export function parseQuery(q, list) {
     out.chips.push('Stable, established area');
   }
   // lifestyle
-  if (/\b(beach|coast|coastal|ocean|sea|water|seaside|river)\b/.test(t)) {
-    out.coastKm = /\b(river)\b/.test(t) ? 3 : 4;
-    out.chips.push('Near the water');
+  if (/\b(beach|beaches|coast|coastal|ocean|sea|seaside|surf|sea change)\b/.test(t)) {
+    out.coastKm = /\b(walk|walking|close|right)\b/.test(t) ? 2 : 4;
+    out.chips.push(`Within ${out.coastKm} km of the ocean`);
+  } else if (/\b(river|riverside|waterfront|water|lake|estuary)\b/.test(t)) {
+    out.waterKm = 2.5;
+    out.chips.push('Near a river or the water');
   }
   if (/\b(city|cbd|inner|central|close to (the )?city|near (the )?city|walk to)\b/.test(t)) {
     out.cbdKm = /\binner|walk\b/.test(t) ? 8 : 15;

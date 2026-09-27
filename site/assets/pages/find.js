@@ -1,4 +1,4 @@
-import { esc, aud, pct, scoreBadge, setMeta, srcBadge, growth12 } from '../ui.js';
+import { esc, aud, pct, scoreBadge, setMeta, srcBadge, growth12, confBadge } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine } from '../data.js';
 import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
 import { parseQuery, looksLikeAddress } from '../intent.js';
@@ -54,7 +54,8 @@ export default async function findPage(main, _p, query) {
   for (const s of list) {
     if (s.pop < (places.some((x) => ['suburb', 'near', 'postcode'].includes(x.kind)) ? 200 : 1500)) continue;
     if (!inPlace(s)) continue;
-    if (p.coastKm && !(s.cst !== null && s.cst <= p.coastKm)) continue;
+    if (p.coastKm && !(s.ocn !== null && s.ocn !== undefined && s.ocn <= p.coastKm)) continue;
+    if (p.waterKm && !(s.cst !== null && s.cst <= p.waterKm)) continue;
     if (p.cbdKm && !(s.cbd !== null && s.cbd <= p.cbdKm)) continue;
     if (p.regional && market.regions[s.rg]?.capital) continue;
     const t = type || s.pt;
@@ -84,7 +85,7 @@ export default async function findPage(main, _p, query) {
       .slice(0, 20)
       .map(
         (r, i) => `<div class="spread" style="padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start">
-        <div><span class="faint mono">${i + 1}.</span> <a href="${suburbUrl(r.s)}" data-link><b>${esc(cleanName(r.s.n))}</b></a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>
+        <div><span class="faint mono">${i + 1}.</span> <a href="${suburbUrl(r.s)}" data-link><b>${esc(cleanName(r.s.n))}</b></a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>${confBadge(r.s)}
           <div class="note">${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} about <b>${aud(r.est.value, { compact: true })}</b> · rent ${aud(r.est.rent)}/wk · ${pct(r.est.yield, 1)} yield · ${growth12(r.s)} ${srcBadge(r.t === 'u' ? r.s.us : r.s.hs)}</div>
           <div class="row" style="margin-top:6px"><a class="btn sm" href="/analyse?suburb=${r.s.id}&price=${r.est.value}&rent=${r.est.rent || ''}&type=${r.t}" data-link>Analyse</a><a class="btn sm ghost" href="${reaSearch(r.s, r.t, p)}" target="_blank" rel="noopener">Homes for sale ↗</a></div></div>
         ${scoreBadge(r.display)}</div>`,

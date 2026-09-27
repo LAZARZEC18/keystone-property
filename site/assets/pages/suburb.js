@@ -1,4 +1,4 @@
-import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12 } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict } from '../engine.js';
@@ -56,11 +56,13 @@ export default async function suburbPage(main, params) {
   <div class="spread" style="align-items:flex-start">
     <div>
       <h1 style="margin-bottom:6px">${esc(name)} <span class="muted" style="font-size:.5em;font-family:var(--sans)">${s.s} ${s.pc || ''}</span></h1>
-      <div class="row muted" style="font-size:14px">${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
+      <div class="print-only report-head">Keystone suburb report · ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })} · keystone-au.netlify.app</div>
+      <div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
     </div>
     <div class="row">
       <button class="btn ${watched ? 'on' : ''}" id="watch">${watched ? '★ On watchlist' : '☆ Watch'}</button>
       <a class="btn" href="/compare?ids=${s.id}" data-link>Compare</a>
+      <button class="btn" id="print" title="Save or print a report of this suburb">Download report</button>
       <a class="btn primary" href="${analyseUrl}" data-link>Analyse a property here</a>
     </div>
   </div>
@@ -222,6 +224,7 @@ export default async function suburbPage(main, params) {
     <p class="fine">How these numbers are made: prices marked Estimate come from Keystone's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. In held-out tests it was within 20% of the official median for about ${Math.round(idx.meta.model.holdout?.VIC?.within20pct || 70)}% of suburbs. Treat it as a starting point and check recent sales before you make an offer. <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
+  main.querySelector('#print').addEventListener('click', () => window.print());
   main.querySelector('#watch').addEventListener('click', (e) => {
     const on = toggleWatch(s.id);
     e.currentTarget.classList.toggle('on', on);

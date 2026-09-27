@@ -59,12 +59,12 @@ export default async function analysePage(main, _p, query) {
           ${field('a-addr', 'Address or label (optional)', esc(st.addr), 'type="text" style="grid-column:1/-1"')}
           <label class="field">State<select id="a-state">${Object.keys(STATES).map((s) => `<option ${s === st.state ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
           <label class="field">Type<select id="a-type"><option value="h">House</option><option value="u" ${st.type === 'u' ? 'selected' : ''}>Unit / apartment</option></select></label>
-          ${field('a-price', 'Purchase price ($)', st.price, 'type="number" step="5000"')}
+          ${field('a-price', 'Purchase price ($)', st.price, 'type="number" step="1"')}
           ${field('a-rent', 'Weekly rent ($)', st.weeklyRent, 'type="number" step="5"')}
           <label class="field">New build?<select id="a-new"><option value="0">Established</option><option value="1" ${st.newBuild ? 'selected' : ''}>New build (never lived in)</option></select><span class="help">Matters a lot under the 2026 rules</span></label>
           ${field('a-built', 'Year built', st.buildYear, 'type="number" min="1850" max="2030"', 'For 2.5% building depreciation')}
-          ${field('a-strata', 'Strata levies ($/yr)', st.strata, 'type="number" step="100"')}
-          ${field('a-council', 'Council rates ($/yr)', st.councilRates, 'type="number" step="100"')}
+          ${field('a-strata', 'Strata levies ($/yr)', st.strata, 'type="number" step="1"')}
+          ${field('a-council', 'Council rates ($/yr)', st.councilRates, 'type="number" step="1"')}
         </div>
       </div>
       <div class="card" style="margin-top:16px">
@@ -84,7 +84,7 @@ export default async function analysePage(main, _p, query) {
       <div class="card" style="margin-top:16px">
         <h3>You</h3>
         <div class="fields">
-          ${field('a-income', 'Your taxable income ($/yr)', st.income, 'type="number" step="5000"', 'Before this property')}
+          ${field('a-income', 'Your taxable income ($/yr)', st.income, 'type="number" step="1"', 'Before this property')}
           <label class="field">Buyer<select id="a-buyer"><option value="investor">Investor</option><option value="owner" ${st.buyer === 'owner' ? 'selected' : ''}>Owner-occupier</option><option value="fhb" ${st.buyer === 'fhb' ? 'selected' : ''}>First home buyer</option></select><span class="help">Changes stamp duty only</span></label>
           ${field('a-date', 'Contract date', st.purchaseDate, 'type="date"')}
         </div>

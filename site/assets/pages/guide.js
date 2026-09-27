@@ -36,11 +36,11 @@ export default async function guidePage(main) {
     <nav class="toc" aria-label="Guide contents">${toc.map(([id, t]) => `<a href="#${id}">${t}</a>`).join('')}</nav>
     <article>
       <section id="before" class="section" style="margin-top:0"><h2>1. Before you start</h2>
-        <p>An investment property is a leveraged, illiquid, high-cost asset. Before looking at a single listing, be clear on three things.</p>
+        <p>Property is the biggest purchase most people make, it's expensive to buy and sell, and it's usually bought with borrowed money. Whether it's a home to live in or an investment, be clear on three things before you look at listings.</p>
         <div class="grid g3">
-          <div class="card flat tint"><h3>Your buffer</h3><p class="note">Most investment properties cost money to hold each week. Keep 3-6 months of repayments and costs in an offset account for vacancies, repairs and rate rises.</p></div>
-          <div class="card flat tint"><h3>Your horizon</h3><p class="note">Buying and selling costs 6-8% of the price. Plan to hold for 7-10 years or more, or the costs eat the gain.</p></div>
-          <div class="card flat tint"><h3>Your goal</h3><p class="note">Cash flow now, or growth later? You rarely get both in the same property. The strategy decides the suburb.</p></div>
+          <div class="card flat tint"><h3>Your buffer</h3><p class="note">Keep 3–6 months of repayments in an offset or savings account for rate rises, repairs and, for investors, vacancies. Test your repayments at 2 points above today's rate.</p></div>
+          <div class="card flat tint"><h3>Your horizon</h3><p class="note">Buying and selling costs 6–8% of the price. Plan to stay or hold for 7–10 years or more, or the costs eat any gain.</p></div>
+          <div class="card flat tint"><h3>Your goal</h3><p class="note">A home: commute, space, schools and the street. An investment: cash flow now or growth later, rarely both. The goal decides the suburb.</p></div>
         </div>
       </section>
 
@@ -62,7 +62,22 @@ export default async function guidePage(main) {
           <li><b>ACT</b>: the Home Buyer Concession Scheme's price and income caps were removed from 1 July 2026 (other eligibility rules apply).</li>
           <li><b>TAS</b>: the 100% established-home exemption ended for settlements after 30 June 2026.</li>
         </ul>
-        <p>Every state also pays a First Home Owner Grant on new homes; amounts and price caps vary, so check your state revenue office.</p>
+        <h3>First Home Owner Grant (new homes)</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Grant</th><th>Applies to</th><th>Value cap</th></tr></thead><tbody>
+          <tr><td>NSW</td><td class="n">$10,000</td><td>New homes</td><td>$600,000 (house and land $750,000)</td></tr>
+          <tr><td>VIC</td><td class="n">$10,000</td><td>New homes</td><td>$750,000</td></tr>
+          <tr><td>QLD</td><td class="n">$15,000</td><td>New homes</td><td>$750,000 ($30,000 for contracts to 30 June 2026)</td></tr>
+          <tr><td>WA</td><td class="n">$10,000</td><td>New homes</td><td>$800,000 south of the 26th parallel, $1,000,000 north</td></tr>
+          <tr><td>SA</td><td class="n">$15,000</td><td>New homes</td><td>No cap</td></tr>
+          <tr><td>TAS</td><td class="n">$10,000</td><td>New homes</td><td>No cap</td></tr>
+          <tr><td>NT</td><td class="n">$50,000 new / $10,000 established</td><td>New and established</td><td>No cap</td></tr>
+          <tr><td>ACT</td><td class="n">—</td><td colspan="2">No grant; the Home Buyer Concession Scheme removes stamp duty instead</td></tr>
+        </tbody></table></div>
+        <p class="fine">Amounts as published in September 2026. Grants change often: confirm with your state revenue office before you sign.</p>
+        <h3>First Home Super Saver scheme</h3>
+        <p>You can make voluntary contributions to your super of up to $15,000 a year and later withdraw up to $50,000 of them, plus deemed earnings, for a first home deposit. Before-tax (salary sacrifice) contributions are taxed at 15% going in instead of your marginal rate, which can grow a deposit faster. You must request a release from the ATO before you sign a contract (or within 14 days of signing).</p>
+        <h3>Help to Buy (shared equity)</h3>
+        <p>The federal Help to Buy scheme contributes up to 40% of the price of a new home or 30% of an existing one, so you need a deposit of just 2% and a much smaller loan. The government owns that share and you buy it back over time or when you sell. It has income limits ($103,000 single, $165,000 for couples and single parents), price caps by area and 10,000 places a year. Weigh it carefully: you give up part of any capital gain.</p>
         <h3>First home, step by step</h3>
         <ol>
           <li><b>Set a budget you can live with.</b> Keep repayments under about 30% of take-home pay, and test them at 2 points above today's rate. The <a href="/afford?buyer=fhb" data-link>affordability analyst</a> does this for every state, using the 5% Deposit Scheme and your state's duty concessions.</li>
@@ -110,7 +125,7 @@ export default async function guidePage(main) {
 
       <section id="buy" class="section"><h2>6. Find, inspect and buy</h2>
         <div class="steps">
-          <div class="card step"><h3>Shortlist properties</h3><p>Use listing sites, and pull each suburb's recent sales to know what things really sell for. Keystone's <a href="/listings" data-link>listings page</a> grades every listing on yield, cash flow and return.</p></div>
+          <div class="card step"><h3>Shortlist properties</h3><p>Use listing sites, and pull each suburb's recent sales to know what things really sell for. Keystone's <a href="/property" data-link>valuation page</a> values any listing you paste in, shows the cash and repayments to buy it, and runs the investment numbers.</p></div>
           <div class="card step"><h3>Run the numbers</h3><p>Put each serious contender through the <a href="/analyse" data-link>deal analyser</a>: all costs, the weekly shortfall after tax, a rate-rise stress test and the 10-year return. Walk away if it only works in the bull case.</p></div>
           <div class="card step"><h3>Check the property</h3><p>Get a building and pest inspection (about $400-800). For strata, get a strata report (about $250-400) covering levies, the sinking fund, defects and disputes. Ask a property manager for a rental appraisal before you buy.</p></div>
           <div class="card step"><h3>Have the contract reviewed</h3><p>A conveyancer or solicitor ($1,000-2,500) checks the title, zoning, easements, special conditions and the vendor statement. In most states you can make the offer "subject to finance" and "subject to building and pest".</p></div>

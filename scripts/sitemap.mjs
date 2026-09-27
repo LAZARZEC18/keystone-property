@@ -7,7 +7,7 @@ const col = (c) => d.cols.indexOf(c);
 const clean = (n) => n.replace(/\s*\((NSW|Vic\.|Qld|SA|WA|Tas\.|NT|ACT)\)\s*$/i, '');
 const slug = (x) => x.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const today = new Date().toISOString().slice(0, 10);
-const urls = new Set(['/', '/live', '/markets', '/suburbs', '/new-builds', '/analyse', '/afford', '/rates', '/listings', '/news', '/guide', '/weekly', '/borrowing', '/methodology', '/compare', '/map', '/property', '/find', '/about', '/contact', '/privacy', '/terms']);
+const urls = new Set(['/', '/live', '/markets', '/suburbs', '/new-builds', '/analyse', '/afford', '/rates', '/news', '/guide', '/weekly', '/borrowing', '/methodology', '/compare', '/map', '/property', '/find', '/about', '/contact', '/privacy', '/terms']);
 for (const r of d.rows) {
   const n = r[col('n')], s = r[col('s')], pc = r[col('pc')], lga = r[col('lga')], id = r[col('id')];
   urls.add(`/suburb/${s.toLowerCase()}/${slug(clean(n))}-${pc || id}`);

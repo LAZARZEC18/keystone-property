@@ -51,6 +51,15 @@ export function srcBadge(src) {
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
 }
 
+/** How much of a suburb's ranking rests on measured data rather than the model. */
+export function confBadge(s) {
+  const priceOfficial = s.hs && s.hs !== 'model' && s.hs !== 'region';
+  const growthLocal = s.g1s && !String(s.g1s).startsWith('region');
+  if (priceOfficial && growthLocal && !String(s.hs).includes('postcode')) return '<span class="tag tag-conf tag-conf-h" title="Price and 12-month change come from official sales for this suburb">Measured</span>';
+  if (priceOfficial || growthLocal) return `<span class="tag tag-conf tag-conf-m" title="${priceOfficial ? 'Price from official sales' : 'Price is modelled'}${String(s.hs).includes('postcode') ? ' for the postcode' : ''}; ${growthLocal ? '12-month change measured locally' : '12-month change is the city or regional index'}. Rent is modelled.">Partly measured</span>`;
+  return '<span class="tag tag-conf tag-conf-l" title="No official suburb sales series here: price and rent are modelled and the 12-month change is the city or regional index. Treat the ranking as a guide.">Modelled</span>';
+}
+
 export function bar(v, max = 100) {
   const w = v === null || v === undefined ? 0 : Math.max(0, Math.min(100, (v / max) * 100));
   return `<span class="meter"><span class="${scoreClass(v)}" style="width:${w}%"></span></span>`;
@@ -185,7 +194,7 @@ export function spark(points, { w = 110, h = 28 } = {}) {
 }
 
 export function setMeta({ title, description }) {
-  document.title = title ? `${title} · Keystone` : 'Keystone · Australian property investment intelligence';
+  document.title = title ? `${title} · Keystone` : 'Keystone · Australian property values, suburbs and rates';
   const m = document.querySelector('meta[name="description"]');
   if (m && description) m.setAttribute('content', description);
 }
@@ -212,6 +221,7 @@ export function growth12(s, { suffix = ' 12m', short = false } = {}) {
     const name = REGION_SHORT[s.rg] || 'Region';
     return `<span class="muted" title="No suburb-level sales series for this suburb. This is the ${name} index over 12 months.">${short ? '' : `${name} `}${pct(s.g1, 1, true)}${short ? '<sup>r</sup>' : ''}${suffix}</span>`;
   }
+  if (src.includes('postcode')) return `<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report, shared by suburbs in the same postcode.">${pct(s.g1, 1, true)}${suffix}</span>`;
   if (src.includes('capped')) return `<span class="${cls}" title="Small number of sales: the suburb figure was held to within 12 points of the region's.">${pct(s.g1, 1, true)}*${suffix}</span>`;
-  return `<span class="${cls}">${pct(s.g1, 1, true)}${suffix}</span>`;
+  return `<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few.">${pct(s.g1, 1, true)}${suffix}</span>`;
 }
