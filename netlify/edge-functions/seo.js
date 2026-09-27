@@ -25,7 +25,7 @@ export default async (request, context) => {
   try {
     const ix = await getIndex(url.origin);
     const primary = (typeof Netlify !== 'undefined' && Netlify.env.get('URL')) || url.origin;
-    const meta = describe(url.pathname, url.search, ix, primary.replace(/\/$/, ''));
+    const meta = describe(url.pathname, url.search, ix, primary.replace(/\/$/, '').replace(/^http:\/\//, 'https://'));
     const html = renderHtml(await res.text(), meta);
     const headers = new Headers(res.headers);
     headers.delete('content-length');
