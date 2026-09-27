@@ -2,7 +2,7 @@
 const cache = new Map();
 
 // Served live by a Netlify function (cached up to an hour), falling back to the stored file.
-const LIVE = new Set(['index', 'news']);
+const LIVE = new Set(['index', 'news', 'rba']);
 const getStatic = (name) =>
   fetch(`/data/${name}.json`, { cache: 'no-cache' }).then((r) => {
     if (!r.ok) throw new Error(`${name}: ${r.status}`);
@@ -30,13 +30,15 @@ let suburbIndex = null;
 /** All suburbs as objects, with lookup maps. */
 export async function suburbs() {
   if (suburbIndex) return suburbIndex;
-  const d = await load('suburbs');
+  const [d, idx, market] = await Promise.all([load('suburbs'), load('index').catch(() => null), load('market').catch(() => null)]);
+  const { applyLiveGrowth } = await import('./live.js');
   const list = d.rows.map((r) => {
     const o = {};
     d.cols.forEach((c, i) => (o[c] = r[i]));
     o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0 };
     o.slug = slug(o);
     o.key = `${o.n} ${o.s} ${o.pc || ''}`.toLowerCase();
+    applyLiveGrowth(o, idx, market);
     return o;
   });
   const byId = new Map(list.map((s) => [s.id, s]));

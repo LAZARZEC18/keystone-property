@@ -36,9 +36,17 @@ export default async function borrowingPage(main) {
     const state = $('#b-state').value;
     // Largest price where savings cover 20% deposit + duty + $2.5k costs, and the loan fits borrowing power
     let price = 100000;
+    let limit = 'deposit';
     for (let p = 100000; p <= 5000000; p += 5000) {
       const need = p * 0.2 + stampDuty(state, p).duty + 2500;
-      if (need > sav || p * 0.8 > bp.amount) break;
+      if (need > sav) {
+        limit = 'deposit';
+        break;
+      }
+      if (p * 0.8 > bp.amount) {
+        limit = 'loan';
+        break;
+      }
       price = p;
     }
     const m = repayment(bp.amount, +$('#b-rate').value, 30);
@@ -47,6 +55,7 @@ export default async function borrowingPage(main) {
     <div class="kv"><span>Repayment at ${pct(+$('#b-rate').value, 2)}</span><span>${aud(m)}/month</span>
     <span>Price you could buy with 20% down (${state})</span><span>${aud(price)}</span>
     <span>Stamp duty at that price</span><span>${aud(stampDuty(state, price).duty)}</span></div>
+    <p class="note" style="margin-top:10px">${limit === 'deposit' ? `<b>Your savings are the limit here, not the loan.</b> A ${aud(price, { compact: true })} purchase needs ${aud(price * 0.2 + stampDuty(state, price).duty + 2500, { compact: true })} for a 20% deposit, duty and costs, and uses only ${aud(price * 0.8, { compact: true })} of the ${aud(bp.amount, { compact: true })} you could borrow. With a smaller deposit (and LMI) or more savings you could pay more.` : `<b>The loan is the limit here.</b> Your savings could cover a bigger deposit, but lenders cap the loan at ${aud(bp.amount, { compact: true })}.`}</p>
     <p class="note" style="margin-top:12px">An estimate only. Each lender uses its own living-expense model (usually the Household Expenditure Measure), rental shading and treatment of other debts, so results can differ by 10-20% between banks. A broker can compare lenders' calculators for you.</p>`;
   };
   main.querySelectorAll('input,select').forEach((el) => el.addEventListener('input', run));

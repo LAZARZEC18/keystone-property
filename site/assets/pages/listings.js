@@ -48,11 +48,11 @@ export function valueCall(asking, est) {
 
 /** "Rate a listing you've found": address + asking price -> full valuation and grade. */
 export function rateBox(s) {
-  return `<div class="card flat tint rate-box"><b>Rate a listing you've found</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Keystone values that home, tells you whether the price is good value, and grades it as an investment.</p>
+  return `<div class="card flat tint rate-box"><b>Check a listing's asking price</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Keystone shows where the price sits against its estimated range for that home, plus the cash and repayments to buy it. Where there's no official suburb sales data (most of WA, QLD, TAS, NT and the ACT) the estimate is modelled: use it as a sense-check alongside recent sales, not a verdict.</p>
     <form class="fields rb-form" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;align-items:end" onsubmit="return false">
       <label class="field">Address<input name="addr" type="search" placeholder="${s ? `e.g. 12 Example Street, ${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}` : 'e.g. 12 Example Street, Morley WA 6062'}" required></label>
       <label class="field">Asking price<input name="price" type="number" step="1" placeholder="e.g. 850000"></label>
-      <button class="btn primary" type="submit">Value and rate</button>
+      <button class="btn primary" type="submit">Check the price</button>
     </form></div>`;
 }
 export function wireRateBox(el, s) {
@@ -67,7 +67,7 @@ export function wireRateBox(el, s) {
 
 export async function liveListings(el, s, { compact = false, mode = 'buy', filters = {}, mapEl = null } = {}) {
   el.innerHTML = '<p class="note">Checking live listings…</p>';
-  const q = new URLSearchParams({ suburb: cleanName(s.n), state: s.s, postcode: s.pc || '', mode: mode === 'rent' ? 'rent' : 'sale', size: compact ? 8 : 24, ...filters });
+  const q = new URLSearchParams({ suburb: cleanName(s.n), state: s.s, postcode: s.pc || '', mode: mode === 'rent' ? 'rent' : 'sale', size: compact ? 10 : 24, ...filters });
   let res;
   try {
     const r = await fetch(`/api/listings?${q}`);

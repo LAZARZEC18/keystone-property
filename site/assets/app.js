@@ -27,6 +27,8 @@ const routes = [
   [/^\/property\/?$/, () => import('./pages/property.js')],
   [/^\/map\/?$/, () => import('./pages/topmap.js')],
   [/^\/(?<page>about|privacy|terms|contact)\/?$/, () => import('./pages/about.js')],
+  [/^\/first-home\/?$/, () => import('./pages/firsthome.js')],
+  [/^\/why\/?$/, () => import('./pages/why.js')],
 ];
 
 let current = null;

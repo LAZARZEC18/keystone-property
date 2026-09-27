@@ -8,7 +8,7 @@ export default async function newsPage(main) {
   const sources = [...new Set(news.items.map((x) => x.source))].sort();
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">News</div><h1>Housing news</h1>
-  <p>Headlines on prices, rates, rents and policy from ${news.feeds.filter((f) => f.ok).length} sources, refreshed within the hour. Last update ${ago(news.updated)}. Links open the publisher's site.</p></div>
+  <p>Headlines on prices, rates, rents and policy from ${new Set(news.items.map((i) => i.source)).size} publishers, refreshed within the hour. Last update ${ago(news.updated)}. Links open the publisher's site.</p></div>
   <div class="toolbar"><div class="seg" id="nt">${tags.map((t, i) => `<button data-t="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
   <label class="field">Source<select id="ns"><option value="">All sources</option>${sources.map((s) => `<option>${esc(s)}</option>`).join('')}</select></label></div>
   <div class="card"><div class="news-list" id="nl"></div></div>

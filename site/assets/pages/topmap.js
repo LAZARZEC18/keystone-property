@@ -11,28 +11,28 @@ const STRATS = { balanced: 'Balanced', growth: 'Capital growth', cashflow: 'Cash
 const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
 export default async function topMap(main, _p, query) {
-  setMeta({ title: 'Best places to buy property in Australia: live map', description: 'A live map of the highest-rated suburbs in Australia for growth, cash flow and first home buyers, with typical prices, yields and graded listings.' });
+  setMeta({ title: 'Highest-scoring suburbs in Australia: map', description: 'A live map of the highest-rated suburbs in Australia for growth, cash flow and first home buyers, with typical prices, yields and graded listings.' });
   const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), load('index')]);
   const st = {
     strategy: STRATS[query.strategy] ? query.strategy : 'balanced',
     area: query.area || 'AU',
     type: ['h', 'u'].includes(query.type) ? query.type : '',
     max: +query.max || '',
-    pop: +query.pop || 2000,
+    pop: +query.pop || 3000,
     n: [50, 100, 250].includes(+query.n) ? +query.n : 100,
   };
   const regionOpts = Object.entries(market.regions).map(([c, r]) => `<option value="${c}">${esc(r.name)}</option>`).join('');
 
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Best buys map</div><h1>Where the best-rated property is right now</h1>
-  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings.</p></div>
+  <div class="page-head"><div class="eyebrow">Suburb scores map</div><h1>Highest-scoring suburbs, on one map</h1>
+  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>valuation</a> and <a href="/analyse" data-link>analyser</a> test the numbers of buying a specific home, which at today's rates are often C or D even in high-scoring suburbs.</p></div>
   <form class="card flat tint" id="mf" onsubmit="return false">
     <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
       <label class="field">Area<select name="area"><option value="AU">All of Australia</option><optgroup label="States">${STATES.map((x) => `<option value="${x}">${x}</option>`).join('')}</optgroup><optgroup label="Markets">${regionOpts}</optgroup></select></label>
       <label class="field">Property<select name="type"><option value="">Most common type</option><option value="h">Houses</option><option value="u">Units</option></select></label>
       <label class="field">Max typical price<input name="max" type="number" step="1" placeholder="Any" value="${st.max}"></label>
-      <label class="field">Min population<select name="pop"><option value="500">500+</option><option value="2000">2,000+</option><option value="5000">5,000+</option><option value="10000">10,000+</option></select></label>
+      <label class="field">Min population<select name="pop"><option value="500">500+</option><option value="2000">2,000+</option><option value="3000">3,000+</option><option value="5000">5,000+</option><option value="10000">10,000+</option></select></label>
       <label class="field">Show<select name="n"><option value="50">Top 50</option><option value="100">Top 100</option><option value="250">Top 250</option></select></label>
     </div>
   </form>
@@ -53,7 +53,7 @@ export default async function topMap(main, _p, query) {
   const compute = () => {
     const f = Object.fromEntries(new FormData(form));
     Object.assign(st, { strategy: f.strategy, area: f.area, type: f.type, max: +f.max || '', pop: +f.pop, n: +f.n });
-    const q = new URLSearchParams(Object.entries(st).filter(([k, v]) => v !== '' && !(k === 'area' && v === 'AU') && !(k === 'strategy' && v === 'balanced') && !(k === 'pop' && v === 2000) && !(k === 'n' && v === 100)));
+    const q = new URLSearchParams(Object.entries(st).filter(([k, v]) => v !== '' && !(k === 'area' && v === 'AU') && !(k === 'strategy' && v === 'balanced') && !(k === 'pop' && v === 3000) && !(k === 'n' && v === 100)));
     history.replaceState(null, '', `/map${q.toString() ? `?${q}` : ''}`);
     const inArea = (s) => st.area === 'AU' || s.s === st.area || s.rg === st.area;
     const out = [];
@@ -67,7 +67,7 @@ export default async function topMap(main, _p, query) {
     }
     out.sort((a, b) => b.v - a.v);
     rows = out.slice(0, st.n);
-    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} suburbs · ${STRATS[st.strategy]}`;
+    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} matching suburbs (${list.length.toLocaleString()} in Australia) · ${STRATS[st.strategy]}`;
     main.querySelector('#mlist').innerHTML = rows.length
       ? rows
           .map(

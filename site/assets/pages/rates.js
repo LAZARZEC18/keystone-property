@@ -3,6 +3,9 @@ import { rateRows, load } from '../data.js';
 import { repayment } from '../engine.js';
 import { rateWatchCard } from '../ratewatch.js';
 
+const tidy = (n = '') => (n === n.toUpperCase() && /[A-Z]{4}/.test(n) ? n.toLowerCase().replace(/\b([a-z])([a-z]{3,})/g, (_, a, b) => a.toUpperCase() + b).replace(/\b(lvr|p&i|io|smsf|abn)\b/g, (x) => x.toUpperCase()) : n);
+const okUrl = (u) => u && /^https?:/i.test(u) && !/\.pdf(\?|#|$)/i.test(u);
+
 export default async function ratesPage(main, _p, query) {
   setMeta({ title: 'Best home loan rates in Australia, checked daily', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
   const [R, rba, rs] = await Promise.all([rateRows(), load('rba'), load('rates-summary')]);
@@ -91,7 +94,7 @@ export default async function ratesPage(main, _p, query) {
       .map((r, i) => {
         const m = repayment(st.loan, r.rate, years, st.repay === 'IO');
         const extra = cheapest !== null ? (m - repayment(st.loan, cheapest, years, st.repay === 'IO')) * 12 : 0;
-        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(r.product)}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}</td><td class="n">${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%</td><td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : ''}</td></tr>`;
+        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(tidy(r.product))}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}</td><td class="n">${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%</td><td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${okUrl(r.url) ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : ''}</td></tr>`;
       })
       .join('')}</tbody></table></div>
     ${rows.length > 300 ? '<p class="note">Showing the first 300. Narrow the filters to see more.</p>' : ''}

@@ -217,11 +217,11 @@ export function growth12(s, { suffix = ' 12m', short = false } = {}) {
   if (s.g1 === null || s.g1 === undefined) return '—';
   const src = String(s.g1s || '');
   const cls = s.g1 >= 0 ? 'up' : 'down';
+  const period = s.g1p ? ` (${s.g1p})` : '';
   if (src.startsWith('region')) {
     const name = REGION_SHORT[s.rg] || 'Region';
-    return `<span class="muted" title="No suburb-level sales series for this suburb. This is the ${name} index over 12 months.">${short ? '' : `${name} `}${pct(s.g1, 1, true)}${short ? '<sup>r</sup>' : ''}${suffix}</span>`;
+    return `<span class="muted" title="No suburb-level sales series here: this is the ${name} figure${period}.">${pct(s.g1, 1, true)}${suffix}${short ? ' <span class="area-tag">area</span>' : ` · ${name}`}</span>`;
   }
-  if (src.includes('postcode')) return `<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report, shared by suburbs in the same postcode.">${pct(s.g1, 1, true)}${suffix}</span>`;
-  if (src.includes('capped')) return `<span class="${cls}" title="Small number of sales: the suburb figure was held to within 12 points of the region's.">${pct(s.g1, 1, true)}*${suffix}</span>`;
-  return `<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few.">${pct(s.g1, 1, true)}${suffix}</span>`;
+  if (src.includes('postcode')) return `<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
+  return `<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
 }

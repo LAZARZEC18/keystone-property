@@ -53,7 +53,7 @@ export function flattenProduct(p, brand) {
     if (type === 'FIXED' && (!term || term > 10)) continue;
     rows.push({
       lender: brand.brandName,
-      product: p.name,
+      product: tidyName(p.name),
       productId: p.productId,
       type: type === 'FIXED' ? 'fixed' : 'variable',
       term,
@@ -63,13 +63,31 @@ export function flattenProduct(p, brand) {
       comparison: comp === null ? null : round5(comp * 100),
       lvrMin: lvrMin === null ? null : round5(lvrMin * 100),
       lvrMax: lvrMax === null ? null : round5(lvrMax * 100),
-      url: p.applicationUri || r.additionalInfoUri || null,
+      // product overview page first; never a PDF application form
+      url: [p.additionalInformation?.overviewUri, r.additionalInfoUri, p.applicationUri].find((u) => u && /^https?:/i.test(u) && !/\.pdf(\?|#|$)/i.test(u)) || null,
       tailored: !!p.isTailored,
       special: SPECIAL.test(p.name || '') ? 1 : 0,
       updated: p.lastUpdated || null,
     });
   }
   return rows;
+}
+
+/** Lender feeds often publish names in capitals: 'BASIC VARIABLE HOME LOAN' -> 'Basic Variable Home Loan' (keeps LVR, P&I etc). */
+export function tidyName(name = '') {
+  const n = String(name).trim();
+  if (!n || n !== n.toUpperCase() || !/[A-Z]{4}/.test(n)) return n;
+  const small = new Set(['AND', 'FOR', 'WITH', 'OF', 'TO', 'THE', 'OR', 'IN']);
+  return n
+    .toLowerCase()
+    .split(' ')
+    .map((w, i) => {
+      const up = w.toUpperCase();
+      if (i && small.has(up)) return w;
+      if (up.length <= 3 && /^[A-Z&]+$/.test(up) && !['HOME', 'LOAN'].includes(up) && !['NEW', 'OLD', 'ONE', 'TWO', 'YR', 'YRS'].includes(up)) return up;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(' ');
 }
 
 // Niche products that aren't a general-purpose home loan (small green top-ups, staff,

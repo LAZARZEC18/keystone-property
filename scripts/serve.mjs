@@ -13,6 +13,7 @@ const fns = {
   '/api/property': (await import('../netlify/functions/property.mjs')).default,
   '/api/live-index': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-news': (await import('../netlify/functions/live.mjs')).default,
+  '/api/live-rba': (await import('../netlify/functions/live.mjs')).default,
 };
 
 createServer(async (req, res) => {

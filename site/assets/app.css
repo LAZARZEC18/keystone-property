@@ -430,3 +430,11 @@ details.faq summary { cursor: pointer; font-weight: 600; }
 }
 @media (max-width: 1080px) { .top-in { position: relative; z-index: 3; } .nav { z-index: 90; } }
 @media (max-width: 1080px) { .nav .nav-link { color: var(--ink); padding: 12px 8px; font-size: 15.5px; } }
+.explain { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: var(--surface-2); font-size: 14px; }
+.explain summary { cursor: pointer; font-weight: 600; }
+.explain p { margin: 8px 0 0; color: var(--muted); line-height: 1.6; }
+.area-tag { font-size: 9.5px; text-transform: uppercase; letter-spacing: .04em; border: 1px solid var(--line-2); border-radius: 4px; padding: 0 4px; margin-left: 2px; }
+.row .btn { max-width: 100%; white-space: normal; text-align: left; }
+.glossary dt { font-weight: 600; margin-top: 12px; }
+.glossary dd { margin: 4px 0 0; color: var(--muted); }
+abbr[title] { text-decoration: underline dotted; cursor: help; }

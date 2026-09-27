@@ -40,7 +40,7 @@ export default async function methodologyPage(main) {
   <section class="section grid g2">
     <div class="card"><h3>Deal analyser</h3>
       <p class="note">Stamp duty uses each state's published schedule and concessions. LMI uses a published premium table plus state duty on LMI. Land tax is for an individual holding one property. Income tax is 2026-27 resident rates with the Medicare levy and the low income tax offset. Negative gearing and CGT follow the Tax Reform No. 1 Act 2026: offset share by date, carried-forward losses, value at 1 July 2027, CPI indexation and the 30% minimum. Depreciation is 2.5% of an estimated construction cost, plus plant for new builds. Return is the internal rate of return on your actual cash flows, including the sale.</p>
-      <p class="fine">It assumes one Australian-resident individual owner and no other properties in the state. Trusts, companies, SMSFs and foreign buyers are treated differently.</p>
+      <p class="fine">It handles one or two individual owners (each taxed on their share at their own rate) and adds any other investment land you own in the state for land tax. Trusts, companies, SMSFs and foreign buyers are treated differently and aren't modelled.</p>
     </div>
     <div class="card" id="privacy"><h3>Privacy</h3><p class="note">Keystone doesn't use tracking cookies. Your watchlist and theme are stored only in your browser. If you register for updates, your name, email and interests are stored in Netlify Forms for Keystone's use only.</p>
     <h3 style="margin-top:14px">Not advice</h3><p class="note">Keystone is general information. It doesn't know your circumstances and isn't a licensed financial, credit, tax or legal adviser. Estimates and projections can be wrong. Check with independent professionals before you buy.</p></div>
@@ -51,6 +51,5 @@ export default async function methodologyPage(main) {
   <li><a href="https://www.abs.gov.au/statistics/industry/building-and-construction/building-approvals-australia/latest-release" target="_blank" rel="noopener">ABS Building Approvals</a></li>
   <li><a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO: negative gearing and CGT reform</a></li>
   <li><a href="${RULES.incomeTax.source}" target="_blank" rel="noopener">ATO: individual income tax rates</a></li>
-  <li><a href="https://developer.domain.com.au" target="_blank" rel="noopener">Domain API</a> (live listings)</li>
   <li>Map tiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a></li></ul></section>`;
 }

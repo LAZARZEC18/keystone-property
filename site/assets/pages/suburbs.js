@@ -161,7 +161,7 @@ export default async function explorer(main, _p, query) {
   function draw() {
     compute();
     syncUrl();
-    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> suburbs match · ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`;
+    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> of ${list.length.toLocaleString()} suburbs match your filters${st.popMin ? ` (including ${st.popMin.toLocaleString()}+ residents)` : ''} · <span class="area-tag">area</span> = city or regional 12-month figure (no suburb sales data) · ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`;
     if (map) {
       map.remove();
       map = null;

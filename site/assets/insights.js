@@ -43,7 +43,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (s.g1 !== null && s.g1 !== undefined) {
     const src = String(s.g1s).startsWith('region') ? `${R.name} values (no suburb-level series here)` : 'Values here';
     if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keystone holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
-    const per = String(s.g1s).startsWith('region') && market.indexMonth ? `the 12 months to ${market.indexMonth.replace(/^\d+ /, '')}` : 'the last year';
+    const per = s.g1p ? `the past year (${s.g1p})` : 'the past year';
     if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over ${per}: strong buyer demand.`);
     else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over ${per}. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
   }
@@ -75,7 +75,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (d.une >= 8) cons.push(`Unemployment was ${pct(d.une, 1)} at the 2021 Census, well above the national average. Tenant arrears risk is higher.`);
   if (d['soc%'] >= 20) cons.push(`${pct(d['soc%'], 0)} of homes are social housing, which can cap price growth.`);
   if (s.pop < 1500) cons.push(`Small market (${s.pop.toLocaleString()} residents), so there are fewer buyers and tenants and it's harder to sell quickly.`);
-  if (['Remote', 'Very Remote'].includes(d.ra)) cons.push(`${d.ra} area. Remote markets swing with local industry (often mining) and can fall sharply.`);
+  if (['Remote', 'Very Remote'].includes(s.ra || d.ra)) cons.push(`${s.ra || d.ra} area. Remote markets swing with local industry (often mining) and can fall sharply.`);
   if (s.pt === 'u' && (d['fla%'] ?? 0) >= 60) cons.push('Unit-dominated market. Check apartment supply in the pipeline, strata levies and building defects before buying off the plan.');
   if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Keystone estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
   if (R.dom && R.domYearAgo && R.dom - R.domYearAgo >= 10) cons.push(`Homes in ${R.name} now take ${R.dom} days to sell, up from ${R.domYearAgo} a year ago: the market is cooling.`);
@@ -83,8 +83,11 @@ export function investmentCase(s, d, region, rs, market) {
   // Who it suits
   if (yld >= 5) suits.push('Cash-flow investors who want rent to cover most of the loan');
   if ((s.sc?.growth ?? 0) >= 65 || (s.sc?.momentum ?? 0) >= 70) suits.push('Growth investors with a long (7+ year) horizon');
-  if ((s.sc?.afford ?? 0) >= 65) suits.push('First-home buyers and rent-vestors on a budget');
-  if ((s.sc?.stability ?? 0) >= 70) suits.push('Conservative buyers who value a stable, established area');
+  const regionHouse = R.medianHouse || R.medianDwelling;
+  if ((s.sc?.afford ?? 0) >= 65 && price && regionHouse && price <= regionHouse * 0.85) suits.push('First-home buyers and rent-vestors on a budget');
+  const newEstate = (s.pg5 ?? 0) >= 20;
+  if ((s.sc?.stability ?? 0) >= 70 && !newEstate) suits.push('Conservative buyers who value a stable, established area');
+  if (newEstate) suits.push(`Buyers comfortable with a fast-growing area (population up ${pct(s.pg5, 0)} in five years), where new supply can hold back price growth`);
   if (!suits.length) suits.push('Buyers with a specific reason to be here (work, family, lifestyle) rather than a pure investment play');
 
   const headline = pros.length > cons.length + 1 ? `${name} stacks up well for investors on the numbers.` : cons.length > pros.length + 1 ? `${name} has more red flags than green for investors right now.` : `${name} is a mixed picture: the right property at the right price matters more than the suburb.`;
@@ -120,4 +123,9 @@ export function listingLinks(s) {
 
 export function fmtPrice(s, type) {
   return aud(type === 'u' ? s.u : s.h, { compact: true });
+}
+
+/** Why a suburb can score highly while a purchase there rates poorly. Shown wherever both appear. */
+export function scoreVsDeal(score, grade) {
+  return `<details class="explain"><summary>Suburb score ${score ?? '—'}/100 and deal rating ${grade}: why they can differ</summary><p>The <b>suburb score</b> ranks the area against every other suburb in Australia on yield, price trend, population and income growth, rental demand, affordability and stability. It says whether the place is strong <i>relative to others</i>. The <b>deal rating</b> tests one purchase: a typical home at today's price, a 20% deposit, today's investor interest rate and a $120k salary, over 10 years. At current rates most established homes cost their owner money every week, so most rate C or D even in the strongest suburbs. A high suburb score with a D means a good area where the numbers of buying right now are thin: a bigger deposit, a cheaper home or a new build (which keeps negative gearing) changes the rating.</p></details>`;
 }

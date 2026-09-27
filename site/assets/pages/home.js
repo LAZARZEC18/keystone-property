@@ -1,7 +1,7 @@
 import { esc, aud, pct, ago, scoreBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge } from '../ui.js';
 import { load, suburbUrl, cleanName, slug } from '../data.js';
 import { attachSearch } from '../app.js';
-import { DAILY } from '../live.js';
+import { DAILY, applyLiveGrowth } from '../live.js';
 import { rateWatchCard } from '../ratewatch.js';
 import { baseTiles } from '../map.js';
 
@@ -22,9 +22,11 @@ export default async function home(main) {
   const ausApprovals = hd.approvals?.total ?? null;
   const apprMonth = hd.approvals ? new Date(`${hd.approvals.month}-01T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '';
   // Top-ranked suburbs per strategy, precomputed hourly (scripts/home.mjs); 3,000+ residents so every pick is investable
-  const lists = Object.fromEntries(Object.entries(hd.lists).map(([k, rows]) => [k, rows.map((r) => { const o = Object.fromEntries(hd.cols.map((c, i) => [c, r[i]])); o.slug = slug(o); return { s: o, v: o.v }; })]));
+  const lists = Object.fromEntries(Object.entries(hd.lists).map(([k, rows]) => [k, rows.map((r) => { const o = Object.fromEntries(hd.cols.map((c, i) => [c, r[i]])); o.slug = slug(o); applyLiveGrowth(o, idx, market); return { s: o, v: o.v }; })]));
   const best = lists.balanced[0];
 
+  // one 12-month figure per market: the daily index where it exists (matches /live and suburb pages)
+  const yr = (code, r) => (DAILY[code] && idx.daily[DAILY[code]]?.year != null ? idx.daily[DAILY[code]].year : r.annualPct);
   const liveCards = Object.entries(DAILY)
     .map(([code, key]) => {
       const d = idx.daily[key];
@@ -44,7 +46,7 @@ export default async function home(main) {
     ]],
     ['Investing', [
       ['/analyse', 'Deal analyser', 'Stamp duty, LMI, land tax, depreciation, 10-year after-tax cash flow and return, with the 2026 negative gearing and CGT rules built in.', 'All 8 states'],
-      ['/map', 'Best buys map', 'The highest-rated suburbs for growth or cash flow on one map, priced for the home you want, with how much of each ranking is measured.', best ? `No. 1 now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
+      ['/map', 'Suburb scores map', 'The highest-rated suburbs for growth or cash flow on one map, priced for the home you want, with how much of each ranking is measured.', best ? `Top score now: ${esc(cleanName(best.s.n))} ${best.s.s}` : ''],
       ['/borrowing', 'Borrowing power', 'How lenders assess you: the 3-point buffer, 80% of rent, your debts and dependants.', 'Lender-style assessment'],
     ]],
     ['Suburbs and the market', [
@@ -112,7 +114,7 @@ export default async function home(main) {
   </section>
 
   <section class="section">
-    <div class="spread"><h2>Where the best buys are</h2><a href="/map" data-link>Open the full map →</a></div>
+    <div class="spread"><h2>Highest-scoring suburbs</h2><a href="/map" data-link>Open the full map →</a></div>
     <div class="seg" id="lists" role="tablist">${Object.entries(TABS)
       .map(([k, v], i) => `<button class="${i ? '' : 'on'}" data-l="${k}">${v}</button>`)
       .join('')}</div>
@@ -126,15 +128,15 @@ export default async function home(main) {
   <section class="section">
     <div class="spread"><h2>Markets at a glance</h2><a href="/markets" data-link>Full market dashboard →</a></div>
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Market</th><th class="n">Median house</th><th class="n">Median unit</th><th class="n">12 months</th><th class="n">3 months</th><th class="n">Gross yield</th><th class="n">Rent growth</th><th class="n">Vacancy</th><th class="n">Days on market</th></tr></thead>
+      <thead><tr><th>Market</th><th class="n">Median house</th><th class="n">Median unit</th><th class="n">12 months†</th><th class="n">3 months to Aug</th><th class="n">Gross yield</th><th class="n">Rent growth</th><th class="n">Vacancy</th><th class="n">Days on market</th></tr></thead>
       <tbody>${caps
         .map(
-          ([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${r.name}</a></td><td class="n">${aud(r.medianHouse, { compact: true })}</td><td class="n">${aud(r.medianUnit, { compact: true })}</td><td class="n ${cls(r.annualPct)}">${pct(r.annualPct, 1, true)}</td><td class="n ${cls(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</td><td class="n">${pct(r.yield, 1)}</td><td class="n">${pct(r.rentAnnualPct, 1, true)}</td><td class="n">${pct(r.vacancy, 1)}</td><td class="n">${r.dom ?? '—'}</td></tr>`,
+          ([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${r.name}</a></td><td class="n">${aud(r.medianHouse, { compact: true })}</td><td class="n">${aud(r.medianUnit, { compact: true })}</td><td class="n ${cls(yr(code, r))}">${pct(yr(code, r), 1, true)}</td><td class="n ${cls(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</td><td class="n">${pct(r.yield, 1)}</td><td class="n">${pct(r.rentAnnualPct, 1, true)}</td><td class="n">${pct(r.vacancy, 1)}</td><td class="n">${r.dom ?? '—'}</td></tr>`,
         )
         .join('')}
       ${regs.map(([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${r.name}</a></td><td class="n muted" title="All dwellings">${aud(r.medianHouse || r.medianDwelling, { compact: true })}*</td><td class="n muted">—</td><td class="n ${cls(r.annualPct)}">${pct(r.annualPct, 1, true)}</td><td class="n ${cls(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</td><td class="n">${pct(r.yield, 1)}</td><td class="n">${pct(r.rentAnnualPct, 1, true)}</td><td class="n">—</td><td class="n">${r.dom ?? '—'}</td></tr>`).join('')}
       </tbody></table></div>
-    <p class="fine" style="margin-top:8px">Cotality Home Value Index, rolled forward monthly; vacancy from SQM Research. *Regional medians are all dwellings.</p>
+    <p class="fine" style="margin-top:8px">†12 months: Cotality daily index, year to ${date(idx.generated)}, for Sydney, Melbourne, Brisbane, Adelaide and Perth; monthly index, 12 months to August, elsewhere. Medians and 3-month change: Cotality monthly index to August; vacancy: SQM Research. *Regional medians are all dwellings.</p>
   </section>
 
   <section class="section grid g2">

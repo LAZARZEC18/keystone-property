@@ -26,6 +26,7 @@ export default async function guidePage(main) {
     ['landtax', 'Land tax by state'],
     ['tax-2026', 'The 2026 tax changes'],
     ['mistakes', 'Common mistakes'],
+    ['glossary', 'Glossary'],
     ['faq', 'Questions'],
   ];
   main.innerHTML = `
@@ -114,7 +115,7 @@ export default async function guidePage(main) {
         <p>The biggest decision is <i>where</i>. Check these for every suburb on your shortlist (each Keystone suburb page shows all of them):</p>
         <ul class="pros">
           <li><b>Yield</b>: annual rent ÷ price. Above your region's average means lower holding costs.</li>
-          <li><b>Vacancy rate</b>: under 1.5% means tenants compete for rentals. Right now Perth, Adelaide and Hobart are at ${pct(market.regions.PER.vacancy, 1)}, ${pct(market.regions.ADL.vacancy, 1)} and ${pct(market.regions.HBA.vacancy, 1)}.</li>
+          <li><b>Vacancy rate</b>: under 1.5% means tenants compete for rentals. ${(() => { const caps = Object.values(market.regions).filter((r) => r.capital && r.vacancy != null).sort((a, b) => a.vacancy - b.vacancy); const lo = caps.slice(0, 3); const same = lo.every((r) => r.vacancy === lo[0].vacancy); return `Right now the tightest capitals are ${lo.map((r) => r.name).join(', ').replace(/, ([^,]*)$/, ' and $1')}${same ? `, all at ${pct(lo[0].vacancy, 1)}` : ` (${lo.map((r) => pct(r.vacancy, 1)).join(', ')})`} (SQM Research, city-wide).`; })()}</li>
           <li><b>Population and income growth</b>: more people with more money means more demand for homes.</li>
           <li><b>Supply pipeline</b>: lots of new apartments being approved nearby caps rents and resale prices. See <a href="/new-builds" data-link>new builds by council</a>.</li>
           <li><b>Days on market and price momentum</b>: rising days on market means buyers have more bargaining power. See <a href="/live" data-link>today's market</a>.</li>
@@ -183,6 +184,9 @@ export default async function guidePage(main) {
         </tbody></table></div>
         <p style="margin-top:12px"><b>What it means in practice:</b> for an established property the weekly cost you feel is now closer to the <i>before-tax</i> shortfall, because the salary tax refund stops after June 2027. The losses aren't wasted: they reduce tax on future rental profits and on the gain when you sell. They just arrive years later. That favours higher-yield properties, bigger deposits and new builds. Keystone's analyser applies all of this automatically.</p>
         <p class="fine">Sources: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a> · <a href="${RULES.reform.factsheet}" target="_blank" rel="noopener">Budget factsheet</a>. General information only. See a registered tax agent about your situation.</p>
+              <h3>Self-managed super funds</h3>
+        <p>From 10 August 2026 (45 days after Royal Assent on 26 June), an SMSF can no longer enter a new limited recourse borrowing arrangement to buy residential property. Arrangements (including signed contracts) made before then are unaffected, and business real property can still be bought with borrowing.</p>
+        <p class="note"><b>Details still being settled.</b> Treasury is still consulting on parts of the new rules, including exactly how gains either side of 1 July 2027 are measured, trusts, and part-year residents. Keystone models the law as passed and will update as the detail is finalised. Get tax advice for your own situation.</p>
       </section>
 
 
@@ -198,6 +202,8 @@ export default async function guidePage(main) {
           <li>Not claiming depreciation, or claiming improvements as repairs.</li>
         </ul>
       </section>
+
+      <section id="glossary" class="section"><h2>Glossary</h2><dl class="glossary"><dt>LVR (loan-to-value ratio)</dt><dd>The loan as a share of the property value. A $540,000 loan on a $600,000 home is a 90% LVR. Above 80%, lenders usually charge lenders mortgage insurance.</dd><dt>LMI (lenders mortgage insurance)</dt><dd>A one-off premium that protects the lender (not you) when you borrow more than 80%. It is usually added to the loan. The 5% Deposit Scheme and Help to Buy avoid it.</dd><dt>Gross yield</dt><dd>A year’s rent as a percentage of the price, before any costs. $600 a week on a $780,000 home is 4%.</dd><dt>IRR (internal rate of return)</dt><dd>The average yearly return on the cash you put in, after all costs, tax and the eventual sale. It lets you compare a property with other investments.</dd><dt>Negative gearing</dt><dd>When an investment property’s costs exceed its rent, the loss reduces tax on your other income. For established homes bought after 12 May 2026 this ends on 1 July 2027; losses then carry forward instead.</dd><dt>Serviceability buffer</dt><dd>Lenders check you could still repay at about 3 percentage points above the actual rate. It is why borrowing power is lower than repayments alone suggest.</dd><dt>Suburb score</dt><dd>Keystone’s 0–100 ranking of a suburb against every other suburb on yield, price trend, growth drivers, rental demand, affordability and stability. It rates the area, not a particular purchase.</dd><dt>Deal rating (A–D)</dt><dd>Keystone’s test of one purchase at today’s price and interest rates. It describes the numbers, not whether you should buy.</dd><dt>Percentile</dt><dd>Where a suburb sits against all others: the 80th percentile on yield means it beats 80% of suburbs.</dd><dt>SA2</dt><dd>An ABS statistical area of roughly 3,000 to 25,000 people, usually a group of neighbouring suburbs. Keystone uses SA2 population estimates for recent growth.</dd><dt>Momentum</dt><dd>How much values changed over the past 12 months. Where there is no suburb-level sales data, the city or regional figure is used and it counts for less in the score.</dd><dt>Vacancy rate</dt><dd>The share of rental homes empty and available. Under about 1.5% means tenants compete for homes and rents tend to rise.</dd></dl></section>
 
       <section id="faq" class="section"><h2>Questions</h2>
         ${[

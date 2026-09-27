@@ -25,6 +25,26 @@ export const FEEDS = [
 const RELEVANT =
   /\b(housing|house prices?|home ?loans?|homes?|home ?buyers?|property|properties|real estate|mortgages?|rents?|rental|renters?|tenants?|landlords?|interest rates?|cash rate|RBA|reserve bank|APRA|auctions?|dwellings?|apartments?|first[- ]home|stamp duty|negative gearing|capital gains|land tax|suburbs?|affordab\w*|investors?|lending|borrow\w*|CPI|inflation|construction|building approvals|vacancy|vacancies)\b/i;
 
+// Publishers accepted from the Google News aggregator (normalised names). Anything else is dropped:
+// the aggregator also surfaces SEO and trading-spam sites.
+const PUBLISHERS = new Map(
+  [
+    ['abc', 'ABC News'], ['abc news', 'ABC News'], ['sbs', 'SBS News'], ['sbs news', 'SBS News'], ['the guardian', 'The Guardian'], ['guardian', 'The Guardian'],
+    ['australian financial review', 'Australian Financial Review'], ['afr', 'Australian Financial Review'], ['the sydney morning herald', 'The Sydney Morning Herald'], ['sydney morning herald', 'The Sydney Morning Herald'],
+    ['the age', 'The Age'], ['brisbane times', 'Brisbane Times'], ['watoday', 'WAtoday'], ['news.com.au', 'news.com.au'], ['the australian', 'The Australian'],
+    ['the west australian', 'The West Australian'], ['perthnow', 'PerthNow'], ['perth now', 'PerthNow'], ['herald sun', 'Herald Sun'], ['the daily telegraph', 'The Daily Telegraph'], ['daily telegraph', 'The Daily Telegraph'],
+    ['the courier-mail', 'The Courier-Mail'], ['courier mail', 'The Courier-Mail'], ['adelaide now', 'The Advertiser'], ['the advertiser', 'The Advertiser'], ['indaily', 'InDaily'], ['the mercury', 'The Mercury'], ['nt news', 'NT News'], ['the canberra times', 'The Canberra Times'],
+    ['9news', '9News'], ['9news.com.au', '9News'], ['7news', '7NEWS'], ['7news.com.au', '7NEWS'], ['sky news australia', 'Sky News Australia'], ['reuters', 'Reuters'], ['bloomberg', 'Bloomberg'], ['bloomberg.com', 'Bloomberg'],
+    ['yahoo finance', 'Yahoo Finance'], ['yahoo finance australia', 'Yahoo Finance'], ['yahoo news australia', 'Yahoo Finance'], ['yahoo', 'Yahoo Finance'],
+    ['realestate.com.au', 'realestate.com.au'], ['domain', 'Domain'], ['domain.com.au', 'Domain'], ['proptrack', 'PropTrack'], ['cotality', 'Cotality'], ['corelogic', 'Cotality'],
+    ['the conversation', 'The Conversation'], ['canstar', 'Canstar'], ['finder', 'Finder'], ['ratecity', 'RateCity'], ['mozo', 'Mozo'], ['money magazine', 'Money Magazine'],
+    ['the adviser', 'The Adviser'], ['broker daily', 'Broker Daily'], ['brokerdaily', 'Broker Daily'], ['mortgage professional australia', 'Mortgage Professional Australia'], ['mpa', 'Mortgage Professional Australia'],
+    ['real estate business', 'Real Estate Business'], ['your investment property', 'Your Investment Property'], ['property update', 'Property Update'], ['smart property investment', 'Smart Property Investment'],
+    ['business insider australia', 'Business Insider Australia'], ['the new daily', 'The New Daily'], ['crikey', 'Crikey'], ['reserve bank of australia', 'RBA'], ['rba', 'RBA'],
+  ],
+);
+const normPub = (x) => String(x || '').toLowerCase().replace(/^www\./, '').replace(/\s+/g, ' ').trim();
+
 const TAGS = [
   ['Rates', /interest rate|cash rate|\bRBA\b|reserve bank|mortgage rate|rate (cut|hike|rise|hold)|fixed rate|variable rate|lender|refinanc/i],
   ['Prices', /price|value|index|auction|clearance|boom|slump|fall|growth|median|market/i],
@@ -97,6 +117,9 @@ export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
           title = m[1];
           source = it.publisher || m[2];
         }
+        const pub = PUBLISHERS.get(normPub(source));
+        if (!pub) continue; // unknown or low-quality publisher
+        source = pub;
       }
       if (/[\u0400-\u04FF\u0600-\u06FF\u3040-\u9FFF]/.test(source + title)) continue; // non-English mirrors
       if (!feed.all && !RELEVANT.test(title)) continue;

@@ -5,6 +5,7 @@
 // so visitors always get a fast answer that is at most about an hour old.
 import { CODE_TO_REGION, changes } from '../../scripts/cotality.mjs';
 import { collectNews } from '../../scripts/news.mjs';
+import { collectRba } from '../../scripts/rba.mjs';
 
 const FEED = 'https://au-indices.cotality.com/asx.json';
 const ymd = (n) => `${String(n).slice(0, 4)}-${String(n).slice(4, 6)}-${String(n).slice(6, 8)}`;
@@ -54,10 +55,15 @@ export default async (req) => {
       if (d.items.length < 10) throw new Error('too few headlines');
       return json({ ...d, live: true });
     }
+    if (name === 'rba') {
+      const d = await collectRba();
+      if (!d?.cashRate?.current) throw new Error('no cash rate');
+      return json({ ...d, live: true });
+    }
     return json({ error: 'unknown feed' }, 404);
   } catch (e) {
     return json({ error: String(e.message || e) }, 502);
   }
 };
 
-export const config = { path: ['/api/live-index', '/api/live-news'] };
+export const config = { path: ['/api/live-index', '/api/live-news', '/api/live-rba'] };

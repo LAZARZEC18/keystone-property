@@ -168,6 +168,10 @@ export function analyse(input) {
     insurance: 1800, maintenancePct: 1.2, landValuePct: 0.55, otherCosts: 2500, lmiCapitalise: true,
     hold: 10, sellCostPct: 2.5, perth: false, ...input,
   };
+  // owners: [{share, income}]; default one owner on p.income. Shares are normalised to sum to 1.
+  const owners0 = Array.isArray(p.owners) && p.owners.length ? p.owners : [{ share: 1, income: p.income }];
+  const tot = owners0.reduce((t, o) => t + (o.share || 0), 0) || 1;
+  const owners = owners0.map((o) => ({ share: (o.share || 0) / tot, income: o.income || 0 }));
   const loan0 = p.price * (1 - p.deposit);
   const duty = stampDuty(p.state, p.price, { buyer: p.buyer, newBuild: p.newBuild });
   const lmiRes = lmi(loan0, p.price, p.state);
@@ -209,7 +213,9 @@ export function analyse(input) {
     const mgmt = (grossRent * p.mgmtPct) / 100;
     // maintenance as a % of the building (not land) value: land doesn't need repairs
     const maint = (value * (1 - p.landValuePct) * p.maintenancePct) / 100;
-    const land = landTax(p.state, landValue0 * (value / p.price), { perth: p.perth }).tax;
+    // land tax is assessed on total holdings in the state: charge the extra this property adds on top of land already owned
+    const other = (p.otherLandValue || 0) * (value / p.price);
+    const land = landTax(p.state, landValue0 * (value / p.price) + other, { perth: p.perth }).tax - (other ? landTax(p.state, other, { perth: p.perth }).tax : 0);
     const holding = costsBase + mgmt + maint + land;
     // loan year
     let interest = 0;
@@ -239,12 +245,12 @@ export function analyse(input) {
       const usable = -netRental * offsetShare;
       quarantined = -netRental - usable;
       carried += quarantined;
-      taxEffect = incomeTax(p.income) - incomeTax(Math.max(0, p.income - usable));
+      taxEffect = owners.reduce((t, o) => t + incomeTax(o.income) - incomeTax(Math.max(0, o.income - usable * o.share)), 0);
     } else {
       const useCarry = Math.min(carried, netRental);
       carried -= useCarry;
       const taxable = netRental - useCarry;
-      taxEffect = -(incomeTax(p.income + taxable) - incomeTax(p.income));
+      taxEffect = -owners.reduce((t, o) => t + incomeTax(o.income + taxable * o.share) - incomeTax(o.income), 0);
     }
     const cashAfterTax = cashBeforeTax + taxEffect;
     cum += cashAfterTax;
@@ -268,10 +274,14 @@ export function analyse(input) {
   const sellCosts = (salePrice * p.sellCostPct) / 100;
   const costBase = p.price + duty.duty + p.otherCosts - div43Claimed;
   const gross = salePrice - sellCosts - costBase;
-  const cgt = capitalGainsTax({
-    purchaseDate: p.purchaseDate, saleDate, price: p.price, salePrice, sellCosts, costBase, growth: p.growth, cpi: p.cpi,
-    income: p.income, carried, newBuild: p.newBuild,
-  });
+  // each owner pays CGT on their share of the gain at their own tax rate
+  const cgtParts = owners.map((o) =>
+    capitalGainsTax({
+      purchaseDate: p.purchaseDate, saleDate, price: p.price * o.share, salePrice: salePrice * o.share, sellCosts: sellCosts * o.share, costBase: costBase * o.share, growth: p.growth, cpi: p.cpi,
+      income: o.income, carried: carried * o.share, newBuild: p.newBuild,
+    }),
+  );
+  const cgt = owners.length === 1 ? cgtParts[0] : { ...capitalGainsTax({ purchaseDate: p.purchaseDate, saleDate, price: p.price, salePrice, sellCosts, costBase, growth: p.growth, cpi: p.cpi, income: owners[0].income, carried, newBuild: p.newBuild }), tax: Math.round(cgtParts.reduce((t, c) => t + c.tax, 0)), perOwner: cgtParts.map((c) => c.tax) };
   const saleProceeds = salePrice - sellCosts - balance - cgt.tax;
   equityFlows[equityFlows.length - 1] += saleProceeds;
   const irr = IRR(equityFlows);
@@ -292,7 +302,8 @@ export function analyse(input) {
     totalProfit: Math.round(equityFlows.reduce((a, b) => a + b, 0)),
     equityAtSale: Math.round(salePrice - balance),
     cashInvested: Math.round(upfront.total + rows.reduce((a, r) => a + Math.min(0, r.cashAfterTax), 0) * -1),
-    marginalRate: round(marginalRate(p.income) * 100, 1),
+    marginalRate: round(owners.reduce((t, o) => t + marginalRate(o.income) * o.share, 0) * 100, 1),
+    owners: owners.length,
     negativeGearing: p.newBuild ? 'new-build' : grandfathered ? 'grandfathered' : 'restricted',
   };
   return { input: p, upfront, duty, lmi: lmiRes, rows, sale: { saleDate, salePrice: Math.round(salePrice), sellCosts: Math.round(sellCosts), costBase: Math.round(costBase), grossGain: Math.round(gross), balance: Math.round(balance), cgt }, summary };

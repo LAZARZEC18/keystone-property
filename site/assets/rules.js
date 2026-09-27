@@ -253,3 +253,22 @@ export const RBA_OUTLOOK = {
   text: 'Markets and the major banks expect a 0.25-point rise to 4.60% (about 90% priced by markets as of late September, after the July inflation figures).',
   source: 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html',
 };
+
+/**
+ * Help to Buy (shared equity), Housing Australia: the government contributes up to 40% (new) or 30% (existing)
+ * of the price; the buyer needs a 2% deposit and no LMI. Income limits and price caps apply; 10,000 places a year.
+ * Sources: firsthomebuyers.gov.au (income limits), money.com.au Sept 2026 (price caps). Confirm with a participating lender.
+ */
+export const HELP_TO_BUY = {
+  share: { existing: 0.3, new: 0.4 },
+  deposit: 0.02,
+  income: { single: 103000, joint: 165000 },
+  caps: { NSW: [1300000, 800000], VIC: [950000, 650000], QLD: [1000000, 700000], WA: [850000, 600000], SA: [900000, 500000], TAS: [700000, 550000], ACT: [1000000, 1000000], NT: [600000, 600000] },
+};
+
+export function helpToBuyCap(s) {
+  const c = HELP_TO_BUY.caps[s.s];
+  if (!c) return 0;
+  const metro = HOME_GUARANTEE.capitals.includes(s.rg) || HOME_GUARANTEE.centres.some((n) => (s.lga || '').startsWith(n));
+  return metro ? c[0] : c[1];
+}

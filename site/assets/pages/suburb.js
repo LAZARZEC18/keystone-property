@@ -2,7 +2,7 @@ import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wire
 import { baseTiles } from '../map.js';
 import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict } from '../engine.js';
-import { investmentCase, regionStats, COMPONENT_HELP, COMPONENT_NAMES, listingLinks } from '../insights.js';
+import { investmentCase, regionStats, COMPONENT_HELP, COMPONENT_NAMES, listingLinks, scoreVsDeal } from '../insights.js';
 import { STATES } from '../rules.js';
 import { liveListings } from './listings.js';
 import { regionMoves, liveFactor } from '../live.js';
@@ -19,6 +19,9 @@ export default async function suburbPage(main, params) {
   const R = market.regions[s.rg] || {};
   const rstats = regionStats(idx.list, s.rg);
   const ic = investmentCase(s, d, R, rstats, market);
+  // one price everywhere on the page: the typical home moved to today with the index
+  ic.price = Math.round((ic.price * liveFactor(s.rg, index)) / 1000) * 1000;
+  if (ic.rent) ic.yld = (ic.rent * 52 * 100) / ic.price;
   const links = listingLinks(s);
   setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Keystone investor score and full investment case.` });
 
@@ -44,7 +47,9 @@ export default async function suburbPage(main, params) {
 
   const mv = regionMoves(s.rg, index, market);
   const lf = liveFactor(s.rg, index);
-  const g12 = s.g1s === 'region' && mv.year !== null && mv.year !== undefined ? mv.year : s.g1;
+  const g12 = s.g1;
+  const rRent = (R.houseYield && R.medianHouse ? (R.houseYield / 100) * R.medianHouse : (R.yield / 100) * R.medianDwelling * 1.04) / 52;
+  const rYear = mv.year ?? R.annualPct;
   const cApp = approvals?.lga?.[s.lgc];
   const sApp = d.sa2 ? approvals?.sa2?.[d.sa2] : null;
   const analyseUrl = `/analyse?suburb=${s.id}&price=${ic.price}&rent=${ic.rent || ''}&type=${s.pt}`;
@@ -57,7 +62,7 @@ export default async function suburbPage(main, params) {
     <div>
       <h1 style="margin-bottom:6px">${esc(name)} <span class="muted" style="font-size:.5em;font-family:var(--sans)">${s.s} ${s.pc || ''}</span></h1>
       <div class="print-only report-head">Keystone suburb report · ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })} · keystone-au.netlify.app</div>
-      <div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
+      <div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(s.ra || d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
     </div>
     <div class="row">
       <button class="btn ${watched ? 'on' : ''}" id="watch">${watched ? '★ On watchlist' : '☆ Watch'}</button>
@@ -70,11 +75,11 @@ export default async function suburbPage(main, params) {
   <div class="grid g-side section" style="margin-top:20px">
     <div class="card">
       <div class="stats">
-        <div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}` : 'Modelled, Aug 2026'}</span></div>
-        <div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}` : 'Modelled, Aug 2026'}</span></div>
-        <div class="stat"><span class="k">Weekly rent (house / unit)</span><span class="v">${aud(s.rh)} <span class="muted" style="font-size:.6em">/ ${aud(s.ru)}</span></span><span class="s">${d.rs === 'NSW postcode' ? `NSW bond data, ${esc(off.rent?.period || '')}` : 'Census rent scaled to current market rents'}</span></div>
+        <div class="stat"><span class="k">Typical house today ${srcBadge(s.hs)}</span><span class="v">${aud(Math.round((s.h * lf) / 1000) * 1000, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to today` : 'Modelled, moved to today with the index'}</span></div>
+        <div class="stat"><span class="k">Typical unit today ${srcBadge(s.us)}</span><span class="v">${aud(Math.round((s.u * lf) / 1000) * 1000, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to today` : 'Modelled, moved to today with the index'}</span></div>
+        <div class="stat"><span class="k">Weekly rent (house / unit)</span><span class="v">${aud(s.rh)} <span class="muted" style="font-size:.6em">/ ${aud(s.ru)}</span></span><span class="s">${d.rs === 'NSW postcode' ? `NSW bond data, ${esc(off.rent?.period || '')}` : 'Modelled: official NSW bond rents and Census rents, scaled to today'}</span></div>
         <div class="stat"><span class="k">Gross yield (${ic.type})</span><span class="v">${pct(ic.yld, 2)}</span><span class="s">${R.name} average ${pct(R.yield, 1)}</span></div>
-        <div class="stat"><span class="k">12-month change</span><span class="v ${g12 >= 0 ? 'up' : 'down'}">${pct(g12, 1, true)}</span><span class="s">${s.g1s === 'region' ? `${esc(R.name)} ${mv.kind === 'daily' ? 'daily ' : ''}index` : 'official sales'}</span></div>
+        <div class="stat"><span class="k">12-month change</span><span class="v ${g12 >= 0 ? 'up' : 'down'}">${pct(g12, 1, true)}</span><span class="s">${esc(s.g1p || '')}</span></div>
         <div class="stat"><span class="k">${d.cagr ? `Houses a year ${esc(d.cagrY || '')}` : 'Price to income'}</span><span class="v">${d.cagr ? pct(d.cagr, 1, true) : `${s.pti ?? '—'}×`}</span><span class="s">${d.cagr ? 'Valuer-General Victoria' : 'price ÷ household income'}</span></div>
       </div>
     </div>
@@ -89,10 +94,10 @@ export default async function suburbPage(main, params) {
     <div class="card">
       <div class="card-head"><h3>How prices have moved</h3><span class="note">${mv.kind === 'daily' ? `<span class="badge-live">Daily</span> ${date(mv.date)}` : `Month-end ${esc(String(mv.date || ''))}`}</span></div>
       <div class="stats" style="grid-template-columns:repeat(3,1fr)">
-        ${[['Day', mv.day], ['Week', mv.week], ['Month', mv.month], ['Quarter', mv.quarter], ['Year to date', mv.ytd], ['12 months', s.g1s === 'region' ? mv.year : s.g1]].map(([k, v]) => `<div class="stat"><span class="k">${k}</span><span class="v ${v > 0 ? 'up' : v < 0 ? 'down' : ''}" style="font-size:20px">${v === null || v === undefined ? '<span class="faint">—</span>' : pct(v, 2, true)}</span></div>`).join('')}
+        ${[['Day', mv.day], ['Week', mv.week], ['Month', mv.month], ['Quarter', mv.quarter], ['Year to date', mv.ytd], ['12 months', s.g1]].map(([k, v]) => `<div class="stat"><span class="k">${k}</span><span class="v ${v > 0 ? 'up' : v < 0 ? 'down' : ''}" style="font-size:20px">${v === null || v === undefined ? '<span class="faint">—</span>' : pct(v, 2, true)}</span></div>`).join('')}
       </div>
       <div class="hr"></div>
-      <div class="kv"><span>Typical ${ic.type} today (live estimate)</span><span>${aud(Math.round((ic.price * lf) / 1000) * 1000)}</span><span>Change since 31 Aug 2026</span><span class="${lf >= 1 ? 'up' : 'down'}">${aud(Math.round(ic.price * (lf - 1)), { compact: true })} (${pct((lf - 1) * 100, 2, true)})</span></div>
+      <div class="kv"><span>Index change since the 31 Aug estimates</span><span class="${lf >= 1 ? 'up' : 'down'}">${pct((lf - 1) * 100, 2, true)} (${aud(Math.round(ic.price * (lf - 1)), { compact: true })} on a typical ${ic.type}, already in the prices above)</span></div>
       <p class="fine" style="margin-top:8px">Short-term moves follow the ${esc(R.name || '')} ${mv.kind === 'daily' ? 'Cotality daily index' : 'monthly index'}${s.g1s === 'region' ? '' : '; the 12-month figure is from official suburb sales'}. Individual suburbs can move differently.</p>
     </div>
     <div class="card">
@@ -119,8 +124,9 @@ export default async function suburbPage(main, params) {
       <h3 style="font-size:16px;margin-top:14px">Best suited to</h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.suits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
     </div>
     <div class="card">
-      <div class="card-head"><h3>What a typical ${ic.type} here would do for you</h3><span class="pill">Grade ${qv.grade}</span></div>
+      <div class="card-head"><h3>What a typical ${ic.type} here would do for you</h3><span class="pill">Deal rating ${qv.grade}</span></div>
       <div class="verdict"><div class="grade grade-${qv.grade}">${qv.grade}</div><div><div style="font-family:var(--serif);font-size:22px;font-weight:600">${qv.label}</div><p class="note" style="margin:4px 0 0">${aud(ic.price)} purchase, 20% deposit, ${pct(quick.input.ratePct, 2)} investor P&amp;I loan, $120k salary, ${quick.input.growth}% a year growth, sold after 10 years.</p></div></div>
+      ${scoreVsDeal(scores.balanced, qv.grade)}
       <div class="kv" style="margin-top:14px">
         <span>Cash needed up front</span><span>${aud(quick.upfront.total)}</span>
         <span>Stamp duty (investor)</span><span>${aud(quick.upfront.duty)}</span>
@@ -184,12 +190,12 @@ export default async function suburbPage(main, params) {
     <div class="card">
       <h3>${esc(name)} vs ${esc(R.name || 'region')}</h3>
       <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">${esc(name)}</th><th class="n">${esc(R.name || '')}</th></tr></thead><tbody>
-        <tr><td>Typical house</td><td class="n">${aud(s.h, { compact: true })}</td><td class="n">${aud(R.medianHouse || R.medianDwelling, { compact: true })}</td></tr>
-        <tr><td>Typical unit</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${aud(R.medianUnit, { compact: true })}</td></tr>
-        <tr><td>House rent</td><td class="n">${aud(s.rh)}</td><td class="n">${aud(R.rentHouse)}</td></tr>
+        <tr><td>Typical house today</td><td class="n">${aud(s.h * lf, { compact: true })}</td><td class="n">${aud((R.medianHouse || R.medianDwelling) * lf, { compact: true })}</td></tr>
+        <tr><td>Typical unit today</td><td class="n">${aud(s.u * lf, { compact: true })}</td><td class="n">${R.medianUnit ? aud(R.medianUnit * lf, { compact: true }) : '—'}</td></tr>
+        <tr><td>Typical house rent</td><td class="n">${aud(s.rh)}</td><td class="n">${aud(Math.round(rRent / 5) * 5)}</td></tr>
         <tr><td>Gross yield</td><td class="n">${pct(ic.yld, 2)}</td><td class="n">${pct(R.yield, 1)}</td></tr>
-        <tr><td>12-month change</td><td class="n">${growth12(s, { suffix: '', short: true })}</td><td class="n">${pct(R.annualPct, 1, true)}</td></tr>
-        <tr><td>Vacancy</td><td class="n">—</td><td class="n">${pct(R.vacancy, 1)}</td></tr>
+        <tr><td>12-month change</td><td class="n">${growth12(s, { suffix: '', short: true })}</td><td class="n">${pct(rYear, 1, true)}</td></tr>
+        <tr><td>Vacancy (city-wide, SQM)</td><td class="n">—</td><td class="n">${pct(R.vacancy, 1)}</td></tr>
         <tr><td>Days on market</td><td class="n">—</td><td class="n">${R.dom ?? '—'}</td></tr>
       </tbody></table></div>
       ${Object.keys(off).length ? `<h3 style="font-size:16px;margin-top:16px">Official data</h3><div class="kv">${off.house ? `<span>House median (${esc(off.house.period)})</span><span>${aud(off.house.median)}</span>` : ''}${off.house?.medianYearAgo ? `<span>A year earlier</span><span>${aud(off.house.medianYearAgo)}</span>` : ''}${off.house?.annualPct !== undefined ? `<span>Annual change</span><span>${pct(off.house.annualPct, 1, true)}</span>` : ''}${off.house?.sales ? `<span>Sales in period</span><span>${Math.round(off.house.sales)}</span>` : ''}${off.unit ? `<span>Unit median (${esc(off.unit.period)})</span><span>${aud(off.unit.median)}</span>` : ''}${off.rent?.all ? `<span>Median new bond rent (${esc(off.rent.period)})</span><span>${aud(off.rent.all)}/wk</span>` : ''}${off.rent?.bonds ? `<span>New bonds lodged</span><span>${num(off.rent.bonds)}</span>` : ''}</div><p class="fine" style="margin-top:6px">${off.house?.source === 'NSW' || off.rent ? 'NSW figures cover the whole postcode. ' : ''}Sources: ${[off.house?.source, off.unit?.source, off.rent?.source].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map((x) => ({ VIC: 'Valuer-General Victoria', SA: 'Land Services SA', NSW: 'NSW DCJ Rent and Sales Report' })[x]).join(', ')}.</p>` : ''}
@@ -206,6 +212,7 @@ export default async function suburbPage(main, params) {
       <a class="btn" href="${links.reaRent}" target="_blank" rel="noopener">For rent</a>
       <a class="btn ghost" href="${links.domainProfile}" target="_blank" rel="noopener">Domain suburb profile</a>
     </div>
+    <div id="livemap" class="map short" hidden style="margin-top:16px"></div>
     <div id="live" style="margin-top:16px"></div>
   </section>
 
@@ -231,7 +238,7 @@ export default async function suburbPage(main, params) {
     e.currentTarget.textContent = on ? '★ On watchlist' : '☆ Watch';
   });
   wireCharts(main, (v) => aud(v, { compact: true }), (v) => new Date(v).getFullYear());
-  liveListings(main.querySelector('#live'), s, { compact: true });
+  liveListings(main.querySelector('#live'), s, { compact: true, mapEl: main.querySelector('#livemap') });
 
   let map = null;
   const drawMap = () => {

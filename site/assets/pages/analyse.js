@@ -87,6 +87,10 @@ export default async function analysePage(main, _p, query) {
           ${field('a-income', 'Your taxable income ($/yr)', st.income, 'type="number" step="1"', 'Before this property')}
           <label class="field">Buyer<select id="a-buyer"><option value="investor">Investor</option><option value="owner" ${st.buyer === 'owner' ? 'selected' : ''}>Owner-occupier</option><option value="fhb" ${st.buyer === 'fhb' ? 'selected' : ''}>First home buyer</option></select><span class="help">Changes stamp duty only</span></label>
           ${field('a-date', 'Contract date', st.purchaseDate, 'type="date"')}
+          <label class="field">Owners<select id="a-owners"><option value="1">Just me</option><option value="2" ${+query.owners === 2 ? 'selected' : ''}>Two people</option></select></label>
+          ${field('a-share', 'Your share (%)', +query.share || 50, 'type="number" min="1" max="99" step="1"', 'Two owners only')}
+          ${field('a-income2', "Other owner's income ($/yr)", +query.income2 || 80000, 'type="number" step="1"', 'Two owners only')}
+          ${field('a-otherland', 'Other investment land you own in this state ($ land value)', +query.otherland || 0, 'type="number" step="1"', 'For land tax: holdings are added together')}
         </div>
       </div>
       <div class="card" style="margin-top:16px">
@@ -114,7 +118,10 @@ export default async function analysePage(main, _p, query) {
       deposit: +v('#a-dep') / 100, ratePct: +v('#a-rate'), interestOnly: v('#a-io') === '1', years: +v('#a-term'),
       income: +v('#a-income'), buyer: v('#a-buyer'), purchaseDate: v('#a-date'), growth: +v('#a-growth'), rentGrowth: +v('#a-rg'),
       vacancyWeeks: +v('#a-vac'), mgmtPct: +v('#a-mgmt'), hold: Math.max(1, Math.min(30, +v('#a-hold') || 10)), cpi: +v('#a-cpi'),
+      otherLandValue: +v('#a-otherland') || 0,
     });
+    const share = Math.max(1, Math.min(99, +v('#a-share') || 50)) / 100;
+    st.owners = v('#a-owners') === '2' ? [{ share, income: st.income }, { share: 1 - share, income: +v('#a-income2') || 0 }] : null;
     st.landValuePct = st.type === 'u' ? 0.25 : 0.55;
     st.maintenancePct = st.type === 'u' ? 1.5 : 1.2;
     st.insurance = st.type === 'u' ? 600 : 1800;
@@ -140,6 +147,12 @@ export default async function analysePage(main, _p, query) {
       'new-build': 'New build: keeps negative gearing and can choose the 50% CGT discount or indexation when sold.',
     }[s.negativeGearing];
     const url = new URLSearchParams({ state: st.state, price: st.price, rent: st.weeklyRent, type: st.type, new: st.newBuild ? 1 : 0, dep: Math.round(st.deposit * 100), rate: st.ratePct, income: st.income, growth: st.growth, hold: st.hold, date: st.purchaseDate });
+    if (st.owners) {
+      url.set('owners', 2);
+      url.set('share', Math.round(st.owners[0].share * 100));
+      url.set('income2', st.owners[1].income);
+    }
+    if (st.otherLandValue) url.set('otherland', st.otherLandValue);
     if (sub) url.set('suburb', sub.id);
     if (st.addr) url.set('addr', st.addr);
     history.replaceState(null, '', `/analyse?${url}`);
@@ -169,7 +182,7 @@ export default async function analysePage(main, _p, query) {
       <div class="grid g4" style="margin-top:16px">
         <div class="card"><div class="stat"><span class="k">Cash needed up front</span><span class="v">${aud(r.upfront.total, { compact: true })}</span><span class="s">Loan ${aud(s.loan, { compact: true })} · LVR ${s.lvr}%</span></div></div>
         <div class="card"><div class="stat"><span class="k">Weekly, year 1 after tax</span><span class="v ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${aud(s.weeklyCashAfterTax)}</span><span class="s">Year 3: ${aud(y3.cashAfterTax / 52)}/wk</span></div></div>
-        <div class="card"><div class="stat"><span class="k">After-tax return (IRR)</span><span class="v">${pct(s.irr, 1)}</span><span class="s">on your cash, ${st.hold} years</span></div></div>
+        <div class="card"><div class="stat"><span class="k">After-tax return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(s.irr, 1)}</span><span class="s">on your cash, ${st.hold} years</span></div></div>
         <div class="card"><div class="stat"><span class="k">Profit after sale and tax</span><span class="v ${s.totalProfit >= 0 ? 'up' : 'down'}">${aud(s.totalProfit, { compact: true })}</span><span class="s">Equity ${aud(s.equityAtSale, { compact: true })}</span></div></div>
       </div>
 
@@ -215,12 +228,12 @@ export default async function analysePage(main, _p, query) {
             <span>Loan repaid</span><span>-${aud(r.sale.balance)}</span>
             <span class="tot">Cash in hand at sale</span><span class="tot">${aud(s.saleProceeds)}</span>
           </div>
-          <p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.</p>
+          <p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Keystone models the law as passed and will update if the detail changes.</p>
         </div>
         <div class="card"><h3>Scenarios</h3>
           <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">Bear</th><th class="n">Base</th><th class="n">Bull</th></tr></thead><tbody>
             <tr><td>Growth / rent growth</td>${Object.values(SCEN).map((o) => `<td class="n">${o.growth}% / ${o.rentGrowth}%</td>`).join('')}</tr>
-            <tr><td>After-tax return (IRR)</td>${Object.values(scen).map((x) => `<td class="n">${pct(x.irr, 1)}</td>`).join('')}</tr>
+            <tr><td>After-tax return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</td>${Object.values(scen).map((x) => `<td class="n">${pct(x.irr, 1)}</td>`).join('')}</tr>
             <tr><td>Profit after tax</td>${Object.values(scen).map((x) => `<td class="n ${x.totalProfit >= 0 ? 'up' : 'down'}">${aud(x.totalProfit, { compact: true })}</td>`).join('')}</tr>
             <tr><td>Equity at sale</td>${Object.values(scen).map((x) => `<td class="n">${aud(x.equityAtSale, { compact: true })}</td>`).join('')}</tr>
           </tbody></table></div>
@@ -231,7 +244,7 @@ export default async function analysePage(main, _p, query) {
           <p class="note" style="margin-top:10px">Lenders test your repayments at ${pct(bp.assessRate, 2)} (rate + 3 points). On a ${aud(st.income, { compact: true })} income with this rent, a lender might lend up to about <b>${aud(bp.amount, { compact: true })}</b> in total. <a href="/borrowing" data-link>Borrowing power calculator →</a></p>
         </div>
       </div>
-      <p class="fine" style="margin-top:14px">General information, not advice. Assumes a single owner who is an Australian tax resident, the 2026-27 tax rates, and building depreciation at 2.5% of an estimated construction cost${st.newBuild ? ' plus plant and equipment for a new build' : ''}. Rules checked ${date(RULES.asOf)}: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a>, <a href="${r.duty.source}" target="_blank" rel="noopener">${esc(st.state)} revenue office</a>.</p>`;
+      <p class="fine" style="margin-top:14px">General information, not advice. Assumes ${st.owners ? `two individual owners (${Math.round(st.owners[0].share * 100)}/${Math.round(st.owners[1].share * 100)})` : 'one individual owner'} who ${st.owners ? 'are' : 'is an'} Australian tax resident${st.owners ? 's' : ''}; trusts, companies and self-managed super funds are taxed differently (and since 10 August 2026 an SMSF can't take out new borrowing to buy residential property). It uses the 2026-27 tax rates, and building depreciation at 2.5% of an estimated construction cost${st.newBuild ? ' plus plant and equipment for a new build' : ''}. Rules checked ${date(RULES.asOf)}: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a>, <a href="${r.duty.source}" target="_blank" rel="noopener">${esc(st.state)} revenue office</a>.</p>`;
     $('#out').querySelectorAll('.chart').forEach((f) => (f.dataset.xfmt = 'year'));
     wireCharts($('#out'), (x) => aud(x, { compact: true }));
   }
