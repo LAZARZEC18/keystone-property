@@ -15,7 +15,7 @@ const PAGES = {
   '/': ['Australian property values, suburbs and rates for home buyers and investors', 'Value any Australian home, compare 11,000 suburbs, see what you can afford (including the 5% Deposit Scheme), track live home values and compare every home loan rate.'],
   '/afford': ['What can I afford? Your buying ceiling in every state', 'Enter your savings and income to see the most you can pay in every state, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
   '/property': ['What is this property worth? Address valuation', 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.'],
-  '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keystone ranks every matching suburb.'],
+  '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keyzing ranks every matching suburb.'],
   '/map': ['Highest-scoring suburbs in Australia: map', 'Every Australian suburb scored on yield, growth, demand, affordability and stability, on one map, with how much of each score is measured.'],
   '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank 11,000 Australian suburbs by price, rent, yield, growth, demand and risk.'],
   '/analyse': ['Investment property analyser with the 2026 tax rules', 'Stamp duty, LMI, land tax, depreciation and a 10-year after-tax cash flow and return for any Australian property, including the 2026 negative gearing and CGT changes.'],
@@ -28,14 +28,14 @@ const PAGES = {
   '/news': ['Australian housing news', 'Headlines on prices, rates, rents and housing policy from Australian publishers.'],
   '/guide': ['How to buy property in Australia: first home and investment guide (2026)', 'The whole process in order for first home buyers and investors: schemes and grants, stamp duty by state, finance, the 2026 tax changes and every cost.'],
   '/first-home': ['First home tools: rent vs buy, savings planner and FHSS calculator', 'How long it will take to save a deposit, whether buying beats renting, and how much the First Home Super Saver scheme adds.'],
-  '/why': ['Why Keystone: what it does for home buyers and investors', 'How Keystone helps first home buyers, upgraders and investors find, value and pay for the right property, and how it differs from listing portals, paid data tools and rate comparison sites.'],
+  '/why': ['Why Keyzing: what it does for home buyers and investors', 'How Keyzing helps first home buyers, upgraders and investors find, value and pay for the right property, and how it differs from listing portals, paid data tools and rate comparison sites.'],
   '/compare': ['Compare suburbs side by side', 'Compare up to four Australian suburbs on price, rent, yield, growth and risk.'],
-  '/watchlist': ['Your suburb watchlist', 'Suburbs you have saved on Keystone.'],
-  '/methodology': ['Data sources and methodology', 'Where every Keystone figure comes from, how the price and rent models work, and their measured error.'],
-  '/about': ['About Keystone', 'Independent Australian property research for home buyers and investors.'],
-  '/contact': ['Contact Keystone', 'Questions, corrections and partnership enquiries.'],
-  '/privacy': ['Privacy policy', 'What Keystone collects, why, and what it does with it.'],
-  '/terms': ['Terms of use', 'The terms for using Keystone.'],
+  '/watchlist': ['Your suburb watchlist', 'Suburbs you have saved on Keyzing.'],
+  '/methodology': ['Data sources and methodology', 'Where every Keyzing figure comes from, how the price and rent models work, and their measured error.'],
+  '/about': ['About Keyzing', 'Independent Australian property research for home buyers and investors.'],
+  '/contact': ['Contact Keyzing', 'Questions, corrections and partnership enquiries.'],
+  '/privacy': ['Privacy policy', 'What Keyzing collects, why, and what it does with it.'],
+  '/terms': ['Terms of use', 'The terms for using Keyzing.'],
 };
 const NOINDEX = new Set(['/compare', '/watchlist']);
 
@@ -113,7 +113,7 @@ export function describe(pathname, search, ix, origin) {
   const canonical = `${origin}${path === '/' ? '/' : path}`;
   const base = { status: 200, canonical, robots: 'index,follow', jsonld: [], body: null, image: `${origin}/assets/og.png` };
   if (!ROUTES.some((re) => re.test(path))) {
-    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Keystone.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
+    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Keyzing.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
   }
   const q = new URLSearchParams(search);
   let m = path.match(/^\/suburb\/([a-z]+\/[a-z0-9-]+)$/);
@@ -130,7 +130,7 @@ export function describe(pathname, search, ix, origin) {
     const lgaSlug = s.lga ? `${s.s.toLowerCase()}/${slugify(s.lga)}` : null;
     const body = `<article class="ssr"><div class="crumbs"><a href="/suburbs?state=${s.s}">${esc(STATE_NAMES[s.s] || s.s)}</a> › ${lgaSlug ? `<a href="/council/${lgaSlug}">${esc(s.lga)}</a> › ` : ''}${s.pc ? `<a href="/postcode/${s.pc}">${s.pc}</a>` : ''}</div>
 <h1>${esc(s.name)} ${s.s} ${esc(s.pc || '')}</h1>
-<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)} and the typical unit about ${money(s.u)}. Typical rents are about $${s.rh ?? '—'} a week for a house and $${s.ru ?? '—'} for a unit, a gross yield of about ${pct(s.y, 1)} on a house. Over the past year values changed about ${pct(s.g1, 1, true)}${String(s.g1s).startsWith('region') ? ` (${esc(R.name || 'regional')} figure)` : ''}. Keystone suburb score: ${s.score ?? '—'}/100.</p>
+<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)} and the typical unit about ${money(s.u)}. Typical rents are about $${s.rh ?? '—'} a week for a house and $${s.ru ?? '—'} for a unit, a gross yield of about ${pct(s.y, 1)} on a house. Over the past year values changed about ${pct(s.g1, 1, true)}${String(s.g1s).startsWith('region') ? ` (${esc(R.name || 'regional')} figure)` : ''}. Keyzing suburb score: ${s.score ?? '—'}/100.</p>
 <ul><li>Price data: ${s.hs === 'model' ? 'modelled (no official suburb sales series)' : 'official government sales'}</li><li>${s.cbd != null ? `${Math.round(s.cbd)} km from the city centre` : 'Regional'}${s.ocn != null ? `, ${Number(s.ocn).toFixed(1)} km from the ocean` : ''}</li></ul>
 <h2>Nearby suburbs</h2><ul>${near.map((x) => `<li><a href="/suburb/${x.slug}">${esc(x.name)} ${x.s} ${esc(x.pc || '')}</a>: typical ${x.pt === 'u' ? 'unit' : 'house'} ${money(x.pt === 'u' ? x.u : x.h)}</li>`).join('')}</ul></article>`;
     const jsonld = [
@@ -158,18 +158,19 @@ export function describe(pathname, search, ix, origin) {
     if (!list.length) return { ...base, status: 404, robots: 'noindex', title: 'Council not found', description: 'No council area matches this address.', body: '<div class="empty"><h1>Council not found</h1></div>' };
     const lga = list[0].lga;
     const title = `${lga} council area: suburbs, house prices, rents and scores`;
-    const description = `${list.length} suburbs in ${lga} (${list[0].s}), with typical prices, rents, yields and Keystone suburb scores.`;
+    const description = `${list.length} suburbs in ${lga} (${list[0].s}), with typical prices, rents, yields and Keyzing suburb scores.`;
     const body = `<article class="ssr"><h1>${esc(lga)}</h1><ul>${list.slice(0, 60).map((x) => `<li><a href="/suburb/${x.slug}">${esc(x.name)} ${esc(x.pc || '')}</a>: typical house ${money(x.h)}, score ${x.score ?? '—'}</li>`).join('')}</ul></article>`;
     return { ...base, title, description, body };
   }
-  const page = PAGES[path] || PAGES[path.replace(/^\/listings$/, '/property')] || ['Keystone', PAGES['/'][1]];
+  const page = PAGES[path] || PAGES[path.replace(/^\/listings$/, '/property')] || ['Keyzing', PAGES['/'][1]];
   let [title, description] = page;
   let robots = NOINDEX.has(path) || [...q.keys()].some((k) => ['q', 'price', 'savings', 'income', 'ids', 'asking'].includes(k)) ? 'noindex,follow' : 'index,follow';
   if (path === '/listings') robots = 'noindex,follow';
   const jsonld =
     path === '/'
       ? [
-          { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Keystone', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
+          { '@context': 'https://schema.org', '@type': 'Organization', name: 'Keyzing', url: `${origin}/`, email: 'Keyzing18@gmail.com', logo: `${origin}/assets/keystone.svg`, address: { '@type': 'PostalAddress', addressLocality: 'Perth', addressRegion: 'WA', addressCountry: 'AU' } },
+          { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Keyzing', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
         ]
       : [];
   const body = path === '/' ? null : `<article class="ssr"><h1>${esc(title)}</h1><p>${esc(description)}</p></article>`;
@@ -178,12 +179,12 @@ export function describe(pathname, search, ix, origin) {
 
 /** Rewrite the app shell for one URL. */
 export function renderHtml(html, meta) {
-  const full = meta.title === 'Keystone' ? 'Keystone' : `${meta.title} · Keystone`;
+  const full = meta.title === 'Keyzing' ? 'Keyzing' : `${meta.title} · Keyzing`;
   const tags = [
     `<link rel="canonical" href="${esc(meta.canonical)}">`,
     `<meta name="robots" content="${meta.robots}">`,
     `<meta property="og:type" content="website">`,
-    `<meta property="og:site_name" content="Keystone">`,
+    `<meta property="og:site_name" content="Keyzing">`,
     `<meta property="og:title" content="${esc(meta.title)}">`,
     `<meta property="og:description" content="${esc(meta.description)}">`,
     `<meta property="og:url" content="${esc(meta.canonical)}">`,

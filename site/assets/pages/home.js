@@ -8,7 +8,7 @@ import { baseTiles } from '../map.js';
 const TABS = { balanced: 'Balanced', growth: 'Growth', cashflow: 'Cash flow', under700: 'Under $700k' };
 
 export default async function home(main) {
-  setMeta({ title: 'Australian property values, ratings and live market data', description: 'Keystone values any Australian home, rates every suburb and any listing as an investment, and tracks prices, rates, approvals and news every hour.' });
+  setMeta({ title: 'Australian property values, ratings and live market data', description: 'Keyzing values any Australian home, rates every suburb and any listing as an investment, and tracks prices, rates, approvals and news every hour.' });
   const [market, rs, rba, news, idx, hd] = await Promise.all([load('market'), load('rates-summary'), load('rba'), load('news'), load('index'), load('home')]);
   const n = market.national;
   const inv = rs.best.INV_PI_variable?.[0];
@@ -61,7 +61,7 @@ export default async function home(main) {
     <div>
       <div class="eyebrow">Australian property intelligence</div>
       <h1>Every property decision, <em>backed by the numbers.</em></h1>
-      <p class="lead">Keystone values any Australian home, rates every suburb and any listing you find, and tracks the market every hour. Official sales, census, approvals and lending data for ${sub.list.length.toLocaleString()} suburbs, in one place, for home buyers and investors.</p>
+      <p class="lead">Keyzing values any Australian home, rates every suburb and any listing you find, and tracks the market every hour. Official sales, census, approvals and lending data for ${sub.list.length.toLocaleString()} suburbs, in one place, for home buyers and investors.</p>
       <form class="hero-search" autocomplete="off" onsubmit="return false">
         <input id="hq" type="search" placeholder="Enter an address, suburb, postcode, or describe what you want" aria-label="Search an address, suburb or postcode, or describe what you're looking for" />
         <div class="ac" id="hac" hidden></div>
@@ -121,9 +121,9 @@ export default async function home(main) {
       .join('')}</div>
     <div class="split-map" style="margin-top:14px">
       <div class="card" style="padding:4px 0 0"><div id="toplist" style="max-height:520px;overflow:auto"></div></div>
-      <div class="card" style="padding:10px"><div id="hmap" class="map"></div><p class="fine" style="margin-top:8px">Top 100 suburbs for the selected strategy, coloured by Keystone Score. Click a dot for the numbers.</p></div>
+      <div class="card" style="padding:10px"><div id="hmap" class="map"></div><p class="fine" style="margin-top:8px">Top 100 suburbs for the selected strategy, coloured by Keyzing Score. Click a dot for the numbers.</p></div>
     </div>
-    <p class="fine" style="margin-top:8px">Keystone Score blends yield, price momentum, growth drivers, rental demand, affordability and stability, less a penalty for concentration risk. Suburbs with 3,000+ residents. <b>Measured</b>, <b>partly measured</b> and <b>modelled</b> show how much of each ranking rests on official sales: outside NSW, Victoria and SA most suburbs are modelled and use their city or regional growth figure. <a href="/methodology" data-link>How it works</a>.</p>
+    <p class="fine" style="margin-top:8px">Keyzing Score blends yield, price momentum, growth drivers, rental demand, affordability and stability, less a penalty for concentration risk. Suburbs with 3,000+ residents. <b>Measured</b>, <b>partly measured</b> and <b>modelled</b> show how much of each ranking rests on official sales: outside NSW, Victoria and SA most suburbs are modelled and use their city or regional growth figure. <a href="/methodology" data-link>How it works</a>.</p>
   </section>
 
   <section class="section">
@@ -164,7 +164,7 @@ export default async function home(main) {
   </section>
 
   <section class="section">
-    <h2>How Keystone rates a property</h2>
+    <h2>How Keyzing rates a property</h2>
     <div class="grid g3 howto">
       <div class="card flat"><span class="step-n">1</span><h3>Official data, kept current</h3><p class="muted">State valuer-general and government sales medians, the ABS Census and building approvals, Cotality's daily index, and RBA and Open Banking lending data.</p></div>
       <div class="card flat"><span class="step-n">2</span><h3>A value for the exact home</h3><p class="muted">A suburb price model (R² 0.75 against official medians) sets the typical value, then each home is adjusted for bedrooms, bathrooms, land, condition and the market's movement since.</p></div>
@@ -184,14 +184,14 @@ export default async function home(main) {
           <label class="field">Suburbs I'm watching<input name="suburbs" placeholder="e.g. Morley 6062"></label>
         </div>
         <input type="hidden" name="consent" value="on">
-        <div class="row" style="margin-top:10px"><button class="btn primary">Register</button><span class="fine" id="hreg-s">By signing up you agree to receive Keystone emails. <a href="/privacy" data-link>Privacy</a>.</span></div>
+        <div class="row" style="margin-top:10px"><button class="btn primary">Register</button><span class="fine" id="hreg-s">By signing up you agree to receive Keyzing emails. <a href="/privacy" data-link>Privacy</a>.</span></div>
       </form>
     </div>
   </section>
 
   <section class="section">
     <div class="callout">
-      <b>The 2026 tax changes are law.</b> Established properties bought after 12 May 2026 can offset rental losses against other income only until 30 June 2027; after that, losses carry forward. From 1 July 2027 the 50% CGT discount is replaced by indexation plus a 30% minimum tax. New builds keep both. Every valuation and analysis on Keystone models this. <a href="/guide#tax-2026" data-link>What it means →</a>
+      <b>The 2026 tax changes are law.</b> Established properties bought after 12 May 2026 can offset rental losses against other income only until 30 June 2027; after that, losses carry forward. From 1 July 2027 the 50% CGT discount is replaced by indexation plus a 30% minimum tax. New builds keep both. Every valuation and analysis on Keyzing models this. <a href="/guide#tax-2026" data-link>What it means →</a>
     </div>
   </section>`;
 

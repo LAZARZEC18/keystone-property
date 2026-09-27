@@ -25,7 +25,7 @@ export default async function livePage(main) {
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow"><span class="badge-live">Live</span> · updated ${ago(idx.updated)}</div>
   <h1>The market, today</h1>
-  <p>Daily home value moves from Cotality's Daily Home Value Index for Sydney, Melbourne, Brisbane, Adelaide and Perth, plus month-end figures for every other market. Index date: <b>${date(idx.generated)}</b>. Keystone checks for new data every hour.</p></div>
+  <p>Daily home value moves from Cotality's Daily Home Value Index for Sydney, Melbourne, Brisbane, Adelaide and Perth, plus month-end figures for every other market. Index date: <b>${date(idx.generated)}</b>. Keyzing checks for new data every hour.</p></div>
 
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">5-capital index, this week</span><span class="v ${cls(cap5.week)}">${pct(cap5.week, 2, true)}</span><span class="s">Month ${pct(cap5.month, 2, true)} · YTD ${pct(cap5.ytd, 2, true)} · year ${pct(cap5.year, 2, true)}</span></div></div>
@@ -53,11 +53,11 @@ export default async function livePage(main) {
   </section>
 
   <section class="section grid g2">
-    <div class="card"><h3>Mortgage rates, tracked daily</h3>${rateSeries ? lineChart(rateSeries, { height: 220, yFmt: (v) => `${v.toFixed(2)}%` }) : `<p class="note">Keystone started logging the lowest advertised rate every day on ${date(rh[0]?.d || new Date().toISOString())}. The chart fills in as days pass. Right now: lowest investor variable <b>${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</b>, median <b>${pct(rs.medianInvestorVariable, 2)}</b>.</p>`}
+    <div class="card"><h3>Mortgage rates, tracked daily</h3>${rateSeries ? lineChart(rateSeries, { height: 220, yFmt: (v) => `${v.toFixed(2)}%` }) : `<p class="note">Keyzing started logging the lowest advertised rate every day on ${date(rh[0]?.d || new Date().toISOString())}. The chart fills in as days pass. Right now: lowest investor variable <b>${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</b>, median <b>${pct(rs.medianInvestorVariable, 2)}</b>.</p>`}
       <a href="/rates" data-link>Compare every rate →</a></div>
     <div class="card"><h3>Week by week</h3>
       ${weekly.length ? `<div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">5-capital week</th><th class="n">Perth</th><th class="n">Sydney</th><th class="n">Lowest inv. rate</th></tr></thead><tbody>${[...weekly].reverse().slice(0, 12).map((x) => `<tr><td>${date(x.week)}</td>${cell(x.index.CAP5?.week)}${cell(x.index.PER?.week)}${cell(x.index.SYD?.week)}<td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>` : ''}
-      <p class="note" style="margin-top:8px">Keystone saves a snapshot every week so you can see the trend build up. <a href="/weekly" data-link>Weekly market report →</a></p></div>
+      <p class="note" style="margin-top:8px">Keyzing saves a snapshot every week so you can see the trend build up. <a href="/weekly" data-link>Weekly market report →</a></p></div>
   </section>`;
   wireCharts(main, (v) => v.toFixed(2));
 }

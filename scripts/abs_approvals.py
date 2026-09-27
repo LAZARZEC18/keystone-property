@@ -18,7 +18,7 @@ OUT = os.path.join(ROOT, 'site', 'data', 'approvals.json')
 MARK = os.path.join(ROOT, 'data', 'history', 'approvals-release.txt')
 BASE = 'https://www.abs.gov.au'
 LATEST = BASE + '/statistics/industry/building-and-construction/building-approvals-australia/latest-release'
-UA = {'User-Agent': 'Mozilla/5.0 (KeystoneBot; +https://github.com/LAZARZEC18/keystone-property)'}
+UA = {'User-Agent': 'Mozilla/5.0 (KeyzingBot; +https://github.com/LAZARZEC18/keystone-property)'}
 STATE_TABLE = {'NSW': '8731001', 'VIC': '8731002', 'QLD': '8731003', 'SA': '8731004', 'WA': '8731005', 'AUS': '8731006'}
 STATE_NAMES = {'New South Wales': 'NSW', 'Victoria': 'VIC', 'Queensland': 'QLD', 'South Australia': 'SA', 'Western Australia': 'WA',
                'Tasmania': 'TAS', 'Northern Territory': 'NT', 'Australian Capital Territory': 'ACT', 'Australia': 'AUS'}

@@ -22,7 +22,7 @@ const json = (body, status = 200) =>
 
 async function liveIndex(req) {
   const [feedRes, stored] = await Promise.all([
-    fetch(FEED, { signal: AbortSignal.timeout(8000), headers: { 'user-agent': 'KeystoneBot/1.0 (+https://keystone-au.netlify.app)' } }),
+    fetch(FEED, { signal: AbortSignal.timeout(8000), headers: { 'user-agent': 'KeyzingBot/1.0 (+https://keystone-au.netlify.app)' } }),
     fetch(new URL('/data/index.json', req.url), { signal: AbortSignal.timeout(5000) }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
   ]);
   if (!feedRes.ok) throw new Error(`index feed ${feedRes.status}`);

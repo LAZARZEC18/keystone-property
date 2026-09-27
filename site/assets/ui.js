@@ -45,7 +45,7 @@ export const scoreBadge = (v, big = false) => `<span class="score ${scoreClass(v
 
 export function srcBadge(src) {
   if (!src) return '';
-  if (src === 'model') return '<span class="tag tag-model" title="Keystone estimate: calibrated model anchored to current regional medians">Estimate</span>';
+  if (src === 'model') return '<span class="tag tag-model" title="Keyzing estimate: calibrated model anchored to current regional medians">Estimate</span>';
   if (src === 'region') return '<span class="tag tag-model" title="Regional figure (Cotality)">Region</span>';
   const pc = src.includes('postcode');
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
@@ -194,7 +194,7 @@ export function spark(points, { w = 110, h = 28 } = {}) {
 }
 
 export function setMeta({ title, description }) {
-  document.title = title ? `${title} · Keystone` : 'Keystone · Australian property values, suburbs and rates';
+  document.title = title ? `${title} · Keyzing` : 'Keyzing · Australian property values, suburbs and rates';
   const m = document.querySelector('meta[name="description"]');
   if (m && description) m.setAttribute('content', description);
 }

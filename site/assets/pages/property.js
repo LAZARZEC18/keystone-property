@@ -36,7 +36,7 @@ export default async function propertyPage(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Property valuation</div><h1>What is this property worth?</h1>
-  <p>Enter an address. Keystone places it in its suburb and estimates its value from the suburb's sales data and the home's features. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>
+  <p>Enter an address. Keyzing places it in its suburb and estimates its value from the suburb's sales data and the home's features. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>
   <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 7 Russell Street, Morley WA 6062" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
@@ -65,7 +65,7 @@ export default async function propertyPage(main, _p, query) {
       idx.list.filter((x) => !st || x.s === st).map((x) => [haversine(x, g), x]).sort((a, b) => a[0] - b[0])[0]?.[1];
   }
   if (!s) {
-    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Keystone couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Morley WA 6062".</p></div>`;
+    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Keyzing couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Morley WA 6062".</p></div>`;
     return;
   }
   const point = prop?.lat ? { lat: prop.lat, lng: prop.lng } : g && haversine(s, g) < 25 ? { lat: g.lat, lng: g.lng } : { lat: s.lat, lng: s.lng };
@@ -172,7 +172,7 @@ export default async function propertyPage(main, _p, query) {
     const fhbDuty = stampDuty(s.s, price, { buyer: 'fhb', newBuild });
     const head = `
         <div class="spread" style="align-items:flex-start">
-          <div><div class="eyebrow" style="margin:0">${edited ? 'Keystone estimate' : 'Starting estimate: typical home'} · ${date(new Date().toISOString())}</div>
+          <div><div class="eyebrow" style="margin:0">${edited ? 'Keyzing estimate' : 'Starting estimate: typical home'} · ${date(new Date().toISOString())}</div>
           <div class="big-num" style="margin:6px 0">${aud(e.value)}</div>
           <div class="note">Likely range ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })} · ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'}</div></div>
           __BADGE__
@@ -243,7 +243,7 @@ export default async function propertyPage(main, _p, query) {
             <span>Stamp duty (investor)</span><span>${aud(stampDuty(s.s, price).duty)}</span>
             <span>Cash needed at 20% deposit</span><span>${aud(a.upfront.total)}</span>
             <span>${esc(R?.name || '')} this week / past year (daily index)</span><span>${pct(mv.week, 2, true)} / ${pct(mv.year ?? s.g1, 1, true)}</span>
-            <span>Suburb Keystone Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
+            <span>Suburb Keyzing Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
           </div>
         </div>
         <div class="grid g2" style="margin-top:10px;gap:8px 20px"><ul class="pros">${v.reasons.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul><ul class="cons">${v.risks.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
@@ -253,7 +253,7 @@ export default async function propertyPage(main, _p, query) {
     }
 
     // Comparable suburbs nearby for less: similar household incomes (a proxy for the kind of street and buyer),
-    // no weaker on Keystone Score or concentration risk, and cheaper for the same home by 4-20%.
+    // no weaker on Keyzing Score or concentration risk, and cheaper for the same home by 4-20%.
     const inc = (x) => (x.h && x.pti ? x.h / x.pti : null);
     const myInc = inc(s);
     const myScore = suburbScore(s.sc);

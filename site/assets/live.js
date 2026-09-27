@@ -1,7 +1,7 @@
 // Shared helpers for live index-based moves.
 export const DAILY = { SYD: 'SYD', MEL: 'MEL', BNE: 'BNEGC', ADL: 'ADL', PER: 'PER' };
 
-/** Index change for a Keystone region: daily feed for 5 capitals, monthly for the other 3, Cotality monthly for regions. */
+/** Index change for a Keyzing region: daily feed for 5 capitals, monthly for the other 3, Cotality monthly for regions. */
 export function regionMoves(rg, idx, market) {
   const d = DAILY[rg] ? idx.daily[DAILY[rg]] : null;
   const R = market.regions[rg] || {};

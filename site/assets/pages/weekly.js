@@ -41,11 +41,11 @@ export default async function weeklyPage(main) {
             <label class="field">Suburbs or postcodes I'm watching<input name="suburbs" placeholder="e.g. Morley 6062, Bayswater"></label>
             <label class="field">Budget<input name="budget" placeholder="e.g. $700k"></label>
           </div>
-          <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Keystone updates. I can unsubscribe any time.</label>
+          <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Keyzing updates. I can unsubscribe any time.</label>
           <button class="btn primary" style="margin-top:12px" type="submit">Register</button>
           <p class="note" id="reg-msg" style="margin-top:8px"></p>
         </form>
-        <p class="fine">Your details are stored by Netlify for Keystone only and never sold. <a href="/methodology#privacy" data-link>Privacy</a>.</p>
+        <p class="fine">Your details are stored by Netlify for Keyzing only and never sold. <a href="/methodology#privacy" data-link>Privacy</a>.</p>
       </div>
     </div>
   </div>`;

@@ -41,4 +41,4 @@ createServer(async (req, res) => {
   const body = await readFile(p);
   res.writeHead(200, { 'content-type': TYPES[extname(p)] || 'application/octet-stream', 'cache-control': 'no-cache' });
   res.end(body);
-}).listen(port, () => console.log(`Keystone on http://localhost:${port}`));
+}).listen(port, () => console.log(`Keyzing on http://localhost:${port}`));

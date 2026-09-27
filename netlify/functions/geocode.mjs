@@ -1,6 +1,6 @@
 // Address lookup via OpenStreetMap Nominatim (server-side so we can send an identifying
 // User-Agent and cache results, as Nominatim's usage policy requires). One lookup per search, no autocomplete.
-const UA = 'KeystoneAU/1.0 (+https://keystone-au.netlify.app; property research site)';
+const UA = 'KeyzingAU/1.0 (+https://keystone-au.netlify.app; property research site)';
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {

@@ -1,4 +1,4 @@
-// Keystone tax, duty and lending rules. Every figure is taken from the official source linked in
+// Keyzing tax, duty and lending rules. Every figure is taken from the official source linked in
 // `sources`, checked 26 September 2026. Brackets: [from, base, rate] where duty = base + rate x (value - from).
 // `per100` means the state charges "per $100 or part", so the excess is rounded up to the next $100.
 

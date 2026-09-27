@@ -66,7 +66,7 @@ function search(opts, top) {
 }
 
 export default async function affordPage(main, _p, query) {
-  setMeta({ title: 'What can I afford? Find the best property you can buy', description: 'Enter your deposit and income. Keystone works out your maximum price in every state (stamp duty, LMI, lender buffers) and ranks the best suburbs you can afford.' });
+  setMeta({ title: 'What can I afford? Find the best property you can buy', description: 'Enter your deposit and income. Keyzing works out your maximum price in every state (stamp duty, LMI, lender buffers) and ranks the best suburbs you can afford.' });
   const [{ list }, rs, market, rba] = await Promise.all([suburbs(), load('rates-summary'), load('market'), load('rba')]);
   const lowOO = rs.best.OO_PI_variable?.[0]?.rate || 6;
   const lowInv = rs.best.INV_PI_variable?.[0]?.rate || 6.3;
@@ -77,7 +77,7 @@ export default async function affordPage(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Affordability analyst</div><h1>What can I afford, and where should I buy?</h1>
-  <p>Tell Keystone what you have saved and what you earn. It calculates the most you can pay in every state, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>
+  <p>Tell Keyzing what you have saved and what you earn. It calculates the most you can pay in every state, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>
   <div class="grid" style="grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px" id="aff-grid">
     <form class="card" id="af" onsubmit="return false" style="align-self:start;position:sticky;top:110px">
       <h3>Your situation</h3>
@@ -260,7 +260,7 @@ export default async function affordPage(main, _p, query) {
         .map((r) => `<tr><td>${STATES[r.st]}</td><td class="n"><b>${aud(r.max, { compact: true })}</b></td>${r.s ? `<td class="n">${aud(r.s.loan, { compact: true })}</td><td class="n">${aud(r.s.deposit, { compact: true })}</td><td class="n">${aud(r.s.duty)}</td><td class="n">${aud(r.s.lmi)}</td><td class="n">${aud(r.s.cash, { compact: true })}</td><td class="n">${aud((repayment(r.s.loan, rate, 30) * 12) / 52)}</td>` : '<td colspan="6" class="muted">Not enough for costs</td>'}<td class="n">${(byState[r.st]?.length || 0).toLocaleString()}</td></tr>`)
         .join('')}
       </tbody></table></div>
-      <p class="fine" style="margin-top:8px">Stamp duty ${buyer === 'fhb' ? 'includes first home buyer concessions for established homes' : buyer === 'owner' ? 'uses owner-occupier concessions where they exist' : 'at investor rates'}. ${guarantee ? `5% Deposit Scheme: 5% deposit, no LMI, no income cap, up to the price cap for each area (capital-city caps shown here, e.g. ${aud(HOME_GUARANTEE.caps.WA[0], { compact: true })} in Perth, ${aud(HOME_GUARANTEE.caps.WA[1], { compact: true })} in regional WA). Above the cap Keystone uses a 10% deposit with LMI.` : ''}${f.lvr === 'htb' ? (htb ? ` Help to Buy: the government pays 30% of an existing home (40% of a new one), you need 2% plus duty and costs, no LMI, and you buy its share back over time or repay it on sale (it takes the same share of any gain). Price caps apply (${aud(HELP_TO_BUY.caps.WA[0], { compact: true })} in Perth); above them Keystone uses a 10% deposit with LMI.` : ` Help to Buy isn't available at this income (limit ${aud(couple ? HELP_TO_BUY.income.joint : HELP_TO_BUY.income.single)} ${couple ? 'for couples' : 'for singles'}), so these figures use a 10% deposit with LMI.`) : ''} Includes ${aud(OTHER_COSTS)} for conveyancing, inspections and fees. Take-home pay about ${aud(takeHome)}/wk.</p>
+      <p class="fine" style="margin-top:8px">Stamp duty ${buyer === 'fhb' ? 'includes first home buyer concessions for established homes' : buyer === 'owner' ? 'uses owner-occupier concessions where they exist' : 'at investor rates'}. ${guarantee ? `5% Deposit Scheme: 5% deposit, no LMI, no income cap, up to the price cap for each area (capital-city caps shown here, e.g. ${aud(HOME_GUARANTEE.caps.WA[0], { compact: true })} in Perth, ${aud(HOME_GUARANTEE.caps.WA[1], { compact: true })} in regional WA). Above the cap Keyzing uses a 10% deposit with LMI.` : ''}${f.lvr === 'htb' ? (htb ? ` Help to Buy: the government pays 30% of an existing home (40% of a new one), you need 2% plus duty and costs, no LMI, and you buy its share back over time or repay it on sale (it takes the same share of any gain). Price caps apply (${aud(HELP_TO_BUY.caps.WA[0], { compact: true })} in Perth); above them Keyzing uses a 10% deposit with LMI.` : ` Help to Buy isn't available at this income (limit ${aud(couple ? HELP_TO_BUY.income.joint : HELP_TO_BUY.income.single)} ${couple ? 'for couples' : 'for singles'}), so these figures use a 10% deposit with LMI.`) : ''} Includes ${aud(OTHER_COSTS)} for conveyancing, inspections and fees. Take-home pay about ${aud(takeHome)}/wk.</p>
     </div>
 
     <div class="card" style="margin-top:16px">
@@ -337,7 +337,7 @@ function verdictText({ matches, stateRows, capitals, savings, income, buyer, tak
   if (can.length) s += `Your budget covers a median-priced house in ${can.join(', ')}. `;
   else if (canUnit.length) s += `A median house is out of reach in every capital, but a median unit is within budget in ${canUnit.join(', ')}. `;
   else s += 'Median capital-city prices are above your current ceiling, so the best options are in regional centres and outer suburbs. ';
-  if (top) s += `The strongest suburb you can afford ${live ? 'to live in' : 'on this strategy'} is ${cleanName(top.s.n)} (${top.s.s}), a ${top.t === 'u' ? 'unit' : 'house'} at about ${aud(top.price, { compact: true })}${live ? `, the best match for living in on commute, local economy, services and growth (${top.score}/100)` : ` with a Keystone Score of ${top.score}`}. `;
+  if (top) s += `The strongest suburb you can afford ${live ? 'to live in' : 'on this strategy'} is ${cleanName(top.s.n)} (${top.s.s}), a ${top.t === 'u' ? 'unit' : 'house'} at about ${aud(top.price, { compact: true })}${live ? `, the best match for living in on commute, local economy, services and growth (${top.score}/100)` : ` with a Keyzing Score of ${top.score}`}. `;
   const top1 = [...stateRows].sort((a, b) => b.max - a.max)[0];
   const rep = top1?.s ? (repayment(top1.s.loan, rate, 30) * 12) / 52 : 0;
   if (buyer !== 'investor' && rep > takeHome * 0.4) s += `At your ceiling, repayments of about ${aud(rep)}/wk would be over 40% of your take-home pay, which is mortgage stress. Aim lower for breathing room. `;

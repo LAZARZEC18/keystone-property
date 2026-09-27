@@ -1,4 +1,4 @@
-// Keystone investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
+// Keyzing investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
 
 const ceil100 = (x) => Math.ceil(x / 100) * 100;
@@ -370,7 +370,7 @@ export function IRR(flows) {
 }
 
 /**
- * Keystone verdict: turns the numbers into a plain-English call with the reasons behind it.
+ * Keyzing verdict: turns the numbers into a plain-English call with the reasons behind it.
  * suburb: optional index row (scores, vacancy etc). Returns {grade, label, score, reasons[], risks[]}.
  */
 export function verdict(result, suburb = null, market = null) {
@@ -410,7 +410,7 @@ export function verdict(result, suburb = null, market = null) {
   if (suburb) {
     const sc = suburb.score ?? null;
     if (sc !== null) {
-      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Keystone's suburb fundamentals.`); }
+      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Keyzing's suburb fundamentals.`); }
       else if (sc < 40) { pts -= 6; risks.push(`${suburb.n} scores only ${sc}/100 on suburb fundamentals.`); }
     }
     const reg = market?.regions?.[suburb.rg];
@@ -430,7 +430,7 @@ export function verdict(result, suburb = null, market = null) {
   return { score, grade, label, reasons, risks };
 }
 
-/** Weighted Keystone Score from a suburb's component percentiles. */
+/** Weighted Keyzing Score from a suburb's component percentiles. */
 export const PROFILES = {
   balanced: { cash: 20, momentum: 15, growth: 20, demand: 20, afford: 10, stability: 15 },
   growth: { cash: 5, momentum: 25, growth: 30, demand: 20, afford: 5, stability: 15 },
@@ -467,7 +467,7 @@ export function riskNote(s) {
 }
 
 /**
- * Keystone estimate for one specific home, built up from the suburb's typical price.
+ * Keyzing estimate for one specific home, built up from the suburb's typical price.
  * s: suburb index row (h/u typical prices, bh/bu typical bedrooms, conf)
  * spec: {type:'h'|'u', beds, baths, land (m²), cars, condition:'new'|'renovated'|'average'|'original'|'needs-work', pool, liveFactor}
  * Returns {value, low, high, rent, adjustments:[{label, pct}], basis}

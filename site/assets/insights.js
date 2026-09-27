@@ -42,7 +42,7 @@ export function investmentCase(s, d, region, rs, market) {
   // Momentum
   if (s.g1 !== null && s.g1 !== undefined) {
     const src = String(s.g1s).startsWith('region') ? `${R.name} values (no suburb-level series here)` : 'Values here';
-    if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keystone holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
+    if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keyzing holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
     const per = s.g1p ? `the past year (${s.g1p})` : 'the past year';
     if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over ${per}: strong buyer demand.`);
     else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over ${per}. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
@@ -77,7 +77,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (s.pop < 1500) cons.push(`Small market (${s.pop.toLocaleString()} residents), so there are fewer buyers and tenants and it's harder to sell quickly.`);
   if (['Remote', 'Very Remote'].includes(s.ra || d.ra)) cons.push(`${s.ra || d.ra} area. Remote markets swing with local industry (often mining) and can fall sharply.`);
   if (s.pt === 'u' && (d['fla%'] ?? 0) >= 60) cons.push('Unit-dominated market. Check apartment supply in the pipeline, strata levies and building defects before buying off the plan.');
-  if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Keystone estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
+  if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Keyzing estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
   if (R.dom && R.domYearAgo && R.dom - R.domYearAgo >= 10) cons.push(`Homes in ${R.name} now take ${R.dom} days to sell, up from ${R.domYearAgo} a year ago: the market is cooling.`);
 
   // Who it suits

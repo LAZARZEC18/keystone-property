@@ -7,9 +7,9 @@ Run: python3 scripts/fetch_raw.py   (writes to data/raw/)
 import json, os, re, sys, urllib.request, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.environ.get('KEYSTONE_RAW', os.path.join(ROOT, 'data', 'raw'))
+RAW = os.environ.get('KEYZING_RAW', os.path.join(ROOT, 'data', 'raw'))
 OFFICIAL = os.path.join(ROOT, 'data', 'official')
-UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126 KeystoneBot'}
+UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126 KeyzingBot'}
 ASGS = 'https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/'
 STATIC = {
     '2021_GCP_SAL_for_AUS_short-header.zip': ('https://www.abs.gov.au/census/find-census-data/datapacks/download/2021_GCP_SAL_for_AUS_short-header.zip', 'c21'),

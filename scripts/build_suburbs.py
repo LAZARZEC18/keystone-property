@@ -1,5 +1,5 @@
 """
-Build Keystone's national suburb dataset.
+Build Keyzing's national suburb dataset.
 
 Joins, for every Australian suburb/locality (ABS SAL 2021):
   * geography: centroid, state, postcode, capital-city/regional area, council (LGA 2025), remoteness
@@ -8,7 +8,7 @@ Joins, for every Australian suburb/locality (ABS SAL 2021):
       VIC Valuer-General Victorian Property Sales Report (houses + units, by suburb)
       SA  Land Services SA metropolitan median house sales (by suburb)
       NSW DCJ Rent and Sales Report (sales + bond rents, by postcode)
-  * a Keystone price and rent model calibrated on those official medians, anchored to current
+  * a Keyzing price and rent model calibrated on those official medians, anchored to current
     Cotality regional medians, for every suburb that has no official figure.
 
 Outputs site/data/suburbs.json (national index) and site/data/model.json (fit statistics).
@@ -24,7 +24,7 @@ from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.environ.get('KEYSTONE_RAW', os.path.join(ROOT, 'data', 'raw'))
+RAW = os.environ.get('KEYZING_RAW', os.path.join(ROOT, 'data', 'raw'))
 OUT = os.path.join(ROOT, 'site', 'data')
 OFFICIAL = os.path.join(ROOT, 'data', 'official')  # state sales/rent files, committed so a blocked download never breaks a rebuild
 MARKET = json.load(open(os.path.join(ROOT, 'data', 'market.json')))
@@ -839,7 +839,7 @@ def risk_index(r):
 
 
 def score(rows):
-    """Percentile components (0-100) that the site weights into the Keystone Score.
+    """Percentile components (0-100) that the site weights into the Keyzing Score.
     Higher is always better for the investor."""
     import bisect
     def ranker(key, invert=False, filt=lambda r: True):

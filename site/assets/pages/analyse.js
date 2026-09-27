@@ -49,7 +49,7 @@ export default async function analysePage(main, _p, query) {
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Deal analyser</div><h1>Should you buy it?</h1>
-  <p>Enter a property and Keystone works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and rates the numbers A to D with every reason listed. It is general information, not a recommendation to buy or not buy.</p></div>
+  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and rates the numbers A to D with every reason listed. It is general information, not a recommendation to buy or not buy.</p></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -172,7 +172,7 @@ export default async function analysePage(main, _p, query) {
     $('#out').innerHTML = `
       <div class="card">
         <div class="verdict"><div class="grade grade-${v.grade}">${v.grade}</div>
-          <div><div class="eyebrow" style="margin:0">Keystone rating of the numbers · ${v.score}/100</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
+          <div><div class="eyebrow" style="margin:0">Keyzing rating of the numbers · ${v.score}/100</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
           <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)}</div></div></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
@@ -228,7 +228,7 @@ export default async function analysePage(main, _p, query) {
             <span>Loan repaid</span><span>-${aud(r.sale.balance)}</span>
             <span class="tot">Cash in hand at sale</span><span class="tot">${aud(s.saleProceeds)}</span>
           </div>
-          <p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Keystone models the law as passed and will update if the detail changes.</p>
+          <p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Keyzing models the law as passed and will update if the detail changes.</p>
         </div>
         <div class="card"><h3>Scenarios</h3>
           <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">Bear</th><th class="n">Base</th><th class="n">Bull</th></tr></thead><tbody>

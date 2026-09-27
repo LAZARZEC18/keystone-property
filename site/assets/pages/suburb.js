@@ -23,7 +23,7 @@ export default async function suburbPage(main, params) {
   ic.price = Math.round((ic.price * liveFactor(s.rg, index)) / 1000) * 1000;
   if (ic.rent) ic.yld = (ic.rent * 52 * 100) / ic.price;
   const links = listingLinks(s);
-  setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Keystone investor score and full investment case.` });
+  setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Keyzing investor score and full investment case.` });
 
   const profiles = Object.keys(PROFILES);
   const scores = Object.fromEntries(profiles.map((p) => [p, suburbScore(s.sc, PROFILES[p])]));
@@ -61,7 +61,7 @@ export default async function suburbPage(main, params) {
   <div class="spread" style="align-items:flex-start">
     <div>
       <h1 style="margin-bottom:6px">${esc(name)} <span class="muted" style="font-size:.5em;font-family:var(--sans)">${s.s} ${s.pc || ''}</span></h1>
-      <div class="print-only report-head">Keystone suburb report · ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })} · keystone-au.netlify.app</div>
+      <div class="print-only report-head">Keyzing suburb report · ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })} · keystone-au.netlify.app</div>
       <div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(s.ra || d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
     </div>
     <div class="row">
@@ -85,7 +85,7 @@ export default async function suburbPage(main, params) {
     </div>
     <div class="card" style="display:flex;gap:16px;align-items:center">
       ${scoreBadge(scores.balanced, true)}
-      <div><div class="eyebrow" style="margin:0">Keystone Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 75 ? 'Top-tier fundamentals' : scores.balanced >= 60 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
+      <div><div class="eyebrow" style="margin:0">Keyzing Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 75 ? 'Top-tier fundamentals' : scores.balanced >= 60 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
       <div class="note">Growth ${scores.growth} · Cash flow ${scores.cashflow} · First home ${scores.firsthome}</div></div>
     </div>
   </div>
@@ -228,7 +228,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section">
-    <p class="fine">How these numbers are made: prices marked Estimate come from Keystone's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. In held-out tests it was within 20% of the official median for about ${Math.round(idx.meta.model.holdout?.VIC?.within20pct || 70)}% of suburbs. Treat it as a starting point and check recent sales before you make an offer. <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
+    <p class="fine">How these numbers are made: prices marked Estimate come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. In held-out tests it was within 20% of the official median for about ${Math.round(idx.meta.model.holdout?.VIC?.within20pct || 70)}% of suburbs. Treat it as a starting point and check recent sales before you make an offer. <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());
