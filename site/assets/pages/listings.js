@@ -1,4 +1,4 @@
-import { esc, aud, pct, setMeta, scoreBadge } from '../ui.js';
+import { esc, aud, pct, setMeta, scoreBadge, cashWeek } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load } from '../data.js';
 import { analyse, verdict, suburbScore, valueEstimate } from '../engine.js';
 import { reaSearch } from './find.js';
@@ -40,10 +40,22 @@ export function rateListing(s, it, { market, index, rate }) {
 export function valueCall(asking, est) {
   if (!asking || !est) return null;
   const gap = (asking / est.value - 1) * 100;
-  // Only call a price high or low when it falls outside the estimate's likely range; inside it the estimate can't tell.
-  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, note: 'The asking price is under Keyzing\'s range for this home. Find out why before offering: condition, position, or a seller who needs to move.' };
-  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, note: 'The asking price is over Keyzing\'s range for this home. Check recent sales in the street before offering near it.' };
-  return { key: 'within', label: 'Within the likely range', cls: '', gap, note: 'Inside the estimate\'s range, the estimate can\'t say whether it\'s cheap or dear. Recent sales in the same street will.' };
+  // Outside the range: call it. Inside: say which third it sits in, which is as far as the estimate can go.
+  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, pos: 0, note: 'The asking price is under Keyzing\'s range for this home. Find out why before offering: condition, position, or a seller who needs to move.' };
+  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, pos: 1, note: 'The asking price is over Keyzing\'s range for this home. Check recent sales in the street before offering near it.' };
+  const pos = (asking - est.low) / Math.max(1, est.high - est.low);
+  if (pos < 1 / 3) return { key: 'lower', label: 'In the lower third of the likely range', cls: 'up', gap, pos, note: 'Priced toward the bottom of what similar homes in this suburb are estimated to be worth. Worth a closer look, and worth asking why.' };
+  if (pos > 2 / 3) return { key: 'upper', label: 'In the upper third of the likely range', cls: 'down', gap, pos, note: 'Priced toward the top of the range: it would need better-than-typical features, position or condition to justify it. Compare recent sales in the street.' };
+  return { key: 'within', label: 'In the middle of the likely range', cls: '', gap, pos, note: 'Close to what a typical home with these features is estimated to be worth. Recent sales in the same street will narrow it down.' };
+}
+
+/** Small bar showing where a price sits in the estimate's range. */
+export function rangeBar(asking, est) {
+  if (!asking || !est) return '';
+  const lo = est.low * 0.9;
+  const hi = est.high * 1.1;
+  const x = (v) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
+  return `<div class="range-bar" role="img" aria-label="Asking price position within the estimated range"><span class="rb-band" style="left:${x(est.low)}%;width:${x(est.high) - x(est.low)}%"></span><span class="rb-third" style="left:${x(est.low + (est.high - est.low) / 3)}%"></span><span class="rb-third" style="left:${x(est.low + (2 * (est.high - est.low)) / 3)}%"></span><span class="rb-mark" style="left:${x(asking)}%"></span></div><div class="spread fine"><span>${Math.round(est.low / 1000)}k</span><span>estimate ${Math.round(est.value / 1000)}k</span><span>${Math.round(est.high / 1000)}k</span></div>`;
 }
 
 /** "Rate a listing you've found": address + asking price -> full valuation and grade. */
@@ -108,7 +120,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
         <div class="note">${esc(it.type || '')} · ${it.beds ?? '?'} bed · ${it.baths ?? '?'} bath · ${it.cars ?? 0} car${it.land ? ` · ${it.land} m²` : ''}${it.isNew ? ' · <b>New build</b>' : ''}</div>
         <div style="margin:4px 0"><b class="mono">${esc(it.displayPrice || 'Contact agent')}</b> ${it.agency ? `<span class="muted">· ${esc(it.agency)}</span>` : ''}</div>
         ${est ? `<div class="note">Keyzing value <b>${aud(est.value, { compact: true })}</b> (${aud(est.low, { compact: true })}–${aud(est.high, { compact: true })})${value ? ` · <b class="${value.cls}">${value.label}</b> ${gap >= 0 ? '+' : ''}${gap.toFixed(1)}% vs asking` : ' · no price shown, compare the estimate with the guide'}</div>` : ''}
-        ${a ? `<div class="note">Est. rent ${aud(rent)}/wk · yield ${pct(a.summary.grossYield, 2)} · ${aud(a.summary.weeklyCashAfterTax)}/wk after tax · 10-yr return ${pct(a.summary.irr, 1)}</div>` : rent ? `<div class="note">Est. rent ${aud(rent)}/wk.</div>` : ''}
+        ${a ? `<div class="note">Est. rent ${aud(rent)}/wk · yield ${pct(a.summary.grossYield, 2)} · ${cashWeek(a.summary.weeklyCashAfterTax).toLowerCase()} after tax · 10-yr return ${pct(a.summary.irr, 1)}</div>` : rent ? `<div class="note">Est. rent ${aud(rent)}/wk.</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
         ${v ? `<div class="grade grade-${v.grade}" style="width:48px;height:48px;font-size:24px;border-radius:12px" title="${esc(v.label)}">${v.grade}</div><span class="fine" style="text-align:right">${esc(v.label)}</span>` : ''}

@@ -1,13 +1,13 @@
 // Precomputes the home page's suburb figures (counts, top-ranked lists) into a small file,
 // so the home page doesn't have to download all 11,000 suburbs before it can show anything.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { suburbScore, PROFILES } from '../site/assets/engine.js';
+import { suburbScore, PROFILES, PROFILE_FILTERS } from '../site/assets/engine.js';
 
 const dir = new URL('../site/data/', import.meta.url).pathname;
 const d = JSON.parse(readFileSync(`${dir}suburbs.json`, 'utf8'));
 const rows = d.rows.map((r) => {
   const o = Object.fromEntries(d.cols.map((k, i) => [k, r[i]]));
-  o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0 };
+  o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0, modelled: !(o.conf === 'high' || o.conf === 'medium') };
   return o;
 });
 const keep = ['id', 'n', 's', 'pc', 'rg', 'lat', 'lng', 'pt', 'h', 'u', 'y', 'g1', 'g1s', 'hs', 'conf'];
@@ -38,6 +38,7 @@ const out = {
     balanced: top('balanced'),
     growth: top('growth'),
     cashflow: top('cashflow'),
+    newbuild: top('newbuild', PROFILE_FILTERS.newbuild),
     under700: top('balanced', (s) => (s.pt === 'u' ? s.u : s.h) <= 700000),
   },
 };

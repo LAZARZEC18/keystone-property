@@ -1,13 +1,13 @@
 import { esc, aud, pct, scoreBadge, setMeta, growth12, confBadge } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
-import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
+import { suburbScore, PROFILES, PROFILE_FILTERS, valueEstimate } from '../engine.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
 import { listingLinks } from '../insights.js';
 import { liveListings } from './listings.js';
 import { reaSearch } from './find.js';
 
-const STRATS = { balanced: 'Balanced', growth: 'Capital growth', cashflow: 'Cash flow', firsthome: 'First home' };
+const STRATS = { balanced: 'Balanced', growth: 'Capital growth', cashflow: 'Cash flow', firsthome: 'First home', newbuild: 'New builds' };
 const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
 export default async function topMap(main, _p, query) {
@@ -25,7 +25,7 @@ export default async function topMap(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Suburb scores map</div><h1>Highest-scoring suburbs, on one map</h1>
-  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>valuation</a> and <a href="/analyse" data-link>analyser</a> test the numbers of buying a specific home, which at today's rates are often C or D even in high-scoring suburbs.</p></div>
+  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>valuation</a> and <a href="/analyse" data-link>analyser</a> test the numbers of buying a specific home, which at today's rates often cost their owner money each week even in high-scoring suburbs. The <b>New builds</b> strategy only includes council areas approving at least one new home a year per 100 existing, since new builds keep negative gearing and the CGT discount under the 2026 rules.</p></div>
   <form class="card flat tint" id="mf" onsubmit="return false">
     <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
@@ -59,6 +59,7 @@ export default async function topMap(main, _p, query) {
     const out = [];
     for (const s of list) {
       if (s.pop < st.pop || !inArea(s) || !s.lat) continue;
+      if (PROFILE_FILTERS[st.strategy] && !PROFILE_FILTERS[st.strategy](s)) continue;
       const t = st.type || s.pt;
       const e = valueEstimate(s, { type: t, liveFactor: liveFactor(s.rg, index) });
       if (!e) continue;
@@ -143,7 +144,7 @@ export default async function topMap(main, _p, query) {
     const lines = rows.map((r, i) => [i + 1, `"${cleanName(r.s.n)}"`, r.s.s, r.s.pc, r.v, r.t === 'u' ? 'unit' : 'house', r.e.value, r.e.rent, r.e.yield?.toFixed(2), r.s.g1?.toFixed(1)].join(','));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([[head.join(','), ...lines].join('\n')], { type: 'text/csv' }));
-    a.download = `keystone-best-buys-${st.strategy}.csv`;
+    a.download = `keyzing-top-suburbs-${st.strategy}.csv`;
     a.click();
   });
   form.addEventListener('change', compute);

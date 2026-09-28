@@ -2,12 +2,13 @@ import { esc, aud, pct, ago, setMeta, sortable } from '../ui.js';
 import { rateRows, load } from '../data.js';
 import { repayment } from '../engine.js';
 import { rateWatchCard } from '../ratewatch.js';
+import { membersOnly, notPurchase } from '../rate-rules.js';
 
 const tidy = (n = '') => (n === n.toUpperCase() && /[A-Z]{4}/.test(n) ? n.toLowerCase().replace(/\b([a-z])([a-z]{3,})/g, (_, a, b) => a.toUpperCase() + b).replace(/\b(lvr|p&i|io|smsf|abn)\b/g, (x) => x.toUpperCase()) : n);
 const okUrl = (u) => u && /^https?:/i.test(u) && !/\.pdf(\?|#|$)/i.test(u);
 
 export default async function ratesPage(main, _p, query) {
-  setMeta({ title: 'Best home loan rates in Australia, checked daily', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
+  setMeta({ title: 'Home loan rates in Australia, updated several times a day', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
   const [R, rba, rs] = await Promise.all([rateRows(), load('rba'), load('rates-summary')]);
   const st = {
     purpose: query.purpose || 'INV',
@@ -18,6 +19,7 @@ export default async function ratesPage(main, _p, query) {
     loan: +query.loan || 600000,
     q: '',
     showSpecial: false,
+    showMembers: false,
     showTailored: false,
     sort: 'rate',
     asc: true,
@@ -50,6 +52,7 @@ export default async function ratesPage(main, _p, query) {
     <div class="row" style="margin-top:12px">
       <label class="check"><input type="checkbox" id="r-best" checked> Best rate per lender only</label>
       <label class="check"><input type="checkbox" id="r-special"> Include green, staff and niche loans</label>
+      <label class="check"><input type="checkbox" id="r-members"> Include members-only lenders (police, teachers, health, emergency services)</label>
       <label class="check"><input type="checkbox" id="r-tailored"> Include "tailored" (negotiated) products</label>
     </div>
   </div>
@@ -73,6 +76,8 @@ export default async function ratesPage(main, _p, query) {
         r.type === st.type &&
         (st.type !== 'fixed' || Math.abs(r.term - +st.term) < 0.01) &&
         (st.showSpecial || !r.special) &&
+        (st.showMembers || !membersOnly(r)) &&
+        !notPurchase(r) &&
         (st.showTailored || !r.tailored) &&
         (r.lvrMax === null || r.lvrMax + 1e-9 >= st.lvr) &&
         (r.lvrMin === null || r.lvrMin <= st.lvr + 1e-9) &&
@@ -94,11 +99,12 @@ export default async function ratesPage(main, _p, query) {
       .map((r, i) => {
         const m = repayment(st.loan, r.rate, years, st.repay === 'IO');
         const extra = cheapest !== null ? (m - repayment(st.loan, cheapest, years, st.repay === 'IO')) * 12 : 0;
-        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(tidy(r.product))}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}</td><td class="n">${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%</td><td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${okUrl(r.url) ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : ''}</td></tr>`;
+        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(tidy(r.product))}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}${membersOnly(r) ? ' <span class="tag tag-news">Members only</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}${r.comparison != null && r.comparison < r.rate - 0.001 ? '<sup title="Comparison rate below the advertised rate: see the note under the table">*</sup>' : ''}</td><td class="n">${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%</td><td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${okUrl(r.url) ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : `<a href="https://www.google.com/search?q=${encodeURIComponent(`${r.lender} ${tidy(r.product)}`)}" target="_blank" rel="noopener nofollow" title="This lender's feed has no product page link">Find ↗</a>`}</td></tr>`;
       })
       .join('')}</tbody></table></div>
     ${rows.length > 300 ? '<p class="note">Showing the first 300. Narrow the filters to see more.</p>' : ''}
-    ${!rows.length ? '<p class="empty">No advertised rates match. Try a lower LVR or another rate type.</p>' : ''}`;
+    ${!rows.length ? '<p class="empty">No advertised rates match. Try a lower LVR or another rate type.</p>' : ''}
+    <p class="fine" style="margin-top:8px">Headline figures and this table leave out members-only lenders and products (tick the box to show them), home equity loans, lines of credit and refinance-only offers. *A comparison rate can sit below the advertised rate when the lender's rate falls later in the loan (for example, Unloan cuts its rate each year you stay) or a package fee is waived; comparison rates are for a $150,000 loan over 25 years and may not reflect your loan. "Find ↗" means the lender's feed didn't include a product page, so the link searches for it.</p>`;
     const t = $('#rt');
     t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');
     sortable(t, (k, asc) => {
@@ -121,6 +127,7 @@ export default async function ratesPage(main, _p, query) {
   bind('#r-q', 'q');
   bind('#r-best', 'bestOnly');
   bind('#r-special', 'showSpecial');
+  bind('#r-members', 'showMembers');
   bind('#r-tailored', 'showTailored');
   draw();
 }

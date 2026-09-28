@@ -1,7 +1,7 @@
 import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
-import { suburbScore, PROFILES } from '../engine.js';
+import { suburbScore, PROFILES, PROFILE_FILTERS } from '../engine.js';
 import { navigate } from '../app.js';
 
 const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
@@ -45,7 +45,7 @@ export default async function explorer(main, _p, query) {
       <label class="field">Min gross yield %<input id="f-yield" type="number" step="0.1" placeholder="Any" value="${st.yieldMin}"></label>
       <label class="field">Min population<input id="f-pop" type="number" step="1" value="${st.popMin}"></label>
       <label class="field">Strategy<select id="f-profile">
-        <option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow / yield</option><option value="firsthome">First home / affordability</option>
+        <option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow / yield</option><option value="firsthome">First home / affordability</option><option value="newbuild">New builds (2026 tax rules)</option>
       </select></label>
       <label class="field">Name, council or postcode<input id="f-q" type="search" placeholder="e.g. Stirling or 6062" value="${esc(st.q || st.lga)}"></label>
     </div>
@@ -67,12 +67,14 @@ export default async function explorer(main, _p, query) {
 
   function compute() {
     const w = PROFILES[st.profile];
+    const pf = PROFILE_FILTERS[st.profile];
     const q = st.q.trim().toLowerCase();
     rows = [];
     for (const s of list) {
       if (st.state && s.s !== st.state) continue;
       if (st.region && s.rg !== st.region) continue;
       if (s.pop < (st.popMin || 0)) continue;
+      if (pf && !pf(s)) continue;
       if (st.officialOnly && (s.hs === 'model' || !s.hs)) continue;
       if (q && !(cleanName(s.n).toLowerCase().includes(q) || (s.lga || '').toLowerCase().includes(q) || (s.pc || '') === q)) continue;
       const type = st.type === 'auto' ? s.pt : st.type;

@@ -225,3 +225,18 @@ export function growth12(s, { suffix = ' 12m', short = false } = {}) {
   if (src.includes('postcode')) return `<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
   return `<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
 }
+
+/** Weekly cash flow in words, avoiding a red double negative: "You pay $491/wk" or "You receive $120/wk". */
+export function cashWeek(v, { short = false } = {}) {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const a = aud(Math.abs(v));
+  if (Math.abs(v) < 0.5) return 'Breaks even';
+  return v < 0 ? `${short ? 'Pay' : 'You pay'} ${a}/wk` : `${short ? 'Receive' : 'You receive'} ${a}/wk`;
+}
+
+/** One line explaining a relative deal grade. */
+export function dealContext(v) {
+  if (!v) return '';
+  const pc = v.percentile;
+  return pc === null || pc === undefined ? esc(v.absolute || '') : `Stronger numbers than about ${pc}% of typical homes across Australia, run with the same deposit, rate and income. ${esc(v.absolute || '')}`;
+}

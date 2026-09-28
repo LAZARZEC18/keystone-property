@@ -35,7 +35,7 @@ export async function suburbs() {
   const list = d.rows.map((r) => {
     const o = {};
     d.cols.forEach((c, i) => (o[c] = r[i]));
-    o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0 };
+    o.sc = { cash: o.sc_cash, momentum: o.sc_momentum, growth: o.sc_growth, demand: o.sc_demand, afford: o.sc_afford, stability: o.sc_stability, risk: o.rsk ?? 0, modelled: !(o.conf === 'high' || o.conf === 'medium') };
     o.slug = slug(o);
     o.key = `${o.n} ${o.s} ${o.pc || ''}`.toLowerCase();
     applyLiveGrowth(o, idx, market);
@@ -150,4 +150,29 @@ export function toggleWatch(id) {
     /* storage unavailable */
   }
   return w.has(id);
+}
+
+// Saved deals (analyser): kept in this browser only.
+const DEALS = 'keyzing.deals';
+export function savedDeals() {
+  try {
+    return JSON.parse(localStorage.getItem(DEALS) || '[]');
+  } catch {
+    return [];
+  }
+}
+export function saveDeal(d) {
+  const list = savedDeals().filter((x) => x.url !== d.url);
+  list.unshift({ ...d, saved: new Date().toISOString() });
+  try {
+    localStorage.setItem(DEALS, JSON.stringify(list.slice(0, 50)));
+    return true;
+  } catch {
+    return false;
+  }
+}
+export function removeDeal(url) {
+  try {
+    localStorage.setItem(DEALS, JSON.stringify(savedDeals().filter((x) => x.url !== url)));
+  } catch {}
 }

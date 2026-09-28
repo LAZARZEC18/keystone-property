@@ -50,6 +50,7 @@ async function render() {
   if (document.activeElement?.closest?.('.nav')) document.activeElement.blur();
   $('#menu').setAttribute('aria-expanded', 'false');
   $('.nav').classList.remove('open');
+  document.body.classList.remove('search-open');
   if (current?.destroy) current.destroy();
   if (!match) {
     main.innerHTML = `<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs" data-link>suburb explorer</a> or search above.</p></div>`;
@@ -117,6 +118,30 @@ $('#menu').addEventListener('click', () => {
   nav.classList.toggle('open');
   $('#menu').setAttribute('aria-expanded', nav.classList.contains('open'));
 });
+// phones: the header search is behind a button
+$('#search-btn')?.addEventListener('click', () => {
+  const open = document.body.classList.toggle('search-open');
+  $('#search-btn').setAttribute('aria-expanded', String(open));
+  if (open) $('#q').focus();
+});
+$('#q').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.body.classList.remove('search-open');
+});
+
+// plain-English explanations and table scroll hints, re-applied whenever a page (re)renders
+{
+  let t = null;
+  const run = () => import('./enhance.js').then((m) => m.enhance($('#main'))).catch(() => {});
+  new MutationObserver(() => {
+    clearTimeout(t);
+    t = setTimeout(run, 250);
+  }).observe($('#main'), { childList: true, subtree: true });
+  window.addEventListener('resize', () => {
+    clearTimeout(t);
+    t = setTimeout(run, 400);
+  });
+  import('./enhance.js').then((m) => m.wireJargonTips());
+}
 
 // ---- search (header, hero + reusable suburb pickers)
 const DESCRIPTIVE = /\b(bed|beds|bedroom|under|below|between|near|close to|within|yield|cash ?flow|growth|house|houses|home|unit|units|apartment|townhouse|first home|beach|coast|cbd|city|regional|budget|cheap|affordable|invest)\b|\$|\d+\s*k\b/i;
@@ -218,10 +243,11 @@ async function ticker() {
       `<span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b>`,
       bestInv && `<span>Lowest investor variable</span> <b>${pct(bestInv.rate, 2)}</b> <span>${esc(bestInv.lender)}</span>`,
       bestOO && `<span>Lowest owner-occupier variable</span> <b>${pct(bestOO.rate, 2)}</b> <span>${esc(bestOO.lender)}</span>`,
-      `<span>National median dwelling</span> <b>${aud(n.medianDwelling, { compact: true })}</b> <span class="${n.annualPct >= 0 ? 'up' : 'down'}">${pct(n.annualPct, 1, true)} y/y</span>`,
+      `<span>National median dwelling</span> <b>${aud(n.medianDwelling, { compact: true })}</b> <span class="${n.annualPct >= 0 ? 'up' : 'down'}">${pct(n.annualPct, 1, true)} 12m</span>`,
       ...Object.values(market.regions)
         .filter((r) => r.capital)
-        .map((r) => `<span>${r.name}</span> <b>${aud(r.medianDwelling, { compact: true })}</b> <span class="${r.annualPct >= 0 ? 'up' : 'down'}">${pct(r.annualPct, 1, true)}</span>`),
+        .map((r) => `<span>${r.name}</span> <b>${aud(r.medianDwelling, { compact: true })}</b> <span class="${r.annualPct >= 0 ? 'up' : 'down'}">${pct(r.annualPct, 1, true)} 12m</span>`),
+      `<span>City figures: median of all dwellings (houses and units), Cotality monthly index to ${esc(market.indexMonth || 'month-end')}</span>`,
       `<span>Rates refreshed</span> <b>${ago(rs.updated)}</b>`,
     ].filter(Boolean);
     const html = items.map((i) => `<div>${i}</div>`).join('');

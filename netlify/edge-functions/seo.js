@@ -18,7 +18,9 @@ async function getIndex(origin) {
 }
 
 export default async (request, context) => {
-  if (request.method !== 'GET' || !(request.headers.get('accept') || '').includes('text/html')) return context.next();
+  // every page request, whatever the client asks for: search engines, link previews and AI crawlers
+  // don't always send a browser-style Accept header
+  if (request.method !== 'GET' && request.method !== 'HEAD') return context.next();
   const url = new URL(request.url);
   const res = await context.next();
   if (!(res.headers.get('content-type') || '').includes('text/html')) return res;

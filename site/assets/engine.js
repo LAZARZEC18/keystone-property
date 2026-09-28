@@ -1,5 +1,6 @@
 // Keyzing investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
+import { DEAL_BANDS } from './deal-bands.js';
 
 const ceil100 = (x) => Math.ceil(x / 100) * 100;
 export const round = (x, d = 0) => {
@@ -425,9 +426,25 @@ export function verdict(result, suburb = null, market = null) {
     if (suburb.conf === 'low') risks.push('Few sales and a small population here, so the price estimate is less certain. Get a local appraisal.');
   }
   const score = Math.max(0, Math.min(100, Math.round(pts)));
-  const grade = score >= 72 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D';
-  const label = { A: 'Strong numbers', B: 'Sound numbers', C: 'Marginal numbers', D: 'Weak numbers' }[grade];
-  return { score, grade, label, reasons, risks };
+  // The grade is RELATIVE: where this deal's numbers sit against the typical home in every Australian suburb,
+  // run through the same model with the same assumptions today (scripts/deal_bands.mjs). With rates where they
+  // are, almost every established property loses money week to week, so an absolute scale would give nearly
+  // everything a D and carry no signal.
+  const percentile = dealPercentile(score);
+  const grade = percentile === null ? (score >= 72 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D') : percentile >= 85 ? 'A' : percentile >= 60 ? 'B' : percentile >= 30 ? 'C' : 'D';
+  const label = { A: 'Top 15% of comparable deals', B: 'Better than most', C: 'Around the middle', D: 'Weaker than most' }[grade];
+  const absolute = s.weeklyCashAfterTax >= 0 ? `Pays its own way: about $${Math.round(s.weeklyCashAfterTax)} a week in your pocket after tax.` : `On its own numbers you pay about $${Math.abs(Math.round(s.weeklyCashAfterTax))} a week after tax to hold it.`;
+  return { score, grade, label, percentile, absolute, reasons, risks };
+}
+
+/** Share (0-100) of benchmark deals this score beats, or null if no benchmark is loaded. */
+export function dealPercentile(score, bands = DEAL_BANDS) {
+  const q = bands?.q;
+  if (!q?.length) return null;
+  // mid-rank, so a score tied with many benchmark deals lands in the middle of the tie
+  const below = q.filter((v) => v < score).length;
+  const equal = q.filter((v) => v === score).length;
+  return Math.round(((below + equal / 2) / q.length) * 100);
 }
 
 /** Weighted Keyzing Score from a suburb's component percentiles. */
@@ -436,7 +453,14 @@ export const PROFILES = {
   growth: { cash: 5, momentum: 25, growth: 30, demand: 20, afford: 5, stability: 15 },
   cashflow: { cash: 45, momentum: 5, growth: 10, demand: 20, afford: 10, stability: 10 },
   firsthome: { cash: 5, momentum: 10, growth: 20, demand: 10, afford: 35, stability: 20 },
+  // New builds keep negative gearing and the CGT discount under the 2026 rules. Ranked among areas where new homes
+  // are actually being approved, on rental demand, affordability, stability and yield; growth drivers carry less
+  // weight because new supply is a given there.
+  newbuild: { cash: 20, momentum: 5, growth: 10, demand: 30, afford: 20, stability: 15 },
 };
+/** Extra eligibility for a strategy: new-build rankings only include council areas approving 1+ new home a year per 100. */
+export const PROFILE_FILTERS = { newbuild: (s) => (s.sup ?? 0) >= 1 && (s.pg5 ?? 0) > 0 };
+export const PROFILE_NAMES = { balanced: 'Balanced', growth: 'Capital growth', cashflow: 'Cash flow', firsthome: 'First home', newbuild: 'New builds' };
 
 export function suburbScore(sc, weights = PROFILES.balanced) {
   let t = 0;
@@ -452,7 +476,11 @@ export function suburbScore(sc, weights = PROFILES.balanced) {
   // high yields in single-industry towns come with price and vacancy swings the other components can't see.
   const risk = sc.risk ?? 0;
   const penalty = risk > 20 ? Math.round((risk - 20) * 0.31) : 0;
-  return Math.max(0, Math.round(t / w) - penalty);
+  // Modelled suburbs (no official sales series) are shrunk 15% toward the middle: less certain numbers
+  // shouldn't outrank measured ones on the same inputs.
+  const raw = t / w;
+  const base = sc.modelled ? 50 + (raw - 50) * 0.85 : raw;
+  return Math.max(0, Math.round(base) - penalty);
 }
 
 /** Plain-English reason for a suburb's concentration-risk penalty, or null. */

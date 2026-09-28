@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Keyzing · Australian property values, suburbs and rates for home buyers and investors</title>
-  <meta name="description" content="Value any Australian home, compare every suburb, see what you can afford (including the 5% Deposit Scheme), track live home values and compare every home loan rate. Independent research for home buyers and investors." />
+  <title>Keyzing · Find a home you can afford, and know what it’s worth</title>
+  <meta name="description" content="Free and independent: see what you can afford in every state with the 5% Deposit Scheme and stamp duty concessions, estimate a home's value with an honest range, compare suburbs and every lender's rate." />
   <meta name="theme-color" content="#0E6B5C" />
-  <link rel="icon" href="/assets/keystone.svg" type="image/svg+xml" />
+  <link rel="icon" href="/assets/keyzing.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -17,6 +17,8 @@
   <link rel="modulepreload" href="/assets/data.js" />
   <link rel="modulepreload" href="/assets/intent.js" />
   <script>
+    // Light by default (a home-buying site, not a trading screen); dark only if the visitor chose it.
+    document.documentElement.dataset.theme = 'light';
     try { const t = localStorage.getItem('keystone.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
 </head>
@@ -65,7 +67,7 @@
             <a href="/markets" data-link><b>Market dashboard</b><span>Every capital and region</span></a>
             <a href="/live" data-link><b>Live daily index</b><span>This week, month, year to date</span></a>
             <a href="/weekly" data-link><b>Weekly report</b><span>What moved, plus the RBA outlook</span></a>
-            <a href="/news" data-link><b>Housing news</b><span>Headlines, refreshed hourly</span></a>
+            <a href="/news" data-link><b>Housing news</b><span>Headlines, checked about every hour</span></a>
           </div>
         </div>
       </nav>
@@ -74,6 +76,9 @@
           <input id="q" type="search" placeholder="Address, suburb or search" aria-label="Search an address, suburb, postcode or describe what you want" />
           <div class="ac" id="ac" hidden></div>
         </form>
+        <button class="icon-btn search-btn" id="search-btn" aria-label="Search" aria-expanded="false" title="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
         <button class="icon-btn" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">
           <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         </button>
@@ -86,14 +91,14 @@
   </header>
 
   <main id="main" class="wrap">
-    <section class="hero" aria-busy="true">
+    <section class="hero hero-light" aria-busy="true">
       <div>
-        <div class="eyebrow">Australian property intelligence</div>
-        <h1>Every property decision, <em>backed by the numbers.</em></h1>
-        <p class="lead">Keyzing values any Australian home, rates every suburb and any listing you find, and tracks the market every hour, from official sales, census, approvals and lending data.</p>
-        <div class="hero-search"><input type="search" placeholder="Enter an address, suburb, postcode, or describe what you want" aria-label="Search" disabled /></div>
+        <div class="eyebrow">Free · independent · no sign-up</div>
+        <h1>Find a home you can afford, <em>and know what it’s worth.</em></h1>
+        <p class="lead">Start with your savings and income. Keyzing works out your price ceiling in every state, including the 5% Deposit Scheme and stamp duty concessions, then shows the suburbs that fit and what each home is likely worth.</p>
+        <div class="row hero-cta"><a class="btn primary lg" href="/afford?buyer=fhb" data-link>Work out what I can afford →</a></div>
       </div>
-      <div class="hero-panel skeleton-panel" aria-hidden="true"></div>
+      <figure class="hero-shot"><img src="/assets/media/afford.jpg" width="1280" height="800" alt="Keyzing’s affordability tool showing a buyer’s price ceiling in each state and suburbs within budget" fetchpriority="high"></figure>
     </section>
   </main>
 
@@ -102,7 +107,7 @@
       <div>
         <div class="brand small"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg><span>Keyzing</span></div>
         <p class="muted">Keyzing · Perth, Western Australia · <a href="mailto:Keyzing18@gmail.com">Keyzing18@gmail.com</a></p>
-        <p class="muted">Independent Australian property research for home buyers and investors. The home value index and news refresh hourly, loan rates several times a day, all from public sources.</p>
+        <p class="muted">Independent Australian property research for home buyers and investors. The daily index, RBA data and news are checked about every hour and loan rates several times a day.</p>
       </div>
       <div class="foot-links">
         <a href="/why" data-link>Why Keyzing</a>

@@ -6,11 +6,11 @@ const PAGES = {
     title: 'About Keyzing',
     description: 'What Keyzing is, where its numbers come from, and how it is funded.',
     body: (h) => `
-      <p class="lead" style="font-size:18px">Keyzing is an independent Australian property research site. It values homes, rates every suburb, tracks the market every hour and runs the full numbers on a purchase, for home buyers and investors.</p>
+      <p class="lead" style="font-size:18px">Keyzing is an independent Australian property research site. It values homes, rates every suburb, tracks the market through the day and runs the full numbers on a purchase, for home buyers and investors.</p>
       <h2>Why it exists</h2>
       <p>Most property tools either sell you something or only show part of the picture. Keyzing puts official sales, census, building approval and lending data in one place, shows its working, and is honest when the numbers are weak: it rates a deal D as readily as A, and it tells you when a suburb figure is really a city-wide index.</p>
       <h2>Where the numbers come from</h2>
-      <p>State valuer-general and government sales medians (Victoria, New South Wales, South Australia), the ABS Census and building approvals, Cotality's daily home value index, SQM Research vacancy rates, the RBA, and every lender's public Open Banking product feed. Rates, the index and news refresh every hour; suburb figures are rebuilt monthly. The full method, including the price and rent models and their measured error, is on the <a href="/methodology" data-link>methodology page</a>.</p>
+      <p>State valuer-general and government sales medians (Victoria, New South Wales, South Australia), the ABS Census and building approvals, Cotality's daily home value index, SQM Research vacancy rates, the RBA, and every lender's public Open Banking product feed. The daily index, RBA data and news are checked about every hour, lender rates several times a day, and suburb figures are rebuilt monthly. The full method, including the price and rent models and their measured error, is on the <a href="/methodology" data-link>methodology page</a>.</p>
       <h2>Independence</h2>
       <p>Keyzing is not a lender, broker, agent or financial adviser, and no lender pays to appear in the rate tables: they're ranked by rate alone. If Keyzing ever earns money from a referral or a paid feature, it will be labelled clearly where it appears, and it will never change a rating.</p>
       <h2>General information only</h2>

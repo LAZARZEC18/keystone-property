@@ -1,5 +1,6 @@
-import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date } from '../ui.js';
-import { suburbs, cleanName, suburbUrl, load } from '../data.js';
+import { printHeader, brandPanel, wireBrand } from '../brand.js';
+import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext } from '../ui.js';
+import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
 import { attachSearch } from '../app.js';
@@ -48,8 +49,8 @@ export default async function analysePage(main, _p, query) {
 
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Deal analyser</div><h1>Should you buy it?</h1>
-  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and rates the numbers A to D with every reason listed. It is general information, not a recommendation to buy or not buy.</p></div>
+  <div class="page-head"><div class="eyebrow">Deal analyser</div><h1>Run the numbers on a property</h1>
+  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and grades the numbers A to D against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -110,6 +111,7 @@ export default async function analysePage(main, _p, query) {
   </div>`;
 
   const $ = (x) => main.querySelector(x);
+  wireBrand(main, () => `Deal analysis: ${st.addr || 'property'}`);
   const read = () => {
     const v = (id) => $(id).value;
     Object.assign(st, {
@@ -172,8 +174,8 @@ export default async function analysePage(main, _p, query) {
     $('#out').innerHTML = `
       <div class="card">
         <div class="verdict"><div class="grade grade-${v.grade}">${v.grade}</div>
-          <div><div class="eyebrow" style="margin:0">Keyzing rating of the numbers · ${v.score}/100</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
-          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)}</div></div></div>
+          <div><div class="eyebrow" style="margin:0">Deal rating, compared with typical homes nationally</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
+          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)}</div><p class="note" style="margin:6px 0 0">${dealContext(v)}</p></div></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
           <div>${v.risks.length ? `<ul class="cons">${v.risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
@@ -181,7 +183,7 @@ export default async function analysePage(main, _p, query) {
       </div>
       <div class="grid g4" style="margin-top:16px">
         <div class="card"><div class="stat"><span class="k">Cash needed up front</span><span class="v">${aud(r.upfront.total, { compact: true })}</span><span class="s">Loan ${aud(s.loan, { compact: true })} · LVR ${s.lvr}%</span></div></div>
-        <div class="card"><div class="stat"><span class="k">Weekly, year 1 after tax</span><span class="v ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${aud(s.weeklyCashAfterTax)}</span><span class="s">Year 3: ${aud(y3.cashAfterTax / 52)}/wk</span></div></div>
+        <div class="card"><div class="stat"><span class="k">Each week, year 1, after tax</span><span class="v ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:22px">${cashWeek(s.weeklyCashAfterTax)}</span><span class="s">Year 3: ${cashWeek(y3.cashAfterTax / 52, { short: true })}</span></div></div>
         <div class="card"><div class="stat"><span class="k">After-tax return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(s.irr, 1)}</span><span class="s">on your cash, ${st.hold} years</span></div></div>
         <div class="card"><div class="stat"><span class="k">Profit after sale and tax</span><span class="v ${s.totalProfit >= 0 ? 'up' : 'down'}">${aud(s.totalProfit, { compact: true })}</span><span class="s">Equity ${aud(s.equityAtSale, { compact: true })}</span></div></div>
       </div>
@@ -238,13 +240,19 @@ export default async function analysePage(main, _p, query) {
             <tr><td>Equity at sale</td>${Object.values(scen).map((x) => `<td class="n">${aud(x.equityAtSale, { compact: true })}</td>`).join('')}</tr>
           </tbody></table></div>
           <h3 style="font-size:16px;margin-top:16px">If rates rise</h3>
-          <div class="tbl-wrap"><table><thead><tr><th>Rate</th><th class="n">Monthly repayment</th><th class="n">Weekly after tax, yr 1</th><th class="n">IRR</th></tr></thead><tbody>
-            ${rateUp.map((x) => `<tr><td>${pct(st.ratePct + x.dd, 2)}${x.dd ? ` (+${x.dd})` : ''}</td><td class="n">${aud(x.s.monthlyRepayment)}</td><td class="n ${x.s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${aud(x.s.weeklyCashAfterTax)}</td><td class="n">${pct(x.s.irr, 1)}</td></tr>`).join('')}
+          <div class="tbl-wrap"><table><thead><tr><th>Rate</th><th class="n">Monthly repayment</th><th class="n">Each week after tax, yr 1</th><th class="n">IRR</th></tr></thead><tbody>
+            ${rateUp.map((x) => `<tr><td>${pct(st.ratePct + x.dd, 2)}${x.dd ? ` (+${x.dd})` : ''}</td><td class="n">${aud(x.s.monthlyRepayment)}</td><td class="n ${x.s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(x.s.weeklyCashAfterTax, { short: true })}</td><td class="n">${pct(x.s.irr, 1)}</td></tr>`).join('')}
           </tbody></table></div>
           <p class="note" style="margin-top:10px">Lenders test your repayments at ${pct(bp.assessRate, 2)} (rate + 3 points). On a ${aud(st.income, { compact: true })} income with this rent, a lender might lend up to about <b>${aud(bp.amount, { compact: true })}</b> in total. <a href="/borrowing" data-link>Borrowing power calculator →</a></p>
         </div>
       </div>
       <p class="fine" style="margin-top:14px">General information, not advice. Assumes ${st.owners ? `two individual owners (${Math.round(st.owners[0].share * 100)}/${Math.round(st.owners[1].share * 100)})` : 'one individual owner'} who ${st.owners ? 'are' : 'is an'} Australian tax resident${st.owners ? 's' : ''}; trusts, companies and self-managed super funds are taxed differently (and since 10 August 2026 an SMSF can't take out new borrowing to buy residential property). It uses the 2026-27 tax rates, and building depreciation at 2.5% of an estimated construction cost${st.newBuild ? ' plus plant and equipment for a new build' : ''}. Rules checked ${date(RULES.asOf)}: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a>, <a href="${r.duty.source}" target="_blank" rel="noopener">${esc(st.state)} revenue office</a>.</p>`;
+    $('#out').insertAdjacentHTML('afterbegin', printHeader(`Deal analysis: ${st.addr || (sub ? `${cleanName(sub.n)} ${sub.s}` : `${st.state} property`)}`));
+    $('#out').insertAdjacentHTML('beforeend', `<div class="card no-print" style="margin-top:16px"><div class="row"><button class="btn primary" type="button" id="save-deal">Save this deal</button><a class="btn" href="/watchlist#deals" data-link>Saved deals</a></div>${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:8px">Saved deals stay in this browser; the link keeps every input, so you can also bookmark or share it.</p></div>`);
+    $('#save-deal').addEventListener('click', (e) => {
+      const ok = saveDeal({ url: location.pathname + location.search, name: st.addr || (sub ? `${cleanName(sub.n)} ${sub.s} ${sub.pc || ''}` : `${st.state} property`), price: st.price, rent: st.weeklyRent, grade: v.grade, weekly: s.weeklyCashAfterTax, irr: s.irr });
+      e.currentTarget.textContent = ok ? 'Saved ✓' : 'Couldn’t save in this browser';
+    });
     $('#out').querySelectorAll('.chart').forEach((f) => (f.dataset.xfmt = 'year'));
     wireCharts($('#out'), (x) => aud(x, { compact: true }));
   }

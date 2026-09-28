@@ -102,6 +102,7 @@ button, input, select { font: inherit; color: inherit; }
 .icon-btn svg { width: 18px; height: 18px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; }
 .icon-btn:hover { background: var(--surface-2); }
 .menu-btn { display: none; }
+.search-btn { display: none; }
 .ticker { border-top: 1px solid var(--line); font-size: 12.5px; white-space: nowrap; overflow: hidden; background: var(--surface); }
 .ticker-in { display: inline-flex; gap: 26px; padding: 7px 16px; animation: tick 70s linear infinite; }
 .ticker:hover .ticker-in { animation-play-state: paused; }
@@ -333,6 +334,11 @@ details.faq summary { cursor: pointer; font-weight: 600; }
 @media (max-width: 700px) {
   .top-in { gap: 10px; }
   .quick { display: none; }
+  .search-btn { display: grid; }
+  body.search-open .quick { display: block; position: absolute; left: 12px; right: 12px; top: calc(100% + 6px); z-index: 60; }
+  body.search-open .quick input { width: 100%; height: 46px; font-size: 16px; box-shadow: var(--shadow); }
+  body.search-open .quick .ac { left: 0; right: 0; width: auto; }
+  .hero-shot { display: none; }
   .g2, .g3, .g4 { grid-template-columns: 1fr; }
   .foot-in { grid-template-columns: 1fr; }
   .card { padding: 16px; }
@@ -426,7 +432,7 @@ details.faq summary { cursor: pointer; font-weight: 600; }
   .card { box-shadow: none !important; break-inside: avoid; border-color: #ddd; }
   .grid { gap: 10px !important; }
   a { color: #111; text-decoration: none; }
-  main::after { content: 'General information only, not financial advice. Estimates are modelled from public data and can be wrong. Sources are listed at keystone-au.netlify.app/methodology.'; display: block; margin-top: 16px; font-size: 8.5pt; color: #666; }
+  main::after { content: 'General information only, not financial advice or a formal valuation. Estimates are modelled from public data and can be wrong; the methodology and each figure’s source are on the Keyzing site.'; display: block; margin-top: 16px; font-size: 8.5pt; color: #666; }
 }
 @media (max-width: 1080px) { .top-in { position: relative; z-index: 3; } .nav { z-index: 90; } }
 @media (max-width: 1080px) { .nav .nav-link { color: var(--ink); padding: 12px 8px; font-size: 15.5px; } }
@@ -451,3 +457,44 @@ abbr[title] { text-decoration: underline dotted; cursor: help; }
 .why-cmp td, .why-cmp th { white-space: normal; min-width: 130px; }
 .why-cmp td:first-child { min-width: 220px; }
 @media (max-width: 900px) { .why-hero, .why-row { grid-template-columns: 1fr; } .why-row.flip > :first-child { order: 0; } }
+
+/* valuation accuracy and range position */
+.acc { font-size: 13px; line-height: 1.5; margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2, rgba(127,127,127,.08)); color: var(--ink-2, inherit); }
+.acc-untested { border-left: 3px solid var(--down, #c0392b); }
+.acc-tested { border-left: 3px solid var(--brass, #b8860b); }
+.acc-measured { border-left: 3px solid var(--up, #0e6b5c); }
+.range-bar { position: relative; height: 12px; margin: 12px 0 4px; border-radius: 6px; background: var(--line, #ddd); }
+.range-bar .rb-band { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--up, #0e6b5c) 35%, transparent); border-radius: 6px; }
+.range-bar .rb-third { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--faint); opacity: .6; }
+.range-bar .rb-mark { position: absolute; top: -4px; width: 4px; height: 20px; margin-left: -2px; border-radius: 2px; background: var(--ink, #111); }
+
+/* home page, lighter */
+.hero-light { padding-top: 34px; }
+.hero-light h1 { font-size: clamp(32px, 5vw, 54px); line-height: 1.05; margin: 8px 0 14px; }
+.hero-cta { margin: 20px 0 6px; }
+.btn.lg { height: 54px; padding: 0 26px; font-size: 17px; border-radius: 14px; }
+.hero-light .hero-search { margin: 18px 0 10px; }
+.hero-light .hero-search label { display: block; margin-bottom: 6px; }
+.hero-shot { margin: 0; }
+.hero-shot img { width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow); display: block; }
+.paths .path { display: flex; flex-direction: column; gap: 8px; }
+.paths .path h3 { margin: 4px 0 0; font-size: 20px; }
+.paths .path p { margin: 0; flex: 1; }
+.path-links { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 6px; }
+table.compact td, table.compact th { padding-top: 8px; padding-bottom: 8px; }
+.top-tools { position: relative; }
+
+/* wide tables: soft edge shadows while there is more to scroll, and a hint on phones */
+.tbl-wrap { background: linear-gradient(to right, var(--surface) 30%, transparent) left / 40px 100% no-repeat local, linear-gradient(to left, var(--surface) 30%, transparent) right / 40px 100% no-repeat local, radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.16), transparent) left / 12px 100% no-repeat scroll, radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.16), transparent) right / 12px 100% no-repeat scroll; }
+.scroll-hint { display: none; font-size: 12px; color: var(--muted); margin: 4px 0; text-align: right; }
+.tbl-wrap.scrolls + .scroll-hint, .scroll-hint.show { display: block; }
+
+/* plain-English terms */
+abbr.jargon { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+.jargon-tip { position: absolute; z-index: 80; max-width: 280px; background: var(--ink); color: var(--bg); font-size: 13px; line-height: 1.45; padding: 8px 10px; border-radius: 8px; box-shadow: var(--shadow); pointer-events: none; }
+.brand-panel { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+.brand-details { font-size: 14px; flex: 1 1 320px; }
+.brand-details summary { cursor: pointer; color: var(--muted); }
+.report-brand .rb-who { font-size: 12pt; margin-bottom: 2px; }
+@media print { .no-print, .brand-panel, .scroll-hint { display: none !important; } .report-brand { border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; } abbr.jargon { text-decoration: none; } .tbl-wrap { overflow: visible !important; background: none !important; } }
+@media (max-width: 700px) { .hide-sm { display: none; } }

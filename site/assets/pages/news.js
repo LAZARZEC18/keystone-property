@@ -2,13 +2,13 @@ import { esc, ago, setMeta, date } from '../ui.js';
 import { load } from '../data.js';
 
 export default async function newsPage(main) {
-  setMeta({ title: 'Australian housing news, updated through the day', description: 'Headlines on house prices, interest rates, rents and property policy from across Australia, refreshed every hour.' });
+  setMeta({ title: 'Australian housing news, updated through the day', description: 'Headlines on house prices, interest rates, rents and property policy from across Australia, checked about every hour.' });
   const news = await load('news');
   const tags = ['All', 'Rates', 'Prices', 'Rents', 'Policy', 'Supply', 'Lending'];
   const sources = [...new Set(news.items.map((x) => x.source))].sort();
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">News</div><h1>Housing news</h1>
-  <p>Headlines on prices, rates, rents and policy from ${new Set(news.items.map((i) => i.source)).size} publishers, refreshed within the hour. Last update ${ago(news.updated)}. Links open the publisher's site.</p></div>
+  <p>Headlines on prices, rates, rents and policy from ${new Set(news.items.map((i) => i.source)).size} publishers, checked about every hour. Last update ${ago(news.updated)}. Links open the publisher's site.</p></div>
   <div class="toolbar"><div class="seg" id="nt">${tags.map((t, i) => `<button data-t="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
   <label class="field">Source<select id="ns"><option value="">All sources</option>${sources.map((s) => `<option>${esc(s)}</option>`).join('')}</select></label></div>
   <div class="card"><div class="news-list" id="nl"></div></div>

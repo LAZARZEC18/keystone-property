@@ -1,3 +1,4 @@
+import { nextStepsCard } from '../insights.js';
 import { esc, aud, pct, setMeta, lineChart, wireCharts } from '../ui.js';
 import { load } from '../data.js';
 import { stampDuty, repayment, lmi, marginalRate } from '../engine.js';
@@ -134,7 +135,8 @@ export default async function firstHomePage(main) {
       <div id="fs-out"></div>
     </div>
   </section>
-  <p class="fine">General information only. These are simplified models: they ignore tax on the renter's investment returns (a home you live in is free of capital gains tax, which favours buying), and FHSS rules have more detail than shown. Check the ATO's FHSS rules and your eligibility before acting.</p>`;
+  <p class="fine">General information only. These are simplified models: they ignore tax on the renter's investment returns (a home you live in is free of capital gains tax, which favours buying), and FHSS rules have more detail than shown. Check the ATO's FHSS rules and your eligibility before acting.</p>
+  <div class="section">${nextStepsCard({ fhb: true })}</div>`;
 
   const $ = (x) => main.querySelector(x);
   const f = (id) => Object.fromEntries(new FormData($(id)));

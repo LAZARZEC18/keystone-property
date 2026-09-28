@@ -18,7 +18,7 @@ export default async function markets(main) {
   <div class="page-head">
     <div class="eyebrow">Markets</div>
     <h1>The Australian housing market</h1>
-    <p>Where values, rents and rates are heading, city by city. Index figures are Cotality's August 2026 Home Value Index. RBA and lender data update automatically every hour.</p>
+    <p>Where values, rents and rates are heading, city by city. Index figures are Cotality's August 2026 Home Value Index. RBA figures are checked about every hour and lender rates several times a day.</p>
   </div>
 
   <div class="grid g4">
@@ -108,7 +108,7 @@ export default async function markets(main) {
   wireCharts(main, (v) => `${v.toFixed(2)}%`);
 }
 
-/** Plain-English read of the current numbers, generated from the data so it never goes stale. */
+/** Plain-English description of the current numbers, generated from the data. Describes what moved; never says what to do. */
 export function commentary(market, rba) {
   const caps = Object.values(market.regions).filter((r) => r.capital);
   const falling = caps.filter((r) => r.quarterPct < 0).map((r) => r.name);
@@ -123,7 +123,8 @@ export function commentary(market, rba) {
   if (upYear.length) parts.push(`${list(upYear)} ${upYear.length > 1 ? 'are' : 'is'} still up more than 5% over the year`);
   let s = `${parts.join(', while ')}.`;
   if (falling.length >= 5) s += ` Values eased over the last three months in ${falling.length} of 8 capitals${hikes ? ` after ${hikes} RBA rate rise${hikes > 1 ? 's' : ''} this year` : ''}.`;
-  if (n.rentAnnualPct > n.annualPct) s += ` Rents (${pct(n.rentAnnualPct, 1, true)}) are rising faster than values (${pct(n.annualPct, 1, true)}) nationally, which pushes yields up.`;
-  s += ` With the cash rate at ${pct(rba.cashRate.current, 2)}, holding costs are high, so cash flow and buffers matter more than chasing growth.`;
+  if (n.rentAnnualPct > n.annualPct) s += ` Nationally, rents (${pct(n.rentAnnualPct, 1, true)}) have risen faster than values (${pct(n.annualPct, 1, true)}) over the year, so gross yields have risen.`;
+  const oo = rba.actual?.newOOVariable?.at?.(-1);
+  s += ` The cash rate is ${pct(rba.cashRate.current, 2)}${oo ? `; the average variable rate on new owner-occupier loans was ${pct(oo[1], 2)} in ${new Date(`${oo[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long' })} (RBA)` : ''}.`;
   return s;
 }

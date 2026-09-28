@@ -850,7 +850,16 @@ def score(rows):
             p = bisect.bisect_left(vals, v) / max(1, len(vals) - 1) * 100
             return round(100 - p if invert else p)
         return f
-    ry = ranker('y'); rg1 = ranker('g1'); rpg = ranker('pg5'); rig = ranker('ig5'); rrg = ranker('rg5')
+    measured = lambda r: not str(r['g1s']).startswith('region')
+    ry = ranker('y'); rg1 = ranker('g1', filt=measured); rig = ranker('ig5'); rrg = ranker('rg5')
+    # Growth drivers, 2026 edition: recent population growth (ABS estimated resident population 2020-25) NET of new supply.
+    # Very fast growth is almost always a greenfield estate being built out, which is supply, not scarcity: growth
+    # above ~2.5% a year earns less credit, and the council area's approvals rate (new dwellings a year per 100
+    # existing) counts against it. Census 2016-21 income and rent growth keep a small weight only.
+    for r in rows:
+        pg = r.get('pg5')
+        r['_pgn'] = None if pg is None else (pg if pg <= 12.5 else max(-5.0, 12.5 - (pg - 12.5) * 0.6))
+    rpg = ranker('_pgn'); rsup = ranker('sup', invert=True)
     rune = ranker('une', invert=True); rsoc = ranker('soc%', invert=True)
     afford = []
     for r in rows:
@@ -864,14 +873,22 @@ def score(rows):
         dom = from_market.get('dom')
         comps = {
             'cash': ry(r['y']),
-            'momentum': rg1(r['g1']) if not (str(r['g1s']).startswith('region') or 'capped' in str(r['g1s'])) else (None if rg1(r['g1']) is None else round(50 + (rg1(r['g1']) - 50) * 0.5)),
-            'growth': avg([rpg(r['pg5']), rig(r['ig5']), rrg(r['rg5'])]),
+            # only a suburb's own measured price change counts; a city-wide index figure is not a suburb signal
+            'momentum': rg1(r['g1']) if measured(r) else None,
+            'growth': wavg([(rpg(r['_pgn']), 0.4), (rsup(r['sup']), 0.35), (rig(r['ig5']), 0.125), (rrg(r['rg5']), 0.125)]),
             'demand': avg([vac_score(vac), dom_score(dom), rune(r['une'])]),
             'afford': raff(r['pti']),
             'stability': avg([rune(r['une']), rsoc(r['soc%']), size_score(r['pop']), 100 - r['rsk'], 100 - r['rsk']]),
         }
         r['sc'] = comps
+    for r in rows:
+        r.pop('_pgn', None)
     return rows
+
+
+def wavg(pairs):
+    pairs = [(v, w) for v, w in pairs if v is not None]
+    return round(sum(v * w for v, w in pairs) / sum(w for _, w in pairs)) if pairs else None
 
 
 def avg(xs):

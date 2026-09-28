@@ -26,6 +26,12 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), camera=(), microphone=()"
 
+# Old URL: listings now live on the property page.
+[[redirects]]
+  from = "/listings"
+  to = "/property"
+  status = 301
+
 # Single-page app: every route serves index.html (static files and /api functions match first).
 [[redirects]]
   from = "/*"

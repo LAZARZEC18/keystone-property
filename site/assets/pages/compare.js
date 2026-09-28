@@ -1,8 +1,9 @@
 import { esc, aud, pct, num, scoreBadge, bar, setMeta, srcBadge } from '../ui.js';
-import { suburbs, suburbDetail, suburbUrl, cleanName, load } from '../data.js';
+import { suburbs, suburbDetail, suburbUrl, cleanName, load, watchlist } from '../data.js';
 import { suburbScore, PROFILES, stampDuty } from '../engine.js';
 import { COMPONENT_NAMES } from '../insights.js';
 import { attachSearch, navigate } from '../app.js';
+import { startersHtml } from '../starters.js';
 
 export default async function comparePage(main, _p, query) {
   setMeta({ title: 'Compare suburbs side by side', description: 'Compare up to four Australian suburbs on price, rent, yield, growth, demographics and investor score.' });
@@ -20,7 +21,8 @@ export default async function comparePage(main, _p, query) {
     if (!picks.find((x) => x.id === s.id)) go([...picks, s].slice(0, 4));
   });
   if (!picks.length) {
-    main.querySelector('#c-out').innerHTML = '<p class="empty">Add a suburb to start comparing.</p>';
+    const wl = watchlist().map((id) => idx.byId.get(id)).filter(Boolean).slice(0, 4);
+    main.querySelector('#c-out').innerHTML = `<div class="card flat tint"><b>Add a suburb above to start comparing.</b>${wl.length >= 2 ? ` Or <a href="/compare?ids=${wl.map((s) => s.id).join(',')}" data-link>compare your watchlist</a>.` : ''}</div>${await startersHtml(idx.list)}`;
     return;
   }
   const best = (vals, higher = true) => {

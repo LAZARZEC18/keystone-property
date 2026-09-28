@@ -50,7 +50,7 @@ export default async function borrowingPage(main) {
       price = p;
     }
     const m = repayment(bp.amount, +$('#b-rate').value, 30);
-    $('#b-out').innerHTML = `<div class="stat"><span class="k">Estimated maximum loan</span><span class="v xl">${aud(bp.amount)}</span><span class="s">Assessed at ${pct(bp.assessRate, 2)} · monthly surplus at that rate ${aud(bp.surplus)}</span></div>
+    $('#b-out').innerHTML = `<div class="stat"><span class="k">Estimated maximum loan</span><span class="v xl">${aud(bp.amount)}</span><span class="s">The loan whose repayments at the ${pct(bp.assessRate, 2)} assessment rate would use up all of the ${aud(bp.surplus)} a month left after tax, living costs and other debts. At that loan, nothing is left over.</span></div>
     <div class="hr"></div>
     <div class="kv"><span>Repayment at ${pct(+$('#b-rate').value, 2)}</span><span>${aud(m)}/month</span>
     <span>Price you could buy with 20% down (${state})</span><span>${aud(price)}</span>

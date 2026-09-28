@@ -55,8 +55,10 @@ export function investmentCase(s, d, region, rs, market) {
   }
   // Population and income
   if (s.pg5 !== null && s.pg5 !== undefined) {
-    if (s.pg5 >= 10) pros.push(`Population grew ${pct(s.pg5, 1)} between the 2016 and 2021 Censuses: more people competing for homes and rentals.`);
-    else if (s.pg5 < -2) cons.push(`Population shrank ${pct(Math.abs(s.pg5), 1)} between 2016 and 2021. Falling demand is a long-term risk.`);
+    const per = /census/i.test(d?.pgS || '') ? 'between the 2016 and 2021 Censuses' : 'from 2020 to 2025 (ABS estimates)';
+    if (s.pg5 > 12.5) cons.push(`Population grew ${pct(s.pg5, 1)} ${per}, faster than about 2.5% a year: that usually means a new estate being built out, so new homes compete with resales and rentals. Keyzing gives growth this fast less credit, not more.`);
+    else if (s.pg5 >= 6) pros.push(`Population grew ${pct(s.pg5, 1)} ${per} without an estate-scale building boom: steady demand for homes and rentals.`);
+    else if (s.pg5 < -2) cons.push(`Population shrank ${pct(Math.abs(s.pg5), 1)} ${per}. Falling demand is a long-term risk.`);
   }
   if (d.ig5 !== undefined && d.ig5 >= 20) pros.push(`Household incomes rose ${pct(d.ig5, 0)} from 2016 to 2021, so locals can afford rising rents and prices.`);
   if (d.rg5 !== undefined && d.rg5 >= 15) pros.push(`Census rents rose ${pct(d.rg5, 0)} between 2016 and 2021, before the recent rental boom.`);
@@ -96,8 +98,8 @@ export function investmentCase(s, d, region, rs, market) {
 
 export const COMPONENT_HELP = {
   cash: 'Gross rental yield ranked against every Australian suburb. Higher means rent covers more of your costs.',
-  momentum: 'Price change over the last 12 months: official suburb or postcode sales in VIC, SA and NSW, weighted toward the region when sales are few; elsewhere the city or regional index, which counts half.',
-  growth: 'Growth drivers: population growth of the surrounding area 2020-25 (ABS estimates), plus household income and rent growth between the 2016 and 2021 Censuses.',
+  momentum: 'Price change over the last 12 months: official suburb or postcode sales in VIC, SA and NSW, weighted toward the region when sales are few; elsewhere there is no suburb-level figure, so momentum is left out of the score rather than filled in with the city-wide index.',
+  growth: 'Growth drivers: population growth of the surrounding area 2020-25 (ABS estimates) net of new supply. Very fast growth (usually a new estate being built out) earns less credit, and a high rate of new dwelling approvals in the council area counts against it. Census 2016-21 income and rent growth carry a small weight.',
   demand: 'Rental demand: the city-wide vacancy rate and days on market (not suburb-level), plus local unemployment.',
   afford: 'Price relative to local household income. Affordable areas have a deeper pool of future buyers.',
   stability: 'Low unemployment, low share of social housing, a large enough market to buy and sell easily, and low concentration risk (mining or single-industry dependence, remoteness, shrinking population).',
@@ -127,5 +129,17 @@ export function fmtPrice(s, type) {
 
 /** Why a suburb can score highly while a purchase there rates poorly. Shown wherever both appear. */
 export function scoreVsDeal(score, grade) {
-  return `<details class="explain"><summary>Suburb score ${score ?? '—'}/100 and deal rating ${grade}: why they can differ</summary><p>The <b>suburb score</b> ranks the area against every other suburb in Australia on yield, price trend, population and income growth, rental demand, affordability and stability. It says whether the place is strong <i>relative to others</i>. The <b>deal rating</b> tests one purchase: a typical home at today's price, a 20% deposit, today's investor interest rate and a $120k salary, over 10 years. At current rates most established homes cost their owner money every week, so most rate C or D even in the strongest suburbs. A high suburb score with a D means a good area where the numbers of buying right now are thin: a bigger deposit, a cheaper home or a new build (which keeps negative gearing) changes the rating.</p></details>`;
+  return `<details class="explain"><summary>Suburb score ${score ?? '—'}/100 and deal rating ${grade}: why they can differ</summary><p>The <b>suburb score</b> ranks the area against every other suburb in Australia on yield, price trend, population and income growth, rental demand, affordability and stability. It says whether the place is strong <i>relative to others</i>. The <b>deal rating</b> tests one purchase: a typical home at today's price, a 20% deposit, today's investor interest rate and a $120k salary, over 10 years. The deal grade is relative: it compares this purchase with the typical home in every Australian suburb run through the same model, so an A means the numbers are in the top 15% and a D means the bottom 30%, not that it is a good or bad purchase for you. At current rates most established homes cost their owner money every week, and the grade doesn't hide that: the weekly cost is shown next to it. A high suburb score with a low grade means a good area where the numbers of buying right now are thinner than elsewhere: a bigger deposit, a cheaper home or a new build (which keeps negative gearing) changes the rating.</p></details>`;
+}
+
+/** The human next step after the numbers: pre-approval. Neutral: Keyzing doesn't refer or earn from this. */
+export function nextStepsCard({ fhb = false } = {}) {
+  return `<div class="card next-steps"><div class="eyebrow">Your next step</div><h3 style="margin-top:4px">Get pre-approval before you make offers</h3>
+    <ol class="note" style="padding-left:18px;margin:8px 0 0;line-height:1.6">
+      <li><b>Pre-approval</b> is a lender's conditional yes to a loan amount, usually valid for 3 to 6 months. It turns the ceiling above into a real number and makes your offers stronger.</li>
+      <li><b>Talk to a mortgage broker or go direct to a lender.</b> A broker compares many lenders and must act in your best interests by law; they are usually paid by the lender. A bank quotes only its own loans.</li>
+      <li><b>Have ready:</b> photo ID, your last two payslips (or two years of tax returns if self-employed), three months of bank and savings statements, and details of any debts, cards and buy-now-pay-later accounts.</li>
+      ${fhb ? '<li><b>For the 5% Deposit Scheme or Help to Buy,</b> you apply through a participating lender, not the government. Ask the broker or bank whether they offer it.</li>' : ''}
+    </ol>
+    <p class="fine" style="margin-top:8px"><a href="https://moneysmart.gov.au/home-loans/choosing-a-mortgage-broker" target="_blank" rel="noopener">Moneysmart: choosing a mortgage broker ↗</a>${fhb ? ' · <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia: schemes and participating lenders ↗</a>' : ''} · Keyzing doesn't refer you to anyone or earn anything from this.</p></div>`;
 }

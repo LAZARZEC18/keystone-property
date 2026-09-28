@@ -250,7 +250,8 @@ export const RBA_DECISIONS = ['2026-02-03', '2026-03-17', '2026-05-05', '2026-06
 /** Optional outlook for the next decision; shown only until that date passes. */
 export const RBA_OUTLOOK = {
   date: '2026-09-29',
-  text: 'Markets and the major banks expect a 0.25-point rise to 4.60% (about 90% priced by markets as of late September, after the July inflation figures).',
+  text: 'Major-bank economists expect a 0.25-point rise to 4.60% (CommBank, September 2026). Market pricing changes daily: the ASX RBA Rate Tracker shows the current implied chance of a move.',
+  links: [['CommBank economists', 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html'], ['ASX RBA Rate Tracker', 'https://www.asx.com.au/markets/trade-our-derivatives-market/futures-market/rba-rate-tracker']],
   source: 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html',
 };
 

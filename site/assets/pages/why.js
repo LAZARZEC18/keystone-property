@@ -2,7 +2,7 @@ import { setMeta } from '../ui.js';
 import { load } from '../data.js';
 
 const TOUR = [
-  ['valuation', 'Value any home in seconds', 'Type an address and get an estimated value with its likely range, built from official sales data and the home’s bedrooms, bathrooms, land and condition. Buying to live in, you see the cash you need, repayments against the rent you pay now, and what a 2-point rate rise would cost. Add the asking price to see whether it sits inside the likely range.', '/property', 'Value a property'],
+  ['valuation', 'Estimate a home’s value, with an honest range', 'Type an address and get an estimated value with its likely range, built from official sales data and the home’s bedrooms, bathrooms, land and condition, plus a plain statement of how far to trust it in that state. Buying to live in, you see the cash you need, repayments against the rent you pay now, and what a 2-point rate rise would cost. Add the asking price to see whether it sits in the lower, middle or upper part of the range.', '/property', 'Value a property'],
   ['afford', 'Know what you can afford, in every state', 'Enter your savings and income once. Keyzing works out your buying ceiling in all eight states and territories with each state’s stamp duty and first home concessions, the 5% Deposit Scheme, Help to Buy and the lender stress test, then ranks the places you can buy near where you work.', '/afford?buyer=fhb', 'What can I afford?'],
   ['rent-vs-buy', 'Plan before you search', 'How long it will take to save a deposit, whether buying beats renting over the years you’ll stay, and how much faster the First Home Super Saver scheme gets you there.', '/first-home', 'First home tools'],
   ['map', 'Find the strongest suburbs', 'All 11,042 suburbs scored on yield, price trend, population growth, rental demand, affordability and stability, with a penalty for mining and single-industry towns. Filter by budget and strategy, and see how much of each score rests on measured data.', '/map', 'Suburb scores map'],
@@ -15,12 +15,12 @@ const WHO = [
   ['First home buyers', 'See exactly what you can afford with the 5% Deposit Scheme, Help to Buy, grants and duty concessions for your state; how long it will take to save; whether to keep renting; and which suburbs near work fit your budget.', '/afford?buyer=fhb'],
   ['Upgraders and downsizers', 'Value your current home and the one you want, see the true cash cost of moving (duty, fees, loan) and compare suburbs on the things that matter for living there.', '/property'],
   ['Investors', 'Rank suburbs by strategy, test any deal against the 2026 negative gearing and CGT rules, model joint ownership and land tax across your holdings, and compare every lender’s rate.', '/analyse'],
-  ['Agents and brokers', 'Share a clean suburb report with buyers and vendors, and give clients a neutral price-range check instead of a portal “estimate” with no range. Built to support conversations, not to grade people’s homes.', '/suburbs'],
+  ['Agents and brokers', 'Print a suburb or property report with your name and agency on it, start a rental appraisal from the rent estimate, and give clients an independent price range that says how sure it is. Built to support your appraisal and your conversations.', '/suburb/wa/morley-6062'],
 ];
 
 const DIFF = [
   ['The whole decision in one place', 'Most people juggle a listing portal, a bank calculator, a duty calculator, a rates site and a spreadsheet. Keyzing joins them up: the same property flows from value, to affordability, to repayments, to the long-term numbers.'],
-  ['Honest about uncertainty', 'Every estimate comes with a range, every ranking says whether it is measured or modelled, and the methodology page publishes the model’s own tested error. Prices are only called high or low when they fall outside the range.'],
+  ['Honest about uncertainty', 'Every estimate comes with a range and says whether the model has been tested in that state; every ranking says whether it is measured or modelled; and the methodology page publishes the model’s own tested error. An asking price is placed within the range, and only called high or low outside it.'],
   ['Current rules, all eight states', 'The 2026 negative gearing and CGT changes, each state’s stamp duty and first home thresholds, the 5% Deposit Scheme caps, Help to Buy, the First Home Super Saver scheme and the RBA calendar, checked and dated.'],
   ['Official, live data', 'Sales medians from state governments, the ABS census, building approvals and population estimates, the RBA, a daily home value index, and every bank’s own Open Banking rate feed, refreshed through the day.'],
   ['Independent', 'Keyzing doesn’t sell property or loans. Lenders don’t pay to appear and rates are ranked on rate alone. If a paid referral is ever added it will be labelled, and it will never change a number.'],
@@ -29,7 +29,7 @@ const DIFF = [
 
 // Typical of each category; individual sites differ.
 const CMP = [
-  ['Address value estimate', 'Yes, with a range', 'Often, usually one figure', 'Yes', '—'],
+  ['Address value estimate', 'Yes, with a range and stated accuracy', 'Often', 'Yes', '—'],
   ['Cash needed, repayments vs rent for your own situation', 'Yes', 'Basic calculators', 'Rarely', 'Repayment calculators'],
   ['Buying ceiling in every state with duty concessions, 5% Deposit Scheme and Help to Buy', 'Yes', 'Rarely', 'Rarely', 'Rarely'],
   ['Scores and risks for every suburb', 'Yes, 11,042', 'Suburb profiles (prices, not scores)', 'Yes, usually paid', '—'],
@@ -49,12 +49,13 @@ export default async function whyPage(main) {
     <div>
       <div class="eyebrow">Why Keyzing</div>
       <h1>Everything you need to buy the right home, <em>in one place.</em></h1>
-      <p class="lead">Keyzing is a free, independent Australian property platform. It values any home, shows what you can afford in every state, scores all ${suburbs} suburbs, runs the long-term numbers under the 2026 tax rules and compares ${rs ? `${rs.rows.toLocaleString()} rates from ${rs.lenders}` : 'every'} lenders, all from official data that updates through the day.</p>
+      <p class="lead">Keyzing is a free, independent Australian property platform. It shows what you can afford in every state, estimates what a home is worth with an honest range, scores all ${suburbs} suburbs, runs the long-term numbers under the 2026 tax rules and compares ${rs ? `${rs.rows.toLocaleString()} rates from ${rs.lenders}` : 'every'} lenders, all from official data that updates through the day.</p>
       <div class="row"><a class="btn primary" href="/afford?buyer=fhb" data-link>Start with what you can afford</a><a class="btn" href="/property" data-link>Value a property</a></div>
     </div>
     <figure class="why-video">
       <video controls playsinline preload="metadata" poster="/assets/media/tour-poster.jpg" aria-label="90-second tour of Keyzing">
         <source src="/assets/media/keyzing-tour.mp4" type="video/mp4">
+        <track kind="captions" src="/assets/media/keyzing-tour.en.vtt" srclang="en" label="English" default>
       </video>
       <figcaption class="fine">A 90-second tour: valuing a home, affordability, suburb scores, the deal analyser and rates.</figcaption>
     </figure>

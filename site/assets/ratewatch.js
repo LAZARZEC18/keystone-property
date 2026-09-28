@@ -26,6 +26,8 @@ export function sensitivity(rate, loans = [500000, 750000, 1000000]) {
   });
 }
 
+const srcLinks = (o) => `<span class="fine">(${(o.links || [['Source', o.source]]).map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(', ')})</span>`;
+
 export function rateWatchCard(rba, { compact = false } = {}) {
   const next = nextDecision();
   const avg = rba.actual?.newOOVariable?.at(-1)?.[1] ?? 6.2;
@@ -37,10 +39,10 @@ export function rateWatchCard(rba, { compact = false } = {}) {
   const justIn = recent ? (moved ? `On ${fmtDay(recent)} the RBA moved the cash rate to ${pct(rba.cashRate.current, 2)}.` : `The RBA announced its ${fmtDay(recent)} decision at 2.30pm; the cash rate shown (${pct(rba.cashRate.current, 2)}) is refreshed from the RBA within a few hours.`) : '';
   if (compact) {
     const mid = rows[1];
-    return `<div class="callout rate-watch">${justIn ? `<b>${esc(justIn)}</b> ` : ''}<b>${next ? `Next RBA decision: ${fmtDay(next)}, 2.30pm Sydney time.` : 'RBA decisions.'}</b> ${outlook ? esc(outlook.text) + ' ' : ''}A 0.25-point rise adds about <b>${aud(mid.up25)} a month</b> to a ${aud(mid.loan, { compact: true })} loan at today's average ${pct(avg, 2)} variable rate. <a href="/weekly#rate-watch" data-link>What it does to your repayments →</a></div>`;
+    return `<div class="callout rate-watch">${justIn ? `<b>${esc(justIn)}</b> ` : ''}<b>${next ? `Next RBA decision: ${fmtDay(next)}, 2.30pm Sydney time.` : 'RBA decisions.'}</b> ${outlook ? `${esc(outlook.text)} ${srcLinks(outlook)} ` : ''}A 0.25-point rise adds about <b>${aud(mid.up25)} a month</b> to a ${aud(mid.loan, { compact: true })} loan at today's average ${pct(avg, 2)} variable rate. <a href="/weekly#rate-watch" data-link>What it does to your repayments →</a></div>`;
   }
   return `<div class="card" id="rate-watch"><div class="card-head"><h3>Rate watch</h3>${next ? `<span class="pill">Next decision ${fmtDay(next)}, 2.30pm Sydney time</span>` : ''}</div>
-    <p class="note" style="margin-top:0">${justIn ? `<b>${esc(justIn)}</b> ` : ''}Cash rate ${pct(rba.cashRate.current, 2)}.${outlook ? ` ${esc(outlook.text)} <a href="${outlook.source}" target="_blank" rel="noopener">Source</a>.` : ''} Repayment changes below use the average new owner-occupier variable rate of ${pct(avg, 2)} (RBA F6), 30-year principal and interest.</p>
+    <p class="note" style="margin-top:0">${justIn ? `<b>${esc(justIn)}</b> ` : ''}Cash rate ${pct(rba.cashRate.current, 2)}.${outlook ? ` ${esc(outlook.text)} ${srcLinks(outlook)}` : ''} Repayment changes below use the average new owner-occupier variable rate of ${pct(avg, 2)} (RBA F6), 30-year principal and interest.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Loan</th><th class="n">Monthly now</th><th class="n">+0.25%</th><th class="n">+0.50%</th></tr></thead><tbody>
     ${rows.map((r) => `<tr><td>${aud(r.loan, { compact: true })}</td><td class="n">${aud(r.base)}</td><td class="n down">+${aud(r.up25)}</td><td class="n down">+${aud(r.up50)}</td></tr>`).join('')}
     </tbody></table></div>

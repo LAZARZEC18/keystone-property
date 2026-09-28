@@ -12,7 +12,7 @@ const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland'
 const W = { cash: 20, momentum: 15, growth: 20, demand: 20, afford: 10, stability: 15 };
 
 const PAGES = {
-  '/': ['Australian property values, suburbs and rates for home buyers and investors', 'Value any Australian home, compare 11,000 suburbs, see what you can afford (including the 5% Deposit Scheme), track live home values and compare every home loan rate.'],
+  '/': ['Find a home you can afford, and know what it’s worth', 'Free and independent: see what you can afford in every state with the 5% Deposit Scheme and stamp duty concessions, estimate a home’s value with an honest range, compare 11,000 suburbs and every lender’s rate.'],
   '/afford': ['What can I afford? Your buying ceiling in every state', 'Enter your savings and income to see the most you can pay in every state, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
   '/property': ['What is this property worth? Address valuation', 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keyzing ranks every matching suburb.'],
@@ -42,7 +42,7 @@ const NOINDEX = new Set(['/compare', '/watchlist']);
 /** Build lookup tables from site/data/suburbs.json and market.json. */
 const DAILY = { SYD: 'SYD', MEL: 'MEL', BNE: 'BNEGC', ADL: 'ADL', PER: 'PER' };
 
-/** Same adjustments the app makes on load: prices moved to today with the daily index, and one 12-month figure. */
+/** Same adjustments the app makes on load: prices moved to today with the daily index. 12-month figures stay on the monthly index. */
 function liveAdjust(o, index, market) {
   const d = DAILY[o.rg] ? index?.daily?.[DAILY[o.rg]] : null;
   const R = market?.regions?.[o.rg];
@@ -52,7 +52,6 @@ function liveAdjust(o, index, market) {
   const lf = base ? d.value / base : 1;
   o.h = o.h ? Math.round((o.h * lf) / 1000) * 1000 : o.h;
   o.u = o.u ? Math.round((o.u * lf) / 1000) * 1000 : o.u;
-  if (o.g1 != null && d.year != null) o.g1 = Math.round((o.g1 - R.annualPct + d.year) * 10) / 10;
 }
 
 export function buildIndex(sub, market, index = null) {
@@ -79,7 +78,9 @@ export function buildIndex(sub, market, index = null) {
       w += wt;
     }
     const risk = o.rsk ?? 0;
-    o.score = w ? Math.max(0, Math.round(t / w) - (risk > 20 ? Math.round((risk - 20) * 0.31) : 0)) : null;
+    const raw = w ? t / w : null;
+    const base = raw != null && !(o.conf === 'high' || o.conf === 'medium') ? 50 + (raw - 50) * 0.85 : raw;
+    o.score = w ? Math.max(0, Math.round(base) - (risk > 20 ? Math.round((risk - 20) * 0.31) : 0)) : null;
     bySlug.set(o.slug, o);
     if (o.pc) (byPc.get(o.pc) || byPc.set(o.pc, []).get(o.pc)).push(o);
     if (o.lga) {
@@ -169,7 +170,7 @@ export function describe(pathname, search, ix, origin) {
   const jsonld =
     path === '/'
       ? [
-          { '@context': 'https://schema.org', '@type': 'Organization', name: 'Keyzing', url: `${origin}/`, email: 'Keyzing18@gmail.com', logo: `${origin}/assets/keystone.svg`, address: { '@type': 'PostalAddress', addressLocality: 'Perth', addressRegion: 'WA', addressCountry: 'AU' } },
+          { '@context': 'https://schema.org', '@type': 'Organization', name: 'Keyzing', url: `${origin}/`, email: 'Keyzing18@gmail.com', logo: `${origin}/assets/keyzing.svg`, address: { '@type': 'PostalAddress', addressLocality: 'Perth', addressRegion: 'WA', addressCountry: 'AU' } },
           { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Keyzing', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
         ]
       : [];

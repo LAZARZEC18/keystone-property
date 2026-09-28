@@ -1,8 +1,6 @@
-// Base map tiles: OpenStreetMap standard tiles (light traffic, attributed per the OSM tile policy).
-// Dark mode inverts the tiles with CSS rather than loading a second tile set.
+// Base map tiles, configured in site.js (one place to switch provider). Dark mode inverts the tiles with CSS.
+import { SITE } from './site.js';
 export function baseTiles() {
-  return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  });
+  const t = SITE.tiles;
+  return L.tileLayer(t.url, { maxZoom: t.maxZoom || 19, attribution: t.attribution });
 }
