@@ -1,3 +1,4 @@
+import { demo } from '../demo.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
@@ -49,8 +50,8 @@ export default async function analysePage(main, _p, query) {
 
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
-  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>
+  <div class="page-head with-demo"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
+  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>${demo('calculator')}</div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">

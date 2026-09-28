@@ -3,6 +3,8 @@ import { load, typicalRate } from '../data.js';
 import { attachSearch } from '../app.js';
 import { rateWatchCard } from '../ratewatch.js';
 import { RULES } from '../rules.js';
+import { demo } from '../demo.js';
+import { wikiPhoto, photoCard } from '../photos.js';
 
 // The home page leads with the two tools Keyzing does best: what you can afford, and the 2026 tax-change numbers.
 // Suburb scores and estimates sit behind them until the suburb data is licensed and measured everywhere.
@@ -33,7 +35,11 @@ export default async function home(main) {
         <div class="ac" id="hac" hidden></div>
       </form>
     </div>
-    <div class="hero-steps card">
+    <div class="hero-media">${demo('intro', { caption: 'Every suburb in Australia, priced and scored.', label: 'Animated map: 11,042 Australian suburbs appear as dots coloured by typical house price, then the view zooms into Perth.' })}</div>
+  </section>
+
+  <section class="section">
+    <div class="hero-steps card how-row">
       <div class="eyebrow">How it works</div>
       <ol>
         <li><b>Your numbers.</b> Savings, income, debts and whether it's your first home.</li>
@@ -51,6 +57,11 @@ export default async function home(main) {
   </section>
 
   <section class="section">
+    <div class="spread"><h2>See it in action</h2><a href="/why" data-link>The full 90-second tour →</a></div>
+    <div class="demo-grid">${demo('afford')}${demo('calculator')}${demo('suburb')}</div>
+  </section>
+
+  <section class="section">
     <div class="card tax-band">
       <div><div class="eyebrow">The 2026 tax changes, in numbers</div><h2 style="margin:4px 0 8px">Know what an investment property costs you each week</h2>
       <p class="muted" style="margin:0">Established homes bought after 12 May 2026 can offset rental losses against your salary only until 30 June 2027; after that, losses carry forward. From 1 July 2027 the 50% CGT discount is replaced by indexation with a 30% minimum tax. New builds keep the old treatment. The calculator applies all of it, with stamp duty, LMI, land tax and depreciation, and tells you whether the projected return beats a term deposit.</p></div>
@@ -60,10 +71,7 @@ export default async function home(main) {
 
   <section class="section">
     <div class="spread"><h2>Prices this month</h2><a href="/markets" data-link>All markets →</a></div>
-    <div class="tbl-wrap"><table class="compact">
-      <thead><tr><th>City</th><th class="n">Typical house</th><th class="n hide-sm">Typical unit</th><th class="n">Past 12 months</th><th class="n hide-sm">Rents, 12 months</th></tr></thead>
-      <tbody>${caps.map(([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${esc(r.name)}</a></td><td class="n">${aud(r.medianHouse, { compact: true })}</td><td class="n hide-sm">${aud(r.medianUnit, { compact: true })}</td><td class="n ${cls(r.annualPct)}">${pct(r.annualPct, 1, true)}</td><td class="n hide-sm">${pct(r.rentAnnualPct, 1, true)}</td></tr>`).join('')}</tbody>
-    </table></div>
+    <div class="city-grid" id="cities">${caps.map(([code, r]) => cityCard(code, r, null)).join('')}</div>
     <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end ${esc(market.indexMonth || idx.monthEnd || '')} (source: <a href="${esc(market.sources?.[0]?.url || '#')}" target="_blank" rel="noopener">Cotality</a>). The typical investor rate used across Keyzing is the RBA's average on new investor variable loans, ${pct(inv.rate, 2)} (${esc(inv.month)}). ${oo ? `Lowest advertised owner-occupier variable rate open to anyone: ${pct(oo.rate, 2)} (${esc(oo.lender)}); <a href="/rates" data-link>compare every lender</a>.` : ''}</p>
     <div style="margin-top:12px">${rateWatchCard(rba, { compact: true })}</div>
   </section>
@@ -78,6 +86,17 @@ export default async function home(main) {
 
   attachSearch(main.querySelector('#hq'), main.querySelector('#hac'));
   wireRegister(main.querySelector('#hreg'));
+  // city photos arrive after the page is up
+  caps.forEach(([code, r]) => wikiPhoto(CITY_ARTICLE[code] || r.name).then((p) => {
+    const el = main.querySelector(`#cities [data-city="${code}"]`);
+    if (p && el) el.outerHTML = cityCard(code, r, p);
+  }));
+}
+
+export const CITY_ARTICLE = { SYD: 'Sydney', MEL: 'Melbourne', BNE: 'Brisbane', PER: 'Perth', ADL: 'Adelaide', HBA: 'Hobart', CBR: 'Canberra', DRW: 'Darwin' };
+export function cityCard(code, r, photo) {
+  const c = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
+  return `<div data-city="${code}">${photoCard(photo, `<b>${esc(r.name)}</b><span class="pc-stats">House ${aud(r.medianHouse, { compact: true })} · unit ${aud(r.medianUnit, { compact: true })}</span><span class="pc-stats">12 months <span class="${c(r.annualPct)}">${pct(r.annualPct, 1, true)}</span> · rents ${pct(r.rentAnnualPct, 1, true)}</span>`, { href: `/suburbs?region=${code}`, alt: `${r.name} skyline` })}</div>`;
 }
 
 /** The one sign-up form used across the site (home page and weekly report). */

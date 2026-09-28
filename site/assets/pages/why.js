@@ -1,3 +1,4 @@
+import { demo } from '../demo.js';
 import { setMeta } from '../ui.js';
 import { load } from '../data.js';
 
@@ -59,6 +60,11 @@ export default async function whyPage(main) {
       </video>
       <figcaption class="fine">A 90-second tour: valuing a home, affordability, suburb scores, the deal analyser and rates.</figcaption>
     </figure>
+  </section>
+
+  <section class="section">
+    <h2>Each tool in 15 seconds</h2>
+    <div class="demo-grid">${['afford', 'calculator', 'estimate', 'suburb', 'rates', 'firsthome'].map((c) => demo(c)).join('')}</div>
   </section>
 
   <section class="section">

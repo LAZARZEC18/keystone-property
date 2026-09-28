@@ -5,7 +5,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 
 const ROOT = new URL('../site/', import.meta.url).pathname;
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.txt': 'text/plain', '.xml': 'application/xml' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.txt': 'text/plain', '.xml': 'application/xml', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.vtt': 'text/vtt', '.webm': 'video/webm' };
 const port = Number(process.env.PORT || 8788);
 const fns = {
   '/api/listings': (await import('../netlify/functions/listings.mjs')).default,
@@ -14,6 +14,7 @@ const fns = {
   '/api/live-index': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-news': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-rba': (await import('../netlify/functions/live.mjs')).default,
+  '/api/photos': (await import('../netlify/functions/photos.mjs')).default,
 };
 
 createServer(async (req, res) => {

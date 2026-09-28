@@ -1,0 +1,91 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#07131a;overflow:hidden}canvas{display:block}</style>
+</head><body><canvas id="c" width="1280" height="720"></canvas>
+<script src="pts.js"></script>
+<script>
+// Deterministic motion graphic: draw(t) renders frame t (seconds). 12 s, loops.
+const W = 1280, H = 720, T = 12;
+const cv = document.getElementById('c'), g = cv.getContext('2d');
+const K = Math.cos(-27 * Math.PI / 180);
+const proj = (lat, lng) => [(lng - 134) * K, -(lat + 28)];
+const P = PTS.map(([lat, lng, price, g1, pop], i) => {
+  const [x, y] = proj(lat, lng);
+  // stable pseudo-random per point
+  const r = Math.abs(Math.sin(i * 12.9898 + lat * 78.233) * 43758.5453) % 1;
+  return { x, y, price, g1, pop, r, lng };
+});
+const ease = (x) => (x < 0 ? 0 : x > 1 ? 1 : x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const mix = (a, b, t) => a + (b - a) * t;
+// price colour: teal (cheaper) -> gold -> coral (dearer)
+function priceCol(p, a) {
+  const t = clamp((Math.log(Math.max(p, 150000)) - Math.log(250000)) / (Math.log(2500000) - Math.log(250000)));
+  const stops = [[60, 196, 166], [230, 190, 100], [240, 110, 85]];
+  const s = t < 0.5 ? [stops[0], stops[1], t * 2] : [stops[1], stops[2], (t - 0.5) * 2];
+  const c = s[0].map((v, k) => Math.round(mix(v, s[1][k], s[2])));
+  return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+}
+function growthCol(g1, a) {
+  return g1 >= 0 ? `rgba(110,225,160,${a})` : `rgba(255,140,120,${a})`;
+}
+const PERTH = proj(-31.95, 115.86);
+function text(str, x, y, { size = 40, font = 'Fraunces', weight = 600, alpha = 1, color = '255,255,255', align = 'left' } = {}) {
+  g.save(); g.globalAlpha = alpha; g.fillStyle = `rgb(${color})`; g.font = `${weight} ${size}px ${font}`; g.textAlign = align; g.fillText(str, x, y); g.restore();
+}
+function draw(t) {
+  t = ((t % T) + T) % T;
+  // background: deep navy with a soft glow
+  const bg = g.createRadialGradient(W * 0.62, H * 0.5, 50, W * 0.62, H * 0.5, 800);
+  bg.addColorStop(0, '#0f2a33'); bg.addColorStop(1, '#06121a');
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  // camera: overview -> zoom to Perth -> back
+  const zIn = ease(clamp((t - 4.2) / 1.6)), zOut = ease(clamp((t - 8.6) / 1.6));
+  const z = zIn * (1 - zOut);
+  const scale = mix(17, 150, z);
+  const cx = mix(W * 0.63, W * 0.5, z), cy = mix(H * 0.53, H * 0.52, z);
+  const fx = mix(0, PERTH[0], z), fy = mix(0, PERTH[1], z);
+  const appear = (p) => clamp((t - 0.2 - (p.lng - 113) / 41 * 2.4 - p.r * 0.6) / 0.5);
+  const fadeAll = 1 - clamp((t - 11.4) / 0.6);
+  const growthMode = clamp((t - 5.8) / 0.8) * (1 - clamp((t - 8.8) / 0.6));
+  g.globalCompositeOperation = 'lighter';
+  for (const p of P) {
+    const a = appear(p) * fadeAll;
+    if (a <= 0) continue;
+    const X = cx + (p.x - fx) * scale, Y = cy + (p.y - fy) * scale;
+    if (X < -20 || X > W + 20 || Y < -20 || Y > H + 20) continue;
+    const size = (0.8 + Math.min(1.8, Math.sqrt(p.pop) / 70)) * mix(1, 2.6, z);
+    const pulse = growthMode > 0 ? 1 + 0.35 * Math.sin(t * 6 + p.r * 6.28) * growthMode : 1;
+    const col = growthMode > 0.5 ? growthCol(p.g1, 0.55 * a) : priceCol(p.price, 0.45 * a);
+    g.fillStyle = col;
+    g.beginPath(); g.arc(X, Y, size * pulse, 0, 6.283); g.fill();
+    if (p.pop > 25000) { g.fillStyle = growthMode > 0.5 ? growthCol(p.g1, 0.04 * a) : priceCol(p.price, 0.04 * a); g.beginPath(); g.arc(X, Y, size * 4, 0, 6.283); g.fill(); }
+  }
+  g.globalCompositeOperation = 'source-over';
+  // captions
+  const a1 = clamp((t - 1.2) / 0.6) * (1 - clamp((t - 4.0) / 0.4));
+  text('Every suburb in Australia.', 70, 150, { size: 50, alpha: a1 });
+  text('11,042 of them, priced and scored.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a1, color: '180,210,205' });
+  const a2 = clamp((t - 5.9) / 0.5) * (1 - clamp((t - 8.5) / 0.4));
+  text('Zoom into Perth.', 70, 150, { size: 50, alpha: a2 });
+  text('Every dot is a suburb.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a2, color: '180,210,205' });
+  text('Green: prices up over the past year. Coral: down.', 72, 236, { size: 18, font: 'IBM Plex Sans', weight: 400, alpha: a2 * 0.85, color: '110,225,160' });
+  const a3 = clamp((t - 9.6) / 0.6) * (1 - clamp((t - 11.4) / 0.5));
+  text('Know what you can afford.', 70, 150, { size: 50, alpha: a3 });
+  text('Anywhere in Australia. Free.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a3, color: '180,210,205' });
+  // legend + wordmark
+  const aL = fadeAll * clamp((t - 0.5) / 0.6);
+  text('KEYZING', W - 60, H - 40, { size: 16, font: 'IBM Plex Mono', weight: 500, alpha: 0.7 * aL, align: 'right', color: '160,200,195' });
+  if (growthMode < 0.5) {
+    const lg = g.createLinearGradient(70, 0, 270, 0);
+    lg.addColorStop(0, priceCol(250000, 1)); lg.addColorStop(0.5, priceCol(790000, 1)); lg.addColorStop(1, priceCol(2500000, 1));
+    g.globalAlpha = 0.85 * aL * (1 - growthMode * 2); g.fillStyle = lg; g.fillRect(70, H - 58, 200, 6); g.globalAlpha = 1;
+    text('$250k', 70, H - 30, { size: 13, font: 'IBM Plex Mono', weight: 500, alpha: 0.7 * aL, color: '160,200,195' });
+    text('$2.5m+', 270, H - 30, { size: 13, font: 'IBM Plex Mono', weight: 500, alpha: 0.7 * aL, align: 'right', color: '160,200,195' });
+    text('typical house price', 280, H - 52, { size: 13, font: 'IBM Plex Sans', weight: 400, alpha: 0.6 * aL, color: '160,200,195' });
+  }
+}
+window.draw = draw;
+document.fonts.ready.then(() => { window.READY = true; draw(0); });
+</script></body></html>

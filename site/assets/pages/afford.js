@@ -1,3 +1,5 @@
+import { suburbPhotos, photoCard } from '../photos.js';
+import { demo } from '../demo.js';
 import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge, growth12 } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { stampDuty, lmi, borrowingPower, repayment, analyse, suburbScore, PROFILES, incomeTax } from '../engine.js';
@@ -76,8 +78,8 @@ export default async function affordPage(main, _p, query) {
   const q = (k, d) => (query[k] !== undefined ? query[k] : d);
 
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Affordability analyst</div><h1>What can I afford, and where should I buy?</h1>
-  <p>Tell Keyzing what you have saved and what you earn. It calculates the most you can pay in every state, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>
+  <div class="page-head with-demo"><div><div class="eyebrow">Affordability analyst</div><h1>What can I afford, and where should I buy?</h1>
+  <p>Tell Keyzing what you have saved and what you earn. It calculates the most you can pay in every state, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>${demo('afford')}</div>
   <div class="grid" style="grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px" id="aff-grid">
     <form class="card" id="af" onsubmit="return false" style="align-self:start;position:sticky;top:110px">
       <h3>Your situation</h3>
@@ -281,6 +283,7 @@ export default async function affordPage(main, _p, query) {
 
     <div class="card" style="margin-top:16px">
       <div class="card-head"><h3>Your best options</h3><span class="note">${live ? `Ranked for living in: ${work ? `distance to ${esc(cleanName(work.n))}, ` : ''}local economy and stability, town size and services, and price growth` : `Ranked by ${esc(form.profile.selectedOptions[0].text.toLowerCase())} score`}</span> ${live && !work ? `<span class="callout" style="display:block;margin:8px 0 0">Without a workplace this ranks only on local economy, services and price trend, so it can suggest places that don't suit you. <b>Add where you work</b> (left) to rank by commute${f.where ? '' : `, or pick a city: ${capitals.map(([c, r]) => `<button type="button" class="pill" data-where="r:${c}">${esc(r.name)}</button>`).join(' ')}`}.</span>` : ''}<span class="fine" style="display:block"><span class="area-tag">area</span> = city or regional 12-month figure where there's no suburb-level sales data.</span></div>
+      ${top.length ? `<div class="pick-grid" id="pick-photos">${top.slice(0, 3).map((m, i) => `<div data-pick="${i}">${photoCard(null, `<b>${i + 1}. ${esc(cleanName(m.s.n))} ${m.s.s}</b><span class="pc-stats">${m.t === 'u' ? 'Unit' : 'House'} about ${aud(m.price, { compact: true })}</span>`, { href: suburbUrl(m.s) })}</div>`).join('')}</div>` : ''}
       ${top.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Suburb</th><th class="n">${live ? 'Fit for you' : 'Score'}</th><th class="n">Typical price</th><th class="n">You'd need</th><th class="n">Left over</th><th class="n">${investor ? 'Weekly after tax' : 'Repayment / wk'}</th>${investor ? '<th class="n">Rent / wk</th><th class="n">Yield</th>' : `<th class="n">Loan</th>${work ? '<th class="n">To work</th>' : ''}`}<th class="n">12m</th>${investor ? '<th class="n">10-yr return</th>' : ''}<th></th></tr></thead><tbody>
       ${top
         .map((m, i) => `<tr><td class="faint mono">${i + 1}</td><td><a href="${suburbUrl(m.s)}" data-link>${esc(cleanName(m.s.n))}</a> <span class="muted">${m.s.s} ${m.s.pc || ''}</span><div class="fine">${esc(market.regions[m.s.rg]?.name || '')} · ${m.t === 'u' ? 'unit' : 'house'}${m.highRise ? ' · <span class="down">high-rise market</span>' : ''} ${srcBadge(m.t === 'u' ? m.s.us : m.s.hs)}</div></td><td class="n">${scoreBadge(m.score)}</td><td class="n">${aud(m.price, { compact: true })}</td><td class="n">${aud(m.st.cash, { compact: true })}</td><td class="n up">${aud(m.st.spare, { compact: true })}</td><td class="n ${investor ? (m.weekly < 0 ? 'down' : 'up') : ''}">${aud(Math.round(investor ? m.weekly : -m.weekly))}</td>${investor ? `<td class="n">${aud(m.rent)}</td><td class="n">${pct(m.yld, 1)}</td>` : `<td class="n"><span class="fine">${m.st.htb ? `Help to Buy (govt ${aud(m.st.govShare, { compact: true })})` : m.st.guarantee ? '5% scheme' : m.st.lmi ? `LMI ${aud(m.st.lmi, { compact: true })}` : 'no LMI'}</span></td>${work ? `<td class="n">${m.km.toFixed(0)} km</td>` : ''}`}<td class="n">${growth12(m.s, { suffix: '', short: true })}</td>${investor ? `<td class="n">${pct(m.irr, 1)}</td>` : ''}<td><a class="btn sm" href="/analyse?suburb=${m.s.id}&price=${m.price}&rent=${m.rent || ''}&type=${m.t}&dep=${Math.round((m.st.deposit / m.price) * 100)}&rate=${rate}&income=${income}&buyer=${buyer}" data-link>Analyse</a> <a class="btn sm ghost" href="${listingLinks(m.s).reaBuy}" target="_blank" rel="noopener">Listings</a></td></tr>`)
@@ -308,6 +311,10 @@ export default async function affordPage(main, _p, query) {
     ${investor ? '' : `<div style="margin-top:16px">${nextStepsCard({ fhb: buyer === 'fhb' })}</div>`}
     ${investor ? '' : `<div class="row no-print" style="margin-top:12px"><button class="btn" type="button" id="print-plan">Print or save my plan as PDF</button><span class="fine">Your inputs are also in the page link, so you can bookmark or email it to yourself.</span></div>`}`;
 
+    top.slice(0, 3).forEach((m, i) => suburbPhotos(m.s, 1).then(([ph]) => {
+      const el = out.querySelector(`#pick-photos [data-pick="${i}"]`);
+      if (ph && el) el.innerHTML = photoCard(ph, `<b>${i + 1}. ${esc(cleanName(m.s.n))} ${m.s.s}</b><span class="pc-stats">${m.t === 'u' ? 'Unit' : 'House'} about ${aud(m.price, { compact: true })}</span>`, { href: suburbUrl(m.s), alt: `${ph.title}, ${cleanName(m.s.n)}` });
+    }));
     if (map) {
       map.remove();
       map = null;

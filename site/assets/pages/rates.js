@@ -1,3 +1,4 @@
+import { demo } from '../demo.js';
 import { esc, aud, pct, ago, setMeta, sortable } from '../ui.js';
 import { rateRows, load } from '../data.js';
 import { repayment } from '../engine.js';
@@ -28,8 +29,8 @@ export default async function ratesPage(main, _p, query) {
   const failed = R.failed.map((f) => f.lender);
 
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Rates</div><h1>Every home loan rate in Australia</h1>
-  <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each bank's public Consumer Data Right (Open Banking) product feed, checked several times a day. Last check ${ago(R.updated)}.</p></div>
+  <div class="page-head with-demo"><div><div class="eyebrow">Rates</div><h1>Every home loan rate in Australia</h1>
+  <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each bank's public Consumer Data Right (Open Banking) product feed, checked several times a day. Last check ${ago(R.updated)}.</p></div>${demo('rates')}</div>
   <div style="margin-bottom:16px">${rateWatchCard(rba, { compact: true })}</div>
   <div class="grid g4">
     ${[['INV_PI_variable', 'Investor variable P&I'], ['INV_PI_fixed3', 'Investor 3-yr fixed'], ['OO_PI_variable', 'Owner-occupier variable'], ['OO_PI_fixed2', 'Owner-occupier 2-yr fixed']]

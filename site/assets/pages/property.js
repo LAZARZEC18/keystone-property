@@ -1,3 +1,4 @@
+import { demo } from '../demo.js';
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
 import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment } from '../engine.js';
@@ -5,6 +6,7 @@ import { liveFactor, regionMoves } from '../live.js';
 import { baseTiles } from '../map.js';
 import { liveListings, valueCall, rangeBar } from './listings.js';
 import { accuracy } from '../accuracy.js';
+import { fillSuburbPhotos } from '../photos.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { reaSearch } from './find.js';
 import { navigate } from '../app.js';
@@ -37,8 +39,8 @@ export default async function propertyPage(main, _p, query) {
   const [idx, market, index, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('index'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
 
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
-  <p>Enter an address. Keyzing checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>
+  <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
+  <p>Enter an address. Keyzing checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
   <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 7 Russell Street, Morley WA 6062" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
@@ -117,6 +119,7 @@ export default async function propertyPage(main, _p, query) {
 
   out.innerHTML = `
   <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')}· located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
+  <div id="pphotos" style="margin-top:14px"></div>
   <div class="grid split-spec" style="gap:20px;margin-top:16px" id="pgrid">
     <form class="card" id="spec" onsubmit="return false" style="align-self:start">
       <div class="seg" id="pmode" role="tablist" style="width:100%;margin-bottom:14px"><button type="button" data-m="home" style="flex:1">Buying to live in</button><button type="button" data-m="invest" style="flex:1">Buying to invest</button></div>
@@ -146,6 +149,7 @@ export default async function propertyPage(main, _p, query) {
   </section>
   <section class="section card"><div class="card-head"><h3>Similar homes for sale</h3><span class="note" id="simnote"></span></div><div class="row" id="simlinks"></div><div id="simlive" style="margin-top:14px"></div><p class="fine" style="margin-top:10px">Recent sales nearby are the best guide to value: <a href="${listingLinks(s).reaSold}" target="_blank" rel="noopener">sold homes in ${esc(cleanName(s.n))} ↗</a>.</p></section>`;
 
+  fillSuburbPhotos(main.querySelector('#pphotos'), s, { n: 4, place: `${cleanName(s.n)} ${s.s}` });
   const form = main.querySelector('#spec');
   form.type.value = spec.type;
   // same default as the affordability tool: first home buyers start on the 5% Deposit Scheme

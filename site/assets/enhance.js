@@ -1,3 +1,4 @@
+import { wireDemos } from './demo.js';
 // Page-wide enhancements applied after every render: plain-English explanations for jargon,
 // and a scroll hint on tables wider than the screen.
 
@@ -90,6 +91,7 @@ export function wireJargonTips() {
 }
 
 export function enhance(root) {
+  wireDemos(root);
   // repeat until no new terms are found (each pass may split text nodes)
   for (let i = 0; i < 4; i++) {
     const before = root.querySelectorAll('abbr.jargon').length;

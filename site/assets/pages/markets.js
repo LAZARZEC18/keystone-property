@@ -1,3 +1,5 @@
+import { cityCard, CITY_ARTICLE } from './home.js';
+import { wikiPhoto } from '../photos.js';
 import { esc, aud, pct, date, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
 import { load } from '../data.js';
 
@@ -27,6 +29,8 @@ export default async function markets(main) {
     <div class="card"><div class="stat"><span class="k">Median new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
     <div class="card"><div class="stat"><span class="k">National rent growth</span><span class="v">${pct(market.national.rentAnnualPct, 1, true)}</span><span class="s">Vacancy ${pct(market.national.vacancySQM, 1)} (SQM)</span></div></div>
   </div>
+
+  <section class="section"><div class="city-grid" id="m-cities">${Object.entries(market.regions).filter(([, r]) => r.capital).map(([code, r]) => cityCard(code, r, null)).join('')}</div></section>
 
   <section class="section">
     <h2>Values and momentum by market</h2>
@@ -106,6 +110,10 @@ export default async function markets(main) {
   <section class="section"><h3>Sources</h3><ul class="note">${market.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}<li><a href="https://www.rba.gov.au/statistics/tables/" target="_blank" rel="noopener">RBA statistical tables A2, F1.1, F5, F6</a> (auto-updated ${date(rba.updated)})</li></ul>
   <p class="fine">${market.caveats.map(esc).join(' ')}</p></section>`;
   wireCharts(main, (v) => `${v.toFixed(2)}%`);
+  Object.entries(market.regions).filter(([, r]) => r.capital).forEach(([code, r]) => wikiPhoto(CITY_ARTICLE[code] || r.name).then((ph) => {
+    const el = main.querySelector(`#m-cities [data-city="${code}"]`);
+    if (ph && el) el.outerHTML = cityCard(code, r, ph);
+  }));
 }
 
 /** Plain-English description of the current numbers, generated from the data. Describes what moved; never says what to do. */

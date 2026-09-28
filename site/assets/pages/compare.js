@@ -1,3 +1,4 @@
+import { suburbPhotos, photoCard } from '../photos.js';
 import { esc, aud, pct, num, scoreBadge, bar, setMeta, srcBadge } from '../ui.js';
 import { suburbs, suburbDetail, suburbUrl, cleanName, load, watchlist } from '../data.js';
 import { suburbScore, PROFILES, stampDuty } from '../engine.js';
@@ -40,6 +41,7 @@ export default async function comparePage(main, _p, query) {
   const yH = picks.map((s) => (s.rh && s.h ? (s.rh * 52 * 100) / s.h : null));
   const yU = picks.map((s) => (s.ru && s.u ? (s.ru * 52 * 100) / s.u : null));
   main.querySelector('#c-out').innerHTML = `
+  <div class="city-grid" id="c-photos" style="grid-template-columns:repeat(${picks.length},minmax(0,1fr));margin-bottom:14px">${picks.map((s, i) => `<div data-c="${i}">${photoCard(null, `<b>${esc(cleanName(s.n))}</b><span class="pc-stats">${s.s} ${s.pc || ''}</span>`, { href: suburbUrl(s) })}</div>`).join('')}</div>
   <div class="tbl-wrap"><table>
     <thead><tr><th></th>${picks.map((s, i) => `<th class="n" style="text-transform:none;font-size:14px;color:var(--ink)"><a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> <span class="muted">${s.s} ${s.pc}</span><br><button class="btn sm ghost" data-rm="${i}">Remove</button></th>`).join('')}</tr></thead>
     <tbody>
@@ -71,4 +73,8 @@ export default async function comparePage(main, _p, query) {
     </tbody></table></div>
     <p class="fine" style="margin-top:8px">Bold green marks the best value in each row for an investor.</p>`;
   main.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => go(picks.filter((_, i) => i !== +b.dataset.rm))));
+  picks.forEach((sb, i) => suburbPhotos(sb, 1).then(([ph]) => {
+    const el = main.querySelector(`#c-photos [data-c="${i}"]`);
+    if (ph && el) el.innerHTML = photoCard(ph, `<b>${esc(cleanName(sb.n))}</b><span class="pc-stats">${sb.s} ${sb.pc || ''}</span>`, { href: suburbUrl(sb), alt: `${ph.title}, ${cleanName(sb.n)}` });
+  }));
 }
