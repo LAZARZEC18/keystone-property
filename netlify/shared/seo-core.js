@@ -126,7 +126,7 @@ export function describe(pathname, search, ix, origin) {
     const price = s.pt === 'u' ? s.u : s.h;
     const rent = s.pt === 'u' ? s.ru : s.rh;
     const title = `${s.name} ${s.s} ${s.pc || ''}: house prices, rents, yield and suburb score`.replace(/\s+/g, ' ');
-    const description = `Typical ${type} in ${s.name} about ${money(price)}, rent about $${rent ?? '—'} a week (${pct(s.y, 1)} yield). Price trend, demographics, supply, risks and the cost to buy, updated daily.`;
+    const description = `Typical ${type} in ${s.name} about ${money(price)}, rent about $${rent ?? '—'} a week (${pct(s.y, 1)} yield). Price trend, demographics, supply, risks and the cost to buy, at the latest month-end.`;
     const near = nearest(ix, s);
     const lgaSlug = s.lga ? `${s.s.toLowerCase()}/${slugify(s.lga)}` : null;
     const body = `<article class="ssr"><div class="crumbs"><a href="/suburbs?state=${s.s}">${esc(STATE_NAMES[s.s] || s.s)}</a> › ${lgaSlug ? `<a href="/council/${lgaSlug}">${esc(s.lga)}</a> › ` : ''}${s.pc ? `<a href="/postcode/${s.pc}">${s.pc}</a>` : ''}</div>
@@ -142,7 +142,9 @@ export function describe(pathname, search, ix, origin) {
         { '@type': 'ListItem', position: lgaSlug ? 3 : 2, name: s.name, item: canonical },
       ] },
     ];
-    return { ...base, title, description, body, jsonld };
+    // small places with only modelled prices are thin pages: keep them usable but out of search indexes
+    const thin = s.hs === 'model' && (Number(s.pop) || 0) < 1000;
+    return { ...base, title, description, body, jsonld, robots: thin ? 'noindex,follow' : base.robots };
   }
   m = path.match(/^\/postcode\/(\d{3,4})$/);
   if (m) {

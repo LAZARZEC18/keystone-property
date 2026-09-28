@@ -43,7 +43,7 @@ export default async function propertyPage(main, _p, query) {
   main.innerHTML = `
   <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
   <p>Enter an address. Keyzing checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
-  <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 7 Russell Street, Morley WA 6062" aria-label="Property address"></form>
+  <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
   const go = () => input.value.trim() && navigate(`/property?q=${encodeURIComponent(input.value.trim())}`);
@@ -71,7 +71,7 @@ export default async function propertyPage(main, _p, query) {
       idx.list.filter((x) => !st || x.s === st).map((x) => [haversine(x, g), x]).sort((a, b) => a[0] - b[0])[0]?.[1];
   }
   if (!s) {
-    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Keyzing couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Morley WA 6062".</p></div>`;
+    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Keyzing couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Collingwood VIC 3066".</p></div>`;
     return;
   }
   const facts = prop?.found ? prop : null;

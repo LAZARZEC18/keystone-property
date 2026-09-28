@@ -12,7 +12,7 @@ const EXAMPLES = [
   'Apartment within 8 km of Melbourne CBD under $600k',
   'First home in Brisbane between $500k and $700k',
   'Cash flow investment in regional WA with 6% yield',
-  '4 bedroom family home near Morley',
+  '4 bedroom family home near good schools in Canberra',
   'Growth house near the city in Adelaide',
 ];
 

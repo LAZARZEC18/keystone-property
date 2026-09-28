@@ -6,18 +6,18 @@ import { rateWatchCard } from '../ratewatch.js';
 import { trendWord } from '../live.js';
 
 export default async function weeklyPage(main) {
-  setMeta({ title: 'Weekly property market report', description: 'What moved in the Australian property market this week: values, rates and the headlines, plus a free weekly update.' });
+  setMeta({ title: 'Property market update: rates this week, prices at month-end', description: 'Home loan rates and the RBA outlook checked every week, capital-city values from the latest month-end index, and the week’s housing headlines.' });
   const [weekly, market, rba, idx] = await Promise.all([load('weekly').catch(() => []), load('market'), load('rba'), Promise.resolve(null)]);
   const cur = weekly.at(-1);
   const prev = weekly.at(-2);
   const names = { CAP5: '5 capitals', SYD: 'Sydney', MEL: 'Melbourne', BNEGC: 'Brisbane + Gold Coast', ADL: 'Adelaide', PER: 'Perth' };
   const cls = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Weekly report</div><h1>This week in property</h1>
-  <p>Week of ${date(cur?.week)} · updated ${ago(cur?.updated)}. A new snapshot is saved every week, so the archive below grows over time.</p></div>
+  <div class="page-head"><div class="eyebrow">Market update</div><h1>Rates this week, prices at month-end</h1>
+  <p>Week of ${date(cur?.week)} · updated ${ago(cur?.updated)}. Lender rates and the RBA outlook change week to week and are checked every week. Home values come from Cotality's index, which is published monthly, so those figures change once a month (latest: ${esc(market.indexMonth || '')}). Keyzing doesn't have weekly sales, clearance rates or listing volumes.</p></div>
   <div class="grid g-side">
     <div>
-      <div class="card"><h3>The short version</h3><p>${esc(commentary(market, rba))}</p>
+      <div class="card"><h3>Prices at month-end</h3><p>${esc(commentary(market, rba))}</p>
       <div class="tbl-wrap"><table><thead><tr><th>Market</th><th class="n">Month</th><th class="n">3 months</th><th class="n">12 months</th><th></th></tr></thead><tbody>
       ${Object.entries(market.regions).filter(([, r]) => r.capital).map(([k, r]) => `<tr><td>${esc(r.name)}</td><td class="n ${cls(r.monthPct)}">${pct(r.monthPct, 1, true)}</td><td class="n ${cls(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</td><td class="n ${cls(r.annualPct)}">${pct(r.annualPct, 1, true)}</td><td class="muted">${trendWord(r.quarterPct)}</td></tr>`).join('')}
       </tbody></table></div>
@@ -32,7 +32,7 @@ export default async function weeklyPage(main) {
     <div>
       <div class="card" id="reg">
         <h3>Register for updates</h3>
-        <p class="note">Register for the weekly email edition (launching soon) and tell us which suburbs you're watching so we can flag big moves.</p>
+        <p class="note">Register for the email edition (launching soon) and tell us which suburbs you're watching so we can flag big moves.</p>
         ${registerForm('reg-form')}
         <p class="fine">Your details are stored by Netlify for Keyzing only and never sold. <a href="/privacy" data-link>Privacy</a>.</p>
       </div>

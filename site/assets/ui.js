@@ -82,6 +82,27 @@ const nice = (min, max, n = 4) => {
   return { lo, hi, ticks };
 };
 
+/** Evenly spaced x ticks: whole years at a round step for dates, round integers for year counts. */
+export function xTicks(x0, x1, max = 7) {
+  const steps = [1, 2, 5, 10, 20, 25, 50];
+  if (x0 > 1e11) {
+    const y0 = new Date(x0).getFullYear();
+    const y1 = new Date(x1).getFullYear();
+    const step = steps.find((st) => (y1 - y0) / st <= max - 1) || 50;
+    const out = [];
+    for (let y = Math.ceil(y0 / step) * step; y <= y1; y += step) {
+      const t = Date.UTC(y, 0, 1);
+      if (t >= x0 && t <= x1) out.push(t);
+    }
+    return out.length >= 2 ? out : [x0, x1];
+  }
+  const span = x1 - x0;
+  const step = steps.find((st) => span / st <= max - 1) || Math.ceil(span / (max - 1));
+  const out = [];
+  for (let v = Math.ceil(x0 / step) * step; v <= x1 + 1e-9; v += step) out.push(v);
+  return out.length >= 2 ? out : [x0, x1];
+}
+
 /**
  * Line chart. series: [{name, points:[[x(Date|number), y]], color?, dash?}]
  * opts: {height, yFmt, xFmt, area, zero}
@@ -102,8 +123,7 @@ export function lineChart(series, opts = {}) {
   const yFmt = opts.yFmt || ((v) => v);
   const xFmt = opts.xFmt || ((v) => new Date(v).getFullYear());
   const grid = yr.ticks.map((t) => `<g><line x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}" class="grid"/><text x="${m.l - 8}" y="${Y(t) + 4}" class="axis" text-anchor="end">${yFmt(t)}</text></g>`).join('');
-  const nx = Math.min(7, xs.length);
-  const xt = Array.from({ length: nx }, (_, i) => x0 + ((x1 - x0) * i) / Math.max(1, nx - 1));
+  const xt = xTicks(x0, x1);
   const xticks = xt.map((t) => `<text x="${X(t)}" y="${H - 8}" class="axis" text-anchor="middle">${xFmt(t)}</text>`).join('');
   const paths = series
     .map((s, i) => {

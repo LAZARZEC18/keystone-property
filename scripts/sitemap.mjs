@@ -10,11 +10,13 @@ const today = new Date().toISOString().slice(0, 10);
 const urls = new Set(['/', '/markets', '/suburbs', '/new-builds', '/analyse', '/afford', '/rates', '/news', '/guide', '/weekly', '/borrowing', '/methodology', '/compare', '/map', '/property', '/find', '/about', '/contact', '/privacy', '/terms', '/first-home', '/why']);
 for (const r of d.rows) {
   const n = r[col('n')], s = r[col('s')], pc = r[col('pc')], lga = r[col('lga')], id = r[col('id')];
-  urls.add(`/suburb/${s.toLowerCase()}/${slug(clean(n))}-${pc || id}`);
+  // same rule as the page's robots tag: small places with only modelled prices aren't listed
+  const thin = r[col('hs')] === 'model' && (r[col('pop')] || 0) < 1000;
+  if (!thin) urls.add(`/suburb/${s.toLowerCase()}/${slug(clean(n))}-${pc || id}`);
   if (pc) urls.add(`/postcode/${pc}`);
   if (lga) urls.add(`/council/${s.toLowerCase()}/${slug(lga)}`);
 }
-const daily = new Set(['/', '/markets', '/rates', '/news', '/weekly', '/map']);
+const daily = new Set(['/', '/rates', '/news']);
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...urls].map((u) => `<url><loc>${SITE}${u}</loc><lastmod>${today}</lastmod><changefreq>${daily.has(u) ? 'hourly' : 'weekly'}</changefreq></url>`).join('\n')}\n</urlset>\n`;
 await writeFile(new URL('../site/sitemap.xml', import.meta.url), xml);
 await writeFile(new URL('../site/robots.txt', import.meta.url), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);

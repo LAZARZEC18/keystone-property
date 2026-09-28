@@ -6,7 +6,6 @@ import { getText, pool } from './lib/http.mjs';
 export const FEEDS = [
   { source: 'RBA', url: 'https://www.rba.gov.au/rss/rss-cb-media-releases.xml', all: true },
   // portal news is filtered like any other feed (it carries celebrity and lifestyle pieces)
-  { source: 'realestate.com.au', url: 'https://www.realestate.com.au/news/feed/' },
   { source: 'PropTrack', url: 'https://www.realestate.com.au/insights/feed/', all: true },
   { source: 'The Conversation', url: 'https://theconversation.com/au/topics/housing-1109/articles.atom', all: true },
   { source: 'The Guardian', url: 'https://www.theguardian.com/australia-news/housing/rss', all: true },
@@ -142,6 +141,10 @@ export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
   out.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   // a short list, and no single publisher (least of all a listing portal) can dominate it
   const count = {};
+  // An independent site shouldn't pass on portal clickbait: skip hype and listicle headlines
+  const HYPE = /tipped to boom|\bboom(ing)?\b|skyrocket|soar(ing)?|hotspots?|\breveals?\b|\brevealed\b|you need to know|must[- ]know|secret|millionaire|\bhacks?\b|\bthe \d+ (best|worst)|\b(five|\d+) (markets|suburbs|places) (to|where)/i;
+  const PROFILE = /'s (leap|journey|story)\b|\bmeet the\b/i;
+  for (let i = out.length - 1; i >= 0; i--) if (HYPE.test(out[i].title) || PROFILE.test(out[i].title)) out.splice(i, 1);
   const curated = out.filter((x) => (count[x.source] = (count[x.source] || 0) + 1) <= (PER_SOURCE[x.source] ?? 5)).slice(0, 30);
   return {
     updated: new Date(now).toISOString(),

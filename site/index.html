@@ -32,45 +32,35 @@
       </a>
       <nav class="nav" aria-label="Main">
         <div class="nav-group">
-          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">What can I afford?<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Buying a home<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
           <div class="nav-menu">
-            <a href="/afford?buyer=fhb" data-link><b>What can I afford?</b><span>Your price ceiling in every state and territory, schemes included</span></a>
-            <a href="/first-home" data-link><b>First home tools</b><span>Rent vs buy, how long to save, super saver</span></a>
-            <a href="/borrowing" data-link><b>Borrowing power</b><span>How lenders assess you</span></a>
-            <a href="/guide#fhb" data-link><b>First home guide</b><span>Grants, schemes and duty concessions by state</span></a>
+            <a href="/afford?buyer=fhb" data-link><b>What can I afford?</b><span>A comfortable price where you want to buy, and the schemes you qualify for</span></a>
+            <a href="/borrowing" data-link><b>How much could I borrow?</b><span>The way lenders test you</span></a>
+            <a href="/first-home" data-link><b>Rent vs buy and saving</b><span>How long to save, and the super saver scheme</span></a>
+            <a href="/guide#fhb" data-link><b>First home guide</b><span>Grants, Keystart and state schemes, duty by state</span></a>
           </div>
         </div>
         <div class="nav-group">
-          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Is this a good buy?<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Investing<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
           <div class="nav-menu">
-            <a href="/analyse" data-link><b>2026 tax-change calculator</b><span>Weekly cost after tax and 10-year return for an investment</span></a>
-            <a href="/property" data-link><b>Suburb estimate for a home</b><span>A typical home like it: price range, cash needed, repayments</span></a>
-            <a href="/rates" data-link><b>Home loan rates</b><span>Every lender's advertised rate</span></a>
-            <a href="/guide#strategy" data-link><b>Investor guide</b><span>Strategy, tax and owning a rental</span></a>
+            <a href="/analyse" data-link><b>2026 tax-change calculator</b><span>The weekly cost after tax and the 10-year return</span></a>
+            <a href="/rates" data-link><b>Home loan rates</b><span>Every lender, with offset and fees</span></a>
+            <a href="/guide#tax-2026" data-link><b>Investor guide</b><span>The 2026 rules, strategy and owning a rental</span></a>
           </div>
         </div>
         <div class="nav-group">
-          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Where should I look?<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Suburbs and prices<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
           <div class="nav-menu">
-            <a href="/find" data-link><b>Search by what you want</b><span>"3 bed near the beach in Perth under $800k"</span></a>
-            <a href="/suburbs" data-link><b>Suburb explorer</b><span>Every suburb, with a map view and filters</span></a>
+            <a href="/property" data-link><b>Price range for a home</b><span>A typical home like it, the cash you need and repayments</span></a>
+            <a href="/suburbs" data-link><b>Suburb explorer</b><span>Ranked within each state, with a map view</span></a>
             <a href="/compare" data-link><b>Compare suburbs</b><span>Side by side, up to four</span></a>
-            <a href="/new-builds" data-link><b>New building by area</b><span>Approvals by council</span></a>
-            <a href="/watchlist" data-link><b>Watchlist and saved deals</b><span>Kept in this browser</span></a>
-          </div>
-        </div>
-        <div class="nav-group">
-          <button type="button" class="nav-top" aria-haspopup="true" aria-expanded="false">Market<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
-          <div class="nav-menu">
-            <a href="/markets" data-link><b>Market dashboard</b><span>Every capital and region</span></a>
-            <a href="/weekly" data-link><b>Weekly report</b><span>What moved, plus the RBA outlook</span></a>
-            <a href="/news" data-link><b>Housing news</b><span>A short list of relevant headlines</span></a>
+            <a href="/markets" data-link><b>Market dashboard</b><span>Every capital and region at month-end</span></a>
           </div>
         </div>
       </nav>
       <div class="top-tools">
         <form class="quick" role="search" autocomplete="off">
-          <input id="q" type="search" placeholder="Address, suburb or search" aria-label="Search an address, suburb, postcode or describe what you want" />
+          <input id="q" type="search" placeholder="Suburb or address" aria-label="Search an address, suburb, postcode or describe what you want" />
           <div class="ac" id="ac" hidden></div>
         </form>
         <button class="icon-btn search-btn" id="search-btn" aria-label="Search" aria-expanded="false" title="Search">
@@ -103,10 +93,15 @@
       <div>
         <div class="brand small"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="arch" d="M4 36V22a16 16 0 0 1 32 0v14h-7V22a9 9 0 0 0-18 0v14z"/><path class="key" d="M15.5 4.6h9l-1.6 9.6h-5.8z"/></svg><span>Keyzing</span></div>
         <p class="muted">Keyzing · Perth, Western Australia · <a href="mailto:Keyzing18@gmail.com">Keyzing18@gmail.com</a></p>
-        <p class="muted">Independent Australian property research for home buyers and investors. The daily index, RBA data and news are checked about every hour and loan rates several times a day.</p>
+        <p class="muted">Free, independent calculators for Australian home buyers and investors. Loan rates are checked several times a day, RBA data and news hourly, and market prices at each month-end.</p>
       </div>
       <div class="foot-links">
         <a href="/why" data-link>Why Keyzing</a>
+        <a href="/weekly" data-link>Market update</a>
+        <a href="/news" data-link>News</a>
+        <a href="/new-builds" data-link>New building</a>
+        <a href="/find" data-link>Search by description</a>
+        <a href="/watchlist" data-link>Saved</a>
         <a href="/about" data-link>About</a>
         <a href="/contact" data-link>Contact</a>
         <a href="/methodology" data-link>Methodology</a>

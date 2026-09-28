@@ -47,7 +47,7 @@ export default async function explorer(main, _p, query) {
       <label class="field">Strategy<select id="f-profile">
         <option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow / yield</option><option value="firsthome">First home / affordability</option><option value="newbuild">New builds (2026 tax rules)</option>
       </select></label>
-      <label class="field">Name, council or postcode<input id="f-q" type="search" placeholder="e.g. Stirling or 6062" value="${esc(st.q || st.lga)}"></label>
+      <label class="field">Name, council or postcode<input id="f-q" type="search" placeholder="e.g. Brisbane or 4000" value="${esc(st.q || st.lga)}"></label>
     </div>
     <div class="row" style="margin-top:12px;justify-content:space-between">
       <label class="check"><input type="checkbox" id="f-official" ${st.officialOnly ? 'checked' : ''}> Official sales data only (VIC, SA, NSW)</label>

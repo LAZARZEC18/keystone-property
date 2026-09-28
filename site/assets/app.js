@@ -2,6 +2,7 @@
 import { $, $$, esc, aud, pct, ago } from './ui.js';
 import { load, suburbs, searchSuburbs, cleanName, suburbUrl } from './data.js';
 import { looksLikeAddress } from './intent.js';
+import { wirePhotos } from './photos.js';
 
 const routes = [
   [/^\/$/, () => import('./pages/home.js')],
@@ -257,4 +258,5 @@ async function ticker() {
   }
 }
 ticker();
+wirePhotos(document);
 render();
