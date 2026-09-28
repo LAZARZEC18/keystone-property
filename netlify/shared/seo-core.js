@@ -150,8 +150,10 @@ export function describe(pathname, search, ix, origin) {
   m = path.match(/^\/council\/([a-z]+\/[a-z0-9-]+)$/);
   if (m) {
     // older links ended in '-' ('campbelltown-nsw-'); treat them as the same council
+    // also accept long official names ('the-hills-shire', 'campbelltown-nsw', 'dubbo-regional')
     const key = m[1].replace(/-+$/, '');
-    const list = (ix.byLga.get(key) || []).sort((a, b) => b.pop - a.pop);
+    const short = key.replace(/(-(shire|regional|city|council|nsw|vic|qld|sa|wa|tas|nt|act))+$/, '');
+    const list = (ix.byLga.get(key) || ix.byLga.get(short) || []).sort((a, b) => b.pop - a.pop);
     if (!list.length) return { ...base, status: 404, robots: 'noindex', title: 'Council not found', description: 'No council area matches this address.', body: '<div class="empty"><h1>Council not found</h1></div>' };
     const lga = list[0].lga;
     const title = `${lga} council area: suburbs, house prices, rents and scores`;

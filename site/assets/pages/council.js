@@ -9,7 +9,10 @@ export default async function councilPage(main, params) {
   const st = params.state.toUpperCase();
   // old links ended in '-' ('campbelltown-nsw-'): accept both
   const want = lgaSlug(params.lga);
-  const rows = list.filter((s) => s.s === st && lgaSlug(s.lga) === want).sort((a, b) => suburbScore(b.sc) - suburbScore(a.sc));
+  const short = want.replace(/(-(shire|regional|city|council|nsw|vic|qld|sa|wa|tas|nt|act))+$/, '');
+  let rows = list.filter((s) => s.s === st && lgaSlug(s.lga) === want);
+  if (!rows.length) rows = list.filter((s) => s.s === st && lgaSlug(s.lga) === short);
+  rows = rows.sort((a, b) => suburbScore(b.sc) - suburbScore(a.sc));
   if (!rows.length) {
     main.innerHTML = '<div class="empty"><h1>Council not found</h1></div>';
     return;
