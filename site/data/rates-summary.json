@@ -1,7 +1,7 @@
 {
- "updated": "2026-09-28T08:31:49.427Z",
+ "updated": "2026-09-28T15:21:15.349Z",
  "lenders": 93,
- "rows": 8085,
+ "rows": 8083,
  "best": {
   "INV_PI_variable": [
    {
@@ -29,7 +29,7 @@
     "url": "https://www.nicu.com.au/home-loans/dream-home-loan"
    },
    {
-    "lender": "CommFCU",
+    "lender": "Community First Bank",
     "product": "Boost Package Home Loan - Investment LVR 80% (Principal and Interest)",
     "rate": 5.99,
     "comparison": 6.37,
@@ -89,7 +89,7 @@
   ],
   "INV_PI_fixed2": [
    {
-    "lender": "CommFCU",
+    "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.24,
     "comparison": 6.65,
@@ -131,7 +131,7 @@
   ],
   "INV_PI_fixed3": [
    {
-    "lender": "CommFCU",
+    "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.19,
     "comparison": 6.63,
@@ -239,7 +239,7 @@
     "url": "https://www.bankofchina.com/au/en/pbservice/pb2/201801/t20180131_11319422.html"
    },
    {
-    "lender": "CommFCU",
+    "lender": "Community First Bank",
     "product": "Boost Package Home Loan - Investment LVR 80% (Interest Only)",
     "rate": 6.14,
     "comparison": 6.57,
@@ -281,34 +281,34 @@
     "url": "https://www.pnbank.com.au/home-loans/investor/fixed-rate/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Investment",
-    "rate": 6.44,
-    "comparison": 8.2,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "IMB Bank",
     "product": "1 year Fixed Rate Home Loan",
     "rate": 6.44,
     "comparison": 6.6,
     "lvrMax": 90,
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Suncorp Bank",
+    "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
+    "rate": 6.49,
+    "comparison": 7.2,
+    "lvrMax": 90,
+    "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    }
   ],
   "INV_IO_fixed2": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.39,
     "comparison": 6.72,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.39,
     "comparison": 6.32,
     "lvrMax": 80,
@@ -349,16 +349,16 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.44,
     "comparison": 6.73,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.44,
     "comparison": 6.35,
     "lvrMax": 80,
@@ -467,7 +467,7 @@
   ],
   "OO_PI_fixed1": [
    {
-    "lender": "Tmcu",
+    "lender": "TMCU",
     "product": "1 Year Fixed Rate Loan",
     "rate": 5.89,
     "comparison": null,
@@ -483,7 +483,7 @@
     "url": "https://www.nicu.com.au/home-loans/value-home-loan-1-year-fixed-special-offer"
    },
    {
-    "lender": "Tmcu",
+    "lender": "TMCU",
     "product": "1 Year Fixed Rate Loan",
     "rate": 5.99,
     "comparison": 6.09,
@@ -583,7 +583,7 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "CommFCU",
+    "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
     "rate": 6.09,
     "comparison": 6.47,
@@ -903,20 +903,12 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "AMP - My AMP",
+    "lender": "AMP",
     "product": "Professional Package",
     "rate": 6.49,
     "comparison": 7.31,
     "lvrMax": 80,
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
-   },
-   {
-    "lender": "Beyond Bank Australia",
-    "product": "Invest Total Home Loan Package",
-    "rate": 6.49,
-    "comparison": 7.06,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
    },
    {
     "lender": "Bendigo Bank",
@@ -925,6 +917,14 @@
     "comparison": 6.28,
     "lvrMax": 80,
     "url": "https://www.brokers.bendigobank.com.au/"
+   },
+   {
+    "lender": "Tiimely Home",
+    "product": "Tiimely Offset Home Loan",
+    "rate": 6.54,
+    "comparison": 6.53,
+    "lvrMax": 80,
+    "url": "https://www.bendigobank.com.au/partner/tiimely-home/features/"
    }
   ],
   "INV_PI_fixed2_national": [
@@ -937,16 +937,16 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.39,
     "comparison": 6.73,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.39,
     "comparison": 6.33,
     "lvrMax": 80,
@@ -971,16 +971,16 @@
   ],
   "INV_PI_fixed3_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.44,
     "comparison": 6.75,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.44,
     "comparison": 6.35,
     "lvrMax": 80,
@@ -1045,8 +1045,8 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "Qantas Money Basic/Offset Home Loans",
-    "product": "Qantas Money Offset Home Loan",
+    "lender": "Qantas Money",
+    "product": "Offset Home Loan",
     "rate": 6.64,
     "comparison": 6.67,
     "lvrMax": 80,
@@ -1055,32 +1055,32 @@
   ],
   "INV_IO_variable_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.29,
     "comparison": 6.3,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.34,
     "comparison": 6.69,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.34,
     "comparison": 6.69,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.34,
     "comparison": 6.69,
     "lvrMax": 80,
@@ -1129,7 +1129,7 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "AMP - My AMP",
+    "lender": "AMP",
     "product": "Professional Package",
     "rate": 6.6,
     "comparison": 7.31,
@@ -1139,16 +1139,16 @@
   ],
   "INV_IO_fixed2_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.39,
     "comparison": 6.72,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.39,
     "comparison": 6.32,
     "lvrMax": 80,
@@ -1181,16 +1181,16 @@
   ],
   "INV_IO_fixed3_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.44,
     "comparison": 6.73,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.44,
     "comparison": 6.35,
     "lvrMax": 80,
@@ -1297,8 +1297,8 @@
     "url": "https://up.com.au/home-loans"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.04,
     "comparison": 6.06,
     "lvrMax": 80,
@@ -1306,22 +1306,6 @@
    }
   ],
   "OO_PI_fixed1_national": [
-   {
-    "lender": "Beyond Bank Australia",
-    "product": "Total Home Loan Package",
-    "rate": 6.29,
-    "comparison": 6.95,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/total-home-loan-package"
-   },
-   {
-    "lender": "Beyond Bank Australia",
-    "product": "Home Buyers Scheme Home Loan",
-    "rate": 6.29,
-    "comparison": 6.95,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/guides/buying-your-first-home/first-home-buyers-package/"
-   },
    {
     "lender": "Suncorp Bank",
     "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
@@ -1345,20 +1329,36 @@
     "comparison": 5.99,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "AMP",
+    "product": "First Home Loan",
+    "rate": 6.38,
+    "comparison": 6.16,
+    "lvrMax": 90,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.39,
+    "comparison": 7.3,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ],
   "OO_PI_fixed2_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.24,
     "comparison": 6.5,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.24,
     "comparison": 6.1,
     "lvrMax": 80,
@@ -1391,16 +1391,16 @@
   ],
   "OO_PI_fixed3_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.29,
     "comparison": 6.53,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.29,
     "comparison": 6.13,
     "lvrMax": 80,
@@ -1517,8 +1517,8 @@
   ],
   "OO_IO_fixed1_national": [
    {
-    "lender": "AMP - My AMP",
-    "product": "AMP First Home Loan",
+    "lender": "AMP",
+    "product": "First Home Loan",
     "rate": 6.59,
     "comparison": 6.18,
     "lvrMax": 80,
@@ -1549,7 +1549,7 @@
     "url": "https://bankofus.com.au/home-loans"
    },
    {
-    "lender": "AMP - My AMP",
+    "lender": "AMP",
     "product": "Professional Package",
     "rate": 6.6,
     "comparison": 7.31,
@@ -1559,8 +1559,8 @@
   ],
   "OO_IO_fixed2_national": [
    {
-    "lender": "AMP - My AMP",
-    "product": "AMP First Home Loan",
+    "lender": "AMP",
+    "product": "First Home Loan",
     "rate": 6.59,
     "comparison": 6.22,
     "lvrMax": 80,
@@ -1591,7 +1591,7 @@
     "url": "https://bankofus.com.au/home-loans"
    },
    {
-    "lender": "AMP - My AMP",
+    "lender": "AMP",
     "product": "Professional Package",
     "rate": 6.6,
     "comparison": 7.24,
@@ -1601,16 +1601,16 @@
   ],
   "OO_IO_fixed3_national": [
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.49,
     "comparison": 6.74,
     "lvrMax": 90,
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank EconoME Home Loan",
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
     "rate": 6.49,
     "comparison": 6.4,
     "lvrMax": 90,
@@ -1633,8 +1633,8 @@
     "url": "https://virginmoney.com.au/home-loans"
    },
    {
-    "lender": "ME Bank - ME Go",
-    "product": "ME Bank CompleteME Home Loan",
+    "lender": "ME Bank",
+    "product": "CompleteME Home Loan",
     "rate": 6.59,
     "comparison": 6.59,
     "lvrMax": 80,
@@ -1643,15 +1643,15 @@
   ],
   "OO_IO_fixed5_national": [
    {
-    "lender": "AMP - My AMP",
-    "product": "AMP First Home Loan",
+    "lender": "AMP",
+    "product": "First Home Loan",
     "rate": 6.88,
     "comparison": 6.45,
     "lvrMax": 80,
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    },
    {
-    "lender": "AMP - My AMP",
+    "lender": "AMP",
     "product": "Professional Package",
     "rate": 6.89,
     "comparison": 7.2,
