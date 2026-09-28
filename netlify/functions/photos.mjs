@@ -40,7 +40,7 @@ function toPhoto(p) {
     width: ii.thumbwidth,
     height: ii.thumbheight,
     page: ii.descriptionurl,
-    artist: text(m.Artist?.value).slice(0, 80) || 'Unknown',
+    artist: text(m.Artist?.value).replace(/^.*derivative work:?\s*/i, '').replace(/^File:\S+\s*/i, '').slice(0, 60) || 'Unknown',
     license,
     licenseUrl: m.LicenseUrl?.value || '',
     categories: m.Categories?.value || '',
