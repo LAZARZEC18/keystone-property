@@ -118,10 +118,14 @@ await job('weekly', async () => {
   const rba = await r(SITE, 'rba.json');
   const news = await r(SITE, 'news.json');
   const now = new Date();
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7))).toISOString().slice(0, 10);
+  // Key the snapshot by the week the INDEX data belongs to (not the UTC clock), so a Sunday-night UTC run with
+  // Monday's Australian data can't overwrite last week's row with this week's numbers.
+  const asOf = new Date(`${idx?.generated || now.toISOString().slice(0, 10)}T00:00:00Z`);
+  const monday = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth(), asOf.getUTCDate() - ((asOf.getUTCDay() + 6) % 7))).toISOString().slice(0, 10);
   const weeks = (await r(HIST, 'weekly.json', [])) || [];
   const snap = {
     week: monday,
+    indexDate: idx?.generated || null,
     updated: now.toISOString(),
     index: Object.fromEntries(Object.entries(idx?.daily || {}).map(([k, v]) => [k, { value: v.value, week: v.week, month: v.month, ytd: v.ytd, year: v.year }])),
     cash: rba?.cashRate?.current ?? null,

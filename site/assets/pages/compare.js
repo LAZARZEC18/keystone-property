@@ -60,7 +60,7 @@ export default async function comparePage(main, _p, query) {
       ${row('Stamp duty on typical house (investor)', picks.map((s) => (s.h ? stampDuty(s.s, s.h).duty : null)), aud, false)}
       ${row('Price ÷ household income', P('pti'), (v) => (v ? `${v}×` : '—'), false)}
       ${row('Population', P('pop'), num, true, true)}
-      ${row('Population growth 2016-21', P('pg5'), (v) => pct(v, 1, true))}
+      ${row('Population growth 2020-25 (ABS estimates)', P('pg5'), (v) => pct(v, 1, true))}
       ${row('Household income / wk', D('inc'), aud)}
       ${row('Income growth 2016-21', D('ig5'), (v) => pct(v, 1, true))}
       ${row('Unemployment', D('une'), (v) => pct(v, 1), false)}

@@ -53,13 +53,13 @@ export default async function ratesPage(main, _p, query) {
       <label class="check"><input type="checkbox" id="r-best" checked> Best rate per lender only</label>
       <label class="check"><input type="checkbox" id="r-special"> Include green, staff and niche loans</label>
       <label class="check"><input type="checkbox" id="r-members"> Include members-only lenders (police, teachers, health, emergency services)</label>
-      <label class="check"><input type="checkbox" id="r-tailored"> Include "tailored" (negotiated) products</label>
+      <label class="check"><input type="checkbox" id="r-tailored"> Include products the lender flags as tailored (rate set case by case)</label>
     </div>
   </div>
   <div id="r-out" class="section"></div>
   <div class="grid g2 section">
     <div class="card"><h3>Advertised vs what people pay</h3><p class="note">The RBA says the average new investor variable loan in ${new Date(rba.actual.newInvVariable.at(-1)[0]).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })} was written at <b>${pct(rba.actual.newInvVariable.at(-1)[1], 2)}</b>, and owner-occupiers paid <b>${pct(rba.actual.newOOVariable.at(-1)[1], 2)}</b>. The banks' "standard variable" headline rates are ${pct(rba.indicator.invStandardVariable.at(-1)[1], 2)} for investors. If your rate is well above the lowest advertised rate at your LVR, refinance or ask your bank to match it.</p></div>
-    <div class="card"><h3>About this data</h3><p class="note">Under the Consumer Data Right every Australian bank must publish its products and rates in a standard format at a public address. Keyzing reads all ${R.brandsChecked} registered banking brands each hour. Advertised rates exclude discretionary discounts, and eligibility, fees and features vary, so read the comparison rate and the lender's terms.${failed.length ? ` Feeds unavailable this hour: ${failed.map(esc).join(', ')}.` : ''}</p></div>
+    <div class="card"><h3>About this data</h3><p class="note">Under the Consumer Data Right every Australian bank must publish its products and rates in a standard format at a public address. Keyzing checks all ${R.brandsChecked} registered banking brands several times a day; ${R.lenders.length} of them currently publish home loan rates. Where a product's name gives a fixed term, interest-only repayments or an LVR limit that its feed leaves out, Keyzing goes by the name. Advertised rates exclude discretionary discounts, and eligibility, fees and features vary, so read the comparison rate and the lender's terms.${failed.length ? ` Feeds unavailable at the last check: ${failed.map(esc).join(', ')}.` : ''}</p></div>
   </div>`;
   const $ = (x) => main.querySelector(x);
   $('#r-purpose').value = st.purpose;
@@ -104,7 +104,7 @@ export default async function ratesPage(main, _p, query) {
       .join('')}</tbody></table></div>
     ${rows.length > 300 ? '<p class="note">Showing the first 300. Narrow the filters to see more.</p>' : ''}
     ${!rows.length ? '<p class="empty">No advertised rates match. Try a lower LVR or another rate type.</p>' : ''}
-    <p class="fine" style="margin-top:8px">Headline figures and this table leave out members-only lenders and products (tick the box to show them), home equity loans, lines of credit and refinance-only offers. *A comparison rate can sit below the advertised rate when the lender's rate falls later in the loan (for example, Unloan cuts its rate each year you stay) or a package fee is waived; comparison rates are for a $150,000 loan over 25 years and may not reflect your loan. "Find ↗" means the lender's feed didn't include a product page, so the link searches for it.</p>`;
+    <p class="fine" style="margin-top:8px">Headline figures and this table leave out members-only lenders and products (tick the box to show them), home equity loans, lines of credit and refinance-only offers. *A comparison rate can sit below the advertised rate when the lender's rate falls later in the loan (for example, Unloan cuts its rate each year you stay) or a package fee is waived; comparison rates are for a $150,000 loan over 25 years and may not reflect your loan. "Find ↗" means the lender's feed didn't include a product page, so the link searches for it. Some products are called "Tailored" (for example NAB's standard loan); that is a name, not the lender's negotiated-rate flag. First home buyers using the 5% Deposit Scheme or Help to Buy need a participating lender: see <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia's lender list ↗</a>.</p>`;
     const t = $('#rt');
     t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');
     sortable(t, (k, asc) => {

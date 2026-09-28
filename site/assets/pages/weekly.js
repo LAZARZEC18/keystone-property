@@ -1,3 +1,4 @@
+import { registerForm, wireRegister } from './home.js';
 import { esc, aud, pct, date, ago, setMeta } from '../ui.js';
 import { load } from '../data.js';
 import { commentary } from './markets.js';
@@ -25,42 +26,16 @@ export default async function weeklyPage(main) {
       <p class="fine" style="margin-top:8px">Week, month and year to date: Cotality Daily Home Value Index, ${date(idx.generated)}. †12 months: Cotality monthly index to ${esc(idx.monthEnd || '')} (for Brisbane + Gold Coast, the Brisbane figure), the same figure used across Keyzing. This report describes what moved; it isn’t a recommendation to buy, sell or wait.</p></div>
       <div style="margin-top:16px">${rateWatchCard(rba)}</div>
       <div class="card" style="margin-top:16px"><h3>Headlines this week</h3><div class="news-list">${(cur?.headlines || []).map((x) => `<div class="news-item"><div><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.title)}</a><div class="meta">${esc(x.source)} · ${ago(x.date)}</div></div></div>`).join('')}</div></div>
-      <div class="card" style="margin-top:16px"><h3>Archive</h3>${weekly.length > 1 ? `<div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">5 capitals</th><th class="n">Sydney</th><th class="n">Melbourne</th><th class="n">Brisbane + GC</th><th class="n">Adelaide</th><th class="n">Perth</th><th class="n">Lowest rate</th></tr></thead><tbody>${[...weekly].reverse().map((x) => `<tr><td>${date(x.week)}</td>${['CAP5', 'SYD', 'MEL', 'BNEGC', 'ADL', 'PER'].map((k) => `<td class="n ${cls(x.index[k]?.week)}">${pct(x.index[k]?.week, 2, true)}</td>`).join('')}<td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="note">The first weekly snapshot was saved this week. Next week\'s will appear here too.</p>'}</div>
+      <div class="card" style="margin-top:16px"><h3>Archive</h3>${weekly.length > 1 ? `<div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">5 capitals</th><th class="n">Sydney</th><th class="n">Melbourne</th><th class="n">Brisbane + GC</th><th class="n">Adelaide</th><th class="n">Perth</th><th class="n">Lowest rate</th></tr></thead><tbody>${[...weekly].reverse().map((x) => `<tr><td>${date(x.week)}${x === weekly.at(-1) ? ' <span class="fine">(so far)</span>' : ''}</td>${['CAP5', 'SYD', 'MEL', 'BNEGC', 'ADL', 'PER'].map((k) => `<td class="n ${cls(x.index[k]?.week)}">${pct(x.index[k]?.week, 2, true)}</td>`).join('')}<td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="note">The first weekly snapshot was saved this week. Next week\'s will appear here too.</p>'}</div>
     </div>
     <div>
       <div class="card" id="reg">
         <h3>Register for updates</h3>
         <p class="note">Register for the weekly email edition (launching soon) and tell us which suburbs you're watching so we can flag big moves.</p>
-        <form id="reg-form" name="register" method="POST" data-netlify="true" netlify-honeypot="company">
-          <input type="hidden" name="form-name" value="register">
-          <p hidden><label>Leave empty <input name="company"></label></p>
-          <div class="fields" style="grid-template-columns:1fr">
-            <label class="field">Name<input name="name" autocomplete="name"></label>
-            <label class="field">Email<input name="email" type="email" required autocomplete="email"></label>
-            <label class="field">I am a<select name="type"><option>First home buyer</option><option>Investor</option><option>Both</option><option>Industry</option></select></label>
-            <label class="field">Suburbs or postcodes I'm watching<input name="suburbs" placeholder="e.g. Morley 6062, Bayswater"></label>
-            <label class="field">Budget<input name="budget" placeholder="e.g. $700k"></label>
-          </div>
-          <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Keyzing updates. I can unsubscribe any time.</label>
-          <button class="btn primary" style="margin-top:12px" type="submit">Register</button>
-          <p class="note" id="reg-msg" style="margin-top:8px"></p>
-        </form>
-        <p class="fine">Your details are stored by Netlify for Keyzing only and never sold. <a href="/methodology#privacy" data-link>Privacy</a>.</p>
+        ${registerForm('reg-form')}
+        <p class="fine">Your details are stored by Netlify for Keyzing only and never sold. <a href="/privacy" data-link>Privacy</a>.</p>
       </div>
     </div>
   </div>`;
-  const form = main.querySelector('#reg-form');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = main.querySelector('#reg-msg');
-    msg.textContent = 'Sending…';
-    try {
-      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() });
-      if (!r.ok) throw new Error(r.status);
-      form.reset();
-      msg.innerHTML = '<span class="up">Thanks, you\'re registered.</span>';
-    } catch (err) {
-      msg.innerHTML = `<span class="down">Couldn't register right now (${esc(String(err.message || err))}). Please try again later.</span>`;
-    }
-  });
+  wireRegister(main.querySelector('#reg-form'));
 }

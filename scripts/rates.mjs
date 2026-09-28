@@ -2,7 +2,7 @@
 // public product feeds. No keys needed: every bank must publish its product reference data.
 // Output: site/data/rates.json (columnar to keep it small) + site/data/rates-summary.json.
 
-import { membersOnly, notPurchase } from '../site/assets/rate-rules.js';
+import { membersOnly, notPurchase, normaliseRate } from '../site/assets/rate-rules.js';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { getJson, pool } from './lib/http.mjs';
 
@@ -175,7 +175,8 @@ export async function collectRates({ log = console.log } = {}) {
 }
 
 /** Best rate per segment, the numbers the dashboard headlines. */
-export function summarise(rows) {
+export function summarise(rawRows) {
+  const rows = rawRows.map(normaliseRate);
   const seg = (f) => rows.filter(f).sort((a, b) => a.rate - b.rate);
   const pick = (list) => list.slice(0, 5).map(({ lender, product, rate, comparison, lvrMax, url }) => ({ lender, product, rate, comparison, lvrMax, url }));
   const at80 = (r) => r.lvrMax === null || r.lvrMax >= 80;

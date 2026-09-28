@@ -24,17 +24,19 @@ export default async (req) => {
   if (q.length < 4) return json({ error: 'address too short' }, 400);
   try {
     let res = await nominatim(q);
-    let precision = 'address';
+    let fallback = false;
     if (!res.length) {
       // drop the house/unit number and try the street
       res = await nominatim(q.replace(/^\s*(unit\s*)?[\d/\-a-z]+\s*[,/]?\s*/i, ''));
-      precision = 'street';
+      fallback = true;
     }
+    const ROAD = new Set(['road', 'street', 'residential', 'tertiary', 'secondary', 'primary', 'unclassified', 'living_street', 'service', 'pedestrian', 'trunk']);
     const out = res.map((x) => ({
       label: x.display_name,
       lat: +x.lat,
       lng: +x.lon,
-      precision: x.address?.house_number ? 'address' : x.addresstype === 'road' ? 'street' : precision,
+      // 'address' = house number found; 'street' = the street exists but not that number; 'area' = only a suburb/town matched
+      precision: x.address?.house_number && !fallback ? 'address' : x.address?.road && (ROAD.has(x.addresstype) || x.addresstype === 'road' || x.address?.house_number) ? 'street' : 'area',
       number: x.address?.house_number || null,
       street: x.address?.road || null,
       suburb: x.address?.suburb || x.address?.town || x.address?.village || x.address?.city_district || x.address?.city || null,

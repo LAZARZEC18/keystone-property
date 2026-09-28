@@ -12,13 +12,13 @@ const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland'
 const W = { cash: 20, momentum: 15, growth: 20, demand: 20, afford: 10, stability: 15 };
 
 const PAGES = {
-  '/': ['Find a home you can afford, and know what it’s worth', 'Free and independent: see what you can afford in every state with the 5% Deposit Scheme and stamp duty concessions, estimate a home’s value with an honest range, compare 11,000 suburbs and every lender’s rate.'],
+  '/': ['What can you afford, and what will it really cost?', 'Free and independent: your price ceiling in every state with the 5% Deposit Scheme and stamp duty concessions, and a calculator for the 2026 negative gearing and CGT changes. Plus every lender’s advertised rate.'],
   '/afford': ['What can I afford? Your buying ceiling in every state', 'Enter your savings and income to see the most you can pay in every state, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
-  '/property': ['What is this property worth? Address valuation', 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.'],
+  '/property': ['Suburb estimate for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keyzing ranks every matching suburb.'],
   '/map': ['Highest-scoring suburbs in Australia: map', 'Every Australian suburb scored on yield, growth, demand, affordability and stability, on one map, with how much of each score is measured.'],
   '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank 11,000 Australian suburbs by price, rent, yield, growth, demand and risk.'],
-  '/analyse': ['Investment property analyser with the 2026 tax rules', 'Stamp duty, LMI, land tax, depreciation and a 10-year after-tax cash flow and return for any Australian property, including the 2026 negative gearing and CGT changes.'],
+  '/analyse': ['2026 tax-change calculator for investment property', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
   '/borrowing': ['How much can I borrow? Borrowing power calculator', 'Estimate your borrowing power the way Australian lenders do: 3-point buffer, 80% of rent, debts and dependants.'],
   '/rates': ['Home loan rates in Australia, compared', 'Every advertised home loan rate from Australian lenders, read from their Open Banking feeds, ranked by loan type and deposit.'],
   '/live': ['Live home values: daily index for the capitals', 'Daily home value moves for Sydney, Melbourne, Brisbane, Adelaide and Perth: this week, month, year to date and year.'],
@@ -37,7 +37,8 @@ const PAGES = {
   '/privacy': ['Privacy policy', 'What Keyzing collects, why, and what it does with it.'],
   '/terms': ['Terms of use', 'The terms for using Keyzing.'],
 };
-const NOINDEX = new Set(['/compare', '/watchlist']);
+// thin or personal pages: aggregated headlines, comparisons and the browser-only watchlist
+const NOINDEX = new Set(['/compare', '/watchlist', '/news']);
 
 /** Build lookup tables from site/data/suburbs.json and market.json. */
 const DAILY = { SYD: 'SYD', MEL: 'MEL', BNE: 'BNEGC', ADL: 'ADL', PER: 'PER' };

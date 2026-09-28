@@ -84,8 +84,8 @@ export function parseQuery(q, list) {
   }
   // lifestyle
   if (/\b(beach|beaches|coast|coastal|ocean|sea|seaside|surf|sea change)\b/.test(t)) {
-    out.coastKm = /\b(walk|walking|close|right)\b/.test(t) ? 2 : 4;
-    out.chips.push(`Within ${out.coastKm} km of the ocean`);
+    out.coastKm = /\b(walk|walking|close|right)\b/.test(t) ? 1.5 : 3;
+    out.chips.push(`Within ${out.coastKm} km of an ocean beach`);
   } else if (/\b(river|riverside|waterfront|water|lake|estuary)\b/.test(t)) {
     out.waterKm = 2.5;
     out.chips.push('Near a river or the water');
@@ -131,3 +131,19 @@ export function parseQuery(q, list) {
   for (const p of out.places) out.chips.push(p.kind === 'near' ? `Near ${p.name}` : p.kind === 'suburb' ? `${p.name}` : p.kind === 'postcode' ? `Postcode ${p.code}` : p.kind === 'lga' ? p.code : p.code);
   return out;
 }
+
+/**
+ * Suburbs whose nearest shoreline in the coastline data is an estuary, inlet, harbour or industrial port rather than a
+ * swimming beach. The coastline dataset can't tell these apart, so "near the beach" searches leave them out.
+ */
+export const NOT_BEACH = new Set([
+  // Perth: Peel-Harvey estuary and the Cockburn Sound industrial strip
+  'WA|Coodanup', 'WA|Greenfields', 'WA|Erskine', 'WA|Dudley Park', 'WA|Barragup', 'WA|Furnissdale', 'WA|Ravenswood', 'WA|South Yunderup', 'WA|North Yunderup', 'WA|Nambeelup', 'WA|Pinjarra',
+  'WA|Kwinana Beach', 'WA|Naval Base', 'WA|Medina', 'WA|Hope Valley', 'WA|Postans', 'WA|Calista', 'WA|Orelia', 'WA|Leda', 'WA|Henderson', 'WA|Wattleup',
+  // Adelaide: Port River
+  'SA|Port Adelaide', 'SA|Birkenhead', 'SA|Ethelton', 'SA|Peterhead', 'SA|Gillman', 'SA|Osborne', 'SA|Dry Creek', 'SA|Wingfield',
+  // Brisbane: port and river mouth
+  'QLD|Pinkenba', 'QLD|Port of Brisbane', 'QLD|Lytton', 'QLD|Hemmant', 'QLD|Murarrie',
+  // Melbourne and Sydney: industrial port frontage
+  'VIC|Spotswood', 'VIC|Altona North', 'NSW|Port Botany', 'NSW|Banksmeadow',
+]);

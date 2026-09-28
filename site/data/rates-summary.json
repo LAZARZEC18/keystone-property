@@ -33,7 +33,7 @@
     "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Principal and Interest)",
     "rate": 5.99,
     "comparison": 6.37,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-investment/"
    },
    {
@@ -63,14 +63,6 @@
     "url": "https://lcu.com.au/product/property-investment-mortgage-fixed/"
    },
    {
-    "lender": "Cairns bank",
-    "product": "Investment Plus HL Fixed 1yr <60 LVR PI",
-    "rate": 6.29,
-    "comparison": 6.36,
-    "lvrMax": null,
-    "url": "https://cairnsbank.com.au/classic-vs-plus/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Premium Home Loan",
     "rate": 6.29,
@@ -85,6 +77,14 @@
     "comparison": 6.49,
     "lvrMax": 80,
     "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.29,
+    "comparison": 6.49,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "INV_PI_fixed2": [
@@ -93,7 +93,7 @@
     "product": "BOOST PACKAGE HOME LOAN - 2 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
     "rate": 6.24,
     "comparison": 6.65,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
    },
    {
@@ -135,7 +135,7 @@
     "product": "BOOST PACKAGE HOME LOAN - 3 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
     "rate": 6.19,
     "comparison": 6.63,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
    },
    {
@@ -243,7 +243,7 @@
     "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Interest Only)",
     "rate": 6.14,
     "comparison": 6.57,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-investment/"
    },
    {
@@ -269,7 +269,7 @@
     "product": "Fixed Home Loan Inv IO LVR<80",
     "rate": 6.42,
     "comparison": 6.51,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.pnbank.com.au/home-loans/investor/fixed-rate/"
    },
    {
@@ -327,7 +327,7 @@
     "product": "Fixed Home Loan Inv IO LVR<80",
     "rate": 6.39,
     "comparison": 6.5,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.pnbank.com.au/home-loans/investor/fixed-rate/"
    },
    {
@@ -467,6 +467,14 @@
   ],
   "OO_PI_fixed1": [
    {
+    "lender": "TMCU",
+    "product": "1 Year Fixed Rate Loan",
+    "rate": 5.89,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
+   },
+   {
     "lender": "Northern Inland Credit Union Limited",
     "product": "Value Fixed Home Loan 12M",
     "rate": 5.99,
@@ -497,14 +505,6 @@
     "comparison": 6.3,
     "lvrMax": 80,
     "url": "https://www.sccu.com.au/home-loans/"
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
-    "rate": 6.09,
-    "comparison": 6.3,
-    "lvrMax": 95,
-    "url": null
    }
   ],
   "OO_PI_fixed2": [
@@ -555,7 +555,7 @@
     "product": "GO BASIC 3 YEAR FIXED HOME LOAN - OWNER-OCCUPIED LVR 80% (Principal and Interest)",
     "rate": 5.85,
     "comparison": 5.98,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan/"
    },
    {
@@ -587,7 +587,7 @@
     "product": "BOOST PACKAGE HOME LOAN - 3 YEAR FIXED - OWNER-OCCUPIED LVR 80% (Principal and Interest)",
     "rate": 6.09,
     "comparison": 6.47,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
    }
   ],
@@ -681,7 +681,7 @@
     "product": "Fixed Home Loan (IO) LVR <80",
     "rate": 6.27,
     "comparison": 6.32,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
    },
    {
@@ -723,7 +723,7 @@
     "product": "Fixed Home Loan (IO) LVR <80",
     "rate": 6.27,
     "comparison": 6.31,
-    "lvrMax": null,
+    "lvrMax": 80,
     "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
    },
    {
@@ -761,6 +761,14 @@
   ],
   "OO_IO_fixed3": [
    {
+    "lender": "ORANGE CREDIT UNION LTD",
+    "product": "Premium Home Loan Fixed 36 mths Interest Only Owner Occupied",
+    "rate": 6.29,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
+   },
+   {
     "lender": "Southern Cross Credit Union",
     "product": "Premium Home Loan",
     "rate": 6.39,
@@ -790,14 +798,6 @@
     "rate": 6.39,
     "comparison": 6.41,
     "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "LJH 5star Home Loan",
-    "rate": 6.39,
-    "comparison": 6.41,
-    "lvrMax": 95,
     "url": null
    }
   ],

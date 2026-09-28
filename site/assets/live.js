@@ -11,7 +11,7 @@ export function regionMoves(rg, idx, market) {
   const d = DAILY[rg] ? idx.daily[DAILY[rg]] : null;
   const R = market.regions[rg] || {};
   const m = idx.monthly?.[rg];
-  const year = m?.allYear ?? R.annualPct; // always the monthly index, so it matches tables, ticker and suburb pages
+  const year = R.annualPct ?? m?.allYear; // always the monthly index, so it matches tables, ticker and suburb pages
   if (d) return { kind: 'daily', dailyName: DAILY_NAMES[rg], date: d.date, day: d.day, week: d.week, month: d.month, quarter: d.quarter, ytd: d.ytd, year, dailyYear: d.year, monthEnd: idx.monthEnd, series: d.series };
   return { kind: 'monthly', date: idx.monthEnd, day: null, week: null, month: m?.allMonth ?? R.monthPct, quarter: R.quarterPct, ytd: null, year, monthEnd: idx.monthEnd, series: null };
 }

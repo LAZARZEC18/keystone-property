@@ -46,7 +46,7 @@ const PAGES = {
       <h2>General information, not advice</h2>
       <p>Keyzing provides general information and calculators. It doesn't take into account your objectives, financial situation or needs, and it isn't financial product advice, credit assistance, tax advice or legal advice. Keyzing doesn't hold an Australian Financial Services Licence or an Australian Credit Licence. Before acting, consider whether the information suits you and get advice from a licensed professional.</p>
       <h2>Estimates and ratings</h2>
-      <p>Valuations, rents, yields, scores and A–D ratings are automated estimates from suburb-level data and the details entered. They describe the numbers, not whether you should buy. They can be wrong, and they are not formal valuations. A bank valuation, an agent's appraisal of recent sales, and building and pest inspections are more reliable for a specific property.</p>
+      <p>Valuations, rents, yields, scores and relative ranks are automated estimates from suburb-level data and the details entered. They describe the numbers, not whether you should buy. They can be wrong, and they are not formal valuations. A bank valuation, an agent's appraisal of recent sales, and building and pest inspections are more reliable for a specific property.</p>
       <h2>Third-party data</h2>
       <p>Figures from Cotality, the ABS, the RBA, SQM Research, state governments and lenders are credited where they appear and belong to their owners. Interest rates are advertised rates from lenders' public product feeds and may not be the rate you're offered. Tax and duty rules are summarised; check the official source.</p>
       <h2>Liability</h2>

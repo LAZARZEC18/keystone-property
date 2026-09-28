@@ -1,6 +1,6 @@
-import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, cashWeek, dealContext } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, cashWeek, dealContext, rankPill } from '../ui.js';
 import { baseTiles } from '../map.js';
-import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch } from '../data.js';
+import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch, typicalRate } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict } from '../engine.js';
 import { investmentCase, regionStats, COMPONENT_HELP, COMPONENT_NAMES, listingLinks, scoreVsDeal } from '../insights.js';
 import { STATES } from '../rules.js';
@@ -10,7 +10,7 @@ import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { accuracy } from '../accuracy.js';
 
 export default async function suburbPage(main, params) {
-  const [idx, market, rs, index, approvals] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('index'), load('approvals').catch(() => null)]);
+  const [idx, market, rs, index, approvals, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('index'), load('approvals').catch(() => null), load('rba').catch(() => null)]);
   const s = idx.bySlug.get(`${params.state}/${params.slug}`);
   if (!s) {
     main.innerHTML = `<div class="empty"><h1>Suburb not found</h1><p>Try the search box, or <a href="/suburbs" data-link>browse all suburbs</a>.</p></div>`;
@@ -35,8 +35,8 @@ export default async function suburbPage(main, params) {
   const bestRate = rs.best.INV_PI_variable?.[0]?.rate;
 
   // Quick deal at the suburb's typical price
-  const quick = analyse({ state: s.s, price: ic.price, weeklyRent: ic.rent || 0, deposit: 0.2, ratePct: bestRate ? Math.max(bestRate, invRate - 0.4) : invRate, income: 120000, hold: 10, growth: s.pt === 'u' ? 3.5 : 5, perth: s.rg === 'PER', newBuild: false, strata: s.pt === 'u' ? 3200 : 0, landValuePct: s.pt === 'u' ? 0.25 : 0.55 });
-  const qv = verdict(quick, { ...s, score: scores.balanced }, market);
+  const quick = analyse({ state: s.s, price: ic.price, weeklyRent: ic.rent || 0, deposit: 0.2, ratePct: typicalRate(rba, 'INV').rate, income: 120000, hold: 10, growth: s.pt === 'u' ? 3.5 : 5, perth: s.rg === 'PER', newBuild: false, strata: s.pt === 'u' ? 3200 : 0, landValuePct: s.pt === 'u' ? 0.25 : 0.55 });
+  const qv = verdict(quick, { ...s, score: scores.balanced }, market, { depositRate: rba?.cashRate?.current ?? 4.35 });
 
   const dutyInv = stampDuty(s.s, ic.price, { buyer: 'investor' });
   const dutyOwn = stampDuty(s.s, ic.price, { buyer: 'owner' });
@@ -64,7 +64,7 @@ export default async function suburbPage(main, params) {
     <div>
       <h1 style="margin-bottom:6px">${esc(name)} <span class="muted" style="font-size:.5em;font-family:var(--sans)">${s.s} ${s.pc || ''}</span></h1>
       ${printHeader(`Suburb report: ${name} ${s.s} ${s.pc || ''}`)}
-      <div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(s.ra || d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
+      ${String(s.hs).includes('postcode') && samePc.length ? `<p class="note" style="margin:4px 0">Prices, rents and the 12-month change here are for postcode ${esc(s.pc)} as a whole (NSW publishes them by postcode), shared with ${samePc.slice(0, 6).map((x) => `<a href="${suburbUrl(x)}" data-link>${esc(cleanName(x.n))}</a>`).join(', ')}${samePc.length > 6 ? ` and ${samePc.length - 6} more` : ''}.</p>` : ''}<div class="row muted" style="font-size:14px">${confBadge(s)} ${esc(s.lga || '')} council · ${esc(R.name || '')} · ${esc(s.ra || d.ra || '')} · ${num(s.pop)} residents · ${num(d.dw)} dwellings</div>
     </div>
     <div class="row">
       <button class="btn ${watched ? 'on' : ''}" id="watch">${watched ? '★ On watchlist' : '☆ Watch'}</button>
@@ -89,7 +89,7 @@ export default async function suburbPage(main, params) {
     <div class="card" style="display:flex;gap:16px;align-items:center">
       ${scoreBadge(scores.balanced, true)}
       <div><div class="eyebrow" style="margin:0">Keyzing Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 75 ? 'Top-tier fundamentals' : scores.balanced >= 60 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
-      <div class="note">Growth ${scores.growth} · Cash flow ${scores.cashflow} · First home ${scores.firsthome}</div></div>
+      <div class="note">Ranks the area against every Australian suburb. It isn't a rating of any particular home.</div></div>
     </div>
   </div>
 
@@ -107,14 +107,14 @@ export default async function suburbPage(main, params) {
       <h3>New building in the area</h3>
       ${cApp?.fy ? `<div class="kv">
         <span>${esc(s.lga)} council, new dwellings approved ${esc(cApp.fy.period)}</span><span>${num(cApp.fy.total)}</span>
-        <span>Houses / apartments &amp; townhouses</span><span>${num(cApp.fy.houses)} / ${num(cApp.fy.other)}</span>
+        <span>Houses / apartments &amp; townhouses${cApp.fy.total - cApp.fy.houses - cApp.fy.other > 0 ? ' / not split by type' : ''}</span><span>${num(cApp.fy.houses)} / ${num(cApp.fy.other)}${cApp.fy.total - cApp.fy.houses - cApp.fy.other > 0 ? ` / ${num(cApp.fy.total - cApp.fy.houses - cApp.fy.other)}` : ''}</span>
         <span>As % of existing homes (supply growth)</span><span class="${(s.sup ?? 0) > 2 ? 'warn' : ''}">${pct(s.sup, 2)}</span>
         <span>This financial year to date</span><span>${num(cApp.ytd?.total)}</span>
         ${sApp?.fy ? `<span>Local area (SA2: ${esc(sApp.name)})</span><span>${num(sApp.fy.total)} approved</span>` : ''}
         <span>Value of new residential building</span><span>${aud((cApp.fy.value || 0) * 1000, { compact: true })}</span>
       </div>
       <p class="note" style="margin-top:10px">${(s.sup ?? 0) > 2.5 ? 'Heavy new supply: rents and resale prices for similar stock (especially apartments) can be held back while it is absorbed.' : (s.sup ?? 0) < 0.8 ? 'Very little new housing is being approved here, which supports prices and rents if demand keeps growing.' : 'A moderate amount of new housing is coming, broadly in line with population growth.'} <a href="/new-builds" data-link>New builds across Australia →</a></p>` : '<p class="note">No building approvals data for this council.</p>'}
-      <p class="fine">ABS Building Approvals (${esc(approvals?.release || '')}).</p>
+      <p class="fine">ABS Building Approvals (${esc(approvals?.release || '')}). The ABS suppresses very small counts by type, so the parts can add up to slightly less than the total.</p>
     </div>
   </section>
 
@@ -127,8 +127,8 @@ export default async function suburbPage(main, params) {
       <h3 style="font-size:16px;margin-top:14px">Best suited to</h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.suits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
     </div>
     <div class="card">
-      <div class="card-head"><h3>What a typical ${ic.type} here would do for you</h3><span class="pill">Deal rating ${qv.grade}</span></div>
-      <div class="verdict"><div class="grade grade-${qv.grade}">${qv.grade}</div><div><div style="font-family:var(--serif);font-size:22px;font-weight:600">${qv.label}</div><p class="note" style="margin:4px 0 0">${dealContext(qv)}</p><p class="note" style="margin:4px 0 0">${aud(ic.price)} purchase, 20% deposit, ${pct(quick.input.ratePct, 2)} investor P&amp;I loan, $120k salary, ${quick.input.growth}% a year growth, sold after 10 years.</p></div></div>
+      <div class="card-head"><h3>What a typical ${ic.type} here would do for you</h3>${rankPill(qv)}</div>
+      <div><div class="cost-head ${quick.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(quick.summary.weeklyCashAfterTax)}</div><p class="note" style="margin:2px 0 0">after tax in year 1</p><p class="td-test"><b class="${qv.beatsDeposit ? 'up' : 'down'}">${qv.beatsDeposit ? 'Beats' : 'Doesn’t beat'} a term deposit.</b> ${esc(qv.vsDeposit || '')}</p><p class="note" style="margin:4px 0 0">${dealContext(qv)}</p><p class="note" style="margin:4px 0 0">${aud(ic.price)} purchase, 20% deposit, ${pct(quick.input.ratePct, 2)} investor P&amp;I loan, $120k salary, ${quick.input.growth}% a year growth, sold after 10 years.</p></div>
       ${scoreVsDeal(scores.balanced, qv.grade)}
       <div class="kv" style="margin-top:14px">
         <span>Cash needed up front</span><span>${aud(quick.upfront.total)}</span>
@@ -177,7 +177,7 @@ export default async function suburbPage(main, params) {
       <h3>People and housing</h3>
       <div class="kv">
         <span>Population (2021 Census)</span><span>${num(s.pop)}</span>
-        <span>Population change 2016-2021</span><span class="${(s.pg5 ?? 0) >= 0 ? 'up' : 'down'}">${pct(s.pg5, 1, true)}</span>
+        <span>Population change ${esc(d.pgS && !/census/i.test(d.pgS) ? '2020-2025 (ABS estimates, surrounding area)' : '2016-2021 (Census)')}</span><span class="${(s.pg5 ?? 0) >= 0 ? 'up' : 'down'}">${pct(s.pg5, 1, true)}</span>
         <span>Median household income</span><span>${aud(d.inc)}/wk (${aud(d.inc * 52, { compact: true })}/yr)</span>
         <span>Household income change 2016-2021</span><span>${pct(d.ig5, 1, true)}</span>
         <span>Median age</span><span>${d.age ?? '—'}</span>
@@ -188,7 +188,7 @@ export default async function suburbPage(main, params) {
         <span>Separate houses / flats</span><span>${pct(d['hou%'], 0)} / ${pct(d['fla%'], 0)}</span>
         <span>Census rent change 2016-2021</span><span>${pct(d.rg5, 1, true)}</span>
       </div>
-      <p class="fine" style="margin-top:8px">ABS Census 2016 and 2021, Suburbs and Localities.</p>
+      <p class="fine" style="margin-top:8px">ABS Census 2016 and 2021, Suburbs and Localities; population change from ABS regional population estimates for the surrounding area (SA2).</p>
     </div>
     <div class="card">
       <h3>${esc(name)} vs ${esc(R.name || 'region')}</h3>
@@ -231,7 +231,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section">
-    <p class="fine">How these numbers are made: prices marked Estimate come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} Treat it as a starting point and check recent sales before you make an offer. <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
+    <p class="fine">How these numbers are made: prices marked Estimate come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());

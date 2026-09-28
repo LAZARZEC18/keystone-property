@@ -251,7 +251,7 @@ async function ticker() {
       `<span>Rates refreshed</span> <b>${ago(rs.updated)}</b>`,
     ].filter(Boolean);
     const html = items.map((i) => `<div>${i}</div>`).join('');
-    $('#ticker').innerHTML = `<div class="ticker-in">${html}${html}</div>`;
+    $('#ticker').innerHTML = `<div class="ticker-in">${html}</div>`; // static strip (no scrolling ticker)
   } catch (e) {
     console.warn('ticker', e);
   }

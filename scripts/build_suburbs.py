@@ -697,7 +697,7 @@ def main():
     }
     os.makedirs(OUT, exist_ok=True)
     # Index: what the explorer, map and ranker need for every suburb (loaded once).
-    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'ocn', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra']
+    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'ocn', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra', 'hou%', 'fla%']
     comp = ['cash', 'momentum', 'growth', 'demand', 'afford', 'stability']
     rows = [[s_[c] for c in index_cols] + [s_['sc'][k] for k in comp] for s_ in scored]
     with open(os.path.join(OUT, 'suburbs.json'), 'w') as fh:

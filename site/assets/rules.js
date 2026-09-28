@@ -273,3 +273,15 @@ export function helpToBuyCap(s) {
   const metro = HOME_GUARANTEE.capitals.includes(s.rg) || HOME_GUARANTEE.centres.some((n) => (s.lga || '').startsWith(n));
   return metro ? c[0] : c[1];
 }
+
+/** First Home Owner Grant by state, September 2026 (see the buying guide). [amount, what it applies to]. Confirm with the state revenue office. */
+export const FHOG = {
+  NSW: [10000, 'new homes up to $600,000 (house and land up to $750,000)'],
+  VIC: [10000, 'new homes up to $750,000'],
+  QLD: [15000, 'new homes up to $750,000'],
+  WA: [10000, 'new homes up to $800,000 (south of the 26th parallel)'],
+  SA: [15000, 'new homes, no price cap'],
+  TAS: [10000, 'new homes, no price cap'],
+  NT: [50000, 'new homes ($10,000 for established homes)'],
+  ACT: [0, 'no grant; a stamp duty concession instead'],
+};

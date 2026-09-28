@@ -1,5 +1,5 @@
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
-import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext } from '../ui.js';
+import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
@@ -8,7 +8,7 @@ import { attachSearch } from '../app.js';
 const SCEN = { bear: { growth: 2, rentGrowth: 2.5 }, base: { growth: 5, rentGrowth: 4 }, bull: { growth: 7, rentGrowth: 5 } };
 
 export default async function analysePage(main, _p, query) {
-  setMeta({ title: 'Investment property analyser', description: 'Stamp duty, LMI, land tax, cash flow, after-tax return and an A–D rating of the numbers for any Australian property, with the 2026 negative gearing and CGT rules.' });
+  setMeta({ title: '2026 tax-change investment property calculator', description: 'Stamp duty, LMI, land tax, the weekly cost after tax and a 10-year after-tax return for any Australian property, under the 2026 negative gearing and CGT rules.' });
   const [idx, market, rs, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba')]);
   let sub = query.suburb ? idx.byId.get(query.suburb) : null;
   const best = rs.best.INV_PI_variable?.[0];
@@ -23,7 +23,7 @@ export default async function analysePage(main, _p, query) {
     newBuild: query.new === '1',
     buildYear: +query.built || (query.new === '1' ? 2026 : 2005),
     deposit: query.dep ? +query.dep / 100 : 0.2,
-    ratePct: +query.rate || +(best ? Math.max(best.rate, (rs.medianInvestorVariable || typical) - 0.4) : typical || 6.4).toFixed(2),
+    ratePct: +query.rate || typical || 6.4,
     years: 30,
     interestOnly: query.io === '1',
     income: +query.income || 120000,
@@ -50,7 +50,7 @@ export default async function analysePage(main, _p, query) {
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Deal analyser</div><h1>Run the numbers on a property</h1>
-  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, and grades the numbers A to D against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>
+  <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -136,7 +136,7 @@ export default async function analysePage(main, _p, query) {
       return;
     }
     const r = analyse(st);
-    const v = verdict(r, sub ? { ...sub, score: suburbScore(sub.sc) } : null, market);
+    const v = verdict(r, sub ? { ...sub, score: suburbScore(sub.sc) } : null, market, { depositRate: rba.cashRate.current });
     const s = r.summary;
     const y1 = r.rows[0];
     const y3 = r.rows[Math.min(2, r.rows.length - 1)];
@@ -173,9 +173,11 @@ export default async function analysePage(main, _p, query) {
     ];
     $('#out').innerHTML = `
       <div class="card">
-        <div class="verdict"><div class="grade grade-${v.grade}">${v.grade}</div>
-          <div><div class="eyebrow" style="margin:0">Deal rating, compared with typical homes nationally</div><h2 style="margin:2px 0 4px">${v.label}${st.addr ? ` <span class="muted" style="font-size:.6em">${esc(st.addr)}</span>` : ''}</h2>
-          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)}</div><p class="note" style="margin:6px 0 0">${dealContext(v)}</p></div></div>
+        <div><div class="eyebrow" style="margin:0">Each week in year 1, after tax${st.addr ? ` · ${esc(st.addr)}` : ''}</div>
+          <div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div>
+          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · ${st.growth}% a year growth assumed</div>
+          <p class="td-test"><b class="${v.beatsDeposit ? 'up' : 'down'}">${v.beatsDeposit ? 'Beats' : 'Doesn’t beat'} a term deposit.</b> ${esc(v.vsDeposit || '')}${scen.bear.irr !== null ? ` With ${SCEN.bear.growth}% growth it would return ${pct(scen.bear.irr, 1)} a year.` : ''}</p>
+          <p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)}</p></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
           <div>${v.risks.length ? `<ul class="cons">${v.risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
@@ -202,7 +204,7 @@ export default async function analysePage(main, _p, query) {
         </div>
         <div class="card"><h3>Year 1 cash flow</h3>
           <div class="kv">${cf.map(([l, val, c]) => `<span class="${c || ''}">${l}</span><span class="${c || ''} ${val < 0 ? 'down' : ''}">${aud(val)}</span>`).join('')}</div>
-          <p class="note" style="margin-top:8px">Loan repayment ${aud(s.monthlyRepayment)}/month. Gross yield ${pct(s.grossYield, 2)}, net yield ${pct(s.netYield, 2)}. Rent needed to break even before tax: <b>${aud(s.breakEvenRent)}/wk</b>. Marginal tax rate ${s.marginalRate}%.</p>
+          <p class="note" style="margin-top:8px">Loan repayment ${aud(s.monthlyRepayment)}/month. Gross yield ${pct(s.grossYield, 2)}, net yield ${pct(s.netYield, 2)}. Rent needed to cover interest and running costs before tax: <b>${aud(s.breakEvenRent)}/wk</b> (${aud(s.breakEvenRentCash)}/wk to also cover principal repayments, which build your equity). Marginal tax rate ${s.marginalRate}%.</p>
         </div>
       </div>
 
@@ -250,7 +252,7 @@ export default async function analysePage(main, _p, query) {
     $('#out').insertAdjacentHTML('afterbegin', printHeader(`Deal analysis: ${st.addr || (sub ? `${cleanName(sub.n)} ${sub.s}` : `${st.state} property`)}`));
     $('#out').insertAdjacentHTML('beforeend', `<div class="card no-print" style="margin-top:16px"><div class="row"><button class="btn primary" type="button" id="save-deal">Save this deal</button><a class="btn" href="/watchlist#deals" data-link>Saved deals</a></div>${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:8px">Saved deals stay in this browser; the link keeps every input, so you can also bookmark or share it.</p></div>`);
     $('#save-deal').addEventListener('click', (e) => {
-      const ok = saveDeal({ url: location.pathname + location.search, name: st.addr || (sub ? `${cleanName(sub.n)} ${sub.s} ${sub.pc || ''}` : `${st.state} property`), price: st.price, rent: st.weeklyRent, grade: v.grade, weekly: s.weeklyCashAfterTax, irr: s.irr });
+      const ok = saveDeal({ url: location.pathname + location.search, name: st.addr || (sub ? `${cleanName(sub.n)} ${sub.s} ${sub.pc || ''}` : `${st.state} property`), price: st.price, rent: st.weeklyRent, grade: v.grade, rank: v.label, beatsDeposit: v.beatsDeposit, weekly: s.weeklyCashAfterTax, irr: s.irr });
       e.currentTarget.textContent = ok ? 'Saved ✓' : 'Couldn’t save in this browser';
     });
     $('#out').querySelectorAll('.chart').forEach((f) => (f.dataset.xfmt = 'year'));

@@ -234,9 +234,15 @@ export function cashWeek(v, { short = false } = {}) {
   return v < 0 ? `${short ? 'Pay' : 'You pay'} ${a}/wk` : `${short ? 'Receive' : 'You receive'} ${a}/wk`;
 }
 
-/** One line explaining a relative deal grade. */
+/** Relative rank of a deal as a coloured pill (no letter grade). */
+export function rankPill(v, { big = false } = {}) {
+  if (!v) return '';
+  return `<span class="rank rank-${v.grade}${big ? ' big' : ''}" title="Relative rank against the typical home in every suburb, same assumptions">${esc(v.label)}</span>`;
+}
+
+/** One line explaining a relative deal rank. */
 export function dealContext(v) {
   if (!v) return '';
   const pc = v.percentile;
-  return pc === null || pc === undefined ? esc(v.absolute || '') : `Stronger numbers than about ${pc}% of typical homes across Australia, run with the same deposit, rate and income. ${esc(v.absolute || '')}`;
+  return pc === null || pc === undefined ? esc(v.absolute || '') : `Relative rank: stronger numbers than about ${pc}% of typical homes across Australia, run with the same deposit, rate and income. A high rank does not mean the purchase makes money.`;
 }

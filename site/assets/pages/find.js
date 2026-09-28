@@ -1,7 +1,7 @@
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, growth12, confBadge } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine } from '../data.js';
 import { suburbScore, PROFILES, valueEstimate } from '../engine.js';
-import { parseQuery, looksLikeAddress } from '../intent.js';
+import { parseQuery, looksLikeAddress, NOT_BEACH } from '../intent.js';
 import { listingLinks } from '../insights.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
@@ -54,7 +54,7 @@ export default async function findPage(main, _p, query) {
   for (const s of list) {
     if (s.pop < (places.some((x) => ['suburb', 'near', 'postcode'].includes(x.kind)) ? 200 : 1500)) continue;
     if (!inPlace(s)) continue;
-    if (p.coastKm && !(s.ocn !== null && s.ocn !== undefined && s.ocn <= p.coastKm)) continue;
+    if (p.coastKm && (!(s.ocn !== null && s.ocn !== undefined && s.ocn <= p.coastKm) || NOT_BEACH.has(`${s.s}|${cleanName(s.n)}`))) continue;
     if (p.waterKm && !(s.cst !== null && s.cst <= p.waterKm)) continue;
     if (p.cbdKm && !(s.cbd !== null && s.cbd <= p.cbdKm)) continue;
     if (p.regional && market.regions[s.rg]?.capital) continue;

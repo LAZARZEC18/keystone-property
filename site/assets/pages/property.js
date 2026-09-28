@@ -1,5 +1,5 @@
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek } from '../ui.js';
-import { suburbs, suburbUrl, cleanName, load, haversine, nearby } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
 import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment } from '../engine.js';
 import { liveFactor, regionMoves } from '../live.js';
 import { baseTiles } from '../map.js';
@@ -37,8 +37,8 @@ export default async function propertyPage(main, _p, query) {
   const [idx, market, index, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('index'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
 
   main.innerHTML = `
-  <div class="page-head"><div class="eyebrow">Property valuation</div><h1>What is this property worth?</h1>
-  <p>Enter an address. Keyzing places it in its suburb and estimates its value from the suburb's sales data and the home's features. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>
+  <div class="page-head"><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
+  <p>Enter an address. Keyzing checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>
   <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 7 Russell Street, Morley WA 6062" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
@@ -70,8 +70,23 @@ export default async function propertyPage(main, _p, query) {
     out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Keyzing couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Morley WA 6062".</p></div>`;
     return;
   }
-  const point = prop?.lat ? { lat: prop.lat, lng: prop.lng } : g && haversine(s, g) < 25 ? { lat: g.lat, lng: g.lng } : { lat: s.lat, lng: s.lng };
   const facts = prop?.found ? prop : null;
+  // A street address must be found on that street, in or next to that suburb, before any price is shown.
+  // Only a bare suburb or postcode gets the typical-home estimate without a street match.
+  const STREET = /[a-z'-]+\s+(st|street|rd|road|ave?|avenue|dr|drive|cres|crescent|ct|court|pl|place|way|tce|terrace|lane|ln|pde|parade|cl|close|hwy|highway|blvd|boulevard|cct|circuit|gr|grove|esp|esplanade|loop|rise|mews|sq|square)\b/i;
+  const first = q.split(',')[0];
+  const bare = first.replace(/\b(NSW|VIC|QLD|SA|WA|TAS|NT|ACT)\b|\b\d{4}\b/gi, '').trim().toLowerCase();
+  const isSuburbName = idx.list.some((x) => cleanName(x.n).toLowerCase() === bare);
+  const streetTyped = !isSuburbName && (/^\s*(unit|u|apt|lot|shop)?\s*\d+[a-z]?(\s*\/\s*\d+[a-z]?)?\s+[a-z]/i.test(first) || STREET.test(first));
+  const streetWord = g?.street ? norm(g.street).trim().split(' ')[0] : '';
+  const streetFound = !!facts || (g && g.precision !== 'area' && streetWord && typed.includes(` ${streetWord} `) && haversine(s, g) < 15);
+  const typicalUrl = `/property?q=${encodeURIComponent(`${cleanName(s.n)} ${s.s} ${s.pc || ''}`.trim())}`;
+  if (streetTyped && !streetFound) {
+    out.innerHTML = `<div class="empty"><h2>We couldn't find that address</h2><p>${geo ? `No street matching "${esc(first.trim())}" was found in or near ${esc(cleanName(s.n))} ${s.s}` : 'The address lookup is unavailable right now'}, so Keyzing won't put a price on it. Check the spelling, or include the unit number and postcode.</p><p><a class="btn" href="${typicalUrl}" data-link>See the estimate for a typical home in ${esc(cleanName(s.n))}</a> <a class="btn ghost" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></p></div>`;
+    return;
+  }
+  const located = facts ? 'the property record' : !streetTyped ? 'the suburb only (no street given)' : g.precision === 'address' ? 'the address' : 'the street (house number not confirmed)';
+  const point = prop?.lat ? { lat: prop.lat, lng: prop.lng } : g && haversine(s, g) < 25 ? { lat: g.lat, lng: g.lng } : { lat: s.lat, lng: s.lng };
   const lf = liveFactor(s.rg, index);
   const R = market.regions[s.rg];
   const mv = regionMoves(s.rg, index, market);
@@ -97,10 +112,11 @@ export default async function propertyPage(main, _p, query) {
     NT: ['NR Maps planning zones', 'https://nrmaps.nt.gov.au/'],
   };
   const plan = PLAN[s.s];
-  let mode = ['home', 'invest'].includes(query.mode) ? query.mode : (() => { try { return localStorage.getItem('keystone.mode') || 'home'; } catch { return 'home'; } })();
+  // always opens on "buying to live in" unless a link asks for the investor view
+  let mode = query.mode === 'invest' ? 'invest' : 'home';
 
   out.innerHTML = `
-  <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')}${g ? ` · located to ${g.precision === 'address' ? 'the address' : 'the street'}` : ' · located from the suburb name'}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
+  <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')}· located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
   <div class="grid split-spec" style="gap:20px;margin-top:16px" id="pgrid">
     <form class="card" id="spec" onsubmit="return false" style="align-self:start">
       <div class="seg" id="pmode" role="tablist" style="width:100%;margin-bottom:14px"><button type="button" data-m="home" style="flex:1">Buying to live in</button><button type="button" data-m="invest" style="flex:1">Buying to invest</button></div>
@@ -140,13 +156,13 @@ export default async function propertyPage(main, _p, query) {
     if (!depTouched) form.dep.value = form.buyer.value === 'fhb' ? '0.05' : '0.2';
   });
   const res = main.querySelector('#res');
-  wireBrand(res, () => `Property report: ${facts?.address || q}`);
-  const invRate = Math.max(rs.best.INV_PI_variable?.[0]?.rate || 6, (rs.medianInvestorVariable || 6.5) - 0.4);
+  wireBrand(res);
+  const invRate = typicalRate(rba, 'INV').rate;
   const ooRate = rba.actual?.newOOVariable?.at(-1)?.[1] || 6.2;
   const setMode = (m) => {
     mode = m;
     try {
-      localStorage.setItem('keystone.mode', m);
+      sessionStorage.setItem('keystone.mode', m);
     } catch {
       /* private browsing */
     }
@@ -168,24 +184,24 @@ export default async function propertyPage(main, _p, query) {
     const e = valueEstimate(s, sp);
     const asking = +f.asking || null;
     const price = asking || e.value;
-    const vc = valueCall(asking, e);
+    const vc = valueCall(asking, e, { measured: s.conf === 'high' || s.conf === 'medium' });
     const acc = accuracy(s, e.type, model);
     const gap = vc ? vc.gap : null;
     const dEst = facts?.estimate?.mid;
     const newBuild = f.condition === 'new';
     const fhbDuty = stampDuty(s.s, price, { buyer: 'fhb', newBuild });
     const head = `
-        ${printHeader(`Property report: ${facts?.address || q}`)}
+        ${printHeader(`Suburb estimate: ${facts?.address || q}`)}
         <div class="spread" style="align-items:flex-start">
-          <div><div class="eyebrow" style="margin:0">${edited ? 'Keyzing estimate' : 'Starting estimate: typical home'} · ${date(new Date().toISOString())}</div>
+          <div><div class="eyebrow" style="margin:0">Suburb estimate for a typical home like this · ${date(new Date().toISOString())}</div>
           <div class="big-num" style="margin:6px 0">${aud(e.value)}</div>
           <div class="note">Likely range ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })} · ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'}</div></div>
           __BADGE__
         </div>
         ${edited ? '' : `<div class="callout" style="margin-top:14px"><b>This is a typical ${e.beds}-bed, ${f.baths}-bath ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))}, not this property yet.</b> Enter its bedrooms, bathrooms, land size and condition on the left, plus the asking price if it's for sale, and everything below updates for this home.</div>`}
         <div class="acc acc-${acc.level}"><b>${esc(acc.label)}.</b> ${esc(acc.text)}</div>
-        ${e.rent ? `<details class="explain"><summary>Rent estimate for this home: ${aud(Math.round((e.rent * 0.9) / 5) * 5)}–${aud(Math.round((e.rent * 1.1) / 5) * 5)} a week</summary><div class="kv" style="margin-top:8px"><span>Estimated weekly rent</span><span>${aud(e.rent)}</span><span>Likely range</span><span>${aud(Math.round((e.rent * 0.9) / 5) * 5)} – ${aud(Math.round((e.rent * 1.1) / 5) * 5)}</span><span>Typical house / unit in ${esc(cleanName(s.n))}</span><span>${aud(s.rh)} / ${aud(s.ru)}</span><span>Gross yield at the estimate</span><span>${pct((e.rent * 52 * 100) / e.value, 2)}</span></div><p>${s.s === 'NSW' && String(s.hs).includes('NSW') ? 'Suburb rent from NSW bond lodgements by postcode' : `Suburb rent modelled from Census rents and price, centred on typical ${esc(R?.name || 'regional')} rents`}; the rent model's median error against official bond data is about 9% for houses and 10% for units. Adjusted for the bedrooms and condition entered. Not a formal rental appraisal: in most states a written appraisal must come from a licensed agent, who can use this as a starting point.</p></details>` : ''}
-        ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the ${aud(e.value, { compact: true })} estimate. ${esc(vc.note)}${rangeBar(asking, e)}${acc.level === 'untested' ? '<p class="fine" style="margin:6px 0 0">The estimate hasn’t been tested in this state, so read this as a sense-check only.</p>' : ''}</div>` : ''}`;
+        ${e.rent ? `<details class="explain"><summary>Rent estimate for this home: ${aud(Math.round((e.rent * 0.9) / 5) * 5)}–${aud(Math.round((e.rent * 1.1) / 5) * 5)} a week</summary><div class="kv" style="margin-top:8px"><span>Estimated weekly rent</span><span>${aud(e.rent)}</span><span>Likely range</span><span>${aud(Math.round((e.rent * 0.9) / 5) * 5)} – ${aud(Math.round((e.rent * 1.1) / 5) * 5)}</span><span>Typical house / unit in ${esc(cleanName(s.n))}</span><span>${aud(s.rh)} / ${aud(s.ru)}</span><span>Gross yield at the estimate</span><span>${pct((e.rent * 52 * 100) / e.value, 2)}</span></div><p>${s.s === 'NSW' && String(s.hs).includes('NSW') ? 'Suburb rent from NSW bond lodgements by postcode' : `Suburb rent modelled from Census rents and price, centred on typical ${esc(R?.name || 'regional')} rents`}; the rent model's median error against official bond data is about 9% for houses and 10% for units. Adjusted for the bedrooms and condition entered. A sanity check only, not a rental appraisal: rents have moved a lot since the 2021 Census, and a local property manager's appraisal of current listings is far more reliable.</p></details>` : ''}
+        ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the ${aud(e.value, { compact: true })} estimate. ${esc(vc.note)}${s.conf === 'high' || s.conf === 'medium' || vc.key !== 'within' ? rangeBar(asking, e) : ''}</div>` : ''}`;
     const built = `<div><h3 style="font-size:16px">How the estimate is built</h3><div class="kv">
             <span>Typical ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))} ${srcBadge(e.type === 'u' ? s.us : s.hs)}</span><span>${aud(e.basis, { compact: true })}</span>
             ${e.adjustments.map((x) => `<span>${esc(x.label)}</span><span class="${x.pct >= 0 ? 'up' : 'down'}">${x.pct >= 0 ? '+' : ''}${(x.pct * 100).toFixed(1)}%</span>`).join('')}
@@ -236,12 +252,12 @@ export default async function propertyPage(main, _p, query) {
         ${foot}</div>`;
     } else {
       const a = analyse({ state: s.s, price, weeklyRent: e.rent || 0, deposit: 0.2, ratePct: invRate, income: 120000, hold: 10, growth: f.type === 'u' ? 3.5 : 5, perth: s.rg === 'PER', strata: f.type === 'u' ? 3200 : 0, landValuePct: f.type === 'u' ? 0.25 : 0.55, newBuild });
-      const v = verdict(a, { ...s, score: suburbScore(s.sc) }, market);
-      res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="grade grade-${v.grade}" style="width:64px;height:64px;font-size:32px;margin-left:auto">${v.grade}</div><div class="note" style="margin-top:4px;max-width:200px">Deal rating: ${esc(v.label.toLowerCase())}${v.percentile != null ? ` (beats ~${v.percentile}% of typical homes)` : ''}</div></div>`)}
+      const v = verdict(a, { ...s, score: suburbScore(s.sc) }, market, { depositRate: rba.cashRate.current });
+      res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">Each week after tax</div><div class="cost-head ${a.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:22px">${cashWeek(a.summary.weeklyCashAfterTax)}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Estimated rent</span><span class="v">${aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span></div>
           <div class="stat"><span class="k">Gross yield</span><span class="v">${pct((e.rent * 52 * 100) / price, 2)}</span></div>
-          <div class="stat"><span class="k">Each week after tax</span><span class="v ${a.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:20px">${cashWeek(a.summary.weeklyCashAfterTax)}</span></div>
+          <div class="stat"><span class="k">Beats a term deposit?</span><span class="v ${v.beatsDeposit ? 'up' : 'down'}">${v.beatsDeposit ? 'Yes' : 'No'}</span><span class="s">vs ${pct(v.tdAfterTax, 1)} after tax</span></div>
           <div class="stat"><span class="k">10-yr return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(a.summary.irr, 1)}</span></div>
         </div>
         <div class="hr"></div>
@@ -256,7 +272,7 @@ export default async function propertyPage(main, _p, query) {
         </div>
         <div class="grid g2" style="margin-top:10px;gap:8px 20px"><ul class="pros">${v.reasons.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul><ul class="cons">${v.risks.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
         <div class="row" style="margin-top:8px"><a class="btn primary" href="/analyse?suburb=${s.id}&price=${price}&rent=${e.rent}&type=${e.type}&new=${newBuild ? 1 : 0}&addr=${encodeURIComponent(facts?.address || q)}" data-link>Full deal analysis</a><a class="btn" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></div>
-        <div style="margin-top:10px">${scoreVsDeal(suburbScore(s.sc), v.grade)}</div>
+        <p class="td-test">${esc(v.vsDeposit || '')} Assumes ${a.input.growth}% a year growth and the RBA's average investor rate of ${pct(invRate, 2)}; change either in the full analysis.</p>
         ${foot}</div>`;
     }
 

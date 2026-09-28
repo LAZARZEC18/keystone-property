@@ -498,3 +498,19 @@ abbr.jargon { text-decoration: underline dotted; text-underline-offset: 3px; cur
 .report-brand .rb-who { font-size: 12pt; margin-bottom: 2px; }
 @media print { .no-print, .brand-panel, .scroll-hint { display: none !important; } .report-brand { border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; } abbr.jargon { text-decoration: none; } .tbl-wrap { overflow: visible !important; background: none !important; } }
 @media (max-width: 700px) { .hide-sm { display: none; } }
+/* relative deal rank (replaces A-D letters) */
+.rank { display: inline-block; font-weight: 600; font-size: 13px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line-2); white-space: nowrap; }
+.rank.big { font-size: 15px; padding: 5px 12px; }
+.rank-A { background: color-mix(in srgb, var(--sc-a) 16%, transparent); border-color: var(--sc-a); }
+.rank-B { background: color-mix(in srgb, var(--sc-b) 16%, transparent); border-color: var(--sc-b); }
+.rank-C { background: color-mix(in srgb, var(--sc-c) 16%, transparent); border-color: var(--sc-c); }
+.rank-D { background: color-mix(in srgb, var(--sc-d) 16%, transparent); border-color: var(--sc-d); }
+.cost-head { font-family: var(--mono); font-size: 30px; letter-spacing: -0.02em; }
+.td-test { margin: 8px 0 0; font-size: 14px; }
+.hero-steps { align-self: center; }
+.hero-steps ol { margin: 8px 0 10px; padding-left: 20px; line-height: 1.55; font-size: 15px; }
+.hero-steps li { margin-bottom: 8px; }
+.tax-band { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; border-left: 4px solid var(--accent); }
+.tax-cta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+@media (max-width: 700px) { .tax-band { grid-template-columns: 1fr; } .hero-cta .btn.lg { width: 100%; justify-content: center; text-align: center; } }
+.ticker-in { animation: none !important; } .ticker { overflow-x: auto; scrollbar-width: none; } .ticker::-webkit-scrollbar { display: none; }

@@ -118,7 +118,7 @@ export default async function explorer(main, _p, query) {
     const slice = rows.slice(st.page * PAGE, (st.page + 1) * PAGE);
     const pages = Math.ceil(rows.length / PAGE);
     return `<div class="tbl-wrap"><table id="tbl"><thead><tr>
-      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 16-21</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
+      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
       ${slice
         .map(
           (r, i) => `<tr><td><input type="checkbox" data-cmp="${r.s.id}" ${compareSet.has(r.s.id) ? 'checked' : ''} aria-label="Compare ${esc(r.s.n)}"></td><td class="faint mono">${st.page * PAGE + i + 1}</td>

@@ -1,3 +1,4 @@
+import { normaliseRate } from './rate-rules.js';
 // Data loading and lookups shared by every page.
 const cache = new Map();
 
@@ -126,7 +127,7 @@ export async function rateRows() {
       const o = {};
       d.cols.forEach((c, i) => (o[c] = r[i]));
       o.lender = d.lenders[o.lender];
-      return o;
+      return normaliseRate(o);
     }),
   };
 }
@@ -175,4 +176,13 @@ export function removeDeal(url) {
   try {
     localStorage.setItem(DEALS, JSON.stringify(savedDeals().filter((x) => x.url !== url)));
   } catch {}
+}
+
+/**
+ * The one "typical" rate used as a default everywhere: the RBA's average rate actually paid on new variable loans
+ * (table F6), not a lender's advertised rate. kind: 'INV' | 'OO'.
+ */
+export function typicalRate(rba, kind = 'INV') {
+  const row = (kind === 'OO' ? rba?.actual?.newOOVariable : rba?.actual?.newInvVariable)?.at?.(-1);
+  return { rate: row?.[1] ?? (kind === 'OO' ? 6.2 : 6.4), month: row?.[0] ? new Date(`${row[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '' };
 }

@@ -296,7 +296,9 @@ export function analyse(input) {
     netYield: round(((y1.grossRent - (y1.mgmt + y1.maintenance + y1.landTax + y1.otherCosts)) / p.price) * 100, 2),
     weeklyCashBeforeTax: round(y1.cashBeforeTax / 52),
     weeklyCashAfterTax: round(y1.cashAfterTax / 52),
-    breakEvenRent: Math.round((y1.maintenance + y1.landTax + y1.otherCosts + y1.interest + y1.principal) / (52 - p.vacancyWeeks) / (1 - p.mgmtPct / 100)),
+    // principal repayments build equity, so they're not a cost: break-even covers interest and running costs only
+    breakEvenRent: Math.round((y1.maintenance + y1.landTax + y1.otherCosts + y1.interest) / (52 - p.vacancyWeeks) / (1 - p.mgmtPct / 100)),
+    breakEvenRentCash: Math.round((y1.maintenance + y1.landTax + y1.otherCosts + y1.interest + y1.principal) / (52 - p.vacancyWeeks) / (1 - p.mgmtPct / 100)),
     stressedWeekly: round((y1.cashBeforeTax - loan * 0.02) / 52), // rates +2 points
     irr: irr === null ? null : round(irr * 100, 2),
     saleProceeds: Math.round(saleProceeds),
@@ -374,7 +376,7 @@ export function IRR(flows) {
  * Keyzing verdict: turns the numbers into a plain-English call with the reasons behind it.
  * suburb: optional index row (scores, vacancy etc). Returns {grade, label, score, reasons[], risks[]}.
  */
-export function verdict(result, suburb = null, market = null) {
+export function verdict(result, suburb = null, market = null, { depositRate = 4.35 } = {}) {
   const s = result.summary;
   const p = result.input;
   const reasons = [];
@@ -432,9 +434,15 @@ export function verdict(result, suburb = null, market = null) {
   // everything a D and carry no signal.
   const percentile = dealPercentile(score);
   const grade = percentile === null ? (score >= 72 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D') : percentile >= 85 ? 'A' : percentile >= 60 ? 'B' : percentile >= 30 ? 'C' : 'D';
-  const label = { A: 'Top 15% of comparable deals', B: 'Better than most', C: 'Around the middle', D: 'Weaker than most' }[grade];
+  // Shown as a rank, never as a letter: an "A" read as "buy" when most deals lose money each week.
+  const label = { A: 'Top 15%', B: 'Upper 40%', C: 'Middle 30%', D: 'Bottom 30%' }[grade];
   const absolute = s.weeklyCashAfterTax >= 0 ? `Pays its own way: about $${Math.round(s.weeklyCashAfterTax)} a week in your pocket after tax.` : `On its own numbers you pay about $${Math.abs(Math.round(s.weeklyCashAfterTax))} a week after tax to hold it.`;
-  return { score, grade, label, percentile, absolute, reasons, risks };
+  // Absolute test: would the same cash have done better, risk-free, in a term deposit after tax?
+  const mr = marginalRate(p.income || 0);
+  const tdAfterTax = Math.round(depositRate * (1 - mr) * 10) / 10;
+  const beatsDeposit = s.irr !== null && s.irr > tdAfterTax;
+  const vsDeposit = s.irr === null ? null : `A projected ${s.irr}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;
+  return { score, grade, label, percentile, absolute, beatsDeposit, tdAfterTax, vsDeposit, reasons, risks };
 }
 
 /** Share (0-100) of benchmark deals this score beats, or null if no benchmark is loaded. */

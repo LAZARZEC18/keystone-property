@@ -2,7 +2,7 @@ import { setMeta } from '../ui.js';
 import { load } from '../data.js';
 
 const TOUR = [
-  ['valuation', 'Estimate a home’s value, with an honest range', 'Type an address and get an estimated value with its likely range, built from official sales data and the home’s bedrooms, bathrooms, land and condition, plus a plain statement of how far to trust it in that state. Buying to live in, you see the cash you need, repayments against the rent you pay now, and what a 2-point rate rise would cost. Add the asking price to see whether it sits in the lower, middle or upper part of the range.', '/property', 'Value a property'],
+  ['valuation', 'A suburb-based price range for a typical home', 'Type an address and get an estimated value with its likely range, built from official sales data and the home’s bedrooms, bathrooms, land and condition, plus a plain statement of how far to trust it in that state. Buying to live in, you see the cash you need, repayments against the rent you pay now, and what a 2-point rate rise would cost. Add the asking price to see whether it sits in the lower, middle or upper part of the range.', '/property', 'Value a property'],
   ['afford', 'Know what you can afford, in every state', 'Enter your savings and income once. Keyzing works out your buying ceiling in all eight states and territories with each state’s stamp duty and first home concessions, the 5% Deposit Scheme, Help to Buy and the lender stress test, then ranks the places you can buy near where you work.', '/afford?buyer=fhb', 'What can I afford?'],
   ['rent-vs-buy', 'Plan before you search', 'How long it will take to save a deposit, whether buying beats renting over the years you’ll stay, and how much faster the First Home Super Saver scheme gets you there.', '/first-home', 'First home tools'],
   ['map', 'Find the strongest suburbs', 'All 11,042 suburbs scored on yield, price trend, population growth, rental demand, affordability and stability, with a penalty for mining and single-industry towns. Filter by budget and strategy, and see how much of each score rests on measured data.', '/map', 'Suburb scores map'],
@@ -15,7 +15,7 @@ const WHO = [
   ['First home buyers', 'See exactly what you can afford with the 5% Deposit Scheme, Help to Buy, grants and duty concessions for your state; how long it will take to save; whether to keep renting; and which suburbs near work fit your budget.', '/afford?buyer=fhb'],
   ['Upgraders and downsizers', 'Value your current home and the one you want, see the true cash cost of moving (duty, fees, loan) and compare suburbs on the things that matter for living there.', '/property'],
   ['Investors', 'Rank suburbs by strategy, test any deal against the 2026 negative gearing and CGT rules, model joint ownership and land tax across your holdings, and compare every lender’s rate.', '/analyse'],
-  ['Agents and brokers', 'Print a suburb or property report with your name and agency on it, start a rental appraisal from the rent estimate, and give clients an independent price range that says how sure it is. Built to support your appraisal and your conversations.', '/suburb/wa/morley-6062'],
+  ['Agents and brokers', 'Point first home buyers to the affordability tool and investors to the 2026 tax-change calculator before they start inspecting: they arrive knowing their ceiling, the schemes they qualify for and what holding a property really costs. Keyzing’s suburb estimates are modelled and not a substitute for your appraisal of comparable sales.', '/afford?buyer=fhb'],
 ];
 
 const DIFF = [

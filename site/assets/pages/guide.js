@@ -1,16 +1,16 @@
 import { esc, aud, pct, setMeta } from '../ui.js';
-import { load } from '../data.js';
+import { load, typicalRate } from '../data.js';
 import { stampDuty, landTax, lmi, repayment } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
 import { HOME_GUARANTEE } from '../rules.js';
 
 export default async function guidePage(main) {
   setMeta({ title: 'How to buy property in Australia: first home and investment (2026 guide)', description: 'Step-by-step guide to buying an investment or first home in Australia: costs, stamp duty by state, loans, inspections, settlement, tax, and the 2026 negative gearing and CGT reforms.' });
-  const [rs, market] = await Promise.all([load('rates-summary'), load('market')]);
+  const [rs, market, rba] = await Promise.all([load('rates-summary'), load('market'), load('rba').catch(() => null)]);
   const prices = [500000, 750000, 1000000, 1500000];
   const sts = Object.keys(STATES);
   const inv = rs.best.INV_PI_variable?.[0];
-  const rate = rs.medianInvestorVariable || 6.5;
+  const rate = typicalRate(rba, 'INV').rate;
 
   const toc = [
     ['before', 'Before you start'],
@@ -147,7 +147,7 @@ export default async function guidePage(main) {
       </section>
 
       <section id="costs" class="section"><h2>9. Every cost, in one place</h2>
-        <p>Using a ${aud(750000)} house bought by an investor with 20% down, a ${pct(rate, 2)} loan and ${aud(620)}/wk rent:</p>
+        <p>Using a ${aud(750000)} house bought by an investor with 20% down, a ${pct(rate, 2)} loan (the RBA average rate on new investor variable loans) and ${aud(620)}/wk rent:</p>
         <div class="tbl-wrap"><table><thead><tr><th>Cost</th>${sts.map((s) => `<th class="n">${s}</th>`).join('')}</tr></thead><tbody>
           <tr><td>Deposit (20%)</td>${sts.map(() => `<td class="n">${aud(150000)}</td>`).join('')}</tr>
           <tr><td>Stamp duty (investor)</td>${sts.map((s) => `<td class="n">${aud(stampDuty(s, 750000).duty)}</td>`).join('')}</tr>
@@ -203,7 +203,7 @@ export default async function guidePage(main) {
         </ul>
       </section>
 
-      <section id="glossary" class="section"><h2>Glossary</h2><dl class="glossary"><dt>LVR (loan-to-value ratio)</dt><dd>The loan as a share of the property value. A $540,000 loan on a $600,000 home is a 90% LVR. Above 80%, lenders usually charge lenders mortgage insurance.</dd><dt>LMI (lenders mortgage insurance)</dt><dd>A one-off premium that protects the lender (not you) when you borrow more than 80%. It is usually added to the loan. The 5% Deposit Scheme and Help to Buy avoid it.</dd><dt>Gross yield</dt><dd>A year’s rent as a percentage of the price, before any costs. $600 a week on a $780,000 home is 4%.</dd><dt>IRR (internal rate of return)</dt><dd>The average yearly return on the cash you put in, after all costs, tax and the eventual sale. It lets you compare a property with other investments.</dd><dt>Negative gearing</dt><dd>When an investment property’s costs exceed its rent, the loss reduces tax on your other income. For established homes bought after 12 May 2026 this ends on 1 July 2027; losses then carry forward instead.</dd><dt>Serviceability buffer</dt><dd>Lenders check you could still repay at about 3 percentage points above the actual rate. It is why borrowing power is lower than repayments alone suggest.</dd><dt>Suburb score</dt><dd>Keyzing’s 0–100 ranking of a suburb against every other suburb on yield, price trend, growth drivers, rental demand, affordability and stability. It rates the area, not a particular purchase.</dd><dt>Deal rating (A–D)</dt><dd>Keyzing’s test of one purchase at today’s price and interest rates. It describes the numbers, not whether you should buy.</dd><dt>Percentile</dt><dd>Where a suburb sits against all others: the 80th percentile on yield means it beats 80% of suburbs.</dd><dt>SA2</dt><dd>An ABS statistical area of roughly 3,000 to 25,000 people, usually a group of neighbouring suburbs. Keyzing uses SA2 population estimates for recent growth.</dd><dt>Momentum</dt><dd>How much values changed over the past 12 months. Where there is no suburb-level sales data, the city or regional figure is used and it counts for less in the score.</dd><dt>Vacancy rate</dt><dd>The share of rental homes empty and available. Under about 1.5% means tenants compete for homes and rents tend to rise.</dd></dl></section>
+      <section id="glossary" class="section"><h2>Glossary</h2><dl class="glossary"><dt>LVR (loan-to-value ratio)</dt><dd>The loan as a share of the property value. A $540,000 loan on a $600,000 home is a 90% LVR. Above 80%, lenders usually charge lenders mortgage insurance.</dd><dt>LMI (lenders mortgage insurance)</dt><dd>A one-off premium that protects the lender (not you) when you borrow more than 80%. It is usually added to the loan. The 5% Deposit Scheme and Help to Buy avoid it.</dd><dt>Gross yield</dt><dd>A year’s rent as a percentage of the price, before any costs. $600 a week on a $780,000 home is 4%.</dd><dt>IRR (internal rate of return)</dt><dd>The average yearly return on the cash you put in, after all costs, tax and the eventual sale. It lets you compare a property with other investments.</dd><dt>Negative gearing</dt><dd>When an investment property’s costs exceed its rent, the loss reduces tax on your other income. For established homes bought after 12 May 2026 this ends on 1 July 2027; losses then carry forward instead.</dd><dt>Serviceability buffer</dt><dd>Lenders check you could still repay at about 3 percentage points above the actual rate. It is why borrowing power is lower than repayments alone suggest.</dd><dt>Suburb score</dt><dd>Keyzing’s 0–100 ranking of a suburb against every other suburb on yield, price trend, growth drivers, rental demand, affordability and stability. It rates the area, not a particular purchase.</dd><dt>Relative rank (deals)</dt><dd>How one purchase’s numbers compare with the typical home in every other suburb, run with the same deposit, rate and income. It is relative: a “top 15%” deal can still cost you money every week, so the weekly cost after tax and the term-deposit test are always shown first. It describes the numbers, not whether you should buy.</dd><dt>Percentile</dt><dd>Where a suburb sits against all others: the 80th percentile on yield means it beats 80% of suburbs.</dd><dt>SA2</dt><dd>An ABS statistical area of roughly 3,000 to 25,000 people, usually a group of neighbouring suburbs. Keyzing uses SA2 population estimates for recent growth.</dd><dt>Momentum</dt><dd>How much values changed over the past 12 months. Where there is no suburb-level sales data, the city or regional figure is shown for information but left out of the score entirely.</dd><dt>Vacancy rate</dt><dd>The share of rental homes empty and available. Under about 1.5% means tenants compete for homes and rents tend to rise.</dd></dl></section>
 
       <section id="faq" class="section"><h2>Questions</h2>
         ${[

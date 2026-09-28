@@ -1,10 +1,13 @@
-import { esc, aud, pct, setMeta, scoreBadge, cashWeek } from '../ui.js';
-import { suburbs, cleanName, suburbUrl, load } from '../data.js';
+import { esc, aud, pct, setMeta, scoreBadge, cashWeek, rankPill } from '../ui.js';
+import { suburbs, cleanName, suburbUrl, load, typicalRate } from '../data.js';
 import { analyse, verdict, suburbScore, valueEstimate } from '../engine.js';
 import { reaSearch } from './find.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
 import { listingLinks } from '../insights.js';
+import { valueCall, rangeBar } from '../valuecall.js';
+
+export { valueCall, rangeBar };
 import { attachSearch, navigate } from '../app.js';
 
 const BED_FACTOR_H = { 1: 0.7, 2: 0.82, 3: 1, 4: 1.14, 5: 1.28, 6: 1.38 };
@@ -25,7 +28,7 @@ export function rateListing(s, it, { market, index, rate }) {
   const t = unit ? 'u' : 'h';
   const est = valueEstimate(s, { type: t, beds: it.beds ?? undefined, baths: it.baths ?? undefined, cars: it.cars ?? undefined, land: t === 'h' && it.land > 50 ? it.land : null, condition: it.isNew ? 'new' : 'average', liveFactor: liveFactor(s.rg, index) });
   const rent = est?.rent || estimateRent(s, it);
-  const value = valueCall(it.price, est);
+  const value = valueCall(it.price, est, { measured: s.conf === 'high' || s.conf === 'medium' });
   const gap = value ? value.gap : null;
   let a = null;
   let v = null;
@@ -37,27 +40,6 @@ export function rateListing(s, it, { market, index, rate }) {
 }
 
 /** Value call from the gap between asking price and Keyzing's estimate (percent). */
-export function valueCall(asking, est) {
-  if (!asking || !est) return null;
-  const gap = (asking / est.value - 1) * 100;
-  // Outside the range: call it. Inside: say which third it sits in, which is as far as the estimate can go.
-  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, pos: 0, note: 'The asking price is under Keyzing\'s range for this home. Find out why before offering: condition, position, or a seller who needs to move.' };
-  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, pos: 1, note: 'The asking price is over Keyzing\'s range for this home. Check recent sales in the street before offering near it.' };
-  const pos = (asking - est.low) / Math.max(1, est.high - est.low);
-  if (pos < 1 / 3) return { key: 'lower', label: 'In the lower third of the likely range', cls: 'up', gap, pos, note: 'Priced toward the bottom of what similar homes in this suburb are estimated to be worth. Worth a closer look, and worth asking why.' };
-  if (pos > 2 / 3) return { key: 'upper', label: 'In the upper third of the likely range', cls: 'down', gap, pos, note: 'Priced toward the top of the range: it would need better-than-typical features, position or condition to justify it. Compare recent sales in the street.' };
-  return { key: 'within', label: 'In the middle of the likely range', cls: '', gap, pos, note: 'Close to what a typical home with these features is estimated to be worth. Recent sales in the same street will narrow it down.' };
-}
-
-/** Small bar showing where a price sits in the estimate's range. */
-export function rangeBar(asking, est) {
-  if (!asking || !est) return '';
-  const lo = est.low * 0.9;
-  const hi = est.high * 1.1;
-  const x = (v) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
-  return `<div class="range-bar" role="img" aria-label="Asking price position within the estimated range"><span class="rb-band" style="left:${x(est.low)}%;width:${x(est.high) - x(est.low)}%"></span><span class="rb-third" style="left:${x(est.low + (est.high - est.low) / 3)}%"></span><span class="rb-third" style="left:${x(est.low + (2 * (est.high - est.low)) / 3)}%"></span><span class="rb-mark" style="left:${x(asking)}%"></span></div><div class="spread fine"><span>${Math.round(est.low / 1000)}k</span><span>estimate ${Math.round(est.value / 1000)}k</span><span>${Math.round(est.high / 1000)}k</span></div>`;
-}
-
 /** "Rate a listing you've found": address + asking price -> full valuation and grade. */
 export function rateBox(s) {
   return `<div class="card flat tint rate-box"><b>Check a listing's asking price</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Keyzing shows where the price sits against its estimated range for that home, plus the cash and repayments to buy it. Where there's no official suburb sales data (most of WA, QLD, TAS, NT and the ACT) the estimate is modelled: use it as a sense-check alongside recent sales, not a verdict.</p>
@@ -103,7 +85,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
     return;
   }
   const [market, rs, index] = await Promise.all([load('market'), load('rates-summary'), load('index')]);
-  const rate = Math.max(rs.best.INV_PI_variable?.[0]?.rate || 6, (rs.medianInvestorVariable || 6.5) - 0.4);
+  const rate = typicalRate(await load('rba'), 'INV').rate;
   const rated = res.items.map((it) => ({ it, r: mode === 'rent' ? { rent: estimateRent(s, it) } : rateListing(s, it, { market, index, rate }) }));
   const rank = { A: 0, B: 1, C: 2, D: 3 };
   if (mode !== 'rent') rated.sort((x, y) => (rank[x.r.v?.grade] ?? 4) - (rank[y.r.v?.grade] ?? 4) || (x.r.gap ?? 99) - (y.r.gap ?? 99));
@@ -123,7 +105,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
         ${a ? `<div class="note">Est. rent ${aud(rent)}/wk · yield ${pct(a.summary.grossYield, 2)} · ${cashWeek(a.summary.weeklyCashAfterTax).toLowerCase()} after tax · 10-yr return ${pct(a.summary.irr, 1)}</div>` : rent ? `<div class="note">Est. rent ${aud(rent)}/wk.</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-        ${v ? `<div class="grade grade-${v.grade}" style="width:48px;height:48px;font-size:24px;border-radius:12px" title="${esc(v.label)}">${v.grade}</div><span class="fine" style="text-align:right">${esc(v.label)}</span>` : ''}
+        ${v ? `${rankPill(v)}<span class="fine" style="text-align:right">relative rank</span>` : ''}
         <a class="btn sm" href="${pUrl}" data-link>Value</a>
         <a class="btn sm ghost" href="${aUrl}" data-link>Analyse</a>
       </div>
@@ -152,7 +134,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
         const i = rated.findIndex((x) => x.it === it);
         L.circleMarker([it.lat, it.lng], { radius: 8, weight: 1.5, color: '#0009', fillColor: col(r.v?.grade), fillOpacity: 0.95 })
           .addTo(map)
-          .bindPopup(`<b>${esc(it.address)}</b><br>${esc(it.displayPrice || '')}<br>${r.est ? `Keyzing value ${aud(r.est.value, { compact: true })}` : ''}${r.value ? ` · ${r.value.label}` : ''}${r.v ? `<br>Grade ${r.v.grade} · ${esc(r.v.label)}` : ''}<br><a href="#lst-${i}">Details ↓</a>`);
+          .bindPopup(`<b>${esc(it.address)}</b><br>${esc(it.displayPrice || '')}<br>${r.est ? `Typical-home estimate ${aud(r.est.value, { compact: true })}` : ''}${r.value ? ` · ${r.value.label}` : ''}${r.a ? `<br>${cashWeek(r.a.summary.weeklyCashAfterTax)} after tax · rank ${esc(r.v.label)}` : ''}<br><a href="#lst-${i}">Details ↓</a>`);
       });
       map.fitBounds(L.latLngBounds(pts.map(({ it }) => [it.lat, it.lng])).pad(0.15), { maxZoom: 15 });
     };
@@ -161,12 +143,12 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
 }
 
 export default async function listingsPage(main, _p, query) {
-  setMeta({ title: 'Rate any property for sale: value, rent and investment grade', description: 'Paste the address and asking price of any Australian listing to see its estimated value, whether the price is good value, rent, yield, holding cost and an investment grade.' });
+  setMeta({ title: 'Check a listing: typical-home estimate, rent and weekly cost', description: 'Paste the address and asking price of any Australian listing to see its estimated value, whether the price is good value, rent, yield, holding cost and an investment grade.' });
   const { byId } = await suburbs();
   let chosen = query.suburb ? byId.get(query.suburb) : null;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Listings</div><h1>Listings, valued and rated</h1>
-  <p>Found a property for sale? Paste its address and asking price and Keyzing gives you an independent value estimate for that home, whether the price is good value, estimated rent and yield, weekly holding cost after tax, a 10-year return and an A–D investment grade.</p></div>
+  <p>Found a property for sale? Paste its address and asking price and Keyzing shows a suburb-based estimate for a typical home like it, estimated rent and yield, the weekly holding cost after tax and a 10-year return.</p></div>
   <div id="rb"></div>
   <section class="section">
     <h2>Browse what's for sale</h2>

@@ -5,7 +5,8 @@ import { getText, pool } from './lib/http.mjs';
 
 export const FEEDS = [
   { source: 'RBA', url: 'https://www.rba.gov.au/rss/rss-cb-media-releases.xml', all: true },
-  { source: 'realestate.com.au', url: 'https://www.realestate.com.au/news/feed/', all: true },
+  // portal news is filtered like any other feed (it carries celebrity and lifestyle pieces)
+  { source: 'realestate.com.au', url: 'https://www.realestate.com.au/news/feed/' },
   { source: 'PropTrack', url: 'https://www.realestate.com.au/insights/feed/', all: true },
   { source: 'The Conversation', url: 'https://theconversation.com/au/topics/housing-1109/articles.atom', all: true },
   { source: 'The Guardian', url: 'https://www.theguardian.com/australia-news/housing/rss', all: true },
@@ -22,8 +23,13 @@ export const FEEDS = [
   },
 ];
 
+// A headline must be about the market, lending, renting or housing policy, not just mention a home.
 const RELEVANT =
-  /\b(housing|house prices?|home ?loans?|homes?|home ?buyers?|property|properties|real estate|mortgages?|rents?|rental|renters?|tenants?|landlords?|interest rates?|cash rate|RBA|reserve bank|APRA|auctions?|dwellings?|apartments?|first[- ]home|stamp duty|negative gearing|capital gains|land tax|suburbs?|affordab\w*|investors?|lending|borrow\w*|CPI|inflation|construction|building approvals|vacancy|vacancies)\b/i;
+  /\b(housing|house prices?|home prices?|property (market|prices?|values?|investors?)|home ?loans?|home ?buyers?|first[- ]home|mortgages?|rents?|rental|renters?|tenants?|landlords?|interest rates?|cash rate|RBA|reserve bank|APRA|auction clearance|clearance rates?|dwelling (values?|prices?|approvals)|stamp duty|negative gearing|capital gains|land tax|affordab\w*|lending|borrowers?|CPI|inflation|building approvals|housing supply|vacancy rates?|home values?|median (price|value)|monetary policy)\b/i;
+// Celebrity, sport, crime and gossip items that feeds tag as "property" but tell a buyer nothing.
+const BLOCK =
+  /\b(mansion|celebrit\w*|star|actor|actress|singer|rapper|influencer|reality|AFL|NRL|cricket|footballer|olympian|swimmer|resigns?|resignation|ICAC|court|charged|police|taser|murder|crash|dies|death|royal|billionaire'?s?|lists? (her|his|their)|sells? (her|his|their)|snaps? up|buys? (a|her|his|their))\b/i;
+const PER_SOURCE = { 'realestate.com.au': 3, PropTrack: 3, Domain: 3 };
 
 // Publishers accepted from the Google News aggregator (normalised names). Anything else is dropped:
 // the aggregator also surfaces SEO and trading-spam sites.
@@ -47,9 +53,9 @@ const normPub = (x) => String(x || '').toLowerCase().replace(/^www\./, '').repla
 
 const TAGS = [
   ['Rates', /interest rate|cash rate|\bRBA\b|reserve bank|mortgage rate|rate (cut|hike|rise|hold)|fixed rate|variable rate|lender|refinanc/i],
-  ['Prices', /price|value|index|auction|clearance|boom|slump|fall|growth|median|market/i],
+  ['Prices', /\bprices?\b|\bvalues?\b|index|clearance rate|boom|slump|median|market (rise|fall|growth|slow|cool)/i],
   ['Rents', /rent|tenant|landlord|vacanc|lease/i],
-  ['Policy', /tax|stamp duty|negative gearing|budget|government|policy|scheme|grant|regulat|apra|council|zoning|planning/i],
+  ['Policy', /\btax|stamp duty|negative gearing|budget|government|policy|scheme|home owners? grant|regulat|apra|zoning|planning|\blaws?\b|\brules?\b|registration|reform|legislation/i],
   ['Supply', /construction|build|approval|supply|developer|apartment|land release|housing target/i],
   ['Lending', /loan|lending|credit|borrow|serviceab|deposit|broker|bank/i],
 ];
@@ -122,8 +128,8 @@ export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
         source = pub;
       }
       if (/[\u0400-\u04FF\u0600-\u06FF\u3040-\u9FFF]/.test(source + title)) continue; // non-English mirrors
-      if (!feed.all && !RELEVANT.test(title)) continue;
-      if (feed.all && feed.source === 'SBS News' && !RELEVANT.test(title)) continue;
+      if (BLOCK.test(title)) continue;
+      if (!RELEVANT.test(title)) continue;
       const age = it.date ? now - Date.parse(it.date) : 0;
       if (age > 14 * 864e5) continue; // two weeks
       const key = norm(title).slice(0, 70);
@@ -134,10 +140,13 @@ export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
     }
   }
   out.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  // a short list, and no single publisher (least of all a listing portal) can dominate it
+  const count = {};
+  const curated = out.filter((x) => (count[x.source] = (count[x.source] || 0) + 1) <= (PER_SOURCE[x.source] ?? 5)).slice(0, 30);
   return {
     updated: new Date(now).toISOString(),
     feeds: results.map((r) => ({ source: r.feed.source, ok: !r.error, count: r.items.length })),
-    items: out.slice(0, 120),
+    items: curated,
   };
 }
 
