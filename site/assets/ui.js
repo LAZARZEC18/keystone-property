@@ -11,6 +11,7 @@ export const aud = (v, { compact = false, dp = 0 } = {}) => {
   if (v === null || v === undefined || Number.isNaN(v)) return '—';
   if (compact) {
     const a = Math.abs(v);
+    if (a >= 1e12) return `${v < 0 ? '-' : ''}$${(a / 1e12).toFixed(2)} trillion`;
     if (a >= 1e9) return `${v < 0 ? '-' : ''}$${(a / 1e9).toFixed(1)}b`;
     if (a >= 999500) return `${v < 0 ? "-" : ""}$${(a / 1e6).toFixed(a >= 9995000 ? 1 : 2)}m`;
     if (a >= 1e4) return `${v < 0 ? '-' : ''}$${Math.round(a / 1e3)}k`;
@@ -48,7 +49,7 @@ export const scoreBadge = (v, big = false) => `<span class="score ${scoreClass(v
 
 export function srcBadge(src) {
   if (!src) return '';
-  if (src === 'model') return '<span class="tag tag-model" title="Keyzing estimate: calibrated model anchored to current regional medians">Estimate</span>';
+  if (src === 'model') return '<span class="tag tag-model" title="Keyzing estimate: calibrated model anchored to current regional medians">Modelled</span>';
   if (src === 'region') return '<span class="tag tag-model" title="Regional figure (Cotality)">Region</span>';
   const pc = src.includes('postcode');
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
@@ -259,5 +260,5 @@ export function dealContext(v) {
 export function returnsLine(sc, v) {
   if (!sc) return '';
   const f = (x) => (x === null || x === undefined ? '—' : pct(x, 1));
-  return `<div class="returns-line"><div class="rl-head">Return on your cash after tax, a year, if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div><span class="k">${sc[k].growth}% a year</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">3% is the major banks' forecast for 2026-27; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
+  return `<div class="returns-line"><div class="rl-head">Return on your cash after tax, a year, if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div${sc[k].yours ? ' class="rl-yours"' : ''}><span class="k">${sc[k].growth}% a year${sc[k].yours ? ' (your input)' : ''}</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">${sc.base.yours ? 'The middle figure uses your own growth input and matches every other return on this page. ' : ''}3% is the major banks' forecast for 2026-27; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
 }

@@ -1,3 +1,4 @@
+import { check, showErrors } from '../validate.js';
 import { demo } from '../demo.js';
 import { nextStepsCard } from '../insights.js';
 import { esc, aud, pct, setMeta, lineChart, wireCharts } from '../ui.js';
@@ -144,6 +145,8 @@ export default async function firstHomePage(main) {
 
   const runSave = () => {
     const v = f('#sv');
+    const c = check(v, { price: 'price', now: 'savings', monthly: 'monthly', sr: 'pctReturn', income: { field: 'income', optional: true } });
+    if (showErrors($('#sv'), c.errors, { price: '[name=price]', now: '[name=now]', monthly: '[name=monthly]', sr: '[name=sr]', income: '[name=income]' }, $('#sv-out'))) return;
     const price = +v.price;
     const dep = +v.dep;
     const duty = stampDuty(v.state, price, { buyer: 'fhb' });
@@ -165,6 +168,8 @@ export default async function firstHomePage(main) {
 
   const runRvb = () => {
     const v = f('#rb');
+    const c = check(v, { price: 'price', rate: 'rate', rent: 'rent', years: 'hold', growth: 'growth', rentGrowth: 'rentGrowth', invest: 'pctReturn', ownCost: 'ownCost', strata: { field: 'strata', optional: true } });
+    if (showErrors($('#rb'), c.errors, Object.fromEntries(Object.keys(c.values).map((k) => [k, `[name=${k}]`])), $('#rb-out'))) return;
     const price = +v.price;
     const dep = +v.dep;
     const duty = stampDuty(v.state, price, { buyer: 'fhb' }).duty;
@@ -182,6 +187,8 @@ export default async function firstHomePage(main) {
 
   const runFhss = () => {
     const v = f('#fs');
+    const c = check(v, { income: 'income', c: 'super', years: 'years10', sr: 'pctReturn' });
+    if (showErrors($('#fs'), c.errors, { income: '[name=income]', c: '[name=c]', years: '[name=years]', sr: '[name=sr]' }, $('#fs-out'))) return;
     const r = fhss({ income: +v.income, c: +v.c, years: Math.max(1, Math.min(10, +v.years)), bab, savingsRate: +v.sr });
     $('#fs-out').innerHTML = `<div class="stats">
       <div class="stat"><span class="k">Contributed through super</span><span class="v">${aud(r.contributed)}</span><span class="s">${aud(r.perYear)} a year${r.perYear < +v.c ? ' (limited by the caps)' : ''}</span></div>

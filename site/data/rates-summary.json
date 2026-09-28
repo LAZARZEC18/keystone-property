@@ -1,11 +1,11 @@
 {
- "updated": "2026-09-28T06:44:26.055Z",
+ "updated": "2026-09-28T08:31:49.427Z",
  "lenders": 93,
  "rows": 8085,
  "best": {
   "INV_PI_variable": [
    {
-    "lender": "Northern Inland Credit Union Limited",
+    "lender": "Northern Inland Credit Union",
     "product": "Value Home Loan - Investment",
     "rate": 5.94,
     "comparison": 5.98,
@@ -14,14 +14,14 @@
    },
    {
     "lender": "Easy Street",
-    "product": "STREET SMART VARIABLE HOME LOAN SPECIAL - INVESTMENT (Principal and Interest)",
+    "product": "Street Smart Variable Home Loan Special - Investment (Principal and Interest)",
     "rate": 5.95,
     "comparison": 6,
     "lvrMax": null,
     "url": "https://easystreet.com.au/variable-home-loan"
    },
    {
-    "lender": "Northern Inland Credit Union Limited",
+    "lender": "Northern Inland Credit Union",
     "product": "Dream Home Loan New Borrowing INV",
     "rate": 5.99,
     "comparison": 6.33,
@@ -30,7 +30,7 @@
    },
    {
     "lender": "CommFCU",
-    "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Principal and Interest)",
+    "product": "Boost Package Home Loan - Investment LVR 80% (Principal and Interest)",
     "rate": 5.99,
     "comparison": 6.37,
     "lvrMax": 80,
@@ -38,7 +38,7 @@
    },
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Lite Home Loan",
+    "product": "Lite Home Loan",
     "rate": 5.99,
     "comparison": 6.01,
     "lvrMax": 80,
@@ -90,7 +90,7 @@
   "INV_PI_fixed2": [
    {
     "lender": "CommFCU",
-    "product": "BOOST PACKAGE HOME LOAN - 2 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
+    "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.24,
     "comparison": 6.65,
     "lvrMax": 80,
@@ -132,7 +132,7 @@
   "INV_PI_fixed3": [
    {
     "lender": "CommFCU",
-    "product": "BOOST PACKAGE HOME LOAN - 3 YEAR FIXED - INVESTMENT LVR 80% (Principal and Interest)",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.19,
     "comparison": 6.63,
     "lvrMax": 80,
@@ -148,7 +148,7 @@
    },
    {
     "lender": "Regional Australia Bank",
-    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "product": "Home Loan (Fixed Investor)",
     "rate": 6.24,
     "comparison": 6.27,
     "lvrMax": 80,
@@ -240,7 +240,7 @@
    },
    {
     "lender": "CommFCU",
-    "product": "BOOST PACKAGE HOME LOAN - INVESTMENT LVR 80% (Interest Only)",
+    "product": "Boost Package Home Loan - Investment LVR 80% (Interest Only)",
     "rate": 6.14,
     "comparison": 6.57,
     "lvrMax": 80,
@@ -258,7 +258,7 @@
   "INV_IO_fixed1": [
    {
     "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
+    "product": "Fixed Rate home loan",
     "rate": 6.39,
     "comparison": 7.69,
     "lvrMax": 80,
@@ -266,7 +266,7 @@
    },
    {
     "lender": "Regional Australia Bank",
-    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "product": "Home Loan (Fixed Investor)",
     "rate": 6.39,
     "comparison": 6.28,
     "lvrMax": 80,
@@ -323,7 +323,7 @@
     "url": "https://www.pnbank.com.au/home-loans/investor/fixed-rate/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.39,
     "comparison": 6.24,
@@ -331,7 +331,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
     "comparison": 6.43,
@@ -342,7 +342,7 @@
   "INV_IO_fixed3": [
    {
     "lender": "Regional Australia Bank",
-    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "product": "Home Loan (Fixed Investor)",
     "rate": 6.24,
     "comparison": 6.27,
     "lvrMax": 80,
@@ -365,7 +365,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.44,
     "comparison": 6.27,
@@ -373,7 +373,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.44,
     "comparison": 6.45,
@@ -384,7 +384,7 @@
   "INV_IO_fixed5": [
    {
     "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
+    "product": "Fixed Rate home loan",
     "rate": 6.64,
     "comparison": 7.32,
     "lvrMax": 80,
@@ -425,7 +425,7 @@
   ],
   "OO_PI_variable": [
    {
-    "lender": "Maitland Mutual Limited",
+    "lender": "Maitland Mutual",
     "product": "Budget Home Loan",
     "rate": 5.79,
     "comparison": 5.79,
@@ -433,7 +433,7 @@
     "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
    },
    {
-    "lender": "Maitland Mutual Limited",
+    "lender": "Maitland Mutual",
     "product": "Budget Home Loan",
     "rate": 5.79,
     "comparison": 5.79,
@@ -458,7 +458,7 @@
    },
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Lite Home Loan",
+    "product": "Lite Home Loan",
     "rate": 5.84,
     "comparison": 5.86,
     "lvrMax": 80,
@@ -467,7 +467,7 @@
   ],
   "OO_PI_fixed1": [
    {
-    "lender": "TMCU",
+    "lender": "Tmcu",
     "product": "1 Year Fixed Rate Loan",
     "rate": 5.89,
     "comparison": null,
@@ -475,7 +475,7 @@
     "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
    },
    {
-    "lender": "Northern Inland Credit Union Limited",
+    "lender": "Northern Inland Credit Union",
     "product": "Value Fixed Home Loan 12M",
     "rate": 5.99,
     "comparison": 5.87,
@@ -483,7 +483,7 @@
     "url": "https://www.nicu.com.au/home-loans/value-home-loan-1-year-fixed-special-offer"
    },
    {
-    "lender": "TMCU",
+    "lender": "Tmcu",
     "product": "1 Year Fixed Rate Loan",
     "rate": 5.99,
     "comparison": 6.09,
@@ -576,7 +576,7 @@
    },
    {
     "lender": "Regional Australia Bank",
-    "product": "Regional Australia Bank Home Loan (Fixed Owner Occupied)",
+    "product": "Home Loan (Fixed Owner Occupied)",
     "rate": 6.09,
     "comparison": 6.08,
     "lvrMax": 80,
@@ -584,7 +584,7 @@
    },
    {
     "lender": "CommFCU",
-    "product": "BOOST PACKAGE HOME LOAN - 3 YEAR FIXED - OWNER-OCCUPIED LVR 80% (Principal and Interest)",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
     "rate": 6.09,
     "comparison": 6.47,
     "lvrMax": 80,
@@ -761,7 +761,7 @@
   ],
   "OO_IO_fixed3": [
    {
-    "lender": "ORANGE CREDIT UNION LTD",
+    "lender": "Orange Credit Union",
     "product": "Premium Home Loan Fixed 36 mths Interest Only Owner Occupied",
     "rate": 6.29,
     "comparison": null,
@@ -770,7 +770,7 @@
    },
    {
     "lender": "Regional Australia Bank",
-    "product": "Regional Australia Bank Home Loan (Fixed Owner Occupied)",
+    "product": "Home Loan (Fixed Owner Occupied)",
     "rate": 6.34,
     "comparison": 6.15,
     "lvrMax": 80,
@@ -846,7 +846,7 @@
   "INV_PI_variable_national": [
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Lite Home Loan",
+    "product": "Lite Home Loan",
     "rate": 5.99,
     "comparison": 6.01,
     "lvrMax": 80,
@@ -854,14 +854,14 @@
    },
    {
     "lender": "Unloan",
-    "product": "Unloan Home Loan",
+    "product": "Home Loan",
     "rate": 6.04,
     "comparison": 5.95,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "ING BANK (Australia) Ltd",
+    "lender": "ING BANK (Australia)",
     "product": "Mortgage Simplifier",
     "rate": 6.19,
     "comparison": 6.22,
@@ -869,7 +869,7 @@
     "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.19,
     "comparison": 6.21,
@@ -877,7 +877,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Economy Variable Home Loan",
     "rate": 6.19,
     "comparison": 6.34,
@@ -953,7 +953,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.39,
     "comparison": 6.25,
@@ -961,7 +961,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
     "comparison": 6.43,
@@ -987,7 +987,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.44,
     "comparison": 6.28,
@@ -995,7 +995,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.44,
     "comparison": 6.46,
@@ -1003,7 +1003,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Plus Home Loan",
     "rate": 6.44,
     "comparison": 6.62,
@@ -1087,7 +1087,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ING BANK (Australia) Ltd",
+    "lender": "ING BANK (Australia)",
     "product": "Mortgage Simplifier",
     "rate": 6.34,
     "comparison": 6.28,
@@ -1098,7 +1098,7 @@
   "INV_IO_fixed1_national": [
    {
     "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
+    "product": "Fixed Rate home loan",
     "rate": 6.39,
     "comparison": 7.69,
     "lvrMax": 80,
@@ -1122,7 +1122,7 @@
    },
    {
     "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
+    "product": "Fixed Rate home loan",
     "rate": 6.59,
     "comparison": 7.71,
     "lvrMax": 80,
@@ -1155,7 +1155,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.39,
     "comparison": 6.24,
@@ -1163,7 +1163,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
     "comparison": 6.43,
@@ -1171,7 +1171,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Plus Home Loan",
     "rate": 6.39,
     "comparison": 6.59,
@@ -1197,7 +1197,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.44,
     "comparison": 6.27,
@@ -1205,7 +1205,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.44,
     "comparison": 6.45,
@@ -1213,7 +1213,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Plus Home Loan",
     "rate": 6.44,
     "comparison": 6.61,
@@ -1224,7 +1224,7 @@
   "INV_IO_fixed5_national": [
    {
     "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
+    "product": "Fixed Rate home loan",
     "rate": 6.64,
     "comparison": 7.32,
     "lvrMax": 80,
@@ -1266,7 +1266,7 @@
   "OO_PI_variable_national": [
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Lite Home Loan",
+    "product": "Lite Home Loan",
     "rate": 5.84,
     "comparison": 5.86,
     "lvrMax": 80,
@@ -1282,7 +1282,7 @@
    },
    {
     "lender": "Unloan",
-    "product": "Unloan Home Loan",
+    "product": "Home Loan",
     "rate": 5.89,
     "comparison": 5.8,
     "lvrMax": 80,
@@ -1290,7 +1290,7 @@
    },
    {
     "lender": "Up",
-    "product": "Up Home Loan",
+    "product": "Home Loan",
     "rate": 5.95,
     "comparison": 5.95,
     "lvrMax": null,
@@ -1340,7 +1340,7 @@
    },
    {
     "lender": "Up",
-    "product": "Up Home Loan",
+    "product": "Home Loan",
     "rate": 6.35,
     "comparison": 5.99,
     "lvrMax": null,
@@ -1373,7 +1373,7 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.24,
     "comparison": 6.13,
@@ -1381,7 +1381,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.24,
     "comparison": 6.28,
@@ -1407,7 +1407,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Essential Home Loan",
     "rate": 6.29,
     "comparison": 6.16,
@@ -1415,7 +1415,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.29,
     "comparison": 6.31,
@@ -1423,7 +1423,7 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland Limited",
+    "lender": "Bank of Queensland",
     "product": "BOQ Plus Home Loan",
     "rate": 6.29,
     "comparison": 6.47,
@@ -1434,7 +1434,7 @@
   "OO_PI_fixed5_national": [
    {
     "lender": "Up",
-    "product": "Up Home Loan",
+    "product": "Home Loan",
     "rate": 6.4,
     "comparison": 6.15,
     "lvrMax": null,
@@ -1618,7 +1618,7 @@
    },
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Loaded Home Loan",
+    "product": "Loaded Home Loan",
     "rate": 6.49,
     "comparison": 6.69,
     "lvrMax": 90,
@@ -1626,7 +1626,7 @@
    },
    {
     "lender": "Virgin Money",
-    "product": "Virgin Money Lite Home Loan",
+    "product": "Lite Home Loan",
     "rate": 6.49,
     "comparison": 6.4,
     "lvrMax": 90,
@@ -1659,8 +1659,8 @@
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    },
    {
-    "lender": "NATIONAL AUSTRALIA BANK",
-    "product": "NAB Tailored Home Loan",
+    "lender": "NAB",
+    "product": "Tailored Home Loan",
     "rate": 6.94,
     "comparison": 7.21,
     "lvrMax": 80,

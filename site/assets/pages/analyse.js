@@ -3,10 +3,19 @@ import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
-import { RULES, STATES, GROWTH } from '../rules.js';
+import { RULES, STATES, GROWTH, runningCosts } from '../rules.js';
+import { check, fromQuery, showErrors } from '../validate.js';
 import { attachSearch } from '../app.js';
 
 const SCEN = { bear: { growth: GROWTH.bear, rentGrowth: 2.5 }, base: { growth: GROWTH.base, rentGrowth: 3.5 }, bull: { growth: GROWTH.bull, rentGrowth: 4.5 } };
+// every numeric input, checked the same way whether it came from the form or the link
+const SPEC = {
+  price: 'price', weeklyRent: 'rent', deposit: 'deposit', ratePct: 'rate', years: 'term', income: 'income', growth: 'growth', rentGrowth: 'rentGrowth',
+  vacancyWeeks: 'vacancy', mgmtPct: 'mgmt', hold: 'hold', cpi: 'cpi', councilRates: 'council', strata: 'strata', waterIns: 'council',
+  buildYear: { field: 'built', optional: true }, otherLandValue: { field: 'otherland', optional: true }, otherRental: { field: 'otherRental', optional: true },
+  share: { field: 'share', optional: true }, income2: { field: 'income2', optional: true },
+};
+const IDS = { price: '#a-price', weeklyRent: '#a-rent', deposit: '#a-dep', ratePct: '#a-rate', years: '#a-term', income: '#a-income', growth: '#a-growth', rentGrowth: '#a-rg', vacancyWeeks: '#a-vac', mgmtPct: '#a-mgmt', hold: '#a-hold', cpi: '#a-cpi', councilRates: '#a-council', strata: '#a-strata', waterIns: '#a-waterins', buildYear: '#a-built', otherLandValue: '#a-otherland', otherRental: '#a-otherrent', share: '#a-share', income2: '#a-income2' };
 
 export default async function analysePage(main, _p, query) {
   setMeta({ title: '2026 tax-change investment property calculator', description: 'Stamp duty, LMI, land tax, the weekly cost after tax and a 10-year after-tax return for any Australian property, under the 2026 negative gearing and CGT rules.' });
@@ -15,40 +24,43 @@ export default async function analysePage(main, _p, query) {
   const best = rs.best.INV_PI_variable?.[0];
   const typical = rba.actual.newInvVariable.at(-1)?.[1];
   const type = query.type || sub?.pt || 'h';
+  const q = (k, d) => fromQuery(query, k, d);
+  const st0 = { state: sub?.s || query.state || 'NSW' };
+  const rc = runningCosts(st0.state, type);
   const st = {
     addr: query.addr || '',
-    state: sub?.s || query.state || 'NSW',
-    price: +query.price || (sub ? (type === 'u' ? sub.u : sub.h) : 850000),
-    weeklyRent: +query.rent || (sub ? (type === 'u' ? sub.ru : sub.rh) : 650),
+    state: st0.state,
+    price: q('price', sub ? (type === 'u' ? sub.u : sub.h) : 850000),
+    weeklyRent: q('rent', sub ? (type === 'u' ? sub.ru : sub.rh) : 650),
     type,
     newBuild: query.new === '1',
-    buildYear: +query.built || (query.new === '1' ? 2026 : 2005),
-    deposit: query.dep ? +query.dep / 100 : 0.2,
-    ratePct: +query.rate || typical || 6.4,
-    years: 30,
+    buildYear: q('built', query.new === '1' ? new Date().getFullYear() : ''),
+    deposit: q('dep', 20),
+    ratePct: q('rate', typical || 6.4),
+    years: q('term', 30),
     interestOnly: query.io === '1',
-    income: +query.income || 120000,
+    income: q('income', 120000),
     buyer: query.buyer || 'investor',
-    growth: +query.growth || GROWTH.base,
-    rentGrowth: +query.rg || 4,
-    cpi: 3,
-    vacancyWeeks: query.vac ? +query.vac : 2,
-    mgmtPct: query.mgmt ? +query.mgmt : 7.5,
-    councilRates: +query.council || 2200,
-    water: 900,
-    strata: query.strata ? +query.strata : type === 'u' ? 3200 : 0,
-    insurance: type === 'u' ? 600 : 1800,
+    growth: q('growth', GROWTH.base),
+    rentGrowth: q('rg', 3.5),
+    cpi: q('cpi', 3),
+    vacancyWeeks: q('vac', 2),
+    mgmtPct: q('mgmt', 7.5),
+    councilRates: q('council', rc.council),
+    waterIns: q('wi', rc.waterIns),
+    strata: q('strata', type === 'u' ? 3200 : 0),
     maintenancePct: type === 'u' ? 1.5 : 1.2,
     landValuePct: type === 'u' ? 0.25 : 0.55,
     otherCosts: 2500,
-    hold: +query.hold || 10,
+    hold: q('hold', 10),
     sellCostPct: 2.5,
     purchaseDate: query.date || new Date().toISOString().slice(0, 10),
     lmiCapitalise: true,
     perth: sub?.rg === 'PER',
   };
+  const example = !Object.keys(query).some((k) => ['price', 'suburb', 'rent'].includes(k));
 
-  const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${value}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
+  const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${esc(String(value ?? ''))}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
   <div class="page-head with-demo"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
   <p>Enter a property and Keyzing works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>${demo('calculator')}</div>
@@ -58,21 +70,22 @@ export default async function analysePage(main, _p, query) {
         <h3>Property</h3>
         <div class="fields">
           <label class="field" style="position:relative;grid-column:1/-1">Suburb (fills in prices and rents)<input id="a-sub" type="search" placeholder="Search suburb or postcode" value="${sub ? esc(`${cleanName(sub.n)} ${sub.s} ${sub.pc}`) : ''}"><div class="ac" id="a-ac" hidden style="top:62px;left:0;right:auto"></div><span class="help" id="a-subinfo"></span></label>
-          ${field('a-addr', 'Address or label (optional)', esc(st.addr), 'type="text" style="grid-column:1/-1"')}
+          ${field('a-addr', 'Address or label (optional)', st.addr, 'type="text" style="grid-column:1/-1"')}
           <label class="field">State<select id="a-state">${Object.keys(STATES).map((s) => `<option ${s === st.state ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
           <label class="field">Type<select id="a-type"><option value="h">House</option><option value="u" ${st.type === 'u' ? 'selected' : ''}>Unit / apartment</option></select></label>
           ${field('a-price', 'Purchase price ($)', st.price, 'type="number" step="1"')}
           ${field('a-rent', 'Weekly rent ($)', st.weeklyRent, 'type="number" step="5"')}
           <label class="field">New build?<select id="a-new"><option value="0">Established</option><option value="1" ${st.newBuild ? 'selected' : ''}>New build (never lived in)</option></select><span class="help">Matters a lot under the 2026 rules</span></label>
-          ${field('a-built', 'Year built', st.buildYear, 'type="number" min="1850" max="2030"', 'For 2.5% building depreciation')}
+          ${field('a-built', 'Year built', st.buildYear, 'type="number" min="1800" max="2031" placeholder="Not sure"', 'Leave blank if unknown: no building depreciation is claimed. Homes started before 16 Sep 1987 get none.')}
           ${field('a-strata', 'Strata levies ($/yr)', st.strata, 'type="number" step="1"')}
-          ${field('a-council', 'Council rates ($/yr)', st.councilRates, 'type="number" step="1"')}
+          ${field('a-council', 'Council rates ($/yr)', st.councilRates, 'type="number" step="1"', 'Typical for the state; use the property’s bill')}
+          ${field('a-waterins', 'Water charges + landlord insurance ($/yr)', st.waterIns, 'type="number" step="1"', 'Typical for the state and type')}
         </div>
       </div>
       <div class="card" style="margin-top:16px">
         <h3>Loan</h3>
         <div class="fields">
-          ${field('a-dep', 'Deposit (%)', st.deposit * 100, 'type="number" step="1" min="5" max="100"')}
+          ${field('a-dep', 'Deposit (%)', st.deposit, 'type="number" step="1" min="2" max="100"')}
           ${field('a-rate', 'Interest rate (% p.a.)', st.ratePct, 'type="number" step="0.01"')}
           <label class="field">Repayments<select id="a-io"><option value="0">Principal &amp; interest</option><option value="1" ${st.interestOnly ? 'selected' : ''}>Interest only</option></select></label>
           ${field('a-term', 'Loan term (years)', st.years, 'type="number" min="5" max="40"')}
@@ -90,9 +103,10 @@ export default async function analysePage(main, _p, query) {
           <label class="field">Buyer<select id="a-buyer"><option value="investor">Investor</option><option value="owner" ${st.buyer === 'owner' ? 'selected' : ''}>Owner-occupier</option><option value="fhb" ${st.buyer === 'fhb' ? 'selected' : ''}>First home buyer</option></select><span class="help">Changes stamp duty only</span></label>
           ${field('a-date', 'Contract date', st.purchaseDate, 'type="date"')}
           <label class="field">Owners<select id="a-owners"><option value="1">Just me</option><option value="2" ${+query.owners === 2 ? 'selected' : ''}>Two people</option></select></label>
-          ${field('a-share', 'Your share (%)', +query.share || 50, 'type="number" min="1" max="99" step="1"', 'Two owners only')}
-          ${field('a-income2', "Other owner's income ($/yr)", +query.income2 || 80000, 'type="number" step="1"', 'Two owners only')}
-          ${field('a-otherland', 'Other investment land you own in this state ($ land value)', +query.otherland || 0, 'type="number" step="1"', 'For land tax: holdings are added together')}
+          ${field('a-share', 'Your share (%)', q('share', 50), 'type="number" min="1" max="99" step="1"', 'Two owners only')}
+          ${field('a-income2', "Other owner's income ($/yr)", q('income2', 80000), 'type="number" step="1"', 'Two owners only')}
+          ${field('a-otherland', 'Other investment land you own in this state ($ land value)', q('otherland', 0), 'type="number" step="1"', 'For land tax: holdings are added together')}
+          ${field('a-otherrent', 'Net rental profit from your other properties ($/yr)', q('otherrent', 0), 'type="number" step="1"', 'Under the 2026 rules, losses on this property can offset it. Leave 0 if none')}
         </div>
       </div>
       <div class="card" style="margin-top:16px">
@@ -115,41 +129,48 @@ export default async function analysePage(main, _p, query) {
   wireBrand(main, () => `Deal analysis: ${st.addr || 'property'}`);
   const read = () => {
     const v = (id) => $(id).value;
+    const raw = Object.fromEntries(Object.entries(IDS).map(([k, id]) => [k, v(id)]));
+    const res = check(raw, SPEC);
+    const n = res.values;
     Object.assign(st, {
-      addr: v('#a-addr'), state: v('#a-state'), type: v('#a-type'), price: +v('#a-price'), weeklyRent: +v('#a-rent'),
-      newBuild: v('#a-new') === '1', buildYear: +v('#a-built'), strata: +v('#a-strata'), councilRates: +v('#a-council'),
-      deposit: +v('#a-dep') / 100, ratePct: +v('#a-rate'), interestOnly: v('#a-io') === '1', years: +v('#a-term'),
-      income: +v('#a-income'), buyer: v('#a-buyer'), purchaseDate: v('#a-date'), growth: +v('#a-growth'), rentGrowth: +v('#a-rg'),
-      vacancyWeeks: +v('#a-vac'), mgmtPct: +v('#a-mgmt'), hold: Math.max(1, Math.min(30, +v('#a-hold') || 10)), cpi: +v('#a-cpi'),
-      otherLandValue: +v('#a-otherland') || 0,
+      addr: v('#a-addr'), state: v('#a-state'), type: v('#a-type'), price: n.price, weeklyRent: n.weeklyRent,
+      newBuild: v('#a-new') === '1', buildYear: n.buildYear, strata: n.strata, councilRates: n.councilRates,
+      deposit: n.deposit / 100, ratePct: n.ratePct, interestOnly: v('#a-io') === '1', years: n.years,
+      income: n.income, buyer: v('#a-buyer'), purchaseDate: v('#a-date'), growth: n.growth, rentGrowth: n.rentGrowth,
+      vacancyWeeks: n.vacancyWeeks, mgmtPct: n.mgmtPct, hold: n.hold, cpi: n.cpi,
+      otherLandValue: n.otherLandValue || 0, otherRental: n.otherRental || 0,
+      // council is its own field; water and insurance share one
+      water: 0, insurance: n.waterIns,
     });
-    const share = Math.max(1, Math.min(99, +v('#a-share') || 50)) / 100;
-    st.owners = v('#a-owners') === '2' ? [{ share, income: st.income }, { share: 1 - share, income: +v('#a-income2') || 0 }] : null;
+    const share = (n.share || 50) / 100;
+    st.owners = v('#a-owners') === '2' ? [{ share, income: st.income }, { share: 1 - share, income: n.income2 || 0 }] : null;
     st.landValuePct = st.type === 'u' ? 0.25 : 0.55;
     st.maintenancePct = st.type === 'u' ? 1.5 : 1.2;
-    st.insurance = st.type === 'u' ? 600 : 1800;
+    return res;
   };
 
   function run() {
-    read();
-    if (!(st.price > 10000)) {
-      $('#out').innerHTML = '<div class="card"><p>Enter a purchase price to see the numbers.</p></div>';
-      return;
-    }
+    const res = read();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(st.purchaseDate) || Number.isNaN(Date.parse(st.purchaseDate))) res.errors.date = 'Contract date: pick a date.';
+    if (showErrors(main, res.errors, { ...IDS, date: '#a-date' }, $('#out'))) return;
     const r = analyse(st);
     const v = verdict(r, sub ? { ...sub, score: suburbScore(sub.sc) } : null, market, { depositRate: rba.cashRate.current });
     const s = r.summary;
     const y1 = r.rows[0];
     const y3 = r.rows[Math.min(2, r.rows.length - 1)];
-    const scen = Object.fromEntries(Object.entries(SCEN).map(([k, o]) => [k, analyse({ ...st, ...o }).summary]));
+    const scen = { bear: analyse({ ...st, ...SCEN.bear }).summary, base: s, bull: analyse({ ...st, ...SCEN.bull }).summary };
     const rateUp = [0, 1, 2].map((dd) => ({ dd, s: analyse({ ...st, ratePct: st.ratePct + dd }).summary }));
     const bp = borrowingPower({ grossIncome: st.income, ratePct: st.ratePct, newRentWeekly: st.weeklyRent });
     const ngText = {
-      restricted: `Established property contracted on or after 12 May 2026. Losses offset your salary only for the part of the first year before 1 July 2027 (${Math.round(y1.offsetShare * 100)}% of year 1). After that they carry forward against rent profits and the capital gain when you sell. By the sale you'll have ${aud(r.rows.at(-1).carried)} of carried-forward losses.`,
+      restricted: `Established property contracted on or after 12 May 2026. Losses offset your salary only for the part of the first year before 1 July 2027 (${Math.round(y1.offsetShare * 100)}% of year 1). After that they carry forward against rental profits (from this or your other properties) and the capital gain when you sell.${st.otherRental ? ` ${aud(r.rows.reduce((t, x) => t + x.usedOther, 0))} of losses are used against your other properties' rental profit over ${st.hold} years.` : ' If you own other rental properties that make a profit, enter it under "You" to use the losses against it.'} By the sale you'll have ${aud(r.rows.at(-1).carried)} of carried-forward losses.`,
       grandfathered: 'Contracted before 12 May 2026, so grandfathered: rental losses keep reducing your salary tax.',
       'new-build': 'New build: keeps negative gearing and can choose the 50% CGT discount or indexation when sold.',
     }[s.negativeGearing];
-    const url = new URLSearchParams({ state: st.state, price: st.price, rent: st.weeklyRent, type: st.type, new: st.newBuild ? 1 : 0, dep: Math.round(st.deposit * 100), rate: st.ratePct, income: st.income, growth: st.growth, hold: st.hold, date: st.purchaseDate });
+    const url = new URLSearchParams({ state: st.state, price: st.price, rent: st.weeklyRent, type: st.type, new: st.newBuild ? 1 : 0, dep: Math.round(st.deposit * 100), rate: st.ratePct, income: st.income, growth: st.growth, rg: st.rentGrowth, hold: st.hold, date: st.purchaseDate, council: st.councilRates, wi: st.insurance, vac: st.vacancyWeeks, mgmt: st.mgmtPct });
+    if (st.buildYear) url.set('built', st.buildYear);
+    if (st.strata) url.set('strata', st.strata);
+    if (st.otherRental) url.set('otherrent', st.otherRental);
+    if (st.buyer !== 'investor') url.set('buyer', st.buyer);
     if (st.owners) {
       url.set('owners', 2);
       url.set('share', Math.round(st.owners[0].share * 100));
@@ -172,12 +193,12 @@ export default async function analysePage(main, _p, query) {
       [y1.taxEffect >= 0 ? 'Tax refund (negative gearing)' : 'Extra tax on rental profit', y1.taxEffect],
       ['Cash flow after tax', y1.cashAfterTax, 'tot'],
     ];
-    $('#out').innerHTML = `
+    $('#out').innerHTML = `${example ? '<div class="callout" style="margin:0 0 12px"><b>These are example numbers</b> for an $850k home. Search a suburb or type in the property you\'re looking at, and the results update as you type.</div>' : ''}
       <div class="card">
         <div><div class="eyebrow" style="margin:0">Each week in year 1, after tax${st.addr ? ` · ${esc(st.addr)}` : ''}</div>
           <div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div>
           <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · projections below use ${st.growth}% a year growth</div>
-          ${returnsLine({ bear: { growth: GROWTH.bear, irr: scen.bear.irr }, base: { growth: GROWTH.base, irr: scen.base.irr }, bull: { growth: GROWTH.bull, irr: scen.bull.irr } }, v)}
+          ${returnsLine({ bear: { growth: GROWTH.bear, irr: scen.bear.irr }, base: { growth: st.growth, irr: s.irr, yours: true }, bull: { growth: GROWTH.bull, irr: scen.bull.irr } }, v)}
           <p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)}</p></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
@@ -225,19 +246,19 @@ export default async function analysePage(main, _p, query) {
         <div class="card"><h3>Selling in ${new Date(r.sale.saleDate).getFullYear()}</h3>
           <div class="kv">
             <span>Sale price</span><span>${aud(r.sale.salePrice)}</span>
-            <span>Agent and marketing (${pct(st.sellCostPct, 1)})</span><span>-${aud(r.sale.sellCosts)}</span>
+            <span>Agent and marketing (${pct(st.sellCostPct, 1)})</span><span>${aud(-r.sale.sellCosts)}</span>
             <span>Cost base (price + duty + costs − depreciation claimed)</span><span>${aud(r.sale.costBase)}</span>
             <span>Capital gain</span><span>${aud(r.sale.grossGain)}</span>
             ${r.sale.cgt.valueAtReform ? `<span>Value on 1 July 2027 (estimated)</span><span>${aud(r.sale.cgt.valueAtReform)}</span><span>Gain before July 2027 (50% discount)</span><span>${aud(r.sale.cgt.preGain)}</span><span>Real gain after July 2027 (CPI-indexed)</span><span>${aud(r.sale.cgt.postRealGain)}</span>` : ''}
-            <span>Capital gains tax</span><span class="down">-${aud(r.sale.cgt.tax)}</span>
-            <span>Loan repaid</span><span>-${aud(r.sale.balance)}</span>
+            <span>Capital gains tax</span><span class="down">${aud(-r.sale.cgt.tax)}</span>
+            <span>Loan repaid</span><span>${aud(-r.sale.balance)}</span>
             <span class="tot">Cash in hand at sale</span><span class="tot">${aud(s.saleProceeds)}</span>
           </div>
           <p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Keyzing models the law as passed and will update if the detail changes.</p>
         </div>
         <div class="card"><h3>Scenarios</h3>
-          <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">Bear</th><th class="n">Base</th><th class="n">Bull</th></tr></thead><tbody>
-            <tr><td>Growth / rent growth</td>${Object.values(SCEN).map((o) => `<td class="n">${o.growth}% / ${o.rentGrowth}%</td>`).join('')}</tr>
+          <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">Low growth</th><th class="n">Your inputs</th><th class="n">High growth</th></tr></thead><tbody>
+            <tr><td>Growth / rent growth</td>${[SCEN.bear, { growth: st.growth, rentGrowth: st.rentGrowth }, SCEN.bull].map((o) => `<td class="n">${o.growth}% / ${o.rentGrowth}%</td>`).join('')}</tr>
             <tr><td>After-tax return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</td>${Object.values(scen).map((x) => `<td class="n">${pct(x.irr, 1)}</td>`).join('')}</tr>
             <tr><td>Profit after tax</td>${Object.values(scen).map((x) => `<td class="n ${x.totalProfit >= 0 ? 'up' : 'down'}">${aud(x.totalProfit, { compact: true })}</td>`).join('')}</tr>
             <tr><td>Equity at sale</td>${Object.values(scen).map((x) => `<td class="n">${aud(x.equityAtSale, { compact: true })}</td>`).join('')}</tr>
@@ -266,6 +287,9 @@ export default async function analysePage(main, _p, query) {
     $('#a-sub').value = `${cleanName(s.n)} ${s.s} ${s.pc}`;
     $('#a-state').value = s.s;
     const t = $('#a-type').value;
+    const c = runningCosts(s.s, t);
+    $('#a-council').value = c.council;
+    $('#a-waterins').value = c.waterIns;
     $('#a-price').value = t === 'u' ? s.u : s.h;
     $('#a-rent').value = t === 'u' ? s.ru : s.rh;
     info();
@@ -276,8 +300,16 @@ export default async function analysePage(main, _p, query) {
   };
   info();
   attachSearch($('#a-sub'), $('#a-ac'), applySuburb);
+  // state and type set the typical running costs; the user can overwrite them
+  const setCosts = () => {
+    const c = runningCosts($('#a-state').value, $('#a-type').value);
+    $('#a-council').value = c.council;
+    $('#a-waterins').value = c.waterIns;
+  };
+  $('#a-state').addEventListener('change', setCosts);
   $('#a-type').addEventListener('change', () => {
     const t = $('#a-type').value;
+    setCosts();
     $('#a-strata').value = t === 'u' ? 3200 : 0;
     if (sub) {
       $('#a-price').value = t === 'u' ? sub.u : sub.h;

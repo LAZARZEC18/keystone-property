@@ -1,6 +1,6 @@
 import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
-import { suburbs, suburbUrl, cleanName, load } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, MIN_POP, fairOrder } from '../data.js';
 import { suburbScore, PROFILES, PROFILE_FILTERS } from '../engine.js';
 import { navigate } from '../app.js';
 
@@ -18,7 +18,7 @@ export default async function explorer(main, _p, query) {
     max: query.max ? +query.max : '',
     min: query.min ? +query.min : '',
     yieldMin: query.yield ? +query.yield : '',
-    popMin: query.pop ? +query.pop : 1000,
+    popMin: query.pop ? +query.pop : MIN_POP,
     profile: query.profile || 'balanced',
     officialOnly: query.official === '1',
     q: query.q || '',
@@ -33,7 +33,7 @@ export default async function explorer(main, _p, query) {
   <div class="page-head">
     <div class="eyebrow">Suburb explorer</div>
     <h1>Rank 11,042 suburbs across Australia</h1>
-    <p>Set your budget and strategy. Keyzing ranks all ${list.length.toLocaleString()} suburbs on yield, momentum, growth drivers, rental demand, affordability and stability, and explains every number on the suburb's page.</p>
+    <p>Set your budget and strategy. Keyzing ranks all ${list.length.toLocaleString()} suburbs on yield, growth drivers, rental demand, affordability and stability (recent price change is shown but not scored), and explains every number on the suburb's page.</p>
   </div>
   <div class="card flat tint">
     <div class="fields">
@@ -96,7 +96,11 @@ export default async function explorer(main, _p, query) {
       if (y === null || y === undefined) return -1;
       return (x < y ? -1 : 1) * (st.asc ? 1 : -1);
     });
+    // across Australia, rank by position within each state so states with less sales data aren't pushed down
+    fair = st.sort === 'score' && !st.asc && !st.state && !st.region;
+    if (fair) fairOrder(rows);
   }
+  let fair = false;
 
   function syncUrl() {
     const p = new URLSearchParams();
@@ -106,7 +110,7 @@ export default async function explorer(main, _p, query) {
     if (st.max) p.set('max', st.max);
     if (st.min) p.set('min', st.min);
     if (st.yieldMin) p.set('yield', st.yieldMin);
-    if (st.popMin !== 1000) p.set('pop', st.popMin);
+    if (st.popMin !== MIN_POP) p.set('pop', st.popMin);
     if (st.profile !== 'balanced') p.set('profile', st.profile);
     if (st.officialOnly) p.set('official', '1');
     if (st.q) p.set('q', st.q);
@@ -117,11 +121,11 @@ export default async function explorer(main, _p, query) {
   function table() {
     const slice = rows.slice(st.page * PAGE, (st.page + 1) * PAGE);
     const pages = Math.ceil(rows.length / PAGE);
-    return `<div class="tbl-wrap"><table id="tbl"><thead><tr>
+    return `${fair ? `<p class="callout" style="margin:0 0 10px">Across Australia, suburbs are listed by <b>their rank within their own state</b>: the best in each state first, then the next best, and so on. Only VIC, SA and NSW publish suburb sales, so comparing raw scores across states would favour them. Pick a state for a straight ranking by score.</p>` : ''}<div class="tbl-wrap"><table id="tbl"><thead><tr>
       <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g3" class="n">Area, 3m</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
       ${slice
         .map(
-          (r, i) => `<tr><td><input type="checkbox" data-cmp="${r.s.id}" ${compareSet.has(r.s.id) ? 'checked' : ''} aria-label="Compare ${esc(r.s.n)}"></td><td class="faint mono">${st.page * PAGE + i + 1}</td>
+          (r, i) => `<tr><td><input type="checkbox" data-cmp="${r.s.id}" ${compareSet.has(r.s.id) ? 'checked' : ''} aria-label="Compare ${esc(r.s.n)}"></td><td class="faint mono">${st.page * PAGE + i + 1}${fair ? `<div class="fine" title="Rank within ${r.s.s}">#${r.stateRank} ${r.s.s}</div>` : ''}</td>
           <td><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span></td>
           <td class="muted">${esc(r.s.lga || '')}</td><td class="n">${scoreBadge(r.score)}</td>
           <td class="n">${aud(r.price, { compact: true })} <span class="faint">${r.type === 'u' ? 'unit' : 'house'}</span></td><td class="n">${aud(r.rent)}</td>

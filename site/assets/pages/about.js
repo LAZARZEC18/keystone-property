@@ -6,11 +6,11 @@ const PAGES = {
     title: 'About Keyzing',
     description: 'What Keyzing is, where its numbers come from, and how it is funded.',
     body: (h) => `
-      <p class="lead" style="font-size:18px">Keyzing is an independent Australian property research site. It values homes, rates every suburb, tracks the market through the day and runs the full numbers on a purchase, for home buyers and investors.</p>
+      <p class="lead" style="font-size:18px">Keyzing is a free, independent calculator site for Australian home buyers and investors. It works out what you can comfortably afford in each state, the schemes you qualify for, the real weekly cost of a purchase under the 2026 tax rules, and every lender's advertised rate. It gives suburb-based price ranges as a guide, not valuations.</p>
       <h2>Why it exists</h2>
-      <p>Most property tools either sell you something or only show part of the picture. Keyzing puts official sales, census, building approval and lending data in one place, shows its working, and is honest when the numbers are weak: it rates a deal D as readily as A, and it tells you when a suburb figure is really a city-wide index.</p>
+      <p>Most property tools either sell you something or only show part of the picture. Keyzing puts official sales, census, building approval and lending data in one place, shows its working, and is honest when the numbers are weak: it shows when a deal ranks in the bottom 30% as plainly as the top 15%, and it tells you when a suburb figure is really a city-wide index or a model.</p>
       <h2>Where the numbers come from</h2>
-      <p>State valuer-general and government sales medians (Victoria, New South Wales, South Australia), the ABS Census and building approvals, Cotality's daily home value index, SQM Research vacancy rates, the RBA, and every lender's public Open Banking product feed. The daily index, RBA data and news are checked about every hour, lender rates several times a day, and suburb figures are rebuilt monthly. The full method, including the price and rent models and their measured error, is on the <a href="/methodology" data-link>methodology page</a>.</p>
+      <p>State valuer-general and government sales medians (Victoria, New South Wales, South Australia), the ABS Census and building approvals, Cotality's monthly Home Value Index, SQM Research vacancy rates, the RBA, and every lender's public Open Banking product feed. Lender rates are checked several times a day, RBA data and news hourly, market figures each month-end, and suburb figures are rebuilt monthly. The full method, including the price and rent models and their measured error, is on the <a href="/methodology" data-link>methodology page</a>.</p>
       <h2>Independence</h2>
       <p>Keyzing is not a lender, broker, agent or financial adviser, and no lender pays to appear in the rate tables: they're ranked by rate alone. If Keyzing ever earns money from a referral or a paid feature, it will be labelled clearly where it appears, and it will never change a rating.</p>
       <h2>General information only</h2>
@@ -27,16 +27,16 @@ const PAGES = {
       <p>Keyzing collects as little as it can. You can use every tool without an account. Keyzing doesn't use advertising or tracking cookies and doesn't sell or share your details. If that ever changes, you'll be asked first.</p>
       <h2>What Keyzing collects</h2>
       <ul>
-        <li><b>If you register for updates:</b> your email, and optionally your name, buyer type, the suburbs you're watching and your budget. Used only to send the weekly update and flag moves in your suburbs.</li>
+        <li><b>If you register for updates:</b> your email, whether you're a first home buyer, owner or investor, and (optionally) the suburbs you're watching. Used only to send the update once it launches and to flag moves in your suburbs.</li>
         <li><b>If you send a message:</b> your name, email and message, used only to reply.</li>
-        <li><b>Addresses you value:</b> sent to OpenStreetMap's Nominatim service through Keyzing's server to find the location. Keyzing doesn't store them.</li>
+        <li><b>Addresses you look up:</b> sent to OpenStreetMap's Nominatim service through Keyzing's server to find the location. Keyzing doesn't store them.</li>
         <li><b>Your watchlist and theme:</b> saved in your own browser, not on Keyzing's servers.</li>
         <li><b>Server logs:</b> the hosting provider (Netlify) keeps standard request logs, such as IP address and pages requested, for security and reliability.</li>
       </ul>
       <h2>Where it's stored</h2>
       <p>Form submissions are stored with Netlify, which may hold data outside Australia. Keyzing takes reasonable steps to keep it secure and deletes it when it's no longer needed.</p>
       <h2>Your choices</h2>
-      <p>Every update email has an unsubscribe link. To see, correct or delete what Keyzing holds about you, email <a href="mailto:${h.email}">${h.email}</a> or use the <a href="/contact" data-link>contact form</a>. If you're not happy with the response, you can contact the Office of the Australian Information Commissioner (oaic.gov.au).</p>`,
+      <p>When the update emails start, every one will have an unsubscribe link, and you can ask to be removed at any time before then. To see, correct or delete what Keyzing holds about you, email <a href="mailto:${h.email}">${h.email}</a> or use the <a href="/contact" data-link>contact form</a>. If you're not happy with the response, you can contact the Office of the Australian Information Commissioner (oaic.gov.au).</p>`,
   },
   terms: {
     title: 'Terms of use',
@@ -46,7 +46,7 @@ const PAGES = {
       <h2>General information, not advice</h2>
       <p>Keyzing provides general information and calculators. It doesn't take into account your objectives, financial situation or needs, and it isn't financial product advice, credit assistance, tax advice or legal advice. Keyzing doesn't hold an Australian Financial Services Licence or an Australian Credit Licence. Before acting, consider whether the information suits you and get advice from a licensed professional.</p>
       <h2>Estimates and ratings</h2>
-      <p>Valuations, rents, yields, scores and relative ranks are automated estimates from suburb-level data and the details entered. They describe the numbers, not whether you should buy. They can be wrong, and they are not formal valuations. A bank valuation, an agent's appraisal of recent sales, and building and pest inspections are more reliable for a specific property.</p>
+      <p>Price ranges, rents, yields, scores and relative ranks are automated estimates from suburb-level data and the details entered. They describe the numbers, not whether you should buy. They can be wrong. They are not valuations or appraisals of any property, and Keyzing is not a licensed valuer or real estate agent. A bank valuation, an agent's appraisal of recent sales, and building and pest inspections are more reliable for a specific property.</p>
       <h2>Third-party data</h2>
       <p>Figures from Cotality, the ABS, the RBA, SQM Research, state governments and lenders are credited where they appear and belong to their owners. Interest rates are advertised rates from lenders' public product feeds and may not be the rate you're offered. Tax and duty rules are summarised; check the official source.</p>
       <h2>Liability</h2>

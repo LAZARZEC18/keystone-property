@@ -562,3 +562,11 @@ abbr.jargon { text-decoration: underline dotted; text-underline-offset: 3px; cur
 .demo-stage { max-width: 980px; margin: 12px auto 0; }
 #demo-tabs { flex-wrap: wrap; }
 .see-area { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px 16px; }
+
+/* input validation */
+.field input[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--down, #c0392b); box-shadow: 0 0 0 2px color-mix(in srgb, var(--down, #c0392b) 25%, transparent); }
+.field-err { display: block; color: var(--down, #c0392b); font-size: 12.5px; margin-top: 4px; font-weight: 600; }
+.warn-box { border-left: 4px solid var(--down, #c0392b); }
+.warn-box ul { margin: 6px 0 0; padding-left: 18px; }
+.rl-yours b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.row-on td { background: color-mix(in srgb, var(--accent, #2a7) 9%, transparent); font-weight: 600; }

@@ -1,7 +1,7 @@
 // Keyzing investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
 import { DEAL_BANDS } from './deal-bands.js';
-import { GROWTH } from './rules.js';
+import { GROWTH, runningCosts } from './rules.js';
 
 const ceil100 = (x) => Math.ceil(x / 100) * 100;
 export const round = (x, d = 0) => {
@@ -164,12 +164,19 @@ const addYears = (iso, n) => {
 export function analyse(input) {
   const p = {
     state: 'NSW', price: 800000, weeklyRent: 650, deposit: 0.2, ratePct: 6.2, years: 30, interestOnly: false,
-    buyer: 'investor', newBuild: false, buildYear: 2000, buildCost: null, plantValue: 0,
+    buyer: 'investor', newBuild: false, buildYear: null, buildCost: null, plantValue: 0,
     purchaseDate: new Date().toISOString().slice(0, 10), income: 120000,
     growth: 3, rentGrowth: 3.5, cpi: 3, vacancyWeeks: 2, mgmtPct: 7.5, councilRates: 2200, water: 900, strata: 0,
     insurance: 1800, maintenancePct: 1.2, landValuePct: 0.55, otherCosts: 2500, lmiCapitalise: true,
     hold: 10, sellCostPct: 2.5, perth: false, ...input,
   };
+  // running costs default to typical figures for the state and type, the same ones every calculator shows
+  const rc = runningCosts(p.state, p.landValuePct <= 0.3 ? 'u' : 'h');
+  if (input.councilRates === undefined) p.councilRates = rc.council;
+  if (input.water === undefined && input.insurance === undefined) {
+    p.water = 0;
+    p.insurance = rc.waterIns;
+  }
   // owners: [{share, income}]; default one owner on p.income. Shares are normalised to sum to 1.
   const owners0 = Array.isArray(p.owners) && p.owners.length ? p.owners : [{ share: 1, income: p.income }];
   const tot = owners0.reduce((t, o) => t + (o.share || 0), 0) || 1;
@@ -243,8 +250,10 @@ export function analyse(input) {
     }
     let taxEffect = 0; // positive = tax saved (refund), negative = extra tax
     let quarantined = 0;
+    let incomeDelta = 0; // how this property changes the owners' taxable income this year
     if (netRental < 0) {
       const usable = -netRental * offsetShare;
+      incomeDelta = -usable;
       quarantined = -netRental - usable;
       carried += quarantined;
       taxEffect = owners.reduce((t, o) => t + incomeTax(o.income) - incomeTax(Math.max(0, o.income - usable * o.share)), 0);
@@ -252,7 +261,16 @@ export function analyse(input) {
       const useCarry = Math.min(carried, netRental);
       carried -= useCarry;
       const taxable = netRental - useCarry;
+      incomeDelta = taxable;
       taxEffect = -owners.reduce((t, o) => t + incomeTax(o.income + taxable * o.share) - incomeTax(o.income), 0);
+    }
+    // 2026 rules: losses that can't reduce salary can still offset net rental profit from the owner's other properties
+    const otherProfit = (p.otherRental || 0) * (1 + p.cpi / 100) ** (y - 1);
+    let usedOther = 0;
+    if (otherProfit > 0 && carried > 0) {
+      usedOther = Math.min(carried, otherProfit);
+      carried -= usedOther;
+      taxEffect += owners.reduce((t, o) => t + incomeTax(Math.max(0, o.income + incomeDelta * o.share)) - incomeTax(Math.max(0, o.income + (incomeDelta - usedOther) * o.share)), 0);
     }
     const cashAfterTax = cashBeforeTax + taxEffect;
     cum += cashAfterTax;
@@ -262,7 +280,7 @@ export function analyse(input) {
       mgmt: Math.round(mgmt), maintenance: Math.round(maint), landTax: land, otherCosts: Math.round(costsBase),
       interest: Math.round(interest), principal: Math.round(principal), depreciation: Math.round(dep),
       netRental: Math.round(netRental), cashBeforeTax: Math.round(cashBeforeTax), taxEffect: Math.round(taxEffect),
-      cashAfterTax: Math.round(cashAfterTax), quarantined: Math.round(quarantined), carried: Math.round(carried),
+      cashAfterTax: Math.round(cashAfterTax), quarantined: Math.round(quarantined), carried: Math.round(carried), usedOther: Math.round(usedOther),
       balance: Math.round(balance), equity: Math.round(value - balance), offsetShare: round(offsetShare, 2),
     });
     equityFlows.push(cashAfterTax);
@@ -386,10 +404,10 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
 
   // 1. Return on the cash you put in
   if (s.irr !== null) {
-    if (s.irr >= 12) { pts += 20; reasons.push(`Projected after-tax return on your cash of ${s.irr}% a year beats shares' long-run ~9-10%.`); }
-    else if (s.irr >= 9) { pts += 10; reasons.push(`Projected after-tax return of ${s.irr}% a year is in line with a diversified share portfolio, with leverage risk on top.`); }
-    else if (s.irr >= 6) { pts -= 2; risks.push(`Projected after-tax return of ${s.irr}% a year is modest for the risk and effort of a leveraged property.`); }
-    else { pts -= 15; risks.push(`Projected after-tax return of only ${s.irr}% a year: you could do about as well in an offset account or term deposit.`); }
+    if (s.irr >= 12) { pts += 20; reasons.push(`Projected after-tax return on your cash of ${s.irr.toFixed(1)}% a year beats shares' long-run ~9-10%.`); }
+    else if (s.irr >= 9) { pts += 10; reasons.push(`Projected after-tax return of ${s.irr.toFixed(1)}% a year is in line with a diversified share portfolio, with leverage risk on top.`); }
+    else if (s.irr >= 6) { pts -= 2; risks.push(`Projected after-tax return of ${s.irr.toFixed(1)}% a year is modest for the risk and effort of a leveraged property.`); }
+    else { pts -= 15; risks.push(`Projected after-tax return of only ${s.irr.toFixed(1)}% a year: you could do about as well in an offset account or term deposit.`); }
   }
   // 2. Cash flow
   const wk = s.weeklyCashAfterTax;
@@ -442,7 +460,7 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   const mr = marginalRate(p.income || 0);
   const tdAfterTax = Math.round(depositRate * (1 - mr) * 10) / 10;
   const beatsDeposit = s.irr !== null && s.irr > tdAfterTax;
-  const vsDeposit = s.irr === null ? null : `A projected ${s.irr}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;
+  const vsDeposit = s.irr === null ? null : `A projected ${s.irr.toFixed(1)}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;
   return { score, grade, label, percentile, absolute, beatsDeposit, tdAfterTax, depositRate, vsDeposit, reasons, risks };
 }
 
@@ -566,4 +584,17 @@ export function scenarioReturns(input) {
   const out = {};
   for (const k of ['bear', 'base', 'bull']) out[k] = { growth: GROWTH[k], irr: analyse({ ...input, growth: GROWTH[k], rentGrowth: { bear: 2.5, base: 3.5, bull: 4.5 }[k] }).summary.irr };
   return out;
+}
+
+/** Gross household income a lender would want before lending this much (inverse of borrowingPower, couple, no dependants). */
+export function incomeFor(loan, ratePct) {
+  let lo = 20000;
+  let hi = 3000000;
+  if (borrowingPower({ grossIncome: hi, couple: true, ratePct }).amount < loan) return hi;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (borrowingPower({ grossIncome: mid, couple: true, ratePct }).amount >= loan) hi = mid;
+    else lo = mid;
+  }
+  return Math.ceil(hi / 1000) * 1000;
 }

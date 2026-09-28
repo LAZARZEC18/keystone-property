@@ -291,3 +291,62 @@ export const FHOG = {
  * (CommBank forecasts about 3% dwelling growth in both years); bear and bull are shown alongside with equal weight.
  */
 export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'CommBank economists, September 2026: about 3% dwelling price growth in 2026 and 2027' };
+
+/** Mortgage stress: the one threshold used on every page. */
+export const STRESS = {
+  share: 0.3,
+  label: '30% of your before-tax income',
+  note: 'Repayments above 30% of gross (before-tax) household income are widely treated as mortgage stress. Keyzing uses this one threshold on every page.',
+};
+/** Comfortable repayments per week for a gross yearly income. */
+export const comfortableWeekly = (grossIncome) => (grossIncome * STRESS.share) / 52;
+
+/**
+ * Typical yearly running costs for an investment home, by state: council rates, water service charges and landlord
+ * insurance (building + landlord cover). Rough state-wide starting points; replace them with the property's own bills.
+ * Insurance is higher in QLD and the NT for cyclone and flood cover; ACT rates are high because they replace stamp duty.
+ */
+export const STATE_COSTS = {
+  NSW: { council: 1700, water: 1200, insHouse: 2000, insUnit: 550 },
+  VIC: { council: 2100, water: 900, insHouse: 1700, insUnit: 500 },
+  QLD: { council: 2300, water: 1300, insHouse: 2600, insUnit: 700 },
+  WA: { council: 2000, water: 1400, insHouse: 1700, insUnit: 500 },
+  SA: { council: 1900, water: 1100, insHouse: 1600, insUnit: 500 },
+  TAS: { council: 1800, water: 1200, insHouse: 1500, insUnit: 500 },
+  ACT: { council: 3200, water: 800, insHouse: 1600, insUnit: 500 },
+  NT: { council: 1900, water: 1000, insHouse: 3800, insUnit: 1200 },
+};
+export const runningCosts = (state, type) => {
+  const c = STATE_COSTS[state] || STATE_COSTS.NSW;
+  return { council: c.council, waterIns: c.water + (type === 'u' ? c.insUnit : c.insHouse) };
+};
+
+/**
+ * State-run lenders and shared-equity programs for first home buyers (on top of the federal schemes).
+ * Figures are only given where the program's own site states them; everything else links there. Checked September 2026.
+ */
+export const STATE_SCHEMES = {
+  WA: [
+    { name: 'Keystart Low Deposit Loan', text: 'The WA Government’s home lender: from a 2% deposit with no lenders mortgage insurance, for homes up to $860,000 in Perth (lower limits in the regions). Income limits apply, and Keystart’s variable rate is usually higher than the major banks’.', url: 'https://www.keystart.com.au/' },
+    { name: 'Keystart shared equity (Urban Connect, Shared Ownership)', text: 'The state takes a share of the home (Urban Connect up to 35% or $250,000, for homes near transport), so you borrow less. Separate income and price limits.', url: 'https://www.keystart.com.au/' },
+  ],
+  SA: [
+    { name: 'HomeStart Finance', text: 'The SA Government’s home lender, with no lenders mortgage insurance: a Low Deposit Loan from 3% for an existing home, the HomeStart Loan from 5%, a Graduate Loan from 2%, and a shared-equity option.', url: 'https://www.homestart.com.au/home-loans' },
+  ],
+  TAS: [
+    { name: 'MyHome shared equity (Homes Tasmania)', text: 'Homes Tasmania owns part of the home so you need a smaller deposit and loan. Income and price limits apply.', url: 'https://www.homestasmania.com.au/' },
+  ],
+  NT: [
+    { name: 'HomeBuild Access and HomeGrown Territory Grant', text: 'Low-deposit and shared-equity loans from the Territory Government, and a grant for buying or building a new home.', url: 'https://nt.gov.au/property/home-owner-assistance' },
+  ],
+  QLD: [
+    { name: 'Queensland Housing Finance Loan', text: 'A government loan for people who can afford repayments but can’t get a bank loan, from a small deposit. Eligibility is tested.', url: 'https://www.qld.gov.au/housing/buying-owning-home/financial-help-concessions/queensland-housing-finance-loan' },
+  ],
+  VIC: [
+    { name: 'Victorian Homebuyer Fund (closed)', text: 'The state shared-equity fund is closed to new applicants. Victorian buyers now use the federal Help to Buy scheme and the state first home duty exemption.', url: 'https://www.sro.vic.gov.au/about-us/our-organisation/closed-taxes-levies-and-grants/victorian-homebuyer-fund' },
+  ],
+  NSW: [],
+  ACT: [
+    { name: 'ACT Home Buyer Concession Scheme', text: 'Income-tested duty relief for first home buyers (Keyzing’s duty figures apply it). No state low-deposit lender.', url: 'https://www.revenue.act.gov.au/home-buyer-assistance' },
+  ],
+};

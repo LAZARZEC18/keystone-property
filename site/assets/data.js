@@ -187,3 +187,24 @@ export function typicalRate(rba, kind = 'INV') {
   const row = (kind === 'OO' ? rba?.actual?.newOOVariable : rba?.actual?.newInvVariable)?.at?.(-1);
   return { rate: row?.[1] ?? (kind === 'OO' ? 6.2 : 6.4), month: row?.[0] ? new Date(`${row[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '' };
 }
+
+/** One minimum population for every suburb ranking (explorer, map, affordability). */
+export const MIN_POP = 3000;
+
+/**
+ * A fair national order. States publish very different amounts of suburb sales data, so raw scores across states
+ * aren't comparable. Each row gets its rank within its own state, and the national list is ordered by that
+ * within-state position (top of each state first, in proportion to the state's size), then by score.
+ */
+export function fairOrder(rows, scoreOf = (r) => r.score, stateOf = (r) => r.s.s) {
+  const by = {};
+  for (const r of rows) (by[stateOf(r)] ||= []).push(r);
+  for (const arr of Object.values(by)) {
+    arr.sort((a, b) => scoreOf(b) - scoreOf(a));
+    arr.forEach((r, i) => {
+      r.stateRank = i + 1;
+      r.statePct = (i + 0.5) / arr.length;
+    });
+  }
+  return rows.sort((a, b) => a.statePct - b.statePct || scoreOf(b) - scoreOf(a));
+}

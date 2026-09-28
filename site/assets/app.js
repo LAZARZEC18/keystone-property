@@ -170,7 +170,7 @@ export function attachSearch(input, box, onPick) {
     let head = '';
     if (smart) {
       const enc = encodeURIComponent(q.trim());
-      if (looksLikeAddress(q)) head = `<a href="/property?q=${enc}" data-x="1" class="ac-act"><span><b>Value this property</b> <span class="muted">${esc(q.trim())}</span></span><small>Address →</small></a>`;
+      if (looksLikeAddress(q)) head = `<a href="/property?q=${enc}" data-x="1" class="ac-act"><span><b>Price range for this address</b> <span class="muted">${esc(q.trim())}</span></span><small>Address →</small></a>`;
       else if (DESCRIPTIVE.test(q) || q.trim().split(/\s+/).length >= 3) head = `<a href="/find?q=${enc}" data-x="1" class="ac-act"><span><b>Smart search</b> <span class="muted">"${esc(q.trim())}"</span></span><small>Search →</small></a>`;
     }
     box.innerHTML =

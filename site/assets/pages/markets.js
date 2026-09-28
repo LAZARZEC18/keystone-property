@@ -33,7 +33,7 @@ export default async function markets(main) {
   <section class="section"><div class="city-grid" id="m-cities">${Object.entries(market.regions).filter(([, r]) => r.capital).map(([code, r]) => cityCard(code, r, null)).join('')}</div></section>
 
   <section class="section">
-    <h2>Values and momentum by market</h2>
+    <h2>Values and recent price change by market</h2>
     <div class="grid g2">
       <div class="card"><h3>Last 3 months: where prices are heading now</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.quarterPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}<h3 style="margin-top:16px">Last 12 months</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.annualPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
       <div class="card"><h3>Gross rental yield</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.yield })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1) })}</div>
@@ -70,7 +70,7 @@ export default async function markets(main) {
       <div class="card-head"><h3>RBA cash rate since 2000</h3><span class="pill">Now ${pct(rba.cashRate.current, 2)}</span></div>
       ${lineChart([{ name: 'Cash rate target', points: cash }], { height: 240, yFmt: (v) => `${v}%`, area: true, zero: true })}
       <p class="note" style="margin-top:10px">Six-month bank bills are trading at ${pct(bab6, 2)} (RBA F1.1, ${date(rba.market.asAt)}), which suggests markets expect the cash rate to be <b>${expect}</b> over the next six months.</p>
-      <div class="tbl-wrap"><table><thead><tr><th>Decision</th><th class="n">Change</th><th class="n">Cash rate</th></tr></thead><tbody>
+      <div class="tbl-wrap"><table><thead><tr><th>Effective date</th><th class="n">Change</th><th class="n">Cash rate</th></tr></thead><tbody>
         ${rba.cashRate.decisions.slice(-8).reverse().map((d) => `<tr><td>${date(d.date)}</td><td class="n ${d.change > 0 ? 'down' : d.change < 0 ? 'up' : ''}">${d.change ? `${d.change > 0 ? '+' : ''}${d.change} bp` : '—'}</td><td class="n">${pct(d.rate, 2)}</td></tr>`).join('')}
       </tbody></table></div>
     </div>

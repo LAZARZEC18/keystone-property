@@ -107,7 +107,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
         ${v ? `${rankPill(v)}<span class="fine" style="text-align:right">relative rank</span>` : ''}
-        <a class="btn sm" href="${pUrl}" data-link>Value</a>
+        <a class="btn sm" href="${pUrl}" data-link>Price range</a>
         <a class="btn sm ghost" href="${aUrl}" data-link>Analyse</a>
       </div>
     </div>`;

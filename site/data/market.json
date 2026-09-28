@@ -473,7 +473,7 @@
  "caveats": [
   "Vacancy rates are SQM Research (capital cities); Cotality uses a different method, so the two aren't mixed.",
   "Capital-city weekly rents are SQM Research asking rents (week ending 4 September 2026).",
-  "Regional days on market were read from chart labels and are approximate."
+  "Regional days on market are the rounded figures Cotality prints in its monthly chart pack."
  ],
  "indexMonth": "31 August 2026"
 }

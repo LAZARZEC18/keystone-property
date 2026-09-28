@@ -1,5 +1,5 @@
 import { esc, aud, pct, scoreBadge, setMeta, growth12, confBadge } from '../ui.js';
-import { suburbs, suburbUrl, cleanName, load } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, MIN_POP, fairOrder } from '../data.js';
 import { suburbScore, PROFILES, PROFILE_FILTERS, valueEstimate } from '../engine.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
@@ -18,7 +18,7 @@ export default async function topMap(main, _p, query) {
     area: query.area || 'AU',
     type: ['h', 'u'].includes(query.type) ? query.type : '',
     max: +query.max || '',
-    pop: +query.pop || 3000,
+    pop: +query.pop || MIN_POP,
     n: [50, 100, 250].includes(+query.n) ? +query.n : 100,
   };
   const regionOpts = Object.entries(market.regions).map(([c, r]) => `<option value="${c}">${esc(r.name)}</option>`).join('');
@@ -53,7 +53,7 @@ export default async function topMap(main, _p, query) {
   const compute = () => {
     const f = Object.fromEntries(new FormData(form));
     Object.assign(st, { strategy: f.strategy, area: f.area, type: f.type, max: +f.max || '', pop: +f.pop, n: +f.n });
-    const q = new URLSearchParams(Object.entries(st).filter(([k, v]) => v !== '' && !(k === 'area' && v === 'AU') && !(k === 'strategy' && v === 'balanced') && !(k === 'pop' && v === 3000) && !(k === 'n' && v === 100)));
+    const q = new URLSearchParams(Object.entries(st).filter(([k, v]) => v !== '' && !(k === 'area' && v === 'AU') && !(k === 'strategy' && v === 'balanced') && !(k === 'pop' && v === MIN_POP) && !(k === 'n' && v === 100)));
     history.replaceState(null, '', `/map${q.toString() ? `?${q}` : ''}`);
     const inArea = (s) => st.area === 'AU' || s.s === st.area || s.rg === st.area;
     const out = [];
@@ -67,12 +67,13 @@ export default async function topMap(main, _p, query) {
       out.push({ s, t, e, v: suburbScore(s.sc, PROFILES[st.strategy]) });
     }
     out.sort((a, b) => b.v - a.v);
+    if (st.area === 'AU') fairOrder(out, (r) => r.v);
     rows = out.slice(0, st.n);
-    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} matching suburbs (${list.length.toLocaleString()} in Australia) · ${STRATS[st.strategy]}`;
+    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} matching suburbs · ${STRATS[st.strategy]}${st.area === 'AU' ? ' · ranked within each state' : ''}`;
     main.querySelector('#mlist').innerHTML = rows.length
       ? rows
           .map(
-            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>${confBadge(r.s)}<span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${growth12(r.s)}</span></span>${scoreBadge(r.v)}</button>`,
+            (r, i) => `<button class="mrow" data-i="${i}"><span class="faint mono">${i + 1}</span><span style="min-width:0"><b>${esc(cleanName(r.s.n))}</b> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>${st.area === 'AU' ? ` <span class="fine">#${r.stateRank} in ${r.s.s}</span>` : ''}${confBadge(r.s)}<span class="note" style="display:block">${r.t === 'u' ? 'Unit' : 'House'} ~${aud(r.e.value, { compact: true })} · ${pct(r.e.yield, 1)} yield · ${growth12(r.s)}</span></span>${scoreBadge(r.v)}</button>`,
           )
           .join('')
       : '<p class="note" style="padding:16px">No suburbs match. Raise the budget or widen the area.</p>';

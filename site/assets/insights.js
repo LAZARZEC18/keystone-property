@@ -105,7 +105,7 @@ export const COMPONENT_HELP = {
   stability: 'Low unemployment, low share of social housing, a large enough market to buy and sell easily, and low concentration risk (mining or single-industry dependence, remoteness, shrinking population).',
 };
 
-export const COMPONENT_NAMES = { cash: 'Yield', momentum: 'Momentum', growth: 'Growth drivers', demand: 'Rental demand', afford: 'Affordability', stability: 'Stability' };
+export const COMPONENT_NAMES = { cash: 'Yield', momentum: 'Price trend (not scored)', growth: 'Growth drivers', demand: 'Rental demand', afford: 'Affordability', stability: 'Stability' };
 
 export function listingLinks(s) {
   const name = cleanName(s.n);

@@ -8,7 +8,7 @@ export const MEMBERS_ONLY_PRODUCT = /\b(police|customs|essential worker|nurses?|
 // Not a loan to buy a home: equity loans, lines of credit, refinance-only offers.
 export const NOT_PURCHASE = /equity loan|home equity|line of credit|equity access|refinanc/i;
 
-export const membersOnly = (r) => MEMBERS_ONLY_LENDER.test(r.lender || '') || MEMBERS_ONLY_PRODUCT.test(r.product || '');
+export const membersOnly = (r) => MEMBERS_ONLY_LENDER.test(r.lenderRaw || r.lender || '') || MEMBERS_ONLY_LENDER.test(r.lender || '') || MEMBERS_ONLY_PRODUCT.test(r.product || '');
 export const notPurchase = (r) => NOT_PURCHASE.test(r.product || '');
 
 /**
@@ -16,9 +16,33 @@ export const notPurchase = (r) => NOT_PURCHASE.test(r.product || '');
  * interest-only filed as P&I, and LVR limits written into the name ("up to 60% LVR", "LVR <70") but missing from the
  * LVR fields. Keeps the stricter reading so nobody sees a rate they can't get.
  */
+// Legal names in the bank feeds -> the names people know
+const LENDER_NAMES = { 'NATIONAL AUSTRALIA BANK': 'NAB', 'COMMONWEALTH BANK OF AUSTRALIA': 'CommBank', 'COMMONWEALTH BANK': 'CommBank', 'WESTPAC BANKING CORPORATION': 'Westpac', 'AUSTRALIA AND NEW ZEALAND BANKING GROUP': 'ANZ', 'BANK OF QUEENSLAND': 'Bank of Queensland' };
+const SHORT_UPPER = new Set(['NAB', 'ANZ', 'ING', 'AMP', 'BOQ', 'ME', 'HSBC', 'LVR', 'P&I', 'IO', 'SMSF', 'ABN', 'RAMS', 'UBANK', 'BCU', 'QBANK', 'CUA', 'IMB', 'P1', 'P2', 'INV', 'OO', 'SMSF', 'LVR']);
+const titleCase = (n) => n.toLowerCase().replace(/(^|[\s/(-])([a-z][a-z&']*)/g, (m, pre, w) => pre + (SHORT_UPPER.has(w.toUpperCase()) ? w.toUpperCase() : ['and', 'of', 'for', 'with', 'to', 'the', 'or', 'in'].includes(w) && pre ? w : w.charAt(0).toUpperCase() + w.slice(1)));
+const shouty = (n) => n === n.toUpperCase() && /[A-Z]{4}/.test(n);
+/** 'NATIONAL AUSTRALIA BANK' -> 'NAB'; other all-caps names in title case. */
+export function lenderName(raw = '') {
+  const n = String(raw).trim();
+  const clean = n.replace(/\s+(Limited|Ltd\.?|Pty\.? Ltd\.?)$/i, '');
+  return LENDER_NAMES[clean.toUpperCase()] || (shouty(clean) ? titleCase(clean) : clean);
+}
+/** 'STREET SMART VARIABLE HOME LOAN SPECIAL' -> 'Street Smart Variable Home Loan Special'; drops ': Our lowest…' marketing text and a repeated lender name. */
+export function productName(raw = '', lender = '') {
+  let n = String(raw).trim().replace(/\s+/g, ' ');
+  n = n.replace(/\s+[:|–—-]\s+(our|the|get|enjoy|save|great|low(est)?|special offer|limited|new customers?)\b.*?(?=\s*\((?:owner|investor|investment|oo|inv)[^)]*\)\s*$|$)/i, '');
+  // word by word, so 'STREET SMART VARIABLE - INVESTMENT (Principal and Interest)' is fixed too
+  if ((n.match(/\b[A-Z][A-Z'&]{3,}\b/g) || []).length >= 2) {
+    n = n.replace(/\b[A-Z][A-Z'&]{2,}\b/g, (w, i) => (SHORT_UPPER.has(w) ? w : i && ['AND', 'FOR', 'WITH', 'THE'].includes(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase()));
+  }
+  const l = lenderName(lender);
+  if (l && n.toLowerCase().startsWith(`${l.toLowerCase()} `) && n.length > l.length + 8) n = n.slice(l.length + 1);
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
 export function normaliseRate(r) {
   const n = String(r.product || '');
-  const o = { ...r };
+  const o = { ...r, lenderRaw: r.lender, lender: lenderName(r.lender), product: productName(r.product, r.lender) };
   if (o.type === 'variable' && /\bfixed\b/i.test(n) && !/\bvariable\b/i.test(n)) {
     o.type = 'fixed';
     const m = n.match(/(\d+(?:\.\d+)?)\s*(years?|yrs?|y\b)/i) || n.match(/(\d+)\s*(months?|mths?)/i);
@@ -43,7 +67,7 @@ export function normaliseRate(r) {
 
 // Lenders anyone in Australia can apply to, online or through branches in every state.
 export const NATIONAL_LENDER = /^(CommBank|Westpac|NATIONAL AUSTRALIA BANK|NAB|ANZ|ANZ Plus|ING|Macquarie|St\.?George|Bank of Melbourne|BankSA|Bankwest|Suncorp|Bank of Queensland|BOQ\b|Bendigo|UBank|Up$|ME Bank|AMP|Virgin Money|Great Southern Bank|Unloan|Tiimely|Qantas Money|Aussie|Liberty|Bank Australia|Beyond Bank|HSBC|Citi|Athena|Bank of us)/i;
-export const isNational = (r) => NATIONAL_LENDER.test(r.lender || '');
+export const isNational = (r) => NATIONAL_LENDER.test(r.lender || '') || NATIONAL_LENDER.test(r.lenderRaw || '');
 /**
  * Customer-owned and regional lenders (credit unions, mutuals, regional banks): you usually join as a member, and some
  * lend only in their region or through branches. Their rates are real but may not be open to a buyer elsewhere.

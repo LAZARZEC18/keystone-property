@@ -60,6 +60,10 @@ export default async function suburbPage(main, params) {
   const pcLink = s.pc ? `<a href="/postcode/${s.pc}" data-link>${s.pc}</a>` : '';
   const lgaSlug = (s.lga || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
+  // in apartment suburbs (a CBD), lead with units and work price-to-income off units, not the few houses
+  const hShare = d['hou%'] ?? s['hou%'] ?? 70;
+  const fewHouses = hShare < 35 && s.u > 0;
+  const ptiShown = s.pti && fewHouses ? Math.round(((s.u / (s.h / s.pti)) || 0) * 10) / 10 : s.pti;
   main.innerHTML = `
   <div class="crumbs"><a href="/suburbs?state=${s.s}" data-link>${STATES[s.s]}</a> › <a href="/suburbs?region=${s.rg}" data-link>${esc(R.name || '')}</a> › ${s.lga ? `<a href="/council/${s.s.toLowerCase()}/${lgaSlug}" data-link>${esc(s.lga)}</a> ›` : ''} ${pcLink}</div>
   <div class="spread" style="align-items:flex-start">
@@ -81,12 +85,13 @@ export default async function suburbPage(main, params) {
   <div class="grid g-side section" style="margin-top:20px">
     <div class="card">
       <div class="stats">
-        <div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
-        <div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
+        ${fewHouses ? `<div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
+        <div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}${fewHouses ? ` <span class="tag">only ${Math.round(hShare)}% of homes</span>` : ''}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>` : `<div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}${fewHouses ? ` <span class="tag">only ${Math.round(hShare)}% of homes</span>` : ''}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
+        <div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>`}
         <div class="stat"><span class="k">Weekly rent (house / unit)</span><span class="v">${aud(s.rh)} <span class="muted" style="font-size:.6em">/ ${aud(s.ru)}</span></span><span class="s">${d.rs === 'NSW postcode' ? `NSW bond data, ${esc(off.rent?.period || '')}` : `Modelled from this suburb’s Census rents and price, centred on typical ${esc(R.name || 'regional')} rents today`}</span></div>
         <div class="stat"><span class="k">Gross yield (${ic.type})</span><span class="v">${pct(ic.yld, 2)}</span><span class="s">${R.name} average ${pct(R.yield, 1)}</span></div>
         <div class="stat"><span class="k">12-month change</span><span class="v ${g12 >= 0 ? 'up' : 'down'}">${pct(g12, 1, true)}</span><span class="s">${esc(s.g1p || '')}</span></div>
-        <div class="stat"><span class="k">${d.cagr ? `Houses a year ${esc(d.cagrY || '')}` : 'Price to income'}</span><span class="v">${d.cagr ? pct(d.cagr, 1, true) : `${s.pti ?? '—'}×`}</span><span class="s">${d.cagr ? 'Valuer-General Victoria' : 'price ÷ household income'}</span></div>
+        <div class="stat"><span class="k">${d.cagr ? `Houses a year ${esc(d.cagrY || '')}` : 'Price to income'}</span><span class="v">${d.cagr ? pct(d.cagr, 1, true) : `${ptiShown ?? '—'}×`}</span><span class="s">${d.cagr ? 'Valuer-General Victoria' : `typical ${fewHouses ? 'unit' : 'house'} price ÷ household income`}</span></div>
       </div>
     </div>
     <div class="card" style="display:flex;gap:16px;align-items:center">

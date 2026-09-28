@@ -28,8 +28,30 @@ export function durationYears(s) {
 }
 
 /** Turn one CDR product detail into flat rate rows we can rank. */
+/** Offset, redraw and the ongoing and up-front fees a product publishes (CDR features and fees). */
+export function productExtras(p) {
+  const feats = (p.features || []).map((f) => String(f.featureType || ''));
+  const amt = (f) => num(f.fixedAmount?.amount ?? f.amount) ?? 0;
+  let annualFee = 0;
+  let upfrontFee = 0;
+  for (const f of p.fees || []) {
+    const per = String(f.additionalValue || '');
+    // optional feature fees (an offset account you may not use) aren't part of the loan's own cost
+    if (f.feeType === 'PERIODIC' && /offset|feature|redraw/i.test(f.name || '')) continue;
+    if (f.feeType === 'PERIODIC') annualFee += /P1M|P30D/.test(per) ? amt(f) * 12 : /P3M/.test(per) ? amt(f) * 4 : /P6M/.test(per) ? amt(f) * 2 : /P1Y|P12M/.test(per) || !per ? amt(f) : 0;
+    else if (f.feeType === 'UPFRONT') upfrontFee += amt(f);
+  }
+  return {
+    offset: feats.some((t) => /OFFSET/.test(t)) ? 1 : 0,
+    redraw: feats.some((t) => /REDRAW/.test(t)) ? 1 : 0,
+    annualFee: Math.round(annualFee),
+    upfrontFee: Math.round(upfrontFee),
+  };
+}
+
 export function flattenProduct(p, brand) {
   const rows = [];
+  const extras = productExtras(p);
   for (const r of p.lendingRates || []) {
     const type = r.lendingRateType;
     if (type !== 'VARIABLE' && type !== 'FIXED') continue;
@@ -69,6 +91,7 @@ export function flattenProduct(p, brand) {
       tailored: !!p.isTailored,
       special: SPECIAL.test(p.name || '') ? 1 : 0,
       updated: p.lastUpdated || null,
+      ...extras,
     });
   }
   return rows;
@@ -206,7 +229,7 @@ export function summarise(rawRows) {
 }
 
 function columnar(rows) {
-  const cols = ['lender', 'product', 'type', 'term', 'purpose', 'repay', 'rate', 'comparison', 'lvrMin', 'lvrMax', 'url', 'tailored', 'special'];
+  const cols = ['lender', 'product', 'type', 'term', 'purpose', 'repay', 'rate', 'comparison', 'lvrMin', 'lvrMax', 'url', 'tailored', 'special', 'offset', 'redraw', 'annualFee', 'upfrontFee'];
   const lenders = [...new Set(rows.map((r) => r.lender))].sort();
   const lidx = new Map(lenders.map((l, i) => [l, i]));
   return {

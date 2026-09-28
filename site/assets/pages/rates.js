@@ -5,12 +5,12 @@ import { repayment } from '../engine.js';
 import { rateWatchCard } from '../ratewatch.js';
 import { membersOnly, notPurchase, checkEligibility } from '../rate-rules.js';
 
-const tidy = (n = '') => (n === n.toUpperCase() && /[A-Z]{4}/.test(n) ? n.toLowerCase().replace(/\b([a-z])([a-z]{3,})/g, (_, a, b) => a.toUpperCase() + b).replace(/\b(lvr|p&i|io|smsf|abn)\b/g, (x) => x.toUpperCase()) : n);
 const okUrl = (u) => u && /^https?:/i.test(u) && !/\.pdf(\?|#|$)/i.test(u);
 
 export default async function ratesPage(main, _p, query) {
   setMeta({ title: 'Home loan rates in Australia, updated several times a day', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
   const [R, rba, rs] = await Promise.all([rateRows(), load('rba'), load('rates-summary')]);
+  const hasExtras = R.rows.some((r) => r.offset !== undefined);
   const st = {
     purpose: query.purpose || 'INV',
     repay: query.repay || 'PI',
@@ -53,6 +53,7 @@ export default async function ratesPage(main, _p, query) {
     </div>
     <div class="row" style="margin-top:12px">
       <label class="check"><input type="checkbox" id="r-best" checked> Lowest rate per lender only</label>
+      ${hasExtras ? '<label class="check"><input type="checkbox" id="r-offset"> With an offset account</label><label class="check"><input type="checkbox" id="r-nofee"> No ongoing fee</label>' : ''}
       <label class="check"><input type="checkbox" id="r-special"> Include green, staff and niche loans</label>
       <label class="check"><input type="checkbox" id="r-members"> Include members-only lenders (police, teachers, health, emergency services)</label>
       <label class="check"><input type="checkbox" id="r-tailored"> Include products the lender flags as tailored (rate set case by case)</label>
@@ -82,6 +83,8 @@ export default async function ratesPage(main, _p, query) {
         !notPurchase(r) &&
         !r.suspect &&
         (st.showTailored || !r.tailored) &&
+        (!st.offsetOnly || r.offset) &&
+        (!st.noFee || !r.annualFee) &&
         (r.lvrMax === null || r.lvrMax + 1e-9 >= st.lvr) &&
         (r.lvrMin === null || r.lvrMin <= st.lvr + 1e-9) &&
         (!q || r.lender.toLowerCase().includes(q) || r.product.toLowerCase().includes(q)),
@@ -96,13 +99,13 @@ export default async function ratesPage(main, _p, query) {
     const years = 30;
     const cheapest = rows.length ? Math.min(...rows.map((r) => r.rate)) : null;
     $('#r-out').innerHTML = `<div class="spread" style="margin-bottom:8px"><span class="muted"><b>${rows.length}</b> ${st.bestOnly ? 'lenders' : 'rates'} match · repayments on ${aud(st.loan)} over ${years} years${st.repay === 'IO' ? ' (interest only)' : ''}</span></div>
-    <div class="tbl-wrap"><table id="rt"><thead><tr><th>#</th><th data-k="lender">Lender</th><th>Product</th><th data-k="rate" class="n">Rate</th><th data-k="comparison" class="n">Comparison</th><th class="n">LVR range</th><th data-k="repay" class="n">Monthly</th><th class="n">vs cheapest / yr</th><th></th></tr></thead><tbody>
+    <div class="tbl-wrap"><table id="rt"><thead><tr><th>#</th><th data-k="lender">Lender</th><th>Product</th><th data-k="rate" class="n">Rate</th><th data-k="comparison" class="n">Comparison</th><th class="n">LVR range</th>${hasExtras ? '<th>Offset · redraw</th><th class="n">Fees: yearly / up front</th>' : ''}<th data-k="repay" class="n">Monthly</th><th class="n" title="Extra interest and ongoing fees a year compared with the cheapest rate shown">vs cheapest / yr</th><th></th></tr></thead><tbody>
     ${rows
       .slice(0, 300)
       .map((r, i) => {
         const m = repayment(st.loan, r.rate, years, st.repay === 'IO');
-        const extra = cheapest !== null ? (m - repayment(st.loan, cheapest, years, st.repay === 'IO')) * 12 : 0;
-        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(tidy(r.product))}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}${membersOnly(r) ? ' <span class="tag tag-news">Members only</span>' : checkEligibility(r) ? ' <span class="tag tag-model" title="Customer-owned or regional lender: you usually join as a member, and some lend only in their region">Check eligibility</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}${r.comparison != null && r.comparison < r.rate - 0.001 ? '<sup title="Comparison rate below the advertised rate: see the note under the table">*</sup>' : ''}</td><td class="n">${r.lvrMin == null && r.lvrMax == null ? '<span class="faint">not stated</span>' : `${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%`}</td><td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${okUrl(r.url) ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : `<a href="https://www.google.com/search?q=${encodeURIComponent(`${r.lender} ${tidy(r.product)}`)}" target="_blank" rel="noopener nofollow" title="This lender's feed has no product page link">Find ↗</a>`}</td></tr>`;
+        const extra = cheapest !== null ? (m - repayment(st.loan, cheapest, years, st.repay === 'IO')) * 12 + (r.annualFee || 0) : 0;
+        return `<tr class="${i === 0 ? 'hl' : ''}"><td class="faint mono">${i + 1}</td><td><b>${esc(r.lender)}</b></td><td class="muted" style="white-space:normal;min-width:200px">${esc(r.product)}${r.tailored ? ' <span class="tag tag-model">Tailored</span>' : ''}${r.special ? ' <span class="tag tag-news">Niche</span>' : ''}${membersOnly(r) ? ' <span class="tag tag-news">Members only</span>' : checkEligibility(r) ? ' <span class="tag tag-model" title="Customer-owned or regional lender: you usually join as a member, and some lend only in their region">Check eligibility</span>' : ''}</td><td class="n"><b>${pct(r.rate, 2)}</b></td><td class="n">${pct(r.comparison, 2)}${r.comparison != null && r.comparison < r.rate - 0.001 ? '<sup title="Comparison rate below the advertised rate: see the note under the table">*</sup>' : ''}</td><td class="n">${r.lvrMin == null && r.lvrMax == null ? '<span class="faint">not stated</span>' : `${r.lvrMin ?? 0}–${r.lvrMax ?? 100}%`}</td>${hasExtras ? `<td>${r.offset ? '<span class="tag tag-official">Offset</span>' : '<span class="faint">No offset</span>'}${r.redraw ? ' <span class="tag">Redraw</span>' : ''}</td><td class="n">${r.annualFee ? aud(r.annualFee) : '<span class="up">$0</span>'} / ${r.upfrontFee ? aud(r.upfrontFee) : '$0'}</td>` : ''}<td class="n">${aud(m)}</td><td class="n ${extra > 0 ? 'down' : ''}">${extra > 0 ? `+${aud(extra)}` : '—'}</td><td>${okUrl(r.url) ? `<a href="${esc(r.url)}" target="_blank" rel="noopener nofollow">Lender ↗</a>` : `<a href="https://www.google.com/search?q=${encodeURIComponent(`${r.lender} ${r.product}`)}" target="_blank" rel="noopener nofollow" title="This lender's feed has no product page link">Find ↗</a>`}</td></tr>`;
       })
       .join('')}</tbody></table></div>
     ${rows.length > 300 ? '<p class="note">Showing the first 300. Narrow the filters to see more.</p>' : ''}
@@ -129,6 +132,10 @@ export default async function ratesPage(main, _p, query) {
   bind('#r-loan', 'loan', Number);
   bind('#r-q', 'q');
   bind('#r-best', 'bestOnly');
+  if (hasExtras) {
+    bind('#r-offset', 'offsetOnly');
+    bind('#r-nofee', 'noFee');
+  }
   bind('#r-special', 'showSpecial');
   bind('#r-members', 'showMembers');
   bind('#r-tailored', 'showTailored');

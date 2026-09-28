@@ -1,7 +1,7 @@
 import { demo } from '../demo.js';
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek, returnsLine } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
-import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment, scenarioReturns } from '../engine.js';
+import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment, scenarioReturns, incomeFor } from '../engine.js';
 import { liveFactor, regionMoves } from '../live.js';
 import { baseTiles } from '../map.js';
 import { liveListings, valueCall, rangeBar } from './listings.js';
@@ -10,7 +10,8 @@ import { seeTheArea } from '../photos.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { reaSearch } from './find.js';
 import { navigate } from '../app.js';
-import { STATES, guaranteeCap, GROWTH } from '../rules.js';
+import { STATES, guaranteeCap, GROWTH, STRESS } from '../rules.js';
+import { check, showErrors } from '../validate.js';
 import { listingLinks, scoreVsDeal, nextStepsCard } from '../insights.js';
 
 const STATE_NAME = { 'new south wales': 'NSW', victoria: 'VIC', queensland: 'QLD', 'western australia': 'WA', 'south australia': 'SA', tasmania: 'TAS', 'australian capital territory': 'ACT', 'northern territory': 'NT' };
@@ -102,7 +103,7 @@ export default async function propertyPage(main, _p, query) {
     cars: facts?.cars ?? 1,
     condition: 'average',
     pool: false,
-    asking: +query.asking || '',
+    asking: query.asking ?? '',
   };
 
   const PLAN = {
@@ -133,7 +134,7 @@ export default async function propertyPage(main, _p, query) {
         <label class="field">Land (m²)<input name="land" type="number" step="1" value="${spec.land}" placeholder="Houses"></label>
         <label class="field">Condition<select name="condition"><option value="new">Brand new</option><option value="renovated">Renovated</option><option value="average" selected>Average</option><option value="original">Original</option><option value="needs-work">Needs work</option></select></label>
         <label class="check" style="grid-column:1/-1"><input type="checkbox" name="pool"> Pool</label>
-        <label class="field" style="grid-column:1/-1">Asking price (optional)<input name="asking" type="number" step="1" value="${spec.asking}" placeholder="Compare against the estimate"></label>
+        <label class="field" style="grid-column:1/-1">Asking price (optional)<input name="asking" type="number" step="1" value="${esc(String(spec.asking))}" placeholder="Compare against the estimate"></label>
       </div>
       <div id="homef" class="fields" style="grid-template-columns:1fr 1fr;margin-top:12px">
         <label class="field">I am a<select name="buyer"><option value="fhb">First home buyer</option><option value="owner">Home owner moving</option></select></label>
@@ -152,13 +153,8 @@ export default async function propertyPage(main, _p, query) {
 
   const form = main.querySelector('#spec');
   form.type.value = spec.type;
-  // same default as the affordability tool: first home buyers start on the 5% Deposit Scheme
-  form.dep.value = form.buyer.value === 'fhb' ? '0.05' : '0.2';
-  let depTouched = false;
-  form.dep.addEventListener('change', () => (depTouched = true));
-  form.buyer.addEventListener('change', () => {
-    if (!depTouched) form.dep.value = form.buyer.value === 'fhb' ? '0.05' : '0.2';
-  });
+  // everyone starts on a 20% deposit: a 5% loan is only realistic for some buyers and prices, so it's a choice, not a default
+  form.dep.value = '0.2';
   const res = main.querySelector('#res');
   wireBrand(res);
   const invRate = typicalRate(rba, 'INV').rate;
@@ -184,6 +180,8 @@ export default async function propertyPage(main, _p, query) {
   let edited = !!facts || !!spec.asking;
   function run() {
     const f = Object.fromEntries(new FormData(form));
+    const chk = check(f, { beds: 'beds', baths: 'baths', cars: 'cars', land: { field: 'land', optional: true }, asking: { field: 'asking', optional: true }, myrent: { field: 'myrent', optional: true } });
+    if (showErrors(form, chk.errors, { beds: '[name=beds]', baths: '[name=baths]', cars: '[name=cars]', land: '[name=land]', asking: '[name=asking]', myrent: '[name=myrent]' }, res)) return;
     const sp = { type: f.type, beds: +f.beds, baths: +f.baths, cars: +f.cars, land: +f.land || null, condition: f.condition, pool: !!f.pool, liveFactor: lf };
     const e = valueEstimate(s, sp);
     const asking = +f.asking || null;
@@ -213,7 +211,7 @@ export default async function propertyPage(main, _p, query) {
             <p class="fine" style="margin-top:6px">Suburb value as at ${esc(market.indexMonth || 'the latest month-end')}; ${esc(R?.name || 'the area')} moved ${pct(R?.quarterPct, 1, true)} over the last 3 months. ${s.conf === 'high' ? 'Based on official suburb sales.' : s.conf === 'medium' ? 'Based on official postcode sales.' : 'Modelled: no official sales series for this suburb, so treat it as a guide.'}</p>
             ${dEst ? `<p class="note" style="margin-top:8px">Domain's own estimate: <b>${aud(dEst)}</b> (${aud(facts.estimate.low, { compact: true })} – ${aud(facts.estimate.high, { compact: true })}).</p>` : ''}
             ${facts?.sales?.length ? `<p class="note" style="margin-top:8px">Sale history: ${facts.sales.slice(0, 4).map((x) => `${aud(x.price, { compact: true })} (${new Date(x.date).getFullYear()})`).join(' · ')}</p>` : ''}</div>`;
-    const foot = `${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:10px">An automated estimate from suburb-level data and the features entered, not a formal valuation. Individual homes vary with position, aspect, quality and street. A bank valuation or a local agent's appraisal of recent sales is more precise.</p>`;
+    const foot = `${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:10px">An automated estimate from suburb-level data and the features entered, not a formal valuation. Individual homes vary with position, aspect, quality and street. For a figure on this specific home, get a bank valuation or a local agent's appraisal of recent sales.</p>`;
 
     if (mode === 'home') {
       const buyer = f.buyer || 'fhb';
@@ -229,6 +227,10 @@ export default async function propertyPage(main, _p, query) {
       const weekly2 = (repayment(loan, ooRate + 2, 30) * 12) / 52;
       const upfront = price * dep + duty.duty + 3000;
       const myRent = +f.myrent || null;
+      // income a lender would want for this loan, and the income at which repayments stay under the stress line
+      const incNeeded = incomeFor(loan, ooRate);
+      const incComfort = Math.round((weekly * 52) / STRESS.share / 1000) * 1000;
+      const stretch = dep < 0.2 && (loan > 900000 || (buyer === 'fhb' && price > cap));
       res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">${esc(R?.name || 'Area')}, last 3 months</div><div class="mono ${(R?.quarterPct ?? 0) < 0 ? 'down' : 'up'}" style="font-size:22px">${pct(R?.quarterPct, 1, true)}</div><div class="note">${s.trend ? `${s.trend} · ` : ''}12 months ${pct(R?.annualPct, 1, true)}${s.g1s === 'region' ? ' (area-wide)' : ''}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Cash you need up front</span><span class="v">${aud(upfront, { compact: true })}</span><span class="s">${Math.round(dep * 100)}% deposit + duty + fees</span></div>
@@ -236,6 +238,8 @@ export default async function propertyPage(main, _p, query) {
           <div class="stat"><span class="k">${myRent ? 'vs your rent now' : 'Renting a similar home'}</span><span class="v ${myRent ? (weekly > myRent ? 'down' : 'up') : ''}">${myRent ? `${weekly > myRent ? '+' : '−'}${aud(Math.abs(weekly - myRent))}` : aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span><span class="s">${myRent ? `${aud(weekly)} repayments vs ${aud(myRent)} rent` : 'estimated weekly rent'}</span></div>
           <div class="stat"><span class="k">If rates rise 2 points</span><span class="v down">${aud(weekly2)}<span class="muted" style="font-size:.55em">/wk</span></span><span class="s">+${aud(weekly2 - weekly)} a week</span></div>
         </div>
+        ${stretch ? `<div class="callout warn-box" style="margin-top:14px"><b>A ${Math.round(dep * 100)}% deposit at this price is a stretch.</b> The loan would be ${aud(loan, { compact: true })}${lm.premium ? `, including ${aud(lm.premium)} of LMI` : ''}. A lender would typically want a household income of about <b>${aud(incNeeded, { compact: true })}</b> a year for it, and about ${aud(incComfort, { compact: true })} to keep repayments under ${STRESS.label}.${buyer === 'fhb' && price > cap ? ` It's also above the ${aud(cap, { compact: true })} 5% Deposit Scheme price cap here, so the no-LMI scheme doesn't apply.` : ''} Few lenders offer 95% loans this large.</div>` : ''}
+        <p class="note" style="margin-top:10px">Household income for comfortable repayments (under ${STRESS.label}): <b>about ${aud(incComfort, { compact: true })} a year</b>.</p>
         <div class="hr"></div>
         <div class="grid g2" style="gap:12px 24px">
           ${built}
@@ -251,7 +255,7 @@ export default async function propertyPage(main, _p, query) {
           </div>
         </div>
         <div class="row" style="margin-top:12px"><a class="btn primary" href="/afford?buyer=${buyer}" data-link>What can I afford?</a><a class="btn" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></div>
-        <p class="fine" style="margin-top:10px">Repayments use the average rate on new owner-occupier variable loans (RBA), 30 years, principal and interest. Keep repayments under about 30% of take-home pay.</p>
+        <p class="fine" style="margin-top:10px">Repayments use the average rate on new owner-occupier variable loans (RBA), 30 years, principal and interest. ${esc(STRESS.note)}</p>
         <div style="margin-top:12px">${nextStepsCard({ fhb: buyer === 'fhb' })}</div>
         ${foot}</div>`;
     } else {
