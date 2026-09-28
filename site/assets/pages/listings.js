@@ -1,3 +1,4 @@
+import { GROWTH } from '../rules.js';
 import { esc, aud, pct, setMeta, scoreBadge, cashWeek, rankPill } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, typicalRate } from '../data.js';
 import { analyse, verdict, suburbScore, valueEstimate } from '../engine.js';
@@ -33,7 +34,7 @@ export function rateListing(s, it, { market, index, rate }) {
   let a = null;
   let v = null;
   if (it.price && rent) {
-    a = analyse({ state: s.s, price: it.price, weeklyRent: rent, deposit: 0.2, ratePct: rate, income: 120000, hold: 10, growth: unit ? 3.5 : 5, newBuild: it.isNew, perth: s.rg === 'PER', strata: unit ? 3200 : 0, landValuePct: unit ? 0.25 : 0.55 });
+    a = analyse({ state: s.s, price: it.price, weeklyRent: rent, deposit: 0.2, ratePct: rate, income: 120000, hold: 10, growth: GROWTH.base, newBuild: it.isNew, perth: s.rg === 'PER', strata: unit ? 3200 : 0, landValuePct: unit ? 0.25 : 0.55 });
     v = verdict(a, { ...s, score: suburbScore(s.sc) }, market);
   }
   return { t, est, rent, gap, value, a, v };
@@ -84,7 +85,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
     el.innerHTML = `<p class="note">No current listings found for ${esc(cleanName(s.n))} with these filters.</p>`;
     return;
   }
-  const [market, rs, index] = await Promise.all([load('market'), load('rates-summary'), load('index')]);
+  const [market, rs, index] = await Promise.all([load('market'), load('rates-summary'), Promise.resolve(null)]);
   const rate = typicalRate(await load('rba'), 'INV').rate;
   const rated = res.items.map((it) => ({ it, r: mode === 'rent' ? { rent: estimateRent(s, it) } : rateListing(s, it, { market, index, rate }) }));
   const rank = { A: 0, B: 1, C: 2, D: 3 };

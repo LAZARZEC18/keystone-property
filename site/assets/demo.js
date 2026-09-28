@@ -3,8 +3,8 @@
 import { esc } from './ui.js';
 
 export const CLIPS = {
-  intro: 'Every suburb in Australia, priced and scored: each dot is a suburb, coloured by its typical house price.',
-  afford: 'Savings and income in: a price ceiling in every state, the schemes you qualify for and the suburbs that fit.',
+  intro: '11,042 suburbs across Australia, priced and scored: each dot is a suburb, coloured by its typical house price.',
+  afford: 'Savings and income in: a price ceiling in every state and territory, the schemes you qualify for and the suburbs that fit.',
   calculator: 'The 2026 tax-change calculator: change the price or rent and the weekly cost after tax updates.',
   estimate: 'A suburb estimate for a typical home: price range, how far to trust it, and the cash you need.',
   suburb: 'A suburb report: photos, prices, rents, new building nearby and the numbers of buying there.',

@@ -12,7 +12,7 @@ const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 
 export default async function topMap(main, _p, query) {
   setMeta({ title: 'Highest-scoring suburbs in Australia: map', description: 'A live map of the highest-rated suburbs in Australia for growth, cash flow and first home buyers, with typical prices, yields and graded listings.' });
-  const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), load('index')]);
+  const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), Promise.resolve(null)]);
   const st = {
     strategy: STRATS[query.strategy] ? query.strategy : 'balanced',
     area: query.area || 'AU',
@@ -25,7 +25,7 @@ export default async function topMap(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Suburb scores map</div><h1>Highest-scoring suburbs, on one map</h1>
-  <p>Every suburb in Australia is scored on yield, price momentum, long-run growth, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want and moved forward with the daily home value index. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>valuation</a> and <a href="/analyse" data-link>analyser</a> test the numbers of buying a specific home, which at today's rates often cost their owner money each week even in high-scoring suburbs. The <b>New builds</b> strategy only includes council areas approving at least one new home a year per 100 existing, since new builds keep negative gearing and the CGT discount under the 2026 rules.</p></div>
+  <p>All 11,042 suburbs and localities with Census data are scored on yield, growth drivers, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, priced for the kind of home you want as at the latest month-end. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>suburb estimate</a> and <a href="/analyse" data-link>tax-change calculator</a> test the numbers of buying a specific home, which at today's rates often cost their owner money each week even in high-scoring suburbs. The <b>New builds</b> strategy only includes council areas approving at least one new home a year per 100 existing, since new builds keep negative gearing and the CGT discount under the 2026 rules.</p></div>
   <form class="card flat tint" id="mf" onsubmit="return false">
     <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
@@ -39,7 +39,7 @@ export default async function topMap(main, _p, query) {
   <div class="split-map section" style="margin-top:16px">
     <div class="card" style="padding:6px 0 0"><div class="spread" style="padding:8px 16px 6px"><b id="mcount"></b><a class="fine" id="mcsv" href="#">Download CSV</a></div><div id="mlist" style="max-height:640px;overflow:auto;border-top:1px solid var(--line)"></div></div>
     <div><div class="card" style="padding:10px"><div id="bmap" class="map tall"></div>
-      <div class="map-legend"><span><i style="background:var(--sc-a)"></i>75+ excellent</span><span><i style="background:var(--sc-b)"></i>60–74 strong</span><span><i style="background:var(--sc-c)"></i>45–59 average</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Larger dot = higher rank</span></div><p class="fine" style="margin-top:6px">Badges show how much of each ranking rests on official sales: <b>Measured</b>, <b>Partly measured</b> or <b>Modelled</b>. Outside NSW, Victoria and SA, most suburbs share their city's growth figure, so rankings there lean on yield, affordability, population trend and stability.</p></div></div>
+      <div class="map-legend"><span><i style="background:var(--sc-a)"></i>65+ top 1%</span><span><i style="background:var(--sc-b)"></i>55–64 top 10%</span><span><i style="background:var(--sc-c)"></i>45–54 above median</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Larger dot = higher rank</span></div><p class="fine" style="margin-top:6px">Badges show how much of each ranking rests on official sales: <b>Measured</b>, <b>Partly measured</b> or <b>Modelled</b>. Outside NSW, Victoria and SA, most suburbs share their city's growth figure, so rankings there lean on yield, affordability, population trend and stability.</p></div></div>
   </div>
   <section class="section card" id="msel" hidden></section>`;
 
@@ -79,7 +79,7 @@ export default async function topMap(main, _p, query) {
     drawMarkers();
   };
 
-  const col = (v) => getComputedStyle(document.documentElement).getPropertyValue(v >= 75 ? '--sc-a' : v >= 60 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
+  const col = (v) => getComputedStyle(document.documentElement).getPropertyValue(v >= 65 ? '--sc-a' : v >= 55 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
   const drawMarkers = () => {
     if (!map) return;
     if (layer) layer.remove();

@@ -71,7 +71,7 @@ export default async function comparePage(main, _p, query) {
       ${row('Median age', D('age'), (v) => v ?? '—', true, true)}
       ${row('Market vacancy', picks.map((s) => market.regions[s.rg]?.vacancy ?? null), (v) => pct(v, 1), false)}
     </tbody></table></div>
-    <p class="fine" style="margin-top:8px">Bold green marks the best value in each row for an investor.</p>`;
+    <p class="fine" style="margin-top:8px">Bold green marks the highest (or lowest, where lower is better) value in each row.</p>`;
   main.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => go(picks.filter((_, i) => i !== +b.dataset.rm))));
   picks.forEach((sb, i) => suburbPhotos(sb, 1).then(([ph]) => {
     const el = main.querySelector(`#c-photos [data-c="${i}"]`);

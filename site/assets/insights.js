@@ -98,7 +98,7 @@ export function investmentCase(s, d, region, rs, market) {
 
 export const COMPONENT_HELP = {
   cash: 'Gross rental yield ranked against every Australian suburb. Higher means rent covers more of your costs.',
-  momentum: 'Price change over the last 12 months: official suburb or postcode sales in VIC, SA and NSW, weighted toward the region when sales are few; elsewhere there is no suburb-level figure, so momentum is left out of the score rather than filled in with the city-wide index.',
+  momentum: 'Price change over the last 12 months: official suburb or postcode sales in VIC, SA and NSW, weighted toward the region when sales are few; elsewhere there is no suburb-level figure. Shown for information only: it no longer counts toward the score anywhere.',
   growth: 'Growth drivers: population growth of the surrounding area 2020-25 (ABS estimates) net of new supply. Very fast growth (usually a new estate being built out) earns less credit, and a high rate of new dwelling approvals in the council area counts against it. Census 2016-21 income and rent growth carry a small weight.',
   demand: 'Rental demand: the city-wide vacancy rate and days on market (not suburb-level), plus local unemployment.',
   afford: 'Price relative to local household income. Affordable areas have a deeper pool of future buyers.',
@@ -136,7 +136,7 @@ export function scoreVsDeal(score, grade) {
 export function nextStepsCard({ fhb = false } = {}) {
   return `<div class="card next-steps"><div class="eyebrow">Your next step</div><h3 style="margin-top:4px">Get pre-approval before you make offers</h3>
     <ol class="note" style="padding-left:18px;margin:8px 0 0;line-height:1.6">
-      <li><b>Pre-approval</b> is a lender's conditional yes to a loan amount, usually valid for 3 to 6 months. It turns the ceiling above into a real number and makes your offers stronger.</li>
+      <li><b>Pre-approval</b> is a lender's conditional yes to a loan amount, usually valid for about 90 days (some lenders allow up to 6 months). It turns the ceiling above into a real number and makes your offers stronger.</li>
       <li><b>Talk to a mortgage broker or go direct to a lender.</b> A broker compares many lenders and must act in your best interests by law; they are usually paid by the lender. A bank quotes only its own loans.</li>
       <li><b>Have ready:</b> photo ID, your last two payslips (or two years of tax returns if self-employed), three months of bank and savings statements, and details of any debts, cards and buy-now-pay-later accounts.</li>
       ${fhb ? '<li><b>For the 5% Deposit Scheme or Help to Buy,</b> you apply through a participating lender, not the government. Ask the broker or bank whether they offer it.</li>' : ''}

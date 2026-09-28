@@ -20,7 +20,7 @@ export default async function findPage(main, _p, query) {
   const q = (query.q || '').trim();
   setMeta({ title: q ? `${q}: property search` : 'Smart property search', description: 'Describe what you want in plain English. Keyzing understands bedrooms, budget, location, lifestyle and investment goals, and ranks every matching suburb.' });
   if (q && looksLikeAddress(q)) return navigate(`/property?q=${encodeURIComponent(q)}`, true);
-  const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), load('index')]);
+  const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), Promise.resolve(null)]);
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Smart search</div><h1>Tell us what you're looking for</h1>
@@ -102,7 +102,7 @@ export default async function findPage(main, _p, query) {
       map = L.map('fmap', { scrollWheelZoom: false });
       baseTiles().addTo(map);
       const css = getComputedStyle(document.documentElement);
-      const col = (v) => css.getPropertyValue(v >= 75 ? '--sc-a' : v >= 60 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
+      const col = (v) => css.getPropertyValue(v >= 65 ? '--sc-a' : v >= 55 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
       top.forEach((r, i) => L.circleMarker([r.s.lat, r.s.lng], { radius: i < 20 ? 8 : 5, weight: 1, color: '#0008', fillColor: col(r.display), fillOpacity: 0.95 }).addTo(map).bindPopup(`<b>${i + 1}. <a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a></b><br>${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} ~${aud(r.est.value, { compact: true })}<br>Score ${r.display} · yield ${pct(r.est.yield, 1)}`));
       map.fitBounds(L.latLngBounds(top.map((r) => [r.s.lat, r.s.lng])).pad(0.1), { maxZoom: 12 });
     };

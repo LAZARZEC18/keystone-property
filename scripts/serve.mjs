@@ -11,7 +11,6 @@ const fns = {
   '/api/listings': (await import('../netlify/functions/listings.mjs')).default,
   '/api/geocode': (await import('../netlify/functions/geocode.mjs')).default,
   '/api/property': (await import('../netlify/functions/property.mjs')).default,
-  '/api/live-index': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-news': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-rba': (await import('../netlify/functions/live.mjs')).default,
   '/api/photos': (await import('../netlify/functions/photos.mjs')).default,

@@ -60,7 +60,7 @@ const PAGES = {
     title: 'Contact',
     description: 'Get in touch with Keyzing.',
     body: (h) => `
-      <p>Questions, corrections, data you think is wrong, or partnership enquiries: email <a href="mailto:${h.email}">${h.email}</a> or send a message below and you'll get a reply by email.</p>
+      <p>Questions, corrections, data you think is wrong, or partnership enquiries (Keyzing doesn't sell advertising, placements or rankings): email <a href="mailto:${h.email}">${h.email}</a> or send a message below and you'll get a reply by email.</p>
       ${h.business}
       <form class="card" name="contact" method="POST" data-netlify="true" netlify-honeypot="company" id="contact-form" style="max-width:620px">
         <input type="hidden" name="form-name" value="contact">
@@ -68,7 +68,7 @@ const PAGES = {
         <div class="fields" style="grid-template-columns:1fr 1fr">
           <label class="field">Name<input name="name" autocomplete="name" required></label>
           <label class="field">Email<input name="email" type="email" autocomplete="email" required></label>
-          <label class="field" style="grid-column:1/-1">About<select name="topic"><option>General question</option><option>Data correction</option><option>Partnership or advertising</option><option>Privacy request</option></select></label>
+          <label class="field" style="grid-column:1/-1">About<select name="topic"><option>General question</option><option>Data correction</option><option>Partnership enquiry</option><option>Privacy request</option></select></label>
           <label class="field" style="grid-column:1/-1">Message<textarea name="message" rows="6" required style="width:100%;border:1px solid var(--line-2);border-radius:10px;padding:10px;font:inherit;background:var(--surface);color:var(--ink)"></textarea></label>
         </div>
         <button class="btn primary" style="margin-top:12px">Send message</button>

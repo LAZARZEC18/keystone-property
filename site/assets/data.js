@@ -3,7 +3,7 @@ import { normaliseRate } from './rate-rules.js';
 const cache = new Map();
 
 // Served live by a Netlify function (cached up to an hour), falling back to the stored file.
-const LIVE = new Set(['index', 'news', 'rba']);
+const LIVE = new Set(['news', 'rba']);
 const getStatic = (name) =>
   fetch(`/data/${name}.json`, { cache: 'no-cache' }).then((r) => {
     if (!r.ok) throw new Error(`${name}: ${r.status}`);
@@ -31,7 +31,8 @@ let suburbIndex = null;
 /** All suburbs as objects, with lookup maps. */
 export async function suburbs() {
   if (suburbIndex) return suburbIndex;
-  const [d, idx, market] = await Promise.all([load('suburbs'), load('index').catch(() => null), load('market').catch(() => null)]);
+  const [d, market] = await Promise.all([load('suburbs'), load('market').catch(() => null)]);
+  const idx = null;
   const { applyLiveGrowth } = await import('./live.js');
   const list = d.rows.map((r) => {
     const o = {};

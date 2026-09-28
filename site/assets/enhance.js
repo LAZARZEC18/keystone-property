@@ -66,7 +66,7 @@ export function tableHints(root) {
   for (const w of root.querySelectorAll('.tbl-wrap')) {
     const scrolls = w.scrollWidth > w.clientWidth + 4;
     w.classList.toggle('scrolls', scrolls);
-    if (scrolls && !(w.nextElementSibling?.classList.contains('scroll-hint'))) w.insertAdjacentHTML('afterend', '<div class="scroll-hint" aria-hidden="true">Swipe the table sideways to see more →</div>');
+    if (scrolls && !(w.nextElementSibling?.classList.contains('scroll-hint'))) w.insertAdjacentHTML('afterend', '<div class="scroll-hint" aria-hidden="true"><span class="sh-touch">Swipe the table sideways to see more →</span><span class="sh-mouse">Scroll the table sideways to see more →</span></div>');
   }
 }
 

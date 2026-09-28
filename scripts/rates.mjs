@@ -2,7 +2,7 @@
 // public product feeds. No keys needed: every bank must publish its product reference data.
 // Output: site/data/rates.json (columnar to keep it small) + site/data/rates-summary.json.
 
-import { membersOnly, notPurchase, normaliseRate } from '../site/assets/rate-rules.js';
+import { membersOnly, notPurchase, normaliseRate, isNational } from '../site/assets/rate-rules.js';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { getJson, pool } from './lib/http.mjs';
 
@@ -181,7 +181,7 @@ export function summarise(rawRows) {
   const pick = (list) => list.slice(0, 5).map(({ lender, product, rate, comparison, lvrMax, url }) => ({ lender, product, rate, comparison, lvrMax, url }));
   const at80 = (r) => r.lvrMax === null || r.lvrMax >= 80;
   // headline picks: open to anyone, for buying a home, standard (not niche or negotiated), available at 80% LVR
-  const std = (r) => !r.tailored && !r.special && at80(r) && !membersOnly(r) && !notPurchase(r);
+  const std = (r) => !r.tailored && !r.special && at80(r) && !membersOnly(r) && !notPurchase(r) && !r.suspect;
   const out = {};
   for (const purpose of ['INV', 'OO']) {
     for (const repay of ['PI', 'IO']) {
@@ -192,6 +192,12 @@ export function summarise(rawRows) {
         );
       }
     }
+  }
+  // the same picks from lenders anyone in Australia can apply to
+  for (const k of Object.keys(out)) {
+    const [purpose, repay, kind] = k.split('_');
+    const fixed = kind.startsWith('fixed') ? +kind.slice(5) : null;
+    out[`${k}_national`] = pick(seg((r) => std(r) && isNational(r) && r.purpose === purpose && r.repay === repay && (fixed ? r.type === 'fixed' && Math.abs(r.term - fixed) < 0.01 : r.type === 'variable')));
   }
   // Median advertised investor P&I variable, a fair "typical" rate for the analyser default.
   const inv = seg((r) => std(r) && r.purpose === 'INV' && r.repay === 'PI' && r.type === 'variable').map((r) => r.rate);

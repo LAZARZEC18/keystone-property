@@ -36,11 +36,14 @@ export const date = (iso) => (iso ? new Date(iso).toLocaleDateString('en-AU', { 
 
 export function scoreClass(v) {
   if (v === null || v === undefined) return 'sc-na';
-  if (v >= 75) return 'sc-a';
-  if (v >= 60) return 'sc-b';
-  if (v >= 45) return 'sc-c';
+  if (v >= SCORE_BANDS[0]) return 'sc-a';
+  if (v >= SCORE_BANDS[1]) return 'sc-b';
+  if (v >= SCORE_BANDS[2]) return 'sc-c';
   return 'sc-d';
 }
+/** Score bands, set from the actual spread of scores: 65+ is about the top 1%, 55+ the top 10%, 45+ above the median. */
+export const SCORE_BANDS = [65, 55, 45];
+export const scoreVar = (v) => `--${scoreClass(v)}`;
 export const scoreBadge = (v, big = false) => `<span class="score ${scoreClass(v)}${big ? ' big' : ''}">${v ?? '—'}</span>`;
 
 export function srcBadge(src) {
@@ -213,17 +216,19 @@ export function sortable(table, onSort) {
 
 const REGION_SHORT = { SYD: 'Sydney', MEL: 'Melbourne', BNE: 'Brisbane', PER: 'Perth', ADL: 'Adelaide', HBA: 'Hobart', DRW: 'Darwin', CBR: 'Canberra', RNSW: 'Regional NSW', RVIC: 'Regional Vic', RQLD: 'Regional Qld', RWA: 'Regional WA', RSA: 'Regional SA', RTAS: 'Regional Tas', RNT: 'Regional NT' };
 /** 12-month change, honest about its source: suburb-level where official sales exist, otherwise labelled as the city/region index. */
-export function growth12(s, { suffix = ' 12m', short = false } = {}) {
-  if (s.g1 === null || s.g1 === undefined) return '—';
+export function growth12(s, { suffix = ' 12m', short = false, three = suffix !== '' } = {}) {
+  // lead with the area's 3-month change (the direction now), then the 12-month figure (the past year)
+  const g3 = three && s.g3 !== null && s.g3 !== undefined ? `<span class="${s.g3 < 0 ? 'down' : s.g3 > 0 ? 'up' : ''}" title="${esc(s.g3p || 'Area, 3 months')}">${s.trend ? `${s.trend} ` : ''}${pct(s.g3, 1, true)} 3m</span> · ` : '';
+  if (s.g1 === null || s.g1 === undefined) return g3 ? g3.replace(/ · $/, '') : '—';
   const src = String(s.g1s || '');
   const cls = s.g1 >= 0 ? 'up' : 'down';
   const period = s.g1p ? ` (${s.g1p})` : '';
   if (src.startsWith('region')) {
     const name = REGION_SHORT[s.rg] || 'Region';
-    return `<span class="muted" title="No suburb-level sales series here: this is the ${name} figure${period}.">${pct(s.g1, 1, true)}${suffix}${short ? ' <span class="area-tag">area</span>' : ` · ${name}`}</span>`;
+    return `${g3}<span class="muted" title="No suburb-level sales series here: this is the ${name}-wide figure${period}.">${pct(s.g1, 1, true)}${suffix}${short ? ' <span class="area-tag">city-wide</span>' : ` · ${name}-wide`}</span>`;
   }
-  if (src.includes('postcode')) return `<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
-  return `<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
+  if (src.includes('postcode')) return `${g3}<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
+  return `${g3}<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
 }
 
 /** Weekly cash flow in words, avoiding a red double negative: "You pay $491/wk" or "You receive $120/wk". */
@@ -245,4 +250,14 @@ export function dealContext(v) {
   if (!v) return '';
   const pc = v.percentile;
   return pc === null || pc === undefined ? esc(v.absolute || '') : `Relative rank: stronger numbers than about ${pc}% of typical homes across Australia, run with the same deposit, rate and income. A high rank does not mean the purchase makes money.`;
+}
+
+/**
+ * Neutral line comparing the return at three growth rates with a deposit, with equal weight on each.
+ * No verdict: whether it "beats" a deposit depends entirely on growth nobody can know.
+ */
+export function returnsLine(sc, v) {
+  if (!sc) return '';
+  const f = (x) => (x === null || x === undefined ? '—' : pct(x, 1));
+  return `<div class="returns-line"><div class="rl-head">Return on your cash after tax, a year, if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div><span class="k">${sc[k].growth}% a year</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">3% is the major banks' forecast for 2026-27; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
 }

@@ -1,6 +1,7 @@
 // Keyzing investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
 import { DEAL_BANDS } from './deal-bands.js';
+import { GROWTH } from './rules.js';
 
 const ceil100 = (x) => Math.ceil(x / 100) * 100;
 export const round = (x, d = 0) => {
@@ -165,7 +166,7 @@ export function analyse(input) {
     state: 'NSW', price: 800000, weeklyRent: 650, deposit: 0.2, ratePct: 6.2, years: 30, interestOnly: false,
     buyer: 'investor', newBuild: false, buildYear: 2000, buildCost: null, plantValue: 0,
     purchaseDate: new Date().toISOString().slice(0, 10), income: 120000,
-    growth: 5, rentGrowth: 4, cpi: 3, vacancyWeeks: 2, mgmtPct: 7.5, councilRates: 2200, water: 900, strata: 0,
+    growth: 3, rentGrowth: 3.5, cpi: 3, vacancyWeeks: 2, mgmtPct: 7.5, councilRates: 2200, water: 900, strata: 0,
     insurance: 1800, maintenancePct: 1.2, landValuePct: 0.55, otherCosts: 2500, lmiCapitalise: true,
     hold: 10, sellCostPct: 2.5, perth: false, ...input,
   };
@@ -442,7 +443,7 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   const tdAfterTax = Math.round(depositRate * (1 - mr) * 10) / 10;
   const beatsDeposit = s.irr !== null && s.irr > tdAfterTax;
   const vsDeposit = s.irr === null ? null : `A projected ${s.irr}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;
-  return { score, grade, label, percentile, absolute, beatsDeposit, tdAfterTax, vsDeposit, reasons, risks };
+  return { score, grade, label, percentile, absolute, beatsDeposit, tdAfterTax, depositRate, vsDeposit, reasons, risks };
 }
 
 /** Share (0-100) of benchmark deals this score beats, or null if no benchmark is loaded. */
@@ -457,14 +458,17 @@ export function dealPercentile(score, bands = DEAL_BANDS) {
 
 /** Weighted Keyzing Score from a suburb's component percentiles. */
 export const PROFILES = {
-  balanced: { cash: 20, momentum: 15, growth: 20, demand: 20, afford: 10, stability: 15 },
-  growth: { cash: 5, momentum: 25, growth: 30, demand: 20, afford: 5, stability: 15 },
-  cashflow: { cash: 45, momentum: 5, growth: 10, demand: 20, afford: 10, stability: 10 },
-  firsthome: { cash: 5, momentum: 10, growth: 20, demand: 10, afford: 35, stability: 20 },
+  // Momentum (the past 12 months' price change) carries no weight: it exists only where official suburb sales do
+  // (NSW, VIC, SA), so weighting it made scores incomparable across states, and it rewards trailing growth just as
+  // markets turn. It is still shown on each suburb page for information.
+  balanced: { cash: 22, momentum: 0, growth: 25, demand: 23, afford: 12, stability: 18 },
+  growth: { cash: 8, momentum: 0, growth: 45, demand: 25, afford: 5, stability: 17 },
+  cashflow: { cash: 48, momentum: 0, growth: 12, demand: 20, afford: 10, stability: 10 },
+  firsthome: { cash: 5, momentum: 0, growth: 22, demand: 10, afford: 40, stability: 23 },
   // New builds keep negative gearing and the CGT discount under the 2026 rules. Ranked among areas where new homes
   // are actually being approved, on rental demand, affordability, stability and yield; growth drivers carry less
   // weight because new supply is a given there.
-  newbuild: { cash: 20, momentum: 5, growth: 10, demand: 30, afford: 20, stability: 15 },
+  newbuild: { cash: 22, momentum: 0, growth: 10, demand: 31, afford: 21, stability: 16 },
 };
 /** Extra eligibility for a strategy: new-build rankings only include council areas approving 1+ new home a year per 100. */
 export const PROFILE_FILTERS = { newbuild: (s) => (s.sup ?? 0) >= 1 && (s.pg5 ?? 0) > 0 };
@@ -483,7 +487,7 @@ export function suburbScore(sc, weights = PROFILES.balanced) {
   // Concentration risk (mining dependence, one dominant employer, remoteness, shrinking population) costs up to 25 points:
   // high yields in single-industry towns come with price and vacancy swings the other components can't see.
   const risk = sc.risk ?? 0;
-  const penalty = risk > 20 ? Math.round((risk - 20) * 0.31) : 0;
+  const penalty = risk > 15 ? Math.min(30, Math.round((risk - 15) * 0.45)) : 0;
   // Modelled suburbs (no official sales series) are shrunk 15% toward the middle: less certain numbers
   // shouldn't outrank measured ones on the same inputs.
   const raw = t / w;
@@ -555,4 +559,11 @@ export function valueEstimate(s, spec = {}) {
     beds,
     spread,
   };
+}
+
+/** After-tax return on your cash (IRR) at the bear, base and bull growth rates, all else equal. */
+export function scenarioReturns(input) {
+  const out = {};
+  for (const k of ['bear', 'base', 'bull']) out[k] = { growth: GROWTH[k], irr: analyse({ ...input, growth: GROWTH[k], rentGrowth: { bear: 2.5, base: 3.5, bull: 4.5 }[k] }).summary.irr };
+  return out;
 }

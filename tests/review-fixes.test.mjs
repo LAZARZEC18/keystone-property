@@ -17,7 +17,7 @@ test('concentration risk lowers the score, low risk does not', () => {
   const sc = { cash: 90, momentum: 70, growth: 60, demand: 70, afford: 80, stability: 40 };
   const base = suburbScore({ ...sc, risk: 0 });
   assert.equal(suburbScore({ ...sc, risk: 15 }), base);
-  assert.equal(suburbScore({ ...sc, risk: 100 }), base - 25);
+  assert.equal(suburbScore({ ...sc, risk: 100 }), base - 30);
 });
 
 test('first home duty explains when a price is above the concession cap', () => {

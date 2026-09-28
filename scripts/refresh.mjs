@@ -72,8 +72,9 @@ await job('news', async () => {
 
 await job('index', async () => {
   const { out, hist } = await collectIndex();
+  // Cotality's daily index is proprietary: it is kept in the private history only and never published on the site.
+  // It is used solely to pick up each new month-end result, which Cotality releases publicly.
   await w(HIST, 'daily-index.json', hist);
-  await w(SITE, 'index.json', out);
   // Roll the monthly market figures forward when Cotality publishes a new month-end
   const market = await r(DATA, 'market.json');
   if (market) {
@@ -92,19 +93,20 @@ await job('index', async () => {
           if (R.medianUnit) R.medianUnit = Math.round(R.medianUnit * f(m.unitMonth));
           R.derived = `Rolled forward to ${monthEnd} with the Cotality index`;
         }
-        R.monthPct = m.allMonth;
-        R.annualPct = m.allYear;
-        R.houseMonthPct = m.houseMonth;
-        R.houseAnnualPct = m.houseYear;
-        R.unitMonthPct = m.unitMonth;
-        R.unitAnnualPct = m.unitYear;
+        // one decimal place, as Cotality publishes them
+        const r1 = (x) => (x == null ? x : Math.round(x * 10) / 10);
+        R.monthPct = r1(m.allMonth);
+        R.annualPct = r1(m.allYear);
+        R.houseMonthPct = r1(m.houseMonth);
+        R.houseAnnualPct = r1(m.houseYear);
+        R.unitMonthPct = r1(m.unitMonth);
+        R.unitAnnualPct = r1(m.unitYear);
       }
       market.indexMonth = monthEnd;
       await w(DATA, 'market.json', market, true);
     }
   }
-  const p = out.daily.PER;
-  return `${out.generated}: Perth week ${p?.week}% ytd ${p?.ytd}%`;
+  return `${out.generated}: month-end ${out.monthEnd}`;
 });
 
 await job('publish-market', async () => {
@@ -113,21 +115,19 @@ await job('publish-market', async () => {
 
 await job('weekly', async () => {
   // A dated weekly snapshot (Monday of the current week) so trends build up over time.
-  const idx = await r(SITE, 'index.json');
+  const market = await r(SITE, 'market.json');
   const rs = await r(SITE, 'rates-summary.json');
   const rba = await r(SITE, 'rba.json');
   const news = await r(SITE, 'news.json');
   const now = new Date();
-  // Key the snapshot by the week the INDEX data belongs to (not the UTC clock), so a Sunday-night UTC run with
-  // Monday's Australian data can't overwrite last week's row with this week's numbers.
-  const asOf = new Date(`${idx?.generated || now.toISOString().slice(0, 10)}T00:00:00Z`);
+  // Key the snapshot by the Australian calendar week, not the UTC clock.
+  const asOf = new Date(`${new Date(now.getTime() + 8 * 3600e3).toISOString().slice(0, 10)}T00:00:00Z`); // Australian (AWST) date
   const monday = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth(), asOf.getUTCDate() - ((asOf.getUTCDay() + 6) % 7))).toISOString().slice(0, 10);
   const weeks = (await r(HIST, 'weekly.json', [])) || [];
   const snap = {
     week: monday,
-    indexDate: idx?.generated || null,
+    indexMonth: market?.indexMonth || null,
     updated: now.toISOString(),
-    index: Object.fromEntries(Object.entries(idx?.daily || {}).map(([k, v]) => [k, { value: v.value, week: v.week, month: v.month, ytd: v.ytd, year: v.year }])),
     cash: rba?.cashRate?.current ?? null,
     bestInv: rs?.best?.INV_PI_variable?.[0] ?? null,
     bestOO: rs?.best?.OO_PI_variable?.[0] ?? null,

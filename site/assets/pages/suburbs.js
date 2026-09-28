@@ -32,7 +32,7 @@ export default async function explorer(main, _p, query) {
   main.innerHTML = `
   <div class="page-head">
     <div class="eyebrow">Suburb explorer</div>
-    <h1>Rank every suburb in Australia</h1>
+    <h1>Rank 11,042 suburbs across Australia</h1>
     <p>Set your budget and strategy. Keyzing ranks all ${list.length.toLocaleString()} suburbs on yield, momentum, growth drivers, rental demand, affordability and stability, and explains every number on the suburb's page.</p>
   </div>
   <div class="card flat tint">
@@ -87,7 +87,7 @@ export default async function explorer(main, _p, query) {
       if (st.yieldMin && (yld ?? 0) < st.yieldMin) continue;
       rows.push({ s, type, price, rent, yld, score: suburbScore(s.sc, w) });
     }
-    const key = { score: (r) => r.score, price: (r) => r.price, yld: (r) => r.yld, g1: (r) => r.s.g1, pop: (r) => r.s.pop, pg5: (r) => r.s.pg5, name: (r) => cleanName(r.s.n), rent: (r) => r.rent, pti: (r) => r.s.pti }[st.sort] || ((r) => r.score);
+    const key = { score: (r) => r.score, price: (r) => r.price, yld: (r) => r.yld, g1: (r) => r.s.g1, g3: (r) => r.s.g3, pop: (r) => r.s.pop, pg5: (r) => r.s.pg5, name: (r) => cleanName(r.s.n), rent: (r) => r.rent, pti: (r) => r.s.pti }[st.sort] || ((r) => r.score);
     rows.sort((a, b) => {
       const x = key(a);
       const y = key(b);
@@ -118,14 +118,14 @@ export default async function explorer(main, _p, query) {
     const slice = rows.slice(st.page * PAGE, (st.page + 1) * PAGE);
     const pages = Math.ceil(rows.length / PAGE);
     return `<div class="tbl-wrap"><table id="tbl"><thead><tr>
-      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
+      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g3" class="n">Area, 3m</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
       ${slice
         .map(
           (r, i) => `<tr><td><input type="checkbox" data-cmp="${r.s.id}" ${compareSet.has(r.s.id) ? 'checked' : ''} aria-label="Compare ${esc(r.s.n)}"></td><td class="faint mono">${st.page * PAGE + i + 1}</td>
           <td><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span></td>
           <td class="muted">${esc(r.s.lga || '')}</td><td class="n">${scoreBadge(r.score)}</td>
           <td class="n">${aud(r.price, { compact: true })} <span class="faint">${r.type === 'u' ? 'unit' : 'house'}</span></td><td class="n">${aud(r.rent)}</td>
-          <td class="n">${pct(r.yld, 2)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${growth12(r.s, { suffix: '', short: true })}</td>
+          <td class="n">${pct(r.yld, 2)}</td><td class="n ${(r.s.g3 ?? 0) < 0 ? 'down' : 'up'}" title="${esc(r.s.g3p || '')}">${r.s.g3 == null ? '—' : pct(r.s.g3, 1, true)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${growth12(r.s, { suffix: '', short: true })}</td>
           <td class="n">${pct(r.s.pg5, 1, true)}</td><td class="n">${r.s.pti ?? '—'}×</td><td class="n">${num(r.s.pop)}</td><td>${srcBadge(r.type === 'u' ? r.s.us : r.s.hs)}</td></tr>`,
         )
         .join('')}
@@ -138,13 +138,13 @@ export default async function explorer(main, _p, query) {
   let layer = null;
   function drawMap() {
     const out = $f('#out');
-    out.innerHTML = `<div id="map" class="map"></div><div class="map-legend"><span><i style="background:var(--sc-a)"></i>75+</span><span><i style="background:var(--sc-b)"></i>60-74</span><span><i style="background:var(--sc-c)"></i>45-59</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Showing the top ${Math.min(rows.length, 3000).toLocaleString()} matches. Click a dot for details.</span></div>`;
+    out.innerHTML = `<div id="map" class="map"></div><div class="map-legend"><span><i style="background:var(--sc-a)"></i>65+ (top 1%)</span><span><i style="background:var(--sc-b)"></i>55-64 (top 10%)</span><span><i style="background:var(--sc-c)"></i>45-54</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Showing the top ${Math.min(rows.length, 3000).toLocaleString()} matches. Click a dot for details.</span></div>`;
     if (!window.L) {
       out.insertAdjacentHTML('beforeend', '<p class="note">The map library is still loading, or it was blocked. Try again in a moment.</p>');
       return;
     }
     const css = getComputedStyle(document.documentElement);
-    const col = (v) => css.getPropertyValue(v >= 75 ? '--sc-a' : v >= 60 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
+    const col = (v) => css.getPropertyValue(v >= 65 ? '--sc-a' : v >= 55 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
     map = L.map('map', { preferCanvas: true, scrollWheelZoom: true }).setView([-28, 134], 4);
     baseTiles().addTo(map);
     layer = L.layerGroup().addTo(map);

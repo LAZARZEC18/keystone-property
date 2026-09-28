@@ -1,7 +1,7 @@
 import { demo } from '../demo.js';
-import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek } from '../ui.js';
+import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek, returnsLine } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
-import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment } from '../engine.js';
+import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment, scenarioReturns } from '../engine.js';
 import { liveFactor, regionMoves } from '../live.js';
 import { baseTiles } from '../map.js';
 import { liveListings, valueCall, rangeBar } from './listings.js';
@@ -10,7 +10,7 @@ import { fillSuburbPhotos } from '../photos.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { reaSearch } from './find.js';
 import { navigate } from '../app.js';
-import { STATES, guaranteeCap } from '../rules.js';
+import { STATES, guaranteeCap, GROWTH } from '../rules.js';
 import { listingLinks, scoreVsDeal, nextStepsCard } from '../insights.js';
 
 const STATE_NAME = { 'new south wales': 'NSW', victoria: 'VIC', queensland: 'QLD', 'western australia': 'WA', 'south australia': 'SA', tasmania: 'TAS', 'australian capital territory': 'ACT', 'northern territory': 'NT' };
@@ -35,8 +35,9 @@ export function suburbFromText(q, list) {
 
 export default async function propertyPage(main, _p, query) {
   const q = (query.q || '').trim();
-  setMeta({ title: q ? `${q}: estimated value, rent and investment rating` : 'Property value estimate by address', description: 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
-  const [idx, market, index, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('index'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
+  setMeta({ title: q ? `${q}: suburb price range for a typical home` : 'Suburb estimate for a typical home', description: 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
+  const [idx, market, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
+  const index = null;
 
   main.innerHTML = `
   <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
@@ -198,19 +199,19 @@ export default async function propertyPage(main, _p, query) {
         ${printHeader(`Suburb estimate: ${facts?.address || q}`)}
         <div class="spread" style="align-items:flex-start">
           <div><div class="eyebrow" style="margin:0">Suburb estimate for a typical home like this · ${date(new Date().toISOString())}</div>
-          <div class="big-num" style="margin:6px 0">${aud(e.value)}</div>
-          <div class="note">Likely range ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })} · ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'}</div></div>
+          <div class="big-num" style="margin:6px 0">${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })}</div>
+          <div class="note">Likely range for a typical ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'} like this${acc.level === 'untested' ? '. No single figure is shown: the model hasn’t been tested against sales in this state.' : ` · middle of the range about ${aud(e.value, { compact: true })}`}</div></div>
           __BADGE__
         </div>
         ${edited ? '' : `<div class="callout" style="margin-top:14px"><b>This is a typical ${e.beds}-bed, ${f.baths}-bath ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))}, not this property yet.</b> Enter its bedrooms, bathrooms, land size and condition on the left, plus the asking price if it's for sale, and everything below updates for this home.</div>`}
         <div class="acc acc-${acc.level}"><b>${esc(acc.label)}.</b> ${esc(acc.text)}</div>
         ${e.rent ? `<details class="explain"><summary>Rent estimate for this home: ${aud(Math.round((e.rent * 0.9) / 5) * 5)}–${aud(Math.round((e.rent * 1.1) / 5) * 5)} a week</summary><div class="kv" style="margin-top:8px"><span>Estimated weekly rent</span><span>${aud(e.rent)}</span><span>Likely range</span><span>${aud(Math.round((e.rent * 0.9) / 5) * 5)} – ${aud(Math.round((e.rent * 1.1) / 5) * 5)}</span><span>Typical house / unit in ${esc(cleanName(s.n))}</span><span>${aud(s.rh)} / ${aud(s.ru)}</span><span>Gross yield at the estimate</span><span>${pct((e.rent * 52 * 100) / e.value, 2)}</span></div><p>${s.s === 'NSW' && String(s.hs).includes('NSW') ? 'Suburb rent from NSW bond lodgements by postcode' : `Suburb rent modelled from Census rents and price, centred on typical ${esc(R?.name || 'regional')} rents`}; the rent model's median error against official bond data is about 9% for houses and 10% for units. Adjusted for the bedrooms and condition entered. A sanity check only, not a rental appraisal: rents have moved a lot since the 2021 Census, and a local property manager's appraisal of current listings is far more reliable.</p></details>` : ''}
-        ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the ${aud(e.value, { compact: true })} estimate. ${esc(vc.note)}${s.conf === 'high' || s.conf === 'medium' || vc.key !== 'within' ? rangeBar(asking, e) : ''}</div>` : ''}`;
+        ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> ${acc.level === 'untested' ? `asking ${aud(asking)} against a range of ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })}.` : `asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the middle of the range.`} ${esc(vc.note)}${s.conf === 'high' || s.conf === 'medium' || vc.key !== 'within' ? rangeBar(asking, e) : ''}</div>` : ''}`;
     const built = `<div><h3 style="font-size:16px">How the estimate is built</h3><div class="kv">
             <span>Typical ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))} ${srcBadge(e.type === 'u' ? s.us : s.hs)}</span><span>${aud(e.basis, { compact: true })}</span>
             ${e.adjustments.map((x) => `<span>${esc(x.label)}</span><span class="${x.pct >= 0 ? 'up' : 'down'}">${x.pct >= 0 ? '+' : ''}${(x.pct * 100).toFixed(1)}%</span>`).join('')}
-            <span class="tot">Estimate</span><span class="tot">${aud(e.value)}</span></div>
-            <p class="fine" style="margin-top:6px">Suburb value includes ${esc(R?.name || '')} index movement to ${date(index.generated)} (${pct((lf - 1) * 100, 2, true)} since 31 Aug). ${s.conf === 'high' ? 'Based on official suburb sales.' : s.conf === 'medium' ? 'Based on official postcode sales.' : 'Modelled: no official sales series for this suburb, so treat it as a guide.'}</p>
+            <span class="tot">Likely range</span><span class="tot">${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })}</span></div>
+            <p class="fine" style="margin-top:6px">Suburb value as at ${esc(market.indexMonth || 'the latest month-end')}; ${esc(R?.name || 'the area')} moved ${pct(R?.quarterPct, 1, true)} over the last 3 months. ${s.conf === 'high' ? 'Based on official suburb sales.' : s.conf === 'medium' ? 'Based on official postcode sales.' : 'Modelled: no official sales series for this suburb, so treat it as a guide.'}</p>
             ${dEst ? `<p class="note" style="margin-top:8px">Domain's own estimate: <b>${aud(dEst)}</b> (${aud(facts.estimate.low, { compact: true })} – ${aud(facts.estimate.high, { compact: true })}).</p>` : ''}
             ${facts?.sales?.length ? `<p class="note" style="margin-top:8px">Sale history: ${facts.sales.slice(0, 4).map((x) => `${aud(x.price, { compact: true })} (${new Date(x.date).getFullYear()})`).join(' · ')}</p>` : ''}</div>`;
     const foot = `${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:10px">An automated estimate from suburb-level data and the features entered, not a formal valuation. Individual homes vary with position, aspect, quality and street. A bank valuation or a local agent's appraisal of recent sales is more precise.</p>`;
@@ -229,7 +230,7 @@ export default async function propertyPage(main, _p, query) {
       const weekly2 = (repayment(loan, ooRate + 2, 30) * 12) / 52;
       const upfront = price * dep + duty.duty + 3000;
       const myRent = +f.myrent || null;
-      res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">Suburb 12 months</div><div class="mono" style="font-size:22px">${growth12(s, { suffix: '' })}</div></div>`)}
+      res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">${esc(R?.name || 'Area')}, last 3 months</div><div class="mono ${(R?.quarterPct ?? 0) < 0 ? 'down' : 'up'}" style="font-size:22px">${pct(R?.quarterPct, 1, true)}</div><div class="note">${s.trend ? `${s.trend} · ` : ''}12 months ${pct(R?.annualPct, 1, true)}${s.g1s === 'region' ? ' (area-wide)' : ''}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Cash you need up front</span><span class="v">${aud(upfront, { compact: true })}</span><span class="s">${Math.round(dep * 100)}% deposit + duty + fees</span></div>
           <div class="stat"><span class="k">Repayments</span><span class="v">${aud(monthly)}<span class="muted" style="font-size:.55em">/mth</span></span><span class="s">${aud(weekly)}/wk at ${pct(ooRate, 2)}</span></div>
@@ -255,13 +256,13 @@ export default async function propertyPage(main, _p, query) {
         <div style="margin-top:12px">${nextStepsCard({ fhb: buyer === 'fhb' })}</div>
         ${foot}</div>`;
     } else {
-      const a = analyse({ state: s.s, price, weeklyRent: e.rent || 0, deposit: 0.2, ratePct: invRate, income: 120000, hold: 10, growth: f.type === 'u' ? 3.5 : 5, perth: s.rg === 'PER', strata: f.type === 'u' ? 3200 : 0, landValuePct: f.type === 'u' ? 0.25 : 0.55, newBuild });
+      const a = analyse({ state: s.s, price, weeklyRent: e.rent || 0, deposit: 0.2, ratePct: invRate, income: 120000, hold: 10, growth: GROWTH.base, perth: s.rg === 'PER', strata: f.type === 'u' ? 3200 : 0, landValuePct: f.type === 'u' ? 0.25 : 0.55, newBuild });
       const v = verdict(a, { ...s, score: suburbScore(s.sc) }, market, { depositRate: rba.cashRate.current });
       res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">Each week after tax</div><div class="cost-head ${a.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:22px">${cashWeek(a.summary.weeklyCashAfterTax)}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Estimated rent</span><span class="v">${aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span></div>
           <div class="stat"><span class="k">Gross yield</span><span class="v">${pct((e.rent * 52 * 100) / price, 2)}</span></div>
-          <div class="stat"><span class="k">Beats a term deposit?</span><span class="v ${v.beatsDeposit ? 'up' : 'down'}">${v.beatsDeposit ? 'Yes' : 'No'}</span><span class="s">vs ${pct(v.tdAfterTax, 1)} after tax</span></div>
+          <div class="stat"><span class="k">Cash needed at 20% deposit</span><span class="v">${aud(a.upfront.total, { compact: true })}</span></div>
           <div class="stat"><span class="k">10-yr return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(a.summary.irr, 1)}</span></div>
         </div>
         <div class="hr"></div>
@@ -270,13 +271,13 @@ export default async function propertyPage(main, _p, query) {
           <div><h3 style="font-size:16px">Buying it</h3><div class="kv">
             <span>Stamp duty (investor)</span><span>${aud(stampDuty(s.s, price).duty)}</span>
             <span>Cash needed at 20% deposit</span><span>${aud(a.upfront.total)}</span>
-            <span>${esc(mv.dailyName || R?.name || '')} this week (daily index) / ${esc(R?.name || '')} past 12 months (monthly index)</span><span>${mv.week == null ? '—' : pct(mv.week, 2, true)} / ${pct(mv.year ?? s.g1, 1, true)}</span>
+            <span>${esc(R?.name || '')}: last 3 months / 12 months</span><span>${pct(R?.quarterPct, 1, true)} / ${pct(R?.annualPct, 1, true)}</span>
             <span>Suburb Keyzing Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
           </div>
         </div>
         <div class="grid g2" style="margin-top:10px;gap:8px 20px"><ul class="pros">${v.reasons.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul><ul class="cons">${v.risks.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
         <div class="row" style="margin-top:8px"><a class="btn primary" href="/analyse?suburb=${s.id}&price=${price}&rent=${e.rent}&type=${e.type}&new=${newBuild ? 1 : 0}&addr=${encodeURIComponent(facts?.address || q)}" data-link>Full deal analysis</a><a class="btn" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></div>
-        <p class="td-test">${esc(v.vsDeposit || '')} Assumes ${a.input.growth}% a year growth and the RBA's average investor rate of ${pct(invRate, 2)}; change either in the full analysis.</p>
+        ${returnsLine(scenarioReturns(a.input), v)}
         ${foot}</div>`;
     }
 

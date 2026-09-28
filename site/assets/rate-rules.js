@@ -24,6 +24,8 @@ export function normaliseRate(r) {
     const m = n.match(/(\d+(?:\.\d+)?)\s*(years?|yrs?|y\b)/i) || n.match(/(\d+)\s*(months?|mths?)/i);
     if (m) o.term = /mo|mth/i.test(m[2]) ? Math.round((+m[1] / 12) * 100) / 100 : +m[1];
   }
+  // a first home buyer product filed as an investment loan is a feed error: keep it out of the lists
+  if (o.purpose === 'INV' && /first home/i.test(n)) o.suspect = true;
   if (o.repay === 'PI' && /interest[\s-]*only|\bI\/?O\b/i.test(n) && !/principal/i.test(n)) o.repay = 'IO';
   const range = n.match(/LVR\s*(\d{2})\s*%?\s*(?:-|–|to)\s*(\d{2})/i);
   const max = n.match(/(?:up to|<=?|≤|max(?:imum)?|under|below)\s*(\d{2})\s*%?\s*LVR/i) || n.match(/LVR\s*(?:of\s*)?(?:<=?|≤|up to|max(?:imum)?|under|below)?\s*(\d{2})\s*%?(?!\s*(?:-|–|to)\s*\d)/i) || n.match(/(\d{2})\s*%\s*LVR/i);
@@ -38,3 +40,12 @@ export function normaliseRate(r) {
   }
   return o;
 }
+
+// Lenders anyone in Australia can apply to, online or through branches in every state.
+export const NATIONAL_LENDER = /^(CommBank|Westpac|NATIONAL AUSTRALIA BANK|NAB|ANZ|ANZ Plus|ING|Macquarie|St\.?George|Bank of Melbourne|BankSA|Bankwest|Suncorp|Bank of Queensland|BOQ\b|Bendigo|UBank|Up$|ME Bank|AMP|Virgin Money|Great Southern Bank|Unloan|Tiimely|Qantas Money|Aussie|Liberty|Bank Australia|Beyond Bank|HSBC|Citi|Athena|Bank of us)/i;
+export const isNational = (r) => NATIONAL_LENDER.test(r.lender || '');
+/**
+ * Customer-owned and regional lenders (credit unions, mutuals, regional banks): you usually join as a member, and some
+ * lend only in their region or through branches. Their rates are real but may not be open to a buyer elsewhere.
+ */
+export const checkEligibility = (r) => !isNational(r) && !membersOnly(r);

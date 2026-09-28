@@ -27,7 +27,8 @@ async function clip(name, url, act) {
 }
 await clip('afford', '/afford?buyer=fhb', async ({ p, wait, scroll, type }) => {
   await wait(600); await type('[name=savings]', '85000'); await wait(300); await type('[name=income]', '105000'); await wait(400);
-  await p.click('#go'); await wait(1500);
+  await p.click('#go'); await wait(1200);
+  await p.click('[data-where="r:PER"]').catch(() => {}); await wait(1600);
   await scroll(520, 30, 45); await wait(1600); await scroll(620, 36, 45); await wait(2200); await scroll(700, 40, 45); await wait(1800);
 });
 await clip('calculator', '/analyse?state=WA&price=720000&rent=680', async ({ p, wait, scroll, type }) => {

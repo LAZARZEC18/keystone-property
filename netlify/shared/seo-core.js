@@ -9,11 +9,11 @@ const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').
 const money = (v) => (v == null ? '—' : v >= 999500 ? `$${(v / 1e6).toFixed(2)}m` : `$${Math.round(v / 1000)}k`);
 const pct = (v, dp = 1, sign = false) => (v == null ? '—' : `${sign && v > 0 ? '+' : ''}${Number(v).toFixed(dp)}%`);
 const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland', WA: 'Western Australia', SA: 'South Australia', TAS: 'Tasmania', ACT: 'Australian Capital Territory', NT: 'Northern Territory' };
-const W = { cash: 20, momentum: 15, growth: 20, demand: 20, afford: 10, stability: 15 };
+const W = { cash: 22, momentum: 0, growth: 25, demand: 23, afford: 12, stability: 18 };
 
 const PAGES = {
-  '/': ['What can you afford, and what will it really cost?', 'Free and independent: your price ceiling in every state with the 5% Deposit Scheme and stamp duty concessions, and a calculator for the 2026 negative gearing and CGT changes. Plus every lender’s advertised rate.'],
-  '/afford': ['What can I afford? Your buying ceiling in every state', 'Enter your savings and income to see the most you can pay in every state, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
+  '/': ['What can you afford, and what will it really cost?', 'Free and independent: your price ceiling in every state and territory with the 5% Deposit Scheme and stamp duty concessions, and a calculator for the 2026 negative gearing and CGT changes. Plus every lender’s advertised rate.'],
+  '/afford': ['What can I afford? Your buying ceiling in every state and territory', 'Enter your savings and income to see the most you can pay in every state and territory, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
   '/property': ['Suburb estimate for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keyzing ranks every matching suburb.'],
   '/map': ['Highest-scoring suburbs in Australia: map', 'Every Australian suburb scored on yield, growth, demand, affordability and stability, on one map, with how much of each score is measured.'],
@@ -21,7 +21,6 @@ const PAGES = {
   '/analyse': ['2026 tax-change calculator for investment property', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
   '/borrowing': ['How much can I borrow? Borrowing power calculator', 'Estimate your borrowing power the way Australian lenders do: 3-point buffer, 80% of rent, debts and dependants.'],
   '/rates': ['Home loan rates in Australia, compared', 'Every advertised home loan rate from Australian lenders, read from their Open Banking feeds, ranked by loan type and deposit.'],
-  '/live': ['Live home values: daily index for the capitals', 'Daily home value moves for Sydney, Melbourne, Brisbane, Adelaide and Perth: this week, month, year to date and year.'],
   '/markets': ['Australian property market dashboard', 'Median values, growth, rents, yields, vacancy and days on market for every capital and regional market.'],
   '/new-builds': ['New builds and housing supply by council', 'Monthly building approvals by state, council and area, and where new supply is heaviest.'],
   '/weekly': ['Weekly Australian property market report', 'What moved in home values and rates this week, the RBA outlook and the headlines.'],
@@ -81,7 +80,7 @@ export function buildIndex(sub, market, index = null) {
     const risk = o.rsk ?? 0;
     const raw = w ? t / w : null;
     const base = raw != null && !(o.conf === 'high' || o.conf === 'medium') ? 50 + (raw - 50) * 0.85 : raw;
-    o.score = w ? Math.max(0, Math.round(base) - (risk > 20 ? Math.round((risk - 20) * 0.31) : 0)) : null;
+    o.score = w ? Math.max(0, Math.round(base) - (risk > 15 ? Math.min(30, Math.round((risk - 15) * 0.45)) : 0)) : null;
     bySlug.set(o.slug, o);
     if (o.pc) (byPc.get(o.pc) || byPc.set(o.pc, []).get(o.pc)).push(o);
     if (o.lga) {
@@ -93,7 +92,7 @@ export function buildIndex(sub, market, index = null) {
 }
 
 const ROUTES = [
-  /^\/$/, /^\/live$/, /^\/markets$/, /^\/new-builds$/, /^\/weekly$/, /^\/suburbs$/, /^\/suburb\/[a-z]+\/[a-z0-9-]+$/, /^\/postcode\/\d{3,4}$/,
+  /^\/$/, /^\/markets$/, /^\/new-builds$/, /^\/weekly$/, /^\/suburbs$/, /^\/suburb\/[a-z]+\/[a-z0-9-]+$/, /^\/postcode\/\d{3,4}$/,
   /^\/council\/[a-z]+\/[a-z0-9-]+$/, /^\/analyse$/, /^\/afford$/, /^\/rates$/, /^\/listings$/, /^\/news$/, /^\/guide$/, /^\/compare$/, /^\/watchlist$/,
   /^\/borrowing$/, /^\/methodology$/, /^\/find$/, /^\/property$/, /^\/map$/, /^\/(about|privacy|terms|contact)$/, /^\/first-home$/, /^\/why$/,
 ];
@@ -132,7 +131,7 @@ export function describe(pathname, search, ix, origin) {
     const lgaSlug = s.lga ? `${s.s.toLowerCase()}/${slugify(s.lga)}` : null;
     const body = `<article class="ssr"><div class="crumbs"><a href="/suburbs?state=${s.s}">${esc(STATE_NAMES[s.s] || s.s)}</a> › ${lgaSlug ? `<a href="/council/${lgaSlug}">${esc(s.lga)}</a> › ` : ''}${s.pc ? `<a href="/postcode/${s.pc}">${s.pc}</a>` : ''}</div>
 <h1>${esc(s.name)} ${s.s} ${esc(s.pc || '')}</h1>
-<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)} and the typical unit about ${money(s.u)}. Typical rents are about $${s.rh ?? '—'} a week for a house and $${s.ru ?? '—'} for a unit, a gross yield of about ${pct(s.y, 1)} on a house. Over the past year values changed about ${pct(s.g1, 1, true)}${String(s.g1s).startsWith('region') ? ` (${esc(R.name || 'regional')} figure)` : ''}. Keyzing suburb score: ${s.score ?? '—'}/100.</p>
+<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)} and the typical unit about ${money(s.u)}. Typical rents are about $${s.rh ?? '—'} a week for a house and $${s.ru ?? '—'} for a unit, a gross yield of about ${pct(s.y, 1)} on a house. ${R.quarterPct != null ? `Over the last 3 months ${esc(R.name || 'the area')} values changed ${pct(R.quarterPct, 1, true)} (${pct(R.annualPct, 1, true)} over 12 months, month-end ${esc(ix.market?.indexMonth || '')}).` : ''} Keyzing suburb score: ${s.score ?? '—'}/100.</p>
 <ul><li>Price data: ${s.hs === 'model' ? 'modelled (no official suburb sales series)' : 'official government sales'}</li><li>${s.cbd != null ? `${Math.round(s.cbd)} km from the city centre` : 'Regional'}${s.ocn != null ? `, ${Number(s.ocn).toFixed(1)} km from the ocean` : ''}</li></ul>
 <h2>Nearby suburbs</h2><ul>${near.map((x) => `<li><a href="/suburb/${x.slug}">${esc(x.name)} ${x.s} ${esc(x.pc || '')}</a>: typical ${x.pt === 'u' ? 'unit' : 'house'} ${money(x.pt === 'u' ? x.u : x.h)}</li>`).join('')}</ul></article>`;
     const jsonld = [

@@ -49,11 +49,12 @@ test('valuation accuracy is stated per state', () => {
   assert.match(accuracy({ s: 'WA', conf: 'low' }, 'u', model).text, /Unit estimates are weaker/);
 });
 
-test('one 12-month series: the monthly index, never the daily one', () => {
-  const idx = { monthEnd: '31 August 2026', daily: { PER: { date: '2026-09-28', week: 0.1, month: -1, ytd: 3, year: 12, series: [] } }, monthly: { PER: { allYear: 15.6 } } };
-  const market = { regions: { PER: { name: 'Perth', annualPct: 15.6 } } };
-  assert.equal(regionMoves('PER', idx, market).year, 15.6);
-  const s = applyLiveGrowth({ rg: 'PER', g1: 15.6, g1s: 'region' }, idx, market);
+test('month-end figures only, 3-month change first with a trend word', () => {
+  const market = { indexMonth: '31 August 2026', regions: { PER: { name: 'Perth', annualPct: 15.6, quarterPct: -3.2 } } };
+  assert.equal(regionMoves('PER', null, market).year, 15.6);
+  const s = applyLiveGrowth({ rg: 'PER', g1: 15.6, g1s: 'region' }, null, market);
   assert.equal(s.g1, 15.6);
-  assert.match(s.g1p, /monthly index/);
+  assert.equal(s.g3, -3.2);
+  assert.equal(s.trend, 'Falling');
+  assert.match(s.g1p, /Perth-wide/);
 });

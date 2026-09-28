@@ -5,7 +5,7 @@ import { looksLikeAddress } from './intent.js';
 
 const routes = [
   [/^\/$/, () => import('./pages/home.js')],
-  [/^\/live\/?$/, () => import('./pages/live.js')],
+  [/^\/live\/?$/, () => Promise.resolve({ default: () => navigate('/markets', true) })],
   [/^\/markets\/?$/, () => import('./pages/markets.js')],
   [/^\/new-builds\/?$/, () => import('./pages/newbuilds.js')],
   [/^\/weekly\/?$/, () => import('./pages/weekly.js')],
@@ -236,18 +236,18 @@ $('.quick').addEventListener('submit', (e) => e.preventDefault());
 async function ticker() {
   try {
     const [rs, rba, market] = await Promise.all([load('rates-summary'), load('rba'), load('market')]);
-    const bestInv = rs.best.INV_PI_variable?.[0];
-    const bestOO = rs.best.OO_PI_variable?.[0];
+    const bestInv = rs.best.INV_PI_variable_national?.[0] || rs.best.INV_PI_variable?.[0];
+    const bestOO = rs.best.OO_PI_variable_national?.[0] || rs.best.OO_PI_variable?.[0];
     const n = market.national;
     const items = [
       `<span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b>`,
-      bestInv && `<span>Lowest investor variable</span> <b>${pct(bestInv.rate, 2)}</b> <span>${esc(bestInv.lender)}</span>`,
-      bestOO && `<span>Lowest owner-occupier variable</span> <b>${pct(bestOO.rate, 2)}</b> <span>${esc(bestOO.lender)}</span>`,
-      `<span>National median dwelling</span> <b>${aud(n.medianDwelling, { compact: true })}</b> <span class="${n.annualPct >= 0 ? 'up' : 'down'}">${pct(n.annualPct, 1, true)} 12m</span>`,
+      bestInv && `<span>Lowest investor variable, national lender</span> <b>${pct(bestInv.rate, 2)}</b> <span>${esc(bestInv.lender)}</span>`,
+      bestOO && `<span>Lowest owner-occupier variable, national lender</span> <b>${pct(bestOO.rate, 2)}</b> <span>${esc(bestOO.lender)}</span>`,
+      `<span>National median dwelling</span> <b>${aud(n.medianDwelling, { compact: true })}</b> <span class="${n.quarterPct >= 0 ? 'up' : 'down'}">${pct(n.quarterPct, 1, true)} 3m</span>`,
       ...Object.values(market.regions)
         .filter((r) => r.capital)
-        .map((r) => `<span>${r.name}</span> <b>${aud(r.medianDwelling, { compact: true })}</b> <span class="${r.annualPct >= 0 ? 'up' : 'down'}">${pct(r.annualPct, 1, true)} 12m</span>`),
-      `<span>City figures: median of all dwellings (houses and units), Cotality monthly index to ${esc(market.indexMonth || 'month-end')}</span>`,
+        .map((r) => `<span>${r.name}, all homes</span> <b>${aud(r.medianDwelling, { compact: true })}</b> <span class="${r.quarterPct >= 0 ? 'up' : 'down'}">${pct(r.quarterPct, 1, true)} 3m</span>`),
+      `<span>Median of all homes and 3-month change, Cotality, month-end ${esc(market.indexMonth || '')}</span>`,
       `<span>Rates refreshed</span> <b>${ago(rs.updated)}</b>`,
     ].filter(Boolean);
     const html = items.map((i) => `<div>${i}</div>`).join('');

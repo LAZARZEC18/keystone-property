@@ -1,12 +1,12 @@
 import { demo } from '../demo.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
-import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill } from '../ui.js';
+import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
-import { RULES, STATES } from '../rules.js';
+import { RULES, STATES, GROWTH } from '../rules.js';
 import { attachSearch } from '../app.js';
 
-const SCEN = { bear: { growth: 2, rentGrowth: 2.5 }, base: { growth: 5, rentGrowth: 4 }, bull: { growth: 7, rentGrowth: 5 } };
+const SCEN = { bear: { growth: GROWTH.bear, rentGrowth: 2.5 }, base: { growth: GROWTH.base, rentGrowth: 3.5 }, bull: { growth: GROWTH.bull, rentGrowth: 4.5 } };
 
 export default async function analysePage(main, _p, query) {
   setMeta({ title: '2026 tax-change investment property calculator', description: 'Stamp duty, LMI, land tax, the weekly cost after tax and a 10-year after-tax return for any Australian property, under the 2026 negative gearing and CGT rules.' });
@@ -29,7 +29,7 @@ export default async function analysePage(main, _p, query) {
     interestOnly: query.io === '1',
     income: +query.income || 120000,
     buyer: query.buyer || 'investor',
-    growth: +query.growth || (type === 'u' ? 3.5 : 5),
+    growth: +query.growth || GROWTH.base,
     rentGrowth: +query.rg || 4,
     cpi: 3,
     vacancyWeeks: query.vac ? +query.vac : 2,
@@ -97,7 +97,7 @@ export default async function analysePage(main, _p, query) {
       </div>
       <div class="card" style="margin-top:16px">
         <h3>Assumptions</h3>
-        <div class="seg" id="a-scen" style="margin-bottom:12px"><button data-s="bear">Bear 2%</button><button data-s="base" class="on">Base 5%</button><button data-s="bull">Bull 7%</button></div>
+        <div class="seg" id="a-scen" style="margin-bottom:12px"><button data-s="bear">Bear ${GROWTH.bear}%</button><button data-s="base" class="on">Base ${GROWTH.base}%</button><button data-s="bull">Bull ${GROWTH.bull}%</button></div>
         <div class="fields">
           ${field('a-growth', 'Capital growth (%/yr)', st.growth, 'type="number" step="0.5"')}
           ${field('a-rg', 'Rent growth (%/yr)', st.rentGrowth, 'type="number" step="0.5"')}
@@ -176,8 +176,8 @@ export default async function analysePage(main, _p, query) {
       <div class="card">
         <div><div class="eyebrow" style="margin:0">Each week in year 1, after tax${st.addr ? ` · ${esc(st.addr)}` : ''}</div>
           <div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div>
-          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · ${st.growth}% a year growth assumed</div>
-          <p class="td-test"><b class="${v.beatsDeposit ? 'up' : 'down'}">${v.beatsDeposit ? 'Beats' : 'Doesn’t beat'} a term deposit.</b> ${esc(v.vsDeposit || '')}${scen.bear.irr !== null ? ` With ${SCEN.bear.growth}% growth it would return ${pct(scen.bear.irr, 1)} a year.` : ''}</p>
+          <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · projections below use ${st.growth}% a year growth</div>
+          ${returnsLine({ bear: { growth: GROWTH.bear, irr: scen.bear.irr }, base: { growth: GROWTH.base, irr: scen.base.irr }, bull: { growth: GROWTH.bull, irr: scen.bull.irr } }, v)}
           <p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)}</p></div>
         <div class="grid g2" style="margin-top:12px;gap:8px 20px">
           <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
@@ -283,7 +283,7 @@ export default async function analysePage(main, _p, query) {
       $('#a-price').value = t === 'u' ? sub.u : sub.h;
       $('#a-rent').value = t === 'u' ? sub.ru : sub.rh;
     }
-    $('#a-growth').value = t === 'u' ? 3.5 : 5;
+    $('#a-growth').value = GROWTH.base;
   });
   $('#a-new').addEventListener('change', () => {
     if ($('#a-new').value === '1') $('#a-built').value = new Date().getFullYear();

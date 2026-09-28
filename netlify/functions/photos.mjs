@@ -23,8 +23,8 @@ const get = async (url) => {
 const text = (html = '') => String(html).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, ' ').trim();
 
 // Things that are near a suburb but say nothing about living there.
-const JUNK = /\b(ISS\d*|view of earth|astronaut|satellite|landsat|airport|aerodrome|helicopters?|hangars?|runway|aircraft|logo|map|locator|location map|diagram|chart|plaque|sign(age)?|phones?|aed|interior|toilet|menu|receipt|screenshot|mcdonald'?s|kfc|hungry jack'?s|realme|iphone|samsung|bus stop pole|timetable|graffiti|rubbish|bin|coat of arms|flag|seal)\b/i;
-const GOOD = /\b(street|streetscape|house|houses|home|homes|residential|park|reserve|lake|beach|foreshore|river|view|panorama|skyline|aerial|jetty|pier|coast|bushland|lookout|sunset|garden|trees|village|town centre)\b/i;
+const JUNK = /\b(construction|under construction|works|roadworks|car ?park|carpark|facade|shopfront|shop front|galleria|shopping (centre|center|mall)|mall|supermarket|market front|library|station|platform|bus (station|interchange)|ISS\d*|view of earth|astronaut|satellite|landsat|airport|aerodrome|helicopters?|hangars?|runway|aircraft|logo|map|locator|location map|diagram|chart|plaque|sign(age)?|phones?|aed|interior|toilet|menu|receipt|screenshot|mcdonald'?s|kfc|hungry jack'?s|realme|iphone|samsung|bus stop pole|timetable|graffiti|rubbish|bin|coat of arms|flag|seal)\b/i;
+const GOOD = /\b(street|streetscape|house|houses|home|homes|residential|park|reserve|lake|beach|foreshore|river|view|panorama|skyline|aerial|jetty|pier|coast|bushland|lookout|sunset|garden|trees)\b/i;
 const OK = /\b(road|avenue|oval|station|shops|church|school|library|hall|cafe|market)\b/i;
 const BADCAT = /\b(animals?|insects?|birds?|species|taxa|fungi|plants? by|mobile phones|people|portraits|vehicles by|aircraft|logos)\b/i;
 
@@ -65,9 +65,11 @@ async function nearby(lat, lng, name, n) {
       if (GOOD.test(x.categories)) s += 1;
       if (/quality images|featured pictures|valued images/i.test(x.categories)) s += 2;
       if (x.big > 3e6) s += 1;
-      return { ...x, s };
+      const scenic = GOOD.test(x.title) || GOOD.test(x.categories) || /quality images|featured pictures|valued images/i.test(x.categories);
+      return { ...x, s, scenic };
     })
-    .filter((x) => x.s >= 2)
+    // only photos that show the place at its best: beaches, parks, water, streets of homes, views
+    .filter((x) => x.scenic && x.s >= 3)
     .sort((a, b) => b.s - a.s || b.big - a.big);
   // keep variety: at most two photos with nearly the same title
   const seen = {};
@@ -100,7 +102,7 @@ export default async (req) => {
         photos = [...extra.filter((x) => !photos.some((p) => p.page === x.page)), ...photos].slice(0, n);
       }
     }
-    return json({ photos: photos.map(({ categories, big, s, ...p }) => p), source: 'Wikimedia Commons' });
+    return json({ photos: photos.map(({ categories, big, s, scenic, ...p }) => p), source: 'Wikimedia Commons' });
   } catch (e) {
     return json({ error: String(e.message || e) }, 502);
   }

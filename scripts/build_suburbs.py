@@ -828,7 +828,9 @@ def risk_index(r):
     """0-100 concentration and liquidity risk: mining dependence, one dominant industry, remoteness, shrinking population."""
     parts = []
     m = (r.get('min%') or 0)
-    parts.append(max(0, min(100, (m - 4) / 22 * 100)))  # 4% of workers in mining -> 0, 26%+ -> 100
+    # resource towns: many mine and gas workers fly or drive in and don't count as residents, so the resident share
+    # understates dependence. 3% of resident workers in mining -> 0, 18%+ -> 100
+    parts.append(max(0, min(100, (m - 3) / 15 * 100)))
     t = (r.get('top%') or 0)
     parts.append(max(0, min(100, (t - 22) / 20 * 100)))  # largest industry 22% -> 0, 42%+ -> 100
     parts.append(RA_RISK.get(r.get('ra'), 20))

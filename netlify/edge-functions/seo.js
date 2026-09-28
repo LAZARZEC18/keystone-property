@@ -8,12 +8,11 @@ const TTL = 60 * 60 * 1000;
 
 async function getIndex(origin) {
   if (cache && Date.now() - cache.at < TTL) return cache.ix;
-  const [sub, market, index] = await Promise.all([
+  const [sub, market] = await Promise.all([
     fetch(`${origin}/data/suburbs.json`).then((r) => r.json()),
     fetch(`${origin}/data/market.json`).then((r) => r.json()),
-    fetch(`${origin}/api/live-index`).then((r) => (r.ok ? r.json() : null)).catch(() => null),
   ]);
-  cache = { ix: buildIndex(sub, market, index), at: Date.now() };
+  cache = { ix: buildIndex(sub, market, null), at: Date.now() };
   return cache.ix;
 }
 

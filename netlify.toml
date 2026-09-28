@@ -26,7 +26,13 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), camera=(), microphone=()"
 
-# Old URL: listings now live on the property page.
+# Old URLs.
+[[redirects]]
+  from = "/live"
+  to = "/markets"
+  status = 301
+
+# Listings now live on the property page.
 [[redirects]]
   from = "/listings"
   to = "/property"

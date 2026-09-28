@@ -3,7 +3,7 @@ import { demo } from '../demo.js';
 import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge, growth12 } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load } from '../data.js';
 import { stampDuty, lmi, borrowingPower, repayment, analyse, suburbScore, PROFILES, incomeTax } from '../engine.js';
-import { STATES, HOME_GUARANTEE, guaranteeCap, HELP_TO_BUY, helpToBuyCap, FHOG } from '../rules.js';
+import { STATES, HOME_GUARANTEE, guaranteeCap, HELP_TO_BUY, helpToBuyCap, FHOG, GROWTH } from '../rules.js';
 import { attachSearch } from '../app.js';
 import { haversine } from '../data.js';
 import { listingLinks, nextStepsCard } from '../insights.js';
@@ -68,7 +68,7 @@ function search(opts, top) {
 }
 
 export default async function affordPage(main, _p, query) {
-  setMeta({ title: 'What can I afford? Find the best property you can buy', description: 'Enter your deposit and income. Keyzing works out your maximum price in every state (stamp duty, LMI, lender buffers) and ranks the best suburbs you can afford.' });
+  setMeta({ title: 'What can I afford? your price ceiling in every state and territory', description: 'Enter your deposit and income. Keyzing works out your maximum price in every state and territory (stamp duty, LMI, lender buffers) and ranks the best suburbs you can afford.' });
   const [{ list }, rs, market, rba] = await Promise.all([suburbs(), load('rates-summary'), load('market'), load('rba')]);
   const lowOO = rs.best.OO_PI_variable?.[0]?.rate || 6;
   const lowInv = rs.best.INV_PI_variable?.[0]?.rate || 6.3;
@@ -79,7 +79,7 @@ export default async function affordPage(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head with-demo"><div><div class="eyebrow">Affordability analyst</div><h1>What can I afford, and where should I buy?</h1>
-  <p>Tell Keyzing what you have saved and what you earn. It calculates the most you can pay in every state, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>${demo('afford')}</div>
+  <p>Tell Keyzing what you have saved and what you earn. It calculates the most you can pay in every state and territory, including stamp duty, first home concessions, the 5% Deposit Scheme and the 3-point lender buffer, then searches all ${list.length.toLocaleString()} suburbs for the best places you can actually afford. Buying a home to live in? Add where you work and it ranks by commute, local economy, town size and growth instead of investment returns.</p></div>${demo('afford')}</div>
   <div class="grid" style="grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px" id="aff-grid">
     <form class="card" id="af" onsubmit="return false" style="align-self:start;position:sticky;top:110px">
       <h3>Your situation</h3>
@@ -98,7 +98,7 @@ export default async function affordPage(main, _p, query) {
           <label class="field" style="grid-column:1/-1;position:relative">Where do you work? (optional)<input id="work" type="search" placeholder="Suburb, e.g. Perth or Osborne Park" value=""><div class="ac" id="wac" hidden style="top:62px;left:0;right:auto"></div></label>
           <label class="field" style="grid-column:1/-1">Max distance from work<select name="commute"><option value="10">10 km</option><option value="20">20 km</option><option value="30" selected>30 km</option><option value="50">50 km</option><option value="80">80 km</option></select></label>
         </div>
-        <label class="field">Rank by<select name="profile"><option value="live">Best place to live</option><option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow</option><option value="firsthome">Affordability / first home</option></select></label>
+        <label class="field">Rank by<select name="profile"><option value="live">Fit for living in</option><option value="balanced">Balanced</option><option value="growth">Capital growth</option><option value="cashflow">Cash flow</option><option value="firsthome">Affordability / first home</option></select></label>
         <label class="field">Where<select name="where"><option value="">Anywhere in Australia</option>${Object.keys(STATES).map((s) => `<option value="s:${s}">${STATES[s]}</option>`).join('')}${Object.entries(market.regions).map(([c, r]) => `<option value="r:${c}">${r.name}</option>`).join('')}</select></label>
         <label class="field">Min population<input name="pop" type="number" step="1" value="${esc(q('pop', 3000))}"></label>
       </div>
@@ -238,12 +238,15 @@ export default async function affordPage(main, _p, query) {
     const stretchOnly = stretch.filter((m) => !inReach.has(m.s)).sort((a, b) => b.score - a.score);
 
     // Weekly cost of the top picks
-    const top = matches.slice(0, 40).map((m) => {
+    // Home buyers with no workplace and no area get no national ranking: a list of 'places to live' anywhere in
+    // Australia isn't meaningful. They pick a city or add a workplace first.
+    const needArea = live && !work && !f.where;
+    const top = (needArea ? [] : matches.slice(0, 40)).map((m) => {
       const repay = (repayment(m.st.loan, rate, 30) * 12) / 52;
       let weekly = -repay;
       let irr = null;
       if (investor) {
-        const a = analyse({ state: m.s.s, price: m.price, weeklyRent: m.rent || 0, deposit: m.st.deposit / m.price, ratePct: rate, income, hold: 10, growth: m.t === 'u' ? 3.5 : 5, perth: m.s.rg === 'PER', strata: m.t === 'u' ? 3200 : 0, landValuePct: m.t === 'u' ? 0.25 : 0.55, otherCosts: OTHER_COSTS });
+        const a = analyse({ state: m.s.s, price: m.price, weeklyRent: m.rent || 0, deposit: m.st.deposit / m.price, ratePct: rate, income, hold: 10, growth: GROWTH.base, perth: m.s.rg === 'PER', strata: m.t === 'u' ? 3200 : 0, landValuePct: m.t === 'u' ? 0.25 : 0.55, otherCosts: OTHER_COSTS });
         weekly = a.summary.weeklyCashAfterTax;
         irr = a.summary.irr;
       }
@@ -269,7 +272,7 @@ export default async function affordPage(main, _p, query) {
         <div class="stat"><span class="k">Highest price you could buy</span><span class="v xl">${aud(bestState.max, { compact: true })}</span><span class="s">in ${STATES[bestState.st]} with ${aud(savings, { compact: true })} saved${bestState.s && bestState.s.loan < Math.min(bpBase.amount, capFromWeekly) * 0.97 ? '. Your deposit is the limit, not your income' : '. Your borrowing power is the limit'}</span></div>
         <div class="stat"><span class="k">Suburbs with a house or unit you can afford</span><span class="v xl">${matches.length.toLocaleString()}</span><span class="s">of ${eligible.toLocaleString()} ${f.where ? 'in your chosen area' : 'across Australia'} with ${minPop.toLocaleString()}+ residents${work && !investor ? ` within ${maxKm} km of work` : ''}</span></div>
       </div>
-      <p class="note" style="margin-top:12px">${esc(verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live }))}</p>
+      <p class="note" style="margin-top:12px">${esc(verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea }))}</p>
     </div>
 
     <div class="card" style="margin-top:16px"><h3>Your ceiling in each state</h3>
@@ -282,17 +285,17 @@ export default async function affordPage(main, _p, query) {
     </div>
 
     <div class="card" style="margin-top:16px">
-      <div class="card-head"><h3>Your best options</h3><span class="note">${live ? `Ranked for living in: ${work ? `distance to ${esc(cleanName(work.n))}, ` : ''}local economy and stability, town size and services, and price growth` : `Ranked by ${esc(form.profile.selectedOptions[0].text.toLowerCase())} score`}</span> ${live && !work ? `<span class="callout" style="display:block;margin:8px 0 0">Without a workplace this ranks only on local economy, services and price trend, so it can suggest places that don't suit you. <b>Add where you work</b> (left) to rank by commute${f.where ? '' : `, or pick a city: ${capitals.map(([c, r]) => `<button type="button" class="pill" data-where="r:${c}">${esc(r.name)}</button>`).join(' ')}`}.</span>` : ''}<span class="fine" style="display:block"><span class="area-tag">area</span> = city or regional 12-month figure where there's no suburb-level sales data.</span></div>
+      <div class="card-head"><h3>Suburbs that fit your budget</h3><span class="note">${live ? `Ranked for living in: ${work ? `distance to ${esc(cleanName(work.n))}, ` : ''}local economy and stability, town size and services, and price growth` : `Ranked by ${esc(form.profile.selectedOptions[0].text.toLowerCase())} score`}</span> ${live && !work && f.where ? `<span class="callout" style="display:block;margin:8px 0 0">Without a workplace this ranks only on local economy, services and price trend, so it can suggest places that don't suit you. <b>Add where you work</b> (left) to rank by commute${f.where ? '' : `, or pick a city: ${capitals.map(([c, r]) => `<button type="button" class="pill" data-where="r:${c}">${esc(r.name)}</button>`).join(' ')}`}.</span>` : ''}<span class="fine" style="display:block"><span class="area-tag">area</span> = city or regional 12-month figure where there's no suburb-level sales data.</span></div>
       ${top.length ? `<div class="pick-grid" id="pick-photos">${top.slice(0, 3).map((m, i) => `<div data-pick="${i}">${photoCard(null, `<b>${i + 1}. ${esc(cleanName(m.s.n))} ${m.s.s}</b><span class="pc-stats">${m.t === 'u' ? 'Unit' : 'House'} about ${aud(m.price, { compact: true })}</span>`, { href: suburbUrl(m.s) })}</div>`).join('')}</div>` : ''}
-      ${top.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Suburb</th><th class="n">${live ? 'Fit for you' : 'Score'}</th><th class="n">Typical price</th><th class="n">You'd need</th><th class="n">Left over</th><th class="n">${investor ? 'Weekly after tax' : 'Repayment / wk'}</th>${investor ? '<th class="n">Rent / wk</th><th class="n">Yield</th>' : `<th class="n">Loan</th>${work ? '<th class="n">To work</th>' : ''}`}<th class="n">12m</th>${investor ? '<th class="n">10-yr return</th>' : ''}<th></th></tr></thead><tbody>
+      ${top.length ? `<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Suburb</th><th class="n">${live ? 'Fit for you' : 'Score'}</th><th class="n">Typical price</th><th class="n">You'd need</th><th class="n">Left over</th><th class="n">${investor ? 'Weekly after tax' : 'Repayment / wk'}</th>${investor ? '<th class="n">Rent / wk</th><th class="n">Yield</th>' : `<th class="n">Loan</th>${work ? '<th class="n">To work</th>' : ''}`}<th class="n">Price trend</th>${investor ? '<th class="n">10-yr return</th>' : ''}<th></th></tr></thead><tbody>
       ${top
-        .map((m, i) => `<tr><td class="faint mono">${i + 1}</td><td><a href="${suburbUrl(m.s)}" data-link>${esc(cleanName(m.s.n))}</a> <span class="muted">${m.s.s} ${m.s.pc || ''}</span><div class="fine">${esc(market.regions[m.s.rg]?.name || '')} · ${m.t === 'u' ? 'unit' : 'house'}${m.highRise ? ' · <span class="down">high-rise market</span>' : ''} ${srcBadge(m.t === 'u' ? m.s.us : m.s.hs)}</div></td><td class="n">${scoreBadge(m.score)}</td><td class="n">${aud(m.price, { compact: true })}</td><td class="n">${aud(m.st.cash, { compact: true })}</td><td class="n up">${aud(m.st.spare, { compact: true })}</td><td class="n ${investor ? (m.weekly < 0 ? 'down' : 'up') : ''}">${aud(Math.round(investor ? m.weekly : -m.weekly))}</td>${investor ? `<td class="n">${aud(m.rent)}</td><td class="n">${pct(m.yld, 1)}</td>` : `<td class="n"><span class="fine">${m.st.htb ? `Help to Buy (govt ${aud(m.st.govShare, { compact: true })})` : m.st.guarantee ? '5% scheme' : m.st.lmi ? `LMI ${aud(m.st.lmi, { compact: true })}` : 'no LMI'}</span></td>${work ? `<td class="n">${m.km.toFixed(0)} km</td>` : ''}`}<td class="n">${growth12(m.s, { suffix: '', short: true })}</td>${investor ? `<td class="n">${pct(m.irr, 1)}</td>` : ''}<td><a class="btn sm" href="/analyse?suburb=${m.s.id}&price=${m.price}&rent=${m.rent || ''}&type=${m.t}&dep=${Math.round((m.st.deposit / m.price) * 100)}&rate=${rate}&income=${income}&buyer=${buyer}" data-link>Analyse</a> <a class="btn sm ghost" href="${listingLinks(m.s).reaBuy}" target="_blank" rel="noopener">Listings</a></td></tr>`)
+        .map((m, i) => `<tr><td class="faint mono">${i + 1}</td><td><a href="${suburbUrl(m.s)}" data-link>${esc(cleanName(m.s.n))}</a> <span class="muted">${m.s.s} ${m.s.pc || ''}</span><div class="fine">${esc(market.regions[m.s.rg]?.name || '')} · ${m.t === 'u' ? 'unit' : 'house'}${m.highRise ? ' · <span class="down">high-rise market</span>' : ''} ${srcBadge(m.t === 'u' ? m.s.us : m.s.hs)}</div></td><td class="n">${scoreBadge(m.score)}</td><td class="n">${aud(m.price, { compact: true })}</td><td class="n">${aud(m.st.cash, { compact: true })}</td><td class="n up">${aud(m.st.spare, { compact: true })}</td><td class="n ${investor ? (m.weekly < 0 ? 'down' : 'up') : ''}">${aud(Math.round(investor ? m.weekly : -m.weekly))}</td>${investor ? `<td class="n">${aud(m.rent)}</td><td class="n">${pct(m.yld, 1)}</td>` : `<td class="n"><span class="fine">${m.st.htb ? `Help to Buy (govt ${aud(m.st.govShare, { compact: true })})` : m.st.guarantee ? '5% scheme' : m.st.lmi ? `LMI ${aud(m.st.lmi, { compact: true })}` : 'no LMI'}</span></td>${work ? `<td class="n">${m.km.toFixed(0)} km</td>` : ''}`}<td class="n">${growth12(m.s, { suffix: '', short: true })}</td>${investor ? `<td class="n">${pct(m.irr, 1)}</td>` : ''}<td><a class="btn sm" href="/analyse?suburb=${m.s.id}&price=${m.price}&rent=${m.rent || ''}&type=${m.t}&dep=${Math.round((m.st.deposit / m.price) * 100)}&rate=${rate}&income=${income}&buyer=${buyer}" data-link>Analyse</a> <a class="btn sm ghost" href="${listingLinks(m.s).reaBuy}" target="_blank" rel="noopener">For sale ↗</a></td></tr>`)
         .join('')}
-      </tbody></table></div>` : '<p class="empty">No suburbs fit this budget and area. Try widening the area, including units, or lowering the minimum population.</p>'}
+      </tbody></table></div>` : needArea ? `<div class="callout" style="margin:8px 0 0"><b>Where do you want to live?</b> ${matches.length.toLocaleString()} suburbs across Australia fit your budget. Add your workplace on the left to rank them by commute, or pick a city: <div class="row" style="margin-top:8px">${capitals.map(([c, r]) => `<button type="button" class="pill" data-where="r:${c}">${esc(r.name)}</button>`).join(' ')}</div></div>` : '<p class="empty">No suburbs fit this budget and area. Try widening the area, including units, or lowering the minimum population.</p>'}
     </div>
 
     <div class="grid g2" style="margin-top:16px">
-      <div class="card"><h3>Best option in each state</h3><div class="kv">${Object.keys(STATES)
+      <div class="card"><h3>Top match in each state and territory</h3><div class="kv">${Object.keys(STATES)
         .map((st) => {
           const b = (byState[st] || [])[0];
           return `<span>${STATES[st]}</span><span>${b ? `<a href="${suburbUrl(b.s)}" data-link>${esc(cleanName(b.s.n))}</a> · ${b.t === 'u' ? 'unit' : 'house'} ${aud(b.price, { compact: true })} · ${scoreBadge(b.score)}` : '<span class="faint">none in budget</span>'}</span>`;
@@ -323,7 +326,7 @@ export default async function affordPage(main, _p, query) {
       map = L.map('amap', { scrollWheelZoom: false });
       baseTiles().addTo(map);
       const css = getComputedStyle(document.documentElement);
-      const col = (v) => css.getPropertyValue(v >= 75 ? '--sc-a' : v >= 60 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
+      const col = (v) => css.getPropertyValue(v >= 65 ? '--sc-a' : v >= 55 ? '--sc-b' : v >= 45 ? '--sc-c' : '--sc-d').trim();
       top.forEach((m, i) => L.circleMarker([m.s.lat, m.s.lng], { radius: 7, weight: 1, color: '#0008', fillColor: col(m.score), fillOpacity: 0.95 }).addTo(map).bindPopup(`<b>${i + 1}. <a href="${suburbUrl(m.s)}" data-link>${esc(cleanName(m.s.n))}</a></b> ${m.s.s}<br>${aud(m.price, { compact: true })} · score ${m.score}`));
       map.fitBounds(L.latLngBounds(top.map((m) => [m.s.lat, m.s.lng])).pad(0.1), { maxZoom: 11 });
     }
@@ -359,7 +362,7 @@ export function liveScore(s, km, maxKm) {
   return Math.round(parts.reduce((a, [v, x]) => a + v * x, 0) / w);
 }
 
-function verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live }) {
+function verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea = false }) {
   const can = capitals.filter(([code, r]) => {
     const row = stateRows.find((x) => x.st === r.state);
     return row && row.max >= (r.medianHouse || r.medianDwelling);
@@ -368,11 +371,11 @@ function verdictText({ matches, stateRows, capitals, savings, income, buyer, tak
     const row = stateRows.find((x) => x.st === r.state);
     return row && r.medianUnit && row.max >= r.medianUnit;
   }).map(([, r]) => r.name);
-  const top = matches[0];
+  const top = needArea ? null : matches[0];
   let s = '';
   if (can.length) s += `Your budget covers a median-priced house in ${can.join(', ')}. `;
   else if (canUnit.length) s += `A median house is out of reach in every capital, but a median unit is within budget in ${canUnit.join(', ')}. `;
-  else s += 'Median capital-city prices are above your current ceiling, so the best options are in regional centres and outer suburbs. ';
+  else s += 'Median capital-city prices are above your current ceiling, so the suburbs that fit are in regional centres and outer suburbs. ';
   if (top) s += `The strongest suburb you can afford ${live ? 'to live in' : 'on this strategy'} is ${cleanName(top.s.n)} (${top.s.s}), a ${top.t === 'u' ? 'unit' : 'house'} at about ${aud(top.price, { compact: true })}${live ? `, the best match for living in on commute, local economy, services and growth (${top.score}/100)` : ` with a Keyzing Score of ${top.score}`}. `;
   const top1 = [...stateRows].sort((a, b) => b.max - a.max)[0];
   const rep = top1?.s ? (repayment(top1.s.loan, rate, 30) * 12) / 52 : 0;
@@ -407,7 +410,7 @@ function schemesCard({ income, couple, kind, code, bestState, market }) {
   return `<div class="card" style="margin-top:16px"><h3>First home schemes, for the numbers you entered</h3><ul class="plain-list" style="line-height:1.65;padding-left:0;list-style:none;margin:6px 0 0">
     ${row(true, '5% Deposit Scheme', `no income limit since October 2025. You need to be 18+, an Australian citizen or permanent resident, and buying your first home to live in, under the price cap for the area (${aud(HOME_GUARANTEE.caps.WA[0], { compact: true })} in Perth, for example).`)}
     ${row(htbOk, 'Help to Buy', htbOk ? `your ${couple ? 'combined' : ''} income of ${aud(income)} is under the ${aud(htbLimit)} limit${couple ? ' for couples' : ' for singles'}. Places are limited and price caps apply.` : `your ${couple ? 'combined' : ''} income of ${aud(income)} is over the ${aud(htbLimit)} limit${couple ? ' for couples' : ' for singles'}.`)}
-    ${row(true, 'First Home Super Saver', 'open to first home buyers for voluntary super contributions made from now on: up to $15,000 a year and $50,000 in total. Request the release before you sign a contract.')}
+    ${row(true, 'First Home Super Saver', 'eligible voluntary super contributions made since 1 July 2017 count, up to $15,000 a year and $50,000 in total, plus deemed earnings. Request the release from the ATO before you sign a contract.')}
     ${g ? row(g[0] > 0 ? null : false, `First Home Owner Grant (${st})`, g[0] > 0 ? `${aud(g[0])} for ${g[1]}. Established homes don't qualify${st === 'NT' ? ' except in the NT' : ''}.` : g[1]) : ''}
   </ul><p class="fine" style="margin-top:8px">A quick check against the main rules only; each scheme has more conditions. Confirm with a participating lender, your state revenue office or <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia ↗</a>. Details and state duty concessions are in the <a href="/guide#fhb" data-link>first home guide</a>.</p></div>`;
 }

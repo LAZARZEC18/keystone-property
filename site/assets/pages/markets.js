@@ -35,7 +35,7 @@ export default async function markets(main) {
   <section class="section">
     <h2>Values and momentum by market</h2>
     <div class="grid g2">
-      <div class="card"><h3>12-month change in values</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.annualPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
+      <div class="card"><h3>Last 3 months: where prices are heading now</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.quarterPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}<h3 style="margin-top:16px">Last 12 months</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.annualPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
       <div class="card"><h3>Gross rental yield</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.yield })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1) })}</div>
     </div>
     <div class="tbl-wrap" style="margin-top:16px"><table>

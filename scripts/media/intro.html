@@ -48,7 +48,7 @@ function draw(t) {
   const fx = mix(0, PERTH[0], z), fy = mix(0, PERTH[1], z);
   const appear = (p) => clamp((t - 0.2 - (p.lng - 113) / 41 * 2.4 - p.r * 0.6) / 0.5);
   const fadeAll = 1 - clamp((t - 11.4) / 0.6);
-  const growthMode = clamp((t - 5.8) / 0.8) * (1 - clamp((t - 8.8) / 0.6));
+  const growthMode = 0; // price colours throughout (no growth snapshot that goes stale)
   g.globalCompositeOperation = 'lighter';
   for (const p of P) {
     const a = appear(p) * fadeAll;
@@ -65,12 +65,11 @@ function draw(t) {
   g.globalCompositeOperation = 'source-over';
   // captions
   const a1 = clamp((t - 1.2) / 0.6) * (1 - clamp((t - 4.0) / 0.4));
-  text('Every suburb in Australia.', 70, 150, { size: 50, alpha: a1 });
-  text('11,042 of them, priced and scored.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a1, color: '180,210,205' });
+  text('11,042 suburbs across Australia.', 70, 150, { size: 50, alpha: a1 });
+  text('Each one priced and scored.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a1, color: '180,210,205' });
   const a2 = clamp((t - 5.9) / 0.5) * (1 - clamp((t - 8.5) / 0.4));
   text('Zoom into Perth.', 70, 150, { size: 50, alpha: a2 });
-  text('Every dot is a suburb.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a2, color: '180,210,205' });
-  text('Green: prices up over the past year. Coral: down.', 72, 236, { size: 18, font: 'IBM Plex Sans', weight: 400, alpha: a2 * 0.85, color: '110,225,160' });
+  text('Every dot is a suburb, coloured by its typical house price.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a2, color: '180,210,205' });
   const a3 = clamp((t - 9.6) / 0.6) * (1 - clamp((t - 11.4) / 0.5));
   text('Know what you can afford.', 70, 150, { size: 50, alpha: a3 });
   text('Anywhere in Australia. Free.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a3, color: '180,210,205' });

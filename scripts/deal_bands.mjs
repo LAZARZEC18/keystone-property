@@ -1,3 +1,4 @@
+import { GROWTH } from '../site/assets/rules.js';
 // Benchmark for the relative deal rating: the typical home in every suburb of 1,000+ people, run through the
 // same analysis the site uses (20% deposit, the RBA's average new investor variable rate, $120k income, 10-year hold,
 // established home bought today). Writes the distribution of verdict scores as 100 quantiles to
@@ -23,7 +24,7 @@ for (const r of d.rows) {
   const rent = unit ? s.ru : s.rh;
   if (!price || !rent) continue;
   s.sc = { cash: s.sc_cash, momentum: s.sc_momentum, growth: s.sc_growth, demand: s.sc_demand, afford: s.sc_afford, stability: s.sc_stability, risk: s.rsk ?? 0, modelled: !(s.conf === 'high' || s.conf === 'medium') };
-  const a = analyse({ state: s.s, price, weeklyRent: rent, deposit: 0.2, ratePct: rate, income: 120000, hold: 10, growth: unit ? 3.5 : 5, perth: s.rg === 'PER', newBuild: false, strata: unit ? 3200 : 0, landValuePct: unit ? 0.25 : 0.55 });
+  const a = analyse({ state: s.s, price, weeklyRent: rent, deposit: 0.2, ratePct: rate, income: 120000, hold: 10, growth: GROWTH.base, perth: s.rg === 'PER', newBuild: false, strata: unit ? 3200 : 0, landValuePct: unit ? 0.25 : 0.55 });
   scores.push(verdict(a, { ...s, score: suburbScore(s.sc) }, market).score);
 }
 scores.sort((a, b) => a - b);

@@ -285,3 +285,9 @@ export const FHOG = {
   NT: [50000, 'new homes ($10,000 for established homes)'],
   ACT: [0, 'no grant; a stamp duty concession instead'],
 };
+
+/**
+ * Default price growth used in every projection (% a year). Base follows the major-bank consensus for 2026-27
+ * (CommBank forecasts about 3% dwelling growth in both years); bear and bull are shown alongside with equal weight.
+ */
+export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'CommBank economists, September 2026: about 3% dwelling price growth in 2026 and 2027' };
