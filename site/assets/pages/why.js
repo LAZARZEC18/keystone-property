@@ -13,7 +13,7 @@ const TOUR = [
 ];
 
 // chapter starts in seconds (scripts/media/tour.mjs writes the same list to ownaroo-tour.json)
-const TOUR_CH = [['Where your budget reaches', 0], ['What you can comfortably afford', 22.1], ['A price range for a home', 46.5], ['The 2026 tax changes', 64.93], ['A suburb report', 83.33], ['Lender rates', 100.87]];
+const TOUR_CH = [['Where your budget reaches', 0], ['What you can comfortably afford', 21.4], ['A price range for a home', 47.73], ['The 2026 tax changes', 66.13], ['A suburb report', 87.47], ['Lender rates', 104.87]];
 
 const WHO = [
   ['First home buyers', 'See exactly what you can afford with the 5% Deposit Scheme, Help to Buy, grants and duty concessions for your state; how long it will take to save; whether to keep renting; and which suburbs near work fit your budget.', '/afford?buyer=fhb'],

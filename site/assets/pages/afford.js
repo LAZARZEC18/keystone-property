@@ -168,10 +168,13 @@ export default async function affordPage(main, _p, query) {
   let shareUrl = '/afford';
   wireCopyLink(main, () => shareUrl);
 
-  function run() {
+  function run(e) {
+    // while someone is still filling the form, don't shout about the field they haven't reached yet
+    const asked = e === true || e?.type === 'click';
     const f = Object.fromEntries(new FormData(form));
     const out = main.querySelector('#out');
-    if (!String(f.savings).trim() && !String(f.income).trim()) {
+    const missing = !String(f.savings).trim() || !String(f.income).trim();
+    if ((!String(f.savings).trim() && !String(f.income).trim()) || (missing && !asked && !example)) {
       out.innerHTML = `<div class="card"><h3 style="margin-top:0">Start with where you want to buy, your savings and your income</h3><p class="note">Ownaroo then works out a comfortable price there, the most a lender might let you stretch to, the cash you need, and the schemes you qualify for. Nothing you type is stored or sent anywhere.</p><button class="btn" type="button" id="aff-example">Or try it with example numbers</button></div>${demo('afford', { caption: 'See it in action: a Perth couple with $110k saved.' })}`;
       wireDemos(out);
       out.querySelector('#aff-example').addEventListener('click', () => {
@@ -404,7 +407,10 @@ export default async function affordPage(main, _p, query) {
     }
   }
 
-  main.querySelector('#go').addEventListener('click', run);
+  main.querySelector('#go').addEventListener('click', (e) => {
+    run(e);
+    if (window.innerWidth < 900) main.querySelector('#out')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   main.addEventListener('click', (e) => {
     if (e.target.closest('#print-plan')) window.print();
   });

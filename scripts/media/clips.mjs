@@ -71,7 +71,9 @@ await clip('budgetmap', '/', async ({ p, wait }) => {
 await clip('afford', '/afford?buyer=fhb', async ({ p, wait, scroll, type }) => {
   await wait(500); await p.selectOption('[name=where]', 'r:PER'); await wait(500);
   await type('[name=savings]', '110000'); await wait(250); await type('[name=income]', '95000'); await wait(250); await type('[name=income2]', '60000'); await wait(300);
-  await p.click('#go'); await wait(1800);
+  await p.click('#go'); await wait(200);
+  // back to the top to show the three headline numbers, then down through the suburbs that fit
+  await p.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); await wait(3200);
   await scroll(420, 30, 45); await wait(1800); await scroll(620, 36, 45); await wait(2000); await scroll(760, 40, 45); await wait(1600);
 });
 await clip('calculator', '/analyse', async ({ p, wait, scroll, type }) => {
