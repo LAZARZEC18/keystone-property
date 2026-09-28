@@ -1,7 +1,7 @@
 {
- "updated": "2026-09-28T00:36:42.848Z",
- "lenders": 92,
- "rows": 7960,
+ "updated": "2026-09-28T06:44:26.055Z",
+ "lenders": 93,
+ "rows": 8085,
  "best": {
   "INV_PI_variable": [
    {
@@ -147,6 +147,14 @@
     "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
    },
    {
+    "lender": "Regional Australia Bank",
+    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "rate": 6.24,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.24,
@@ -161,14 +169,6 @@
     "comparison": 7.3,
     "lvrMax": null,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
-   {
-    "lender": "Easy Street",
-    "product": "3 YEAR FIXED HOME LOAN - INVESTMENT (Principal and Interest)",
-    "rate": 6.24,
-    "comparison": 6.18,
-    "lvrMax": null,
-    "url": "https://easystreet.com.au/fixed-home-loan"
    }
   ],
   "INV_PI_fixed5": [
@@ -259,10 +259,18 @@
    {
     "lender": "ANZ",
     "product": "ANZ Fixed Rate home loan",
-    "rate": 6.24,
-    "comparison": 7.67,
+    "rate": 6.39,
+    "comparison": 7.69,
     "lvrMax": 80,
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "rate": 6.39,
+    "comparison": 6.28,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
     "lender": "P&N Bank",
@@ -281,14 +289,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.44,
-    "comparison": 7.69,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
-   {
     "lender": "IMB Bank",
     "product": "1 year Fixed Rate Home Loan",
     "rate": 6.44,
@@ -298,14 +298,6 @@
    }
   ],
   "INV_IO_fixed2": [
-   {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.34,
-    "comparison": 7.54,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
    {
     "lender": "ME Bank - ME Go",
     "product": "ME Bank CompleteME Home Loan",
@@ -337,9 +329,25 @@
     "comparison": 6.24,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+   },
+   {
+    "lender": "Bank of Queensland Limited",
+    "product": "Fixed Rate Home Loan",
+    "rate": 6.39,
+    "comparison": 6.43,
+    "lvrMax": 80,
+    "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "INV_IO_fixed3": [
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Regional Australia Bank Home Loan (Fixed Investor)",
+    "rate": 6.24,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
    {
     "lender": "ME Bank - ME Go",
     "product": "ME Bank CompleteME Home Loan",
@@ -371,22 +379,14 @@
     "comparison": 6.45,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Bank of Queensland Limited",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.44,
-    "comparison": 6.61,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    }
   ],
   "INV_IO_fixed5": [
    {
     "lender": "ANZ",
     "product": "ANZ Fixed Rate home loan",
-    "rate": 6.54,
-    "comparison": 7.28,
+    "rate": 6.64,
+    "comparison": 7.32,
     "lvrMax": 80,
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
@@ -551,14 +551,6 @@
   ],
   "OO_PI_fixed3": [
    {
-    "lender": "CommFCU",
-    "product": "GO BASIC 3 YEAR FIXED HOME LOAN - OWNER-OCCUPIED LVR 80% (Principal and Interest)",
-    "rate": 5.85,
-    "comparison": 5.98,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan/"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Loan",
     "rate": 5.99,
@@ -581,6 +573,14 @@
     "comparison": 6.57,
     "lvrMax": null,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Regional Australia Bank Home Loan (Fixed Owner Occupied)",
+    "rate": 6.09,
+    "comparison": 6.08,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
     "lender": "CommFCU",
@@ -769,6 +769,14 @@
     "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
    },
    {
+    "lender": "Regional Australia Bank",
+    "product": "Regional Australia Bank Home Loan (Fixed Owner Occupied)",
+    "rate": 6.34,
+    "comparison": 6.15,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
     "lender": "Southern Cross Credit Union",
     "product": "Premium Home Loan",
     "rate": 6.39,
@@ -790,14 +798,6 @@
     "rate": 6.39,
     "comparison": 6.41,
     "lvrMax": 95,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
-    "rate": 6.39,
-    "comparison": 6.41,
-    "lvrMax": 80,
     "url": null
    }
   ],
@@ -903,14 +903,6 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.49,
-    "comparison": 7.7,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
-   {
     "lender": "AMP - My AMP",
     "product": "Professional Package",
     "rate": 6.49,
@@ -925,6 +917,14 @@
     "comparison": 7.06,
     "lvrMax": null,
     "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
+    "rate": 6.54,
+    "comparison": 6.28,
+    "lvrMax": 80,
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_PI_fixed2_national": [
@@ -953,20 +953,20 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.39,
-    "comparison": 7.54,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
-   {
     "lender": "Bank of Queensland Limited",
     "product": "BOQ Essential Home Loan",
     "rate": 6.39,
     "comparison": 6.25,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+   },
+   {
+    "lender": "Bank of Queensland Limited",
+    "product": "Fixed Rate Home Loan",
+    "rate": 6.39,
+    "comparison": 6.43,
+    "lvrMax": 80,
+    "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "INV_PI_fixed3_national": [
@@ -1099,15 +1099,7 @@
    {
     "lender": "ANZ",
     "product": "ANZ Fixed Rate home loan",
-    "rate": 6.24,
-    "comparison": 7.67,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
-   {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.44,
+    "rate": 6.39,
     "comparison": 7.69,
     "lvrMax": 80,
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
@@ -1129,6 +1121,14 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
+    "lender": "ANZ",
+    "product": "ANZ Fixed Rate home loan",
+    "rate": 6.59,
+    "comparison": 7.71,
+    "lvrMax": 80,
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+   },
+   {
     "lender": "AMP - My AMP",
     "product": "Professional Package",
     "rate": 6.6,
@@ -1138,14 +1138,6 @@
    }
   ],
   "INV_IO_fixed2_national": [
-   {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.34,
-    "comparison": 7.54,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
-   },
    {
     "lender": "ME Bank - ME Go",
     "product": "ME Bank CompleteME Home Loan",
@@ -1177,6 +1169,14 @@
     "comparison": 6.43,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bank of Queensland Limited",
+    "product": "BOQ Plus Home Loan",
+    "rate": 6.39,
+    "comparison": 6.59,
+    "lvrMax": 80,
+    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
    }
   ],
   "INV_IO_fixed3_national": [
@@ -1225,8 +1225,8 @@
    {
     "lender": "ANZ",
     "product": "ANZ Fixed Rate home loan",
-    "rate": 6.54,
-    "comparison": 7.28,
+    "rate": 6.64,
+    "comparison": 7.32,
     "lvrMax": 80,
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
@@ -1339,12 +1339,12 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "ANZ",
-    "product": "ANZ Fixed Rate home loan",
-    "rate": 6.34,
-    "comparison": 7.15,
-    "lvrMax": 80,
-    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+    "lender": "Up",
+    "product": "Up Home Loan",
+    "rate": 6.35,
+    "comparison": 5.99,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "OO_PI_fixed2_national": [

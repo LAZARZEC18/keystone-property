@@ -1,36 +1,36 @@
 {
- "started": "2026-09-28T00:35:32.695Z",
+ "started": "2026-09-28T06:43:08.834Z",
  "jobs": {
   "rates": {
    "ok": true,
-   "ms": 70191,
-   "note": "7960 rates, 92 lenders"
+   "ms": 77302,
+   "note": "8085 rates, 93 lenders"
   },
   "rba": {
    "ok": true,
-   "ms": 943,
+   "ms": 1225,
    "note": "cash 4.35"
   },
   "news": {
    "ok": true,
-   "ms": 1073,
-   "note": "104 headlines"
+   "ms": 13333,
+   "note": "20 headlines"
   },
   "index": {
    "ok": true,
-   "ms": 631,
-   "note": "2026-09-28: Perth week -0.41% ytd 2.92%"
+   "ms": 740,
+   "note": "2026-09-28: month-end 31 August 2026"
   },
   "publish-market": {
    "ok": true,
-   "ms": 0,
+   "ms": 1,
    "note": null
   },
   "weekly": {
    "ok": true,
-   "ms": 4,
+   "ms": 5,
    "note": "2026-09-28"
   }
  },
- "finished": "2026-09-28T00:36:45.540Z"
+ "finished": "2026-09-28T06:44:41.441Z"
 }
