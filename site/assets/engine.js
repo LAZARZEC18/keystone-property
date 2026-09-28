@@ -1,4 +1,4 @@
-// Market Lenz investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
+// Ownaroo investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
 import { DEAL_BANDS } from './deal-bands.js';
 import { GROWTH, runningCosts } from './rules.js';
@@ -23,7 +23,7 @@ export function bracket(table, value, per100 = false) {
  * Stamp (transfer) duty.
  * buyer: 'investor' | 'owner' (owner-occupier) | 'fhb' (first home buyer, owner-occupier)
  */
-export function stampDuty(state, price, { buyer = 'investor', newBuild = false } = {}) {
+export function stampDuty(state, price, { buyer = 'investor', newBuild = false, notOwned5 = false } = {}) {
   const R = RULES.duty[state];
   if (!R) throw new Error(`Unknown state ${state}`);
   const notes = [];
@@ -41,10 +41,14 @@ export function stampDuty(state, price, { buyer = 'investor', newBuild = false }
       notes.push(state === 'VIC' ? 'Principal place of residence concession applied.' : state === 'QLD' ? 'Home concession rate applied.' : 'Owner-occupier rates applied.');
     }
   }
+  if (buyer === 'owner' && R.fhbFull && notOwned5) {
+    duty = 0;
+    notes.push('ACT Home Buyer Concession Scheme: full concession for a home to live in when no buyer has owned property in the last five years (from 1 July 2026).');
+  }
   if (buyer === 'fhb') {
     if (R.fhbFull) {
       duty = 0;
-      notes.push('ACT Home Buyer Concession Scheme: full concession (price and income caps removed from 1 July 2026, eligibility rules apply).');
+      notes.push('ACT Home Buyer Concession Scheme: full concession (price cap removed from 1 July 2026; also open to buyers who haven\'t owned property in the last five years).');
     } else if (R.fhbNewNoCap && newBuild) {
       duty = 0;
       notes.push('First home buyer buying a new home: no duty, no value cap.');
@@ -135,11 +139,21 @@ export function repayment(principal, ratePct, years, interestOnly = false) {
 }
 
 /** How much a lender might lend: APRA 3% buffer, 80% of rent counted, HEM-style living costs. */
+/**
+ * Monthly living costs a lender would assume. Like the Household Expenditure Measure, it rises with income:
+ * a base for the household, plus about 10% of gross income above $80k (single) or $120k (couple). Conservative.
+ */
+export function livingBenchmark(grossIncome, { couple = false, dependants = 0 } = {}) {
+  const base = (couple ? 3800 : 2400) + dependants * 700;
+  const over = Math.max(0, grossIncome - (couple ? 120000 : 80000));
+  return Math.round(base + (over * 0.1) / 12);
+}
+
 export function borrowingPower({ grossIncome, otherDebtMonthly = 0, dependants = 0, couple = false, existingRentIncome = 0, newRentWeekly = 0, ratePct, years = 30, livingCostsMonthly }) {
   const assess = ratePct + RULES.serviceability.buffer;
   const shaded = (existingRentIncome + newRentWeekly * 52) * RULES.serviceability.rentShading;
   const net = grossIncome + shaded - incomeTax(grossIncome + shaded);
-  const living = livingCostsMonthly ?? (couple ? 3800 : 2400) + dependants * 700; // conservative HEM-style benchmark
+  const living = livingCostsMonthly ?? livingBenchmark(grossIncome, { couple, dependants });
   const surplus = net / 12 - living - otherDebtMonthly;
   if (surplus <= 0) return { amount: 0, assessRate: assess, surplus };
   const r = assess / 100 / 12;
@@ -392,7 +406,7 @@ export function IRR(flows) {
 }
 
 /**
- * Market Lenz verdict: turns the numbers into a plain-English call with the reasons behind it.
+ * Ownaroo verdict: turns the numbers into a plain-English call with the reasons behind it.
  * suburb: optional index row (scores, vacancy etc). Returns {grade, label, score, reasons[], risks[]}.
  */
 export function verdict(result, suburb = null, market = null, { depositRate = 4.35 } = {}) {
@@ -435,7 +449,7 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   if (suburb) {
     const sc = suburb.score ?? null;
     if (sc !== null) {
-      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Market Lenz's suburb fundamentals.`); }
+      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Ownaroo's suburb fundamentals.`); }
       else if (sc < 40) { pts -= 6; risks.push(`${suburb.n} scores only ${sc}/100 on suburb fundamentals.`); }
     }
     const reg = market?.regions?.[suburb.rg];
@@ -474,7 +488,7 @@ export function dealPercentile(score, bands = DEAL_BANDS) {
   return Math.round(((below + equal / 2) / q.length) * 100);
 }
 
-/** Weighted Market Lenz Score from a suburb's component percentiles. */
+/** Weighted Ownaroo Score from a suburb's component percentiles. */
 export const PROFILES = {
   // Momentum (the past 12 months' price change) carries no weight: it exists only where official suburb sales do
   // (NSW, VIC, SA), so weighting it made scores incomparable across states, and it rewards trailing growth just as
@@ -525,7 +539,7 @@ export function riskNote(s) {
 }
 
 /**
- * Market Lenz estimate for one specific home, built up from the suburb's typical price.
+ * Ownaroo estimate for one specific home, built up from the suburb's typical price.
  * s: suburb index row (h/u typical prices, bh/bu typical bedrooms, conf)
  * spec: {type:'h'|'u', beds, baths, land (m²), cars, condition:'new'|'renovated'|'average'|'original'|'needs-work', pool, liveFactor}
  * Returns {value, low, high, rent, adjustments:[{label, pct}], basis}

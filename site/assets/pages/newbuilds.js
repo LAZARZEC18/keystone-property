@@ -32,7 +32,7 @@ export default async function newBuildsPage(main) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">New builds</div><h1>Where Australia is building</h1>
-  <p>Every new home needs a building approval. Market Lenz reads the ABS figures for every council and SA2 as soon as they're released (latest: <b>${monthName(ap.latestMonth)}</b>), so you can see where supply is rising, which affects rents and prices, and find new builds that keep the 2026 tax advantages.</p></div>
+  <p>Every new home needs a building approval. Ownaroo reads the ABS figures for every council and SA2 as soon as they're released (latest: <b>${monthName(ap.latestMonth)}</b>), so you can see where supply is rising, which affects rents and prices, and find new builds that keep the 2026 tax advantages.</p></div>
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">Dwellings approved, ${monthName(last(S.AUS.total)?.[0])} (seasonally adj.)</span><span class="v">${num(last(S.AUS.total)?.[1])}</span><span class="s">${pct(yoy(S.AUS.total), 1, true)} on a year ago</span></div></div>
     <div class="card"><div class="stat"><span class="k">Last 12 months, Australia</span><span class="v">${num(sum12(S.AUS.total))}</span><span class="s">vs the 240,000 a year needed for the national 1.2m homes target</span></div></div>
@@ -84,8 +84,12 @@ export default async function newBuildsPage(main) {
     const key = { name: (l) => l.name, total: (l) => l.fy.total, per1000: (l) => l.per1000, share: (l) => l.share, value: (l) => l.fy.value, ytd: (l) => l.ytd?.total ?? 0 }[st.sort];
     rows.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0) * (st.asc ? 1 : -1));
     main.querySelector('#nb-tbl').innerHTML = `<div class="tbl-wrap"><table id="nbt"><thead><tr><th data-k="name">Council</th><th>State</th><th data-k="total" class="n">New dwellings</th><th class="n">Houses</th><th class="n">Other</th><th data-k="share" class="n">% apartments / townhouses</th><th data-k="per1000" class="n">Per 1,000 residents</th><th data-k="value" class="n">Value</th><th data-k="ytd" class="n">This FY to date</th></tr></thead><tbody>
-    ${rows.slice(0, 150).map((l) => `<tr><td><a href="/council/${l.s.toLowerCase()}/${lgaSlug(lgaName[l.code] || l.name)}" data-link>${esc(l.name)}</a></td><td>${l.s}</td><td class="n">${num(l.fy.total)}</td><td class="n">${num(l.fy.houses)}</td><td class="n">${num(l.fy.other)}</td><td class="n">${pct(l.share, 0)}</td><td class="n ${l.per1000 > 15 ? 'warn' : ''}">${l.per1000.toFixed(1)}</td><td class="n">${aud((l.fy.value || 0) * 1000, { compact: true })}</td><td class="n">${num(l.ytd?.total)}</td></tr>`).join('')}
-    </tbody></table></div>`;
+    ${rows.slice(0, st.all ? rows.length : 15).map((l) => `<tr><td><a href="/council/${l.s.toLowerCase()}/${lgaSlug(lgaName[l.code] || l.name)}" data-link>${esc(l.name)}</a></td><td>${l.s}</td><td class="n">${num(l.fy.total)}</td><td class="n">${num(l.fy.houses)}</td><td class="n">${num(l.fy.other)}</td><td class="n">${pct(l.share, 0)}</td><td class="n ${l.per1000 > 15 ? 'warn' : ''}">${l.per1000.toFixed(1)}</td><td class="n">${aud((l.fy.value || 0) * 1000, { compact: true })}</td><td class="n">${num(l.ytd?.total)}</td></tr>`).join('')}
+    </tbody></table></div>${rows.length > 15 ? `<button class="btn sm" type="button" id="nb-more" style="margin-top:10px">${st.all ? 'Show the top 15' : `Show all ${rows.length} councils`}</button>` : ''}`;
+    main.querySelector('#nb-more')?.addEventListener('click', () => {
+      st.all = !st.all;
+      draw();
+    });
     const t = main.querySelector('#nbt');
     t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');
     sortable(t, (k, asc) => {

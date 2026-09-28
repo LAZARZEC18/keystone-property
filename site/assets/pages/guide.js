@@ -4,7 +4,21 @@ import { stampDuty, landTax, lmi, repayment } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
 import { HOME_GUARANTEE, STATE_SCHEMES } from '../rules.js';
 
-export default async function guidePage(main) {
+// one page per section (keep in step with netlify/shared/seo-core.js GUIDE): [id, page title, description]
+export const GUIDE = [["before", "Before you buy: goals, budget and timing", "What to decide before you look at a single property: why you are buying, what you can hold through a rate rise, and your timeline."], ["fhb", "Buying your first home in Australia (2026)", "The 5% Deposit Scheme, Help to Buy, first home grants, stamp duty concessions and state home lenders like Keystart, and each step to settlement."], ["strategy", "Property investment strategies: growth, yield or new builds", "Capital growth, cash flow and new builds under the 2026 tax rules: what each strategy needs and who it suits."], ["finance", "Getting your home loan ready", "Pre-approval, deposit, lenders mortgage insurance, the 3-point serviceability buffer and the documents lenders ask for."], ["research", "How to research a suburb before you buy", "Prices, rents, vacancy, supply, local economy and hazards: what to check about a suburb and where to find it."], ["buy", "Finding, inspecting and buying a property", "Inspections, building and pest reports, making an offer, auctions and exchanging contracts."], ["settle", "Property settlement in Australia", "What happens between exchange and settlement, and what to check on the day."], ["own", "Owning an investment property", "Tenants, property managers, insurance, depreciation and records for tax time."], ["costs", "Every cost of buying property, in one place", "Deposit, stamp duty, LMI, legal and inspection fees, and the ongoing costs of owning."], ["duty", "Stamp duty in every state and territory (2026)", "Stamp duty at common prices in each state and territory, with first home and owner-occupier concessions."], ["landtax", "Land tax by state (2026)", "Land tax thresholds and rates for investors in each state and territory."], ["tax-2026", "The 2026 negative gearing and CGT changes, explained", "Who keeps negative gearing, how capital gains are taxed from 1 July 2027, and what it means for your weekly cost and return."], ["mistakes", "Common property buying mistakes", "The mistakes that cost buyers most, and how to avoid them."], ["glossary", "Property and home loan glossary", "Plain-English definitions of LVR, LMI, comparison rates, offset accounts and more."], ["faq", "Property buying questions, answered", "Short answers to the questions buyers ask most."]];
+
+export default async function guidePage(main, params = {}) {
+  const section = params.section || '';
+  // old single-page links (/guide/fhb, /guide/fhb#state-schemes) open the section's own page
+  if (!section && location.hash) {
+    const target = location.hash.slice(1);
+    const owner = GUIDE.find(([id]) => id === target) ? target : SUB_ANCHORS[target];
+    if (owner) {
+      const { navigate } = await import('../app.js');
+      navigate(`/guide/${owner}${owner === target ? '' : `#${target}`}`, true);
+      return;
+    }
+  }
   setMeta({ title: 'How to buy property in Australia: first home and investment (2026 guide)', description: 'Step-by-step guide to buying an investment or first home in Australia: costs, stamp duty by state, loans, inspections, settlement, tax, and the 2026 negative gearing and CGT reforms.' });
   const [rs, market, rba] = await Promise.all([load('rates-summary'), load('market'), load('rba').catch(() => null)]);
   const prices = [500000, 750000, 1000000, 1500000];
@@ -60,7 +74,7 @@ export default async function guidePage(main) {
           <li><b>QLD</b>: no duty on new homes of any value (contracts from 1 May 2025); no duty on established homes to $700,000, phasing out by $800,000.</li>
           <li><b>WA</b>: from 7 May 2026, no duty up to $600,000 and a concessional rate to $800,000.</li>
           <li><b>SA</b>: no duty on new homes, off-the-plan and vacant land of any value; no relief on established homes.</li>
-          <li><b>ACT</b>: the Home Buyer Concession Scheme's price and income caps were removed from 1 July 2026 (other eligibility rules apply).</li>
+          <li><b>ACT</b>: from 1 July 2026 the Home Buyer Concession Scheme removes stamp duty at any price for first home buyers and for anyone who hasn't owned property in the last five years, if they live in the home for at least 12 months.</li>
           <li><b>TAS</b>: the 100% established-home exemption ended for settlements after 30 June 2026.</li>
         </ul>
         <h3>First Home Owner Grant (new homes)</h3>
@@ -88,7 +102,7 @@ export default async function guidePage(main) {
           <li><b>Set a budget you can live with.</b> Keep repayments under 30% of your before-tax household income (above that is commonly called mortgage stress), and test them at 2 points above today's rate. The <a href="/afford?buyer=fhb" data-link>affordability analyst</a> does this for every state, using the 5% Deposit Scheme and your state's duty concessions.</li>
           <li><b>Choose where to live.</b> Start from where you work and how far you're willing to travel, then look at the local economy, services and price trend. Enter your workplace in the affordability analyst to rank suburbs within your commute.</li>
           <li><b>Get pre-approval.</b> A broker or lender confirms what you can borrow and whether you qualify for the 5% Deposit Scheme.</li>
-          <li><b>Check value before you offer.</b> Recent sales in the same street are the real guide. Market Lenz's <a href="/property" data-link>price range tool</a> gives a price range for a typical home like it as a sense-check, not a valuation.</li>
+          <li><b>Check value before you offer.</b> Recent sales in the same street are the real guide. Ownaroo's <a href="/property" data-link>price range tool</a> gives a price range for a typical home like it as a sense-check, not a valuation.</li>
           <li><b>Inspect properly.</b> Building and pest inspection for houses; strata report for units and townhouses.</li>
           <li><b>Exchange and settle.</b> Your conveyancer handles contracts, duty and settlement (sections 6 and 7 below apply to you too).</li>
         </ol>
@@ -103,20 +117,20 @@ export default async function guidePage(main) {
           <tr><td><b>Rent-vest</b></td><td>Rent where you live, buy where you can afford</td><td>Get into the market sooner</td><td>No first home concessions on an investment; you pay rent and a mortgage</td></tr>
           <tr><td><b>Value-add</b></td><td>Renovate, subdivide or add a granny flat</td><td>Can create equity quickly</td><td>Building costs and approvals risk; needs skills or trades</td></tr>
         </tbody></table></div>
-        <p class="note" style="margin-top:10px">Market Lenz's <a href="/suburbs" data-link>suburb explorer</a> has a strategy switch that re-ranks all 11,000+ suburbs for growth, cash flow or first-home affordability.</p>
+        <p class="note" style="margin-top:10px">Ownaroo's <a href="/suburbs" data-link>suburb explorer</a> has a strategy switch that re-ranks all 11,000+ suburbs for growth, cash flow or first-home affordability.</p>
       </section>
 
       <section id="finance" class="section"><h2>4. Get your finance ready</h2>
         <div class="steps">
           <div class="card step"><h3>Check your borrowing power</h3><p>Lenders test your repayments at the loan rate plus 3 percentage points and usually count only about 80% of rent. Use the <a href="/borrowing" data-link>borrowing power calculator</a> to get a realistic ceiling.</p></div>
           <div class="card step"><h3>Save the deposit and costs</h3><p>At 20% deposit you avoid lenders mortgage insurance (LMI). At 10% you'll pay LMI: on a ${aud(630000)} loan for a ${aud(700000)} property in Victoria that's about <b>${aud(lmi(630000, 700000, 'VIC').premium)}</b>. On top of the deposit, budget for stamp duty (see below) and about $2,000-3,500 of legal, inspection and government fees.</p></div>
-          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest advertised investor variable rate today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and the average rate on new investor variable loans (RBA) is ${pct(rate, 2)}. Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare every lender →</a></p></div>
+          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest advertised investor variable rate today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and the average rate on new investor variable loans (RBA) is ${pct(rate, 2)}. Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare 90+ lenders →</a></p></div>
           <div class="card step"><h3>Get pre-approval</h3><p>Pre-approval (conditional approval) tells you what a lender will likely lend and lets you bid with confidence. It usually lasts 90 days. A mortgage broker is paid by the lender and can compare dozens of banks at no cost to you.</p></div>
         </div>
       </section>
 
       <section id="research" class="section"><h2>5. Research the market</h2>
-        <p>The biggest decision is <i>where</i>. Check these for every suburb on your shortlist (each Market Lenz suburb page shows all of them):</p>
+        <p>The biggest decision is <i>where</i>. Check these for every suburb on your shortlist (each Ownaroo suburb page shows all of them):</p>
         <ul class="pros">
           <li><b>Yield</b>: annual rent ÷ price. Above your region's average means lower holding costs.</li>
           <li><b>Vacancy rate</b>: under 1.5% means tenants compete for rentals. ${(() => { const caps = Object.values(market.regions).filter((r) => r.capital && r.vacancy != null).sort((a, b) => a.vacancy - b.vacancy); const lo = caps.slice(0, 3); const same = lo.every((r) => r.vacancy === lo[0].vacancy); return `Right now the tightest capitals are ${lo.map((r) => r.name).join(', ').replace(/, ([^,]*)$/, ' and $1')}${same ? `, all at ${pct(lo[0].vacancy, 1)}` : ` (${lo.map((r) => pct(r.vacancy, 1)).join(', ')})`} (SQM Research, city-wide).`; })()}</li>
@@ -130,7 +144,7 @@ export default async function guidePage(main) {
 
       <section id="buy" class="section"><h2>6. Find, inspect and buy</h2>
         <div class="steps">
-          <div class="card step"><h3>Shortlist properties</h3><p>Use listing sites, and pull each suburb's recent sales to know what things really sell for. Market Lenz's <a href="/property" data-link>price range tool</a> gives a price range for a typical home like the one you're looking at (not a valuation), the cash and repayments to buy it, and the investment numbers.</p></div>
+          <div class="card step"><h3>Shortlist properties</h3><p>Use listing sites, and pull each suburb's recent sales to know what things really sell for. Ownaroo's <a href="/property" data-link>price range tool</a> gives a price range for a typical home like the one you're looking at (not a valuation), the cash and repayments to buy it, and the investment numbers.</p></div>
           <div class="card step"><h3>Run the numbers</h3><p>Put each serious contender through the <a href="/analyse" data-link>2026 tax-change calculator</a>: all costs, the weekly shortfall after tax, a rate-rise stress test and the 10-year return. Walk away if it only works in the high-growth case.</p></div>
           <div class="card step"><h3>Check the property</h3><p>Get a building and pest inspection (about $400-800). For strata, get a strata report (about $250-400) covering levies, the sinking fund, defects and disputes. Ask a property manager for a rental appraisal before you buy.</p></div>
           <div class="card step"><h3>Have the contract reviewed</h3><p>A conveyancer or solicitor ($1,000-2,500) checks the title, zoning, easements, special conditions and the vendor statement. In most states you can make the offer "subject to finance" and "subject to building and pest".</p></div>
@@ -186,11 +200,11 @@ export default async function guidePage(main) {
           <tr><td>An established home, from 1 July 2027</td><td>Losses quarantined from the start</td><td>Indexation + 30% minimum tax</td></tr>
           <tr><td>A new build (first owner)</td><td>Continues</td><td>Your choice: 50% discount or indexation</td></tr>
         </tbody></table></div>
-        <p style="margin-top:12px"><b>What it means in practice:</b> for an established property the weekly cost you feel is now closer to the <i>before-tax</i> shortfall, because the salary tax refund stops after June 2027. The losses aren't wasted: they reduce tax on future rental profits and on the gain when you sell. They just arrive years later. That favours higher-yield properties, bigger deposits and new builds. Market Lenz's analyser applies all of this automatically.</p>
+        <p style="margin-top:12px"><b>What it means in practice:</b> for an established property the weekly cost you feel is now closer to the <i>before-tax</i> shortfall, because the salary tax refund stops after June 2027. The losses aren't wasted: they reduce tax on future rental profits and on the gain when you sell. They just arrive years later. That favours higher-yield properties, bigger deposits and new builds. Ownaroo's analyser applies all of this automatically.</p>
         <p class="fine">Sources: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a> · <a href="${RULES.reform.factsheet}" target="_blank" rel="noopener">Budget factsheet</a>. General information only. See a registered tax agent about your situation.</p>
               <h3>Self-managed super funds</h3>
         <p>From 10 August 2026 (45 days after Royal Assent on 26 June), an SMSF can no longer enter a new limited recourse borrowing arrangement to buy residential property. Arrangements (including signed contracts) made before then are unaffected, and business real property can still be bought with borrowing.</p>
-        <p class="note"><b>Details still being settled.</b> Treasury is still consulting on parts of the new rules, including exactly how gains either side of 1 July 2027 are measured, trusts, and part-year residents. Market Lenz models the law as passed and will update as the detail is finalised. Get tax advice for your own situation.</p>
+        <p class="note"><b>Details still being settled.</b> Treasury is still consulting on parts of the new rules, including exactly how gains either side of 1 July 2027 are measured, trusts, and part-year residents. Ownaroo models the law as passed and will update as the detail is finalised. Get tax advice for your own situation.</p>
       </section>
 
 
@@ -207,7 +221,7 @@ export default async function guidePage(main) {
         </ul>
       </section>
 
-      <section id="glossary" class="section"><h2>Glossary</h2><dl class="glossary"><dt>LVR (loan-to-value ratio)</dt><dd>The loan as a share of the property value. A $540,000 loan on a $600,000 home is a 90% LVR. Above 80%, lenders usually charge lenders mortgage insurance.</dd><dt>LMI (lenders mortgage insurance)</dt><dd>A one-off premium that protects the lender (not you) when you borrow more than 80%. It is usually added to the loan. The 5% Deposit Scheme and Help to Buy avoid it.</dd><dt>Gross yield</dt><dd>A year’s rent as a percentage of the price, before any costs. $600 a week on a $780,000 home is 4%.</dd><dt>IRR (internal rate of return)</dt><dd>The average yearly return on the cash you put in, after all costs, tax and the eventual sale. It lets you compare a property with other investments.</dd><dt>Negative gearing</dt><dd>When an investment property’s costs exceed its rent, the loss reduces tax on your other income. For established homes bought after 12 May 2026 this ends on 1 July 2027; losses then carry forward instead.</dd><dt>Serviceability buffer</dt><dd>Lenders check you could still repay at about 3 percentage points above the actual rate. It is why borrowing power is lower than repayments alone suggest.</dd><dt>Suburb score</dt><dd>Market Lenz’s 0–100 ranking of a suburb against every other suburb on yield, growth drivers, rental demand, affordability and stability. Recent price change is shown beside it but isn't scored. It rates the area, not a particular purchase.</dd><dt>Relative rank (deals)</dt><dd>How one purchase’s numbers compare with the typical home in every other suburb, run with the same deposit, rate and income. It is relative: a “top 15%” deal can still cost you money every week, so the weekly cost after tax and the term-deposit test are always shown first. It describes the numbers, not whether you should buy.</dd><dt>Percentile</dt><dd>Where a suburb sits against all others: the 80th percentile on yield means it beats 80% of suburbs.</dd><dt>SA2</dt><dd>An ABS statistical area of roughly 3,000 to 25,000 people, usually a group of neighbouring suburbs. Market Lenz uses SA2 population estimates for recent growth.</dd><dt>Price trend (momentum)</dt><dd>How much values changed over the past 12 months. Shown for information only: it is not part of the score, because suburb-level figures exist only in NSW, Victoria and SA, and past growth says little about the next year.</dd><dt>Vacancy rate</dt><dd>The share of rental homes empty and available. Under about 1.5% means tenants compete for homes and rents tend to rise.</dd></dl></section>
+      <section id="glossary" class="section"><h2>Glossary</h2><dl class="glossary"><dt>LVR (loan-to-value ratio)</dt><dd>The loan as a share of the property value. A $540,000 loan on a $600,000 home is a 90% LVR. Above 80%, lenders usually charge lenders mortgage insurance.</dd><dt>LMI (lenders mortgage insurance)</dt><dd>A one-off premium that protects the lender (not you) when you borrow more than 80%. It is usually added to the loan. The 5% Deposit Scheme and Help to Buy avoid it.</dd><dt>Gross yield</dt><dd>A year’s rent as a percentage of the price, before any costs. $600 a week on a $780,000 home is 4%.</dd><dt>IRR (internal rate of return)</dt><dd>The average yearly return on the cash you put in, after all costs, tax and the eventual sale. It lets you compare a property with other investments.</dd><dt>Negative gearing</dt><dd>When an investment property’s costs exceed its rent, the loss reduces tax on your other income. For established homes bought after 12 May 2026 this ends on 1 July 2027; losses then carry forward instead.</dd><dt>Serviceability buffer</dt><dd>Lenders check you could still repay at about 3 percentage points above the actual rate. It is why borrowing power is lower than repayments alone suggest.</dd><dt>Suburb score</dt><dd>Ownaroo’s 0–100 ranking of a suburb against every other suburb on yield, growth drivers, rental demand, affordability and stability. Recent price change is shown beside it but isn't scored. It rates the area, not a particular purchase.</dd><dt>Relative rank (deals)</dt><dd>How one purchase’s numbers compare with the typical home in every other suburb, run with the same deposit, rate and income. It is relative: a “top 15%” deal can still cost you money every week, so the weekly cost after tax and the term-deposit test are always shown first. It describes the numbers, not whether you should buy.</dd><dt>Percentile</dt><dd>Where a suburb sits against all others: the 80th percentile on yield means it beats 80% of suburbs.</dd><dt>SA2</dt><dd>An ABS statistical area of roughly 3,000 to 25,000 people, usually a group of neighbouring suburbs. Ownaroo uses SA2 population estimates for recent growth.</dd><dt>Price trend (momentum)</dt><dd>How much values changed over the past 12 months. Shown for information only: it is not part of the score, because suburb-level figures exist only in NSW, Victoria and SA, and past growth says little about the next year.</dd><dt>Vacancy rate</dt><dd>The share of rental homes empty and available. Under about 1.5% means tenants compete for homes and rents tend to rise.</dd></dl></section>
 
       <section id="faq" class="section"><h2>Questions</h2>
         ${[
@@ -215,7 +229,7 @@ export default async function guidePage(main) {
           ["How much deposit do I need?", "Most lenders want 10-20% for investors, plus stamp duty and costs. Below 20% you pay LMI, which can be added to the loan."],
           ["Should I buy in my own name, jointly or in a trust?", "It depends on incomes, other assets and plans. Negative gearing benefits the higher earner; land tax thresholds differ for trusts. Get advice from an accountant before you sign, because changing names later triggers duty and CGT."],
           ["House or apartment?", "Land drives long-run growth, so houses have usually grown faster. Apartments have higher yields and lower entry prices but carry strata costs and supply risk. Townhouses and villas sit in between."],
-          ["How accurate are Market Lenz's prices?", "Where a state publishes official suburb sales (VIC, SA, NSW), Market Lenz uses them. Elsewhere it's a calibrated model, typically within about 12-20% of the true median. Always check recent sales for the specific street and property."],
+          ["How accurate are Ownaroo's prices?", "Where a state publishes official suburb sales (VIC, SA, NSW), Ownaroo uses them. Elsewhere it's a calibrated model, typically within about 12-20% of the true median. Always check recent sales for the specific street and property."],
         ]
           .map(([q, a]) => `<details class="faq"><summary>${q}</summary><p class="note" style="margin-top:8px">${esc(a)}</p></details>`)
           .join('')}
@@ -223,11 +237,41 @@ export default async function guidePage(main) {
       <p class="fine section">General information only, not financial, tax or legal advice.</p>
     </article>
   </div>`;
-  if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView(), 60);
-  main.querySelectorAll('.toc a').forEach((a) => a.addEventListener('click', (e) => {
-    e.preventDefault();
+  const art = main.querySelector('article');
+  const toc_ = main.querySelector('.toc');
+  toc_.innerHTML = `<a href="/guide" data-link class="${section ? '' : 'on'}">All topics</a>${GUIDE.map(([id, t]) => `<a href="/guide/${id}" data-link class="${id === section ? 'on' : ''}">${esc(toc.find(([x]) => x === id)?.[1] || t)}</a>`).join('')}`;
+  if (!section) {
+    // the guide's front page: every topic as a short card
+    art.innerHTML = `<div class="grid g2 guide-index">${GUIDE.map(([id, t, d], i) => `<a class="card product" href="/guide/${id}" data-link><span class="faint mono">${String(i + 1).padStart(2, '0')}</span><h3>${esc(toc.find(([x]) => x === id)?.[1] || t)}</h3><p class="muted">${esc(d)}</p></a>`).join('')}</div><p class="fine section">General information only, not financial, tax or legal advice.</p>`;
+    main.querySelectorAll('a[href^="#"]:not(.skip)').forEach((a) => { a.setAttribute('href', `/guide/${a.getAttribute('href').slice(1)}`); a.setAttribute('data-link', ''); });
+    return;
+  }
+  const i = GUIDE.findIndex(([id]) => id === section);
+  if (i < 0) {
+    main.innerHTML = '<div class="empty"><h1>Guide page not found</h1><p><a href="/guide" data-link>All guide topics</a></p></div>';
+    return;
+  }
+  const [, title, description] = GUIDE[i];
+  setMeta({ title, description });
+  art.querySelectorAll(':scope > section').forEach((x) => { if (x.id !== section) x.remove(); });
+  const sec = art.querySelector(`#${CSS.escape(section)}`);
+  sec?.querySelector('h2')?.remove();
+  sec?.style.setProperty('margin-top', '0');
+  art.querySelector(':scope > p.fine')?.remove();
+  const prev = GUIDE[i - 1];
+  const next = GUIDE[i + 1];
+  art.insertAdjacentHTML('beforeend', `<nav class="guide-pager section" aria-label="More of the guide">${prev ? `<a class="btn" href="/guide/${prev[0]}" data-link>← ${esc(toc.find(([x]) => x === prev[0])?.[1] || prev[1])}</a>` : '<span></span>'}${next ? `<a class="btn" href="/guide/${next[0]}" data-link>${esc(toc.find(([x]) => x === next[0])?.[1] || next[1])} →</a>` : ''}</nav><p class="fine section">General information only, not financial, tax or legal advice.</p>`);
+  const head = main.querySelector('.page-head');
+  head.innerHTML = `<div class="eyebrow"><a href="/guide" data-link>Guide</a> · ${i + 1} of ${GUIDE.length}</div><h1>${esc(title)}</h1><p>${esc(description)}</p>`;
+  // in-page links to other sections go to their pages
+  art.querySelectorAll('a[href^="#"]').forEach((a) => {
     const id = a.getAttribute('href').slice(1);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    history.replaceState(null, '', `#${id}`);
-  }));
+    if (sec?.querySelector(`#${CSS.escape(id)}`)) return;
+    const owner = GUIDE.find(([g]) => g === id) ? id : SUB_ANCHORS[id];
+    if (owner) { a.setAttribute('href', `/guide/${owner}`); a.setAttribute('data-link', ''); }
+  });
+  if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView(), 60);
 }
+
+// anchors inside a section, for old links
+const SUB_ANCHORS = { 'state-schemes': 'fhb' };

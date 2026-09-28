@@ -4,6 +4,15 @@ const cache = new Map();
 
 // Served live by a Netlify function (cached up to an hour), falling back to the stored file.
 const LIVE = new Set(['news', 'rba']);
+/** The stored copy at once, plus the live copy when it arrives (up to 20 s), for pages that can update in place. */
+export function loadStaleFirst(name) {
+  const stored = getStatic(name);
+  const live = fetch(`/api/live-${name}`, { signal: AbortSignal.timeout(20000) })
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
+    .then((d) => (d && !d.error ? d : Promise.reject(new Error('live'))))
+    .catch(() => null);
+  return { stored, live };
+}
 const getStatic = (name) =>
   fetch(`/data/${name}.json`, { cache: 'no-cache' }).then((r) => {
     if (!r.ok) throw new Error(`${name}: ${r.status}`);

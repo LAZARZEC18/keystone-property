@@ -18,13 +18,13 @@ const EXAMPLES = [
 
 export default async function findPage(main, _p, query) {
   const q = (query.q || '').trim();
-  setMeta({ title: q ? `${q}: property search` : 'Smart property search', description: 'Describe what you want in plain English. Market Lenz understands bedrooms, budget, location, lifestyle and investment goals, and ranks every matching suburb.' });
+  setMeta({ title: q ? `${q}: property search` : 'Smart property search', description: 'Describe what you want in plain English. Ownaroo understands bedrooms, budget, location, lifestyle and investment goals, and ranks every matching suburb.' });
   if (q && looksLikeAddress(q)) return navigate(`/property?q=${encodeURIComponent(q)}`, true);
   const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), Promise.resolve(null)]);
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Smart search</div><h1>Tell us what you're looking for</h1>
-  <p>Search the way you'd describe it to an agent. Market Lenz reads your budget, bedrooms, property type, location, lifestyle (beach, city, regional) and goal (yield, growth, first home), then ranks every matching suburb and prices the kind of home you described.</p></div>
+  <p>Search the way you'd describe it to an agent. Ownaroo reads your budget, bedrooms, property type, location, lifestyle (beach, city, regional) and goal (yield, growth, first home), then ranks every matching suburb and prices the kind of home you described.</p></div>
   <form class="hero-search" id="fs" style="max-width:none" onsubmit="return false"><input id="fq" type="search" value="${esc(q)}" placeholder="e.g. 3 bed house under $800k near the beach in Perth with good yield" aria-label="Describe what you're looking for"></form>
   <div class="row" style="margin-bottom:8px">${EXAMPLES.map((e) => `<button class="pill" data-ex="${esc(e)}" style="cursor:pointer">${esc(e)}</button>`).join('')}</div>
   <div id="fout"></div>`;
@@ -77,8 +77,9 @@ export default async function findPage(main, _p, query) {
 
   const out = main.querySelector('#fout');
   out.innerHTML = `
-  <div class="card flat tint" style="margin-top:8px"><div class="row"><b>Market Lenz understood:</b> ${chips.length ? chips.map((c) => `<span class="pill" style="background:var(--accent-soft);color:var(--accent);border-color:transparent">${esc(c)}</span>`).join('') : '<span class="muted">no specific filters, showing the best suburbs overall</span>'}</div>
-  <p class="note" style="margin:8px 0 0">${rows.length.toLocaleString()} suburbs match. Prices are Market Lenz estimates for ${p.beds ? `a ${p.beds}-bedroom ` : 'a typical '}${type === 'u' ? 'unit' : type === 'h' ? 'house' : 'home'} in each suburb, ranked by ${p.strategy === 'cashflow' ? 'cash flow' : p.strategy === 'growth' ? 'growth' : p.strategy === 'firsthome' ? 'affordability' : 'overall'} score.</p></div>
+  <div class="card flat tint" style="margin-top:8px"><div class="row"><b>Ownaroo understood:</b> ${chips.length ? chips.map((c) => `<span class="pill" style="background:var(--accent-soft);color:var(--accent);border-color:transparent">${esc(c)}</span>`).join('') : '<span class="muted">no specific filters, showing the best suburbs overall</span>'}</div>
+  <p class="note" style="margin:8px 0 0">${rows.length.toLocaleString()} suburbs match. Prices are Ownaroo estimates for ${p.beds ? `a ${p.beds}-bedroom ` : 'a typical '}${type === 'u' ? 'unit' : type === 'h' ? 'house' : 'home'} in each suburb, ranked by ${p.strategy === 'cashflow' ? 'cash flow' : p.strategy === 'growth' ? 'growth' : p.strategy === 'firsthome' ? 'affordability' : 'overall'} score.</p>
+  ${(() => { const rgs = [...new Set(top.slice(0, 20).filter((r) => String(r.s.g1s || '').startsWith('region')).map((r) => r.s.rg))]; return rgs.length ? `<p class="note" style="margin:6px 0 0">Area-wide price trend (where a suburb has no sales series of its own): ${rgs.map((c) => { const R = market.regions[c] || {}; return `${esc(R.name || c)} ${pct(R.quarterPct, 1, true)} over 3 months, ${pct(R.annualPct, 1, true)} over 12`; }).join('; ')}. It isn't repeated on each suburb because it says nothing about any one of them.</p>` : ''; })()}</div>
   ${top.length ? `
   <div class="grid split section" style="margin-top:16px">
     <div class="card" style="padding:8px 16px">${top
@@ -86,7 +87,7 @@ export default async function findPage(main, _p, query) {
       .map(
         (r, i) => `<div class="spread" style="padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start">
         <div><span class="faint mono">${i + 1}.</span> <a class="fs-name" href="${suburbUrl(r.s)}" data-link><b>${esc(cleanName(r.s.n))}</b></a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span>${confBadge(r.s)}
-          <div class="note">${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} about <b>${aud(r.est.value, { compact: true })}</b> · rent ${aud(r.est.rent)}/wk · ${pct(r.est.yield, 1)} yield · ${growth12(r.s)} ${srcBadge(r.t === 'u' ? r.s.us : r.s.hs)}</div>
+          <div class="note">${r.est.beds}-bed ${r.t === 'u' ? 'unit' : 'house'} about <b>${aud(r.est.value, { compact: true })}</b> · rent ${aud(r.est.rent)}/wk · ${pct(r.est.yield, 1)} yield${String(r.s.g1s || '').startsWith('region') ? '' : ` · ${growth12(r.s)}`} ${srcBadge(r.t === 'u' ? r.s.us : r.s.hs)}</div>
           <div class="row" style="margin-top:6px"><a class="btn sm" href="/analyse?suburb=${r.s.id}&price=${r.est.value}&rent=${r.est.rent || ''}&type=${r.t}" data-link>Analyse</a><a class="btn sm ghost" href="${reaSearch(r.s, r.t, p)}" target="_blank" rel="noopener">Homes for sale ↗</a></div></div>
         ${scoreBadge(r.display)}</div>`,
       )

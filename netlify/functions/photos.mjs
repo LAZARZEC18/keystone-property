@@ -2,7 +2,7 @@
 //   /api/photos?lat=-31.89&lng=115.90&name=Morley&n=6   photos geotagged in and around a suburb
 //   /api/photos?wiki=Perth                              the lead photo of a Wikipedia article (cities)
 // Results are cached on Netlify's CDN for 30 days, so Wikimedia sees about one request per suburb a month.
-const UA = 'MarketLenzBot/1.0 (https://keystone-au.netlify.app; Keyzing18@gmail.com) property research site';
+const UA = 'OwnarooBot/1.0 (https://keystone-au.netlify.app; Keyzing18@gmail.com) property research site';
 const API = 'https://commons.wikimedia.org/w/api.php';
 
 const json = (body, status = 200) =>

@@ -43,7 +43,7 @@ export default async function comparePage(main, _p, query) {
   <div class="tbl-wrap"><table>
     <thead><tr><th></th>${picks.map((s, i) => `<th class="n" style="text-transform:none;font-size:14px;color:var(--ink)"><a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> <span class="muted">${s.s} ${s.pc}</span><br><button class="btn sm ghost" data-rm="${i}">Remove</button></th>`).join('')}</tr></thead>
     <tbody>
-      <tr><td class="muted">Market Lenz Score</td>${picks.map((s) => `<td class="n">${scoreBadge(suburbScore(s.sc))}</td>`).join('')}</tr>
+      <tr><td class="muted">Ownaroo Score</td>${picks.map((s) => `<td class="n">${scoreBadge(suburbScore(s.sc))}</td>`).join('')}</tr>
       ${Object.keys(PROFILES).filter((p) => p !== 'balanced').map((p) => row(`Score · ${{ firsthome: 'first home', newbuild: 'new builds', cashflow: 'cash flow', growth: 'growth' }[p] || p}`, picks.map((s) => suburbScore(s.sc, PROFILES[p])), (v) => v ?? '—')).join('')}
       ${Object.keys(COMPONENT_NAMES).map((k) => `<tr><td class="muted">${COMPONENT_NAMES[k]}</td>${picks.map((s) => `<td class="n" style="min-width:140px">${bar(s.sc[k])} <span class="mono">${s.sc[k] ?? '—'}</span></td>`).join('')}</tr>`).join('')}
       <tr><td class="muted">Market</td>${picks.map((s) => `<td class="n">${esc(market.regions[s.rg]?.name || '')}</td>`).join('')}</tr>

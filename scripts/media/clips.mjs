@@ -74,11 +74,15 @@ await clip('afford', '/afford?buyer=fhb', async ({ p, wait, scroll, type }) => {
   await p.click('#go'); await wait(1800);
   await scroll(420, 30, 45); await wait(1800); await scroll(620, 36, 45); await wait(2000); await scroll(760, 40, 45); await wait(1600);
 });
-await clip('calculator', '/analyse?state=WA&price=720000&rent=680&built=2008', async ({ p, wait, scroll, type }) => {
-  await wait(700); await scroll(240, 20, 40); await wait(700);
-  await type('#a-price', '650000', 100); await p.press('#a-price', 'Tab'); await wait(1300);
-  await type('#a-rent', '720', 130); await p.press('#a-rent', 'Tab'); await wait(1500);
-  await scroll(700, 40, 45); await wait(1500); await scroll(600, 36, 45); await wait(1500);
+await clip('calculator', '/analyse', async ({ p, wait, scroll, type }) => {
+  // starts on the page's own default example, so the first frame matches what a visitor sees
+  await wait(1200); await scroll(240, 20, 40); await wait(700);
+  await p.selectOption('#a-state', 'WA').catch(() => {}); await wait(900);
+  await type('#a-price', '720000', 100); await p.press('#a-price', 'Tab'); await wait(1300);
+  await type('#a-rent', '680', 130); await p.press('#a-rent', 'Tab'); await wait(1500);
+  await scroll(520, 30, 45); await wait(1200);
+  await p.click('#breakdown summary').catch(() => {}); await wait(900);
+  await scroll(700, 40, 45); await wait(1500);
 });
 await clip('estimate', '/property', async ({ p, wait, scroll, type }) => {
   await wait(400); await type('#pq', '20 Grant Street, Cottesloe WA 6011', 50); await wait(300); await p.press('#pq', 'Enter');

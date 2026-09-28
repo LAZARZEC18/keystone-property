@@ -12,7 +12,7 @@ const json = (body, status = 200) =>
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'public, max-age=0, must-revalidate',
-      'netlify-cdn-cache-control': status === 200 ? 'public, s-maxage=3600, stale-while-revalidate=7200' : 'no-store',
+      'netlify-cdn-cache-control': status === 200 ? 'public, s-maxage=1800, stale-while-revalidate=86400' : 'no-store',
     },
   });
 
@@ -20,7 +20,7 @@ export default async (req) => {
   const name = new URL(req.url).pathname.replace(/^\/api\/live-/, '');
   try {
     if (name === 'news') {
-      const d = await collectNews({ timeout: 6000 });
+      const d = await collectNews({ timeout: 8000 });
       if (d.items.length < 10) throw new Error('too few headlines');
       return json({ ...d, live: true });
     }

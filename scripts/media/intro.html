@@ -75,7 +75,7 @@ function draw(t) {
   text('Anywhere in Australia. Free.', 72, 200, { size: 24, font: 'IBM Plex Sans', weight: 400, alpha: a3, color: '180,210,205' });
   // legend + wordmark
   const aL = fadeAll * clamp((t - 0.5) / 0.6);
-  text('MARKET LENZ', W - 60, H - 40, { size: 16, font: 'IBM Plex Mono', weight: 500, alpha: 0.7 * aL, align: 'right', color: '160,200,195' });
+  text('OWNAROO', W - 60, H - 40, { size: 16, font: 'IBM Plex Mono', weight: 500, alpha: 0.7 * aL, align: 'right', color: '160,200,195' });
   if (growthMode < 0.5) {
     const lg = g.createLinearGradient(70, 0, 270, 0);
     lg.addColorStop(0, priceCol(250000, 1)); lg.addColorStop(0.5, priceCol(790000, 1)); lg.addColorStop(1, priceCol(2500000, 1));

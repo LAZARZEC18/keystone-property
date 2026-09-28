@@ -49,7 +49,7 @@ export const scoreBadge = (v, big = false) => `<span class="score ${scoreClass(v
 
 export function srcBadge(src) {
   if (!src) return '';
-  if (src === 'model') return '<span class="tag tag-model" title="Market Lenz estimate: calibrated model anchored to current regional medians">Modelled</span>';
+  if (src === 'model') return '<span class="tag tag-model" title="Ownaroo estimate: calibrated model anchored to current regional medians">Modelled</span>';
   if (src === 'region') return '<span class="tag tag-model" title="Regional figure (Cotality)">Region</span>';
   const pc = src.includes('postcode');
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
@@ -218,7 +218,7 @@ export function spark(points, { w = 110, h = 28 } = {}) {
 }
 
 export function setMeta({ title, description }) {
-  document.title = title ? `${title} · Market Lenz` : 'Market Lenz · Australian property values, suburbs and rates';
+  document.title = title ? `${title} · Ownaroo` : 'Ownaroo · Australian property values, suburbs and rates';
   const m = document.querySelector('meta[name="description"]');
   if (m && description) m.setAttribute('content', description);
 }
@@ -246,7 +246,8 @@ export function growth12(s, { suffix = ' 12m', short = false, three = suffix !==
   const period = s.g1p ? ` (${s.g1p})` : '';
   if (src.startsWith('region')) {
     const name = REGION_SHORT[s.rg] || 'Region';
-    return `${g3}<span class="muted" title="No suburb-level sales series here: this is the ${name}-wide figure${period}.">${pct(s.g1, 1, true)}${suffix}${short ? ' <span class="area-tag">city-wide</span>' : ` · ${name}-wide`}</span>`;
+    const wide = String(s.rg || '').startsWith('R') ? 'region-wide' : 'city-wide';
+    return `${g3}<span class="muted" title="No suburb-level sales series here: this is the ${name}-wide figure${period}.">${pct(s.g1, 1, true)}${suffix}${short ? ` <span class="area-tag">${wide}</span>` : ` · ${name}-wide`}</span>`;
   }
   if (src.includes('postcode')) return `${g3}<span class="${cls}" title="Postcode-level figure from the NSW Rent and Sales Report${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
   return `${g3}<span class="${cls}" title="Suburb figure from official sales, weighted toward the region when sales are few${period}.">${pct(s.g1, 1, true)}${suffix}</span>`;
@@ -281,4 +282,25 @@ export function returnsLine(sc, v) {
   if (!sc) return '';
   const f = (x) => (x === null || x === undefined ? '—' : pct(x, 1));
   return `<div class="returns-line"><div class="rl-head">Return on your cash after tax, a year, if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div${sc[k].yours ? ' class="rl-yours"' : ''}><span class="k">${sc[k].growth}% a year${sc[k].yours ? ' (your input)' : ''}</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">${sc.base.yours ? 'The middle figure uses your own growth input and matches every other return on this page. ' : ''}3% is the major banks' forecast for 2026-27; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
+}
+
+/** A button that copies a link holding every input (income included), so sharing personal numbers is a choice. */
+export function copyLinkButton(label = 'Copy link with my numbers') {
+  return `<button class="btn" type="button" data-copy-link>${esc(label)}</button><span class="fine copy-done" aria-live="polite"></span>`;
+}
+export function wireCopyLink(root, getUrl) {
+  root.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-copy-link]');
+    if (!b) return;
+    const url = new URL(getUrl(), location.origin).href;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(url);
+      ok = true;
+    } catch {
+      ok = false;
+    }
+    const done = b.parentElement.querySelector('.copy-done');
+    if (done) done.textContent = ok ? ' Copied. It includes your income and savings.' : ` ${url}`;
+  });
 }

@@ -1,5 +1,5 @@
 """
-Build Market Lenz's national suburb dataset.
+Build Ownaroo's national suburb dataset.
 
 Joins, for every Australian suburb/locality (ABS SAL 2021):
   * geography: centroid, state, postcode, capital-city/regional area, council (LGA 2025), remoteness
@@ -8,14 +8,14 @@ Joins, for every Australian suburb/locality (ABS SAL 2021):
       VIC Valuer-General Victorian Property Sales Report (houses + units, by suburb)
       SA  Land Services SA metropolitan median house sales (by suburb)
       NSW DCJ Rent and Sales Report (sales + bond rents, by postcode)
-  * a Market Lenz price and rent model calibrated on those official medians, anchored to current
+  * a Ownaroo price and rent model calibrated on those official medians, anchored to current
     Cotality regional medians, for every suburb that has no official figure.
 
 Outputs site/data/suburbs.json (national index) and site/data/model.json (fit statistics).
 Run: python3 scripts/build_suburbs.py  (needs data/raw/*, see scripts/fetch_raw.sh)
 """
 import json, math, os, re, sys, glob
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.environ.get('MARKET LENZ_RAW', os.path.join(ROOT, 'data', 'raw'))
+RAW = os.environ.get('OWNAROO_RAW', os.path.join(ROOT, 'data', 'raw'))
 OUT = os.path.join(ROOT, 'site', 'data')
 OFFICIAL = os.path.join(ROOT, 'data', 'official')  # state sales/rent files, committed so a blocked download never breaks a rebuild
 MARKET = json.load(open(os.path.join(ROOT, 'data', 'market.json')))
@@ -105,6 +105,36 @@ def coastline():
     # keep the mainland + Tasmania + sizeable islands; boundary = coastline
     polys = [p for p in polys if p.area > 0.002]
     return unary_union([p.exterior for p in polys])
+
+
+# islands joined to the mainland (or Tasmania) by a road bridge: normal commuter suburbs
+BRIDGED = {'bongaree', 'bellara', 'banksia beach', 'woorim', 'white patch', 'welsby', 'bribie island north', 'bribie island',
+           'cowes', 'rhyll', 'ventnor', 'newhaven', 'cape woolamai', 'smiths beach', 'sunderland bay', 'surf beach', 'silverleaves',
+           'wimbledon heights', 'summerlands', 'sunset strip', 'hindmarsh island', 'hope island', 'sovereign islands',
+           'garden island', 'torrens island', 'bruny island',
+           # Tasman and Forestier peninsulas: joined by the Eaglehawk Neck isthmus and the Dunalley bridge
+           'eaglehawk neck', 'koonya', 'nubeena', 'port arthur', 'premaydena', 'saltwater river', 'taranna', 'white beach',
+           'murdunna', 'sloping main', 'highcroft', 'stormlea', 'fortescue', 'dunalley', 'boomer bay', 'marion bay'}
+
+
+def islands(rows):
+    """Flags suburbs on an island with no road bridge (reached by ferry or plane): Russell and Macleay islands,
+    Stradbroke, Magnetic Island, Rottnest, Kangaroo Island, the Tiwi Islands and so on. A home buyer who works on the
+    mainland can't sensibly live there, so the affordability tool leaves them out of its picks."""
+    from shapely.ops import unary_union
+    from shapely.prepared import prep
+    geoms, _ = load_polys(os.path.join(RAW, 'b_GCCSA/GCCSA_2021_AUST_GDA2020'), ['GCC_CODE21'])
+    land = unary_union([g.simplify(0.0005) for g in geoms])
+    polys = sorted(list(land.geoms) if hasattr(land, 'geoms') else [land], key=lambda p: -p.area)
+    main = [prep(p) for p in polys[:2]]  # mainland Australia and Tasmania
+    n = 0
+    for x in rows:
+        on_main = any(m.intersects(x['geom']) for m in main)
+        nm = re.sub(r'\s*\(.*?\)$', '', x['name']).lower()
+        # Bruny Island has a vehicle ferry, not a bridge: keep it flagged
+        x['island'] = not on_main and (nm not in BRIDGED or nm == 'bruny island')
+        n += x['island']
+    log(f'geography: {n} island suburbs without a road bridge')
 
 
 def sa2_population():
@@ -197,6 +227,8 @@ def build_geography():
     coast = coastline()
     for x in rows:
         x['coast_km'] = coast.distance(x['pt']) * 100  # degrees -> ~km (good enough as a log feature)
+    log('geography: islands')
+    islands(rows)
     log('geography: ocean coastline')
     ocean_distances(rows)
     for x in rows:
@@ -232,6 +264,7 @@ def census():
     opd = g36['OPDs_Tot_OPDs_Dwellings'].replace(0, np.nan)
     c['houses'] = g36['OPDs_Separate_house_Dwellings'] / opd
     c['flats'] = g36['OPDs_Flt_apart_Tot_Dwgs'] / opd
+    c['semis'] = g36['OPDs_SD_r_t_h_th_Tot_Dwgs'] / opd
     c['dwellings'] = g36['Total_PDs_Dwellings']
     c['occupied'] = g36['OPDs_Tot_OPDs_Dwellings'] / g36['Total_PDs_Dwellings'].replace(0, np.nan)
     c['unemp'] = g43['Percent_Unem_loyment_P']
@@ -421,7 +454,7 @@ def main():
             continue
         r = dict(g)
         for k in ['pop', 'age', 'mort', 'rent21', 'hhinc', 'hhsize', 'ownOutright', 'ownMortgage', 'renters',
-                  'socialHousing', 'houses', 'flats', 'dwellings', 'occupied', 'unemp', 'bh', 'bu', 'mining', 'topInd', 'employed']:
+                  'socialHousing', 'houses', 'flats', 'semis', 'dwellings', 'occupied', 'unemp', 'bh', 'bu', 'mining', 'topInd', 'employed']:
             r[k] = num(row[k])
         o = old.get((norm_name(g['name']), g['state']))
         if o:
@@ -626,14 +659,17 @@ def main():
             src_house = o['house']['source'] + (' postcode' if o['house'].get('postcode') else '')
         elif house_model:
             house = house_model
+        unit_model = None
+        if est_u.get(idx) is not None:
+            unit_model = anchor_unit(rg) * math.exp(min(1.2, max(-1.2, est_u[idx] - (centre_u.get(rg) or 0))))
+        elif house:
+            # unit prices move ~0.45x as much as house prices across suburbs (fitted on VIC + NSW official medians)
+            unit_model = anchor_unit(rg) * math.exp(UNIT_ELASTICITY * math.log(house / anchor_house(rg)))
         if o.get('unit'):
             unit = o['unit']['median'] * roll(rg, lag[o['unit']['source']])
             src_unit = o['unit']['source'] + (' postcode' if o['unit'].get('postcode') else '')
-        elif est_u.get(idx) is not None:
-            unit = anchor_unit(rg) * math.exp(min(1.2, max(-1.2, est_u[idx] - (centre_u.get(rg) or 0))))
-        elif house:
-            # unit prices move ~0.45x as much as house prices across suburbs (fitted on VIC + NSW official medians)
-            unit = anchor_unit(rg) * math.exp(UNIT_ELASTICITY * math.log(house / anchor_house(rg)))
+        else:
+            unit = unit_model
         # --- rents are set after the loop by a model calibrated on official bond rents (see calibrate_rents)
         o_rent = o.get('rent') or {}
         rr21 = min(2.0, max(0.5, r['rent21'] / reg[rg]['rent21'])) if r['rent21'] and r['rent21'] > 0 and reg[rg]['rent21'] else None
@@ -660,27 +696,30 @@ def main():
             'h': rnd(house, -3), 'u': rnd(unit, -3), 'hs': src_house, 'us': src_unit,
             'rh': rnd(rent_house, 0), 'ru': rnd(rent_unit, 0), 'rs': src_rent,
             'y': rnd(yld, 2), 'g1': rnd(g1, 1), 'g1s': g1src, 'cagr': rnd(o.get('cagr'), 1), 'cagrY': o.get('cagrYears'),
-            'pg5': rnd(r.get('popGrowth5'), 1), 'pgS': r.get('popSrc') if isinstance(r.get('popSrc'), str) else 'Census 2016-21', 'ig5': rnd(r.get('incGrowth5'), 1), 'rg5': rnd(r.get('rentGrowth5'), 1),
-            'inc': rnd(r['hhinc'], 0), 'age': r['age'], 'une': rnd(r['unemp'], 1), 'rent%': rnd(pct(r['renters']), 1),
+            'pg5': rnd(r.get('popGrowth5'), 1), 'pgS': r.get('popSrc') if isinstance(r.get('popSrc'), str) else 'Census 2016-21', 'ig5': rnd(AREA['incomeGrowth'].get(str(r['sa2']), r.get('incGrowth5')), 1), 'igS': 'SA2 2018-19 to 2022-23' if str(r['sa2']) in AREA['incomeGrowth'] else 'Census 2016-21', 'rg5': rnd(r.get('rentGrowth5'), 1),
+            'inc': rnd(inc_now(r), 0), 'inc21': rnd(r['hhinc'], 0), 'age': r['age'], 'une': rnd(une_now(r), 1), 'une21': rnd(r['unemp'], 1), 'rent%': rnd(pct(r['renters']), 1),
             'own%': rnd(pct(r['ownOutright']), 1), 'soc%': rnd(pct(r['socialHousing']), 1),
             'hou%': rnd(pct(r['houses']), 1), 'fla%': rnd(pct(r['flats']), 1), 'dw': int(r['dwellings'] or 0),
             'sup': supply(r['lgc']),
             'bh': rnd(r['bh'], 1), 'bu': rnd(r['bu'], 1), 'cst': rnd(r['coast_km'], 1), 'ocn': rnd(r.get('ocean_km'), 1), 'cbd': rnd(r['cbd_km'], 1),
-            'conf': conf, 'pt': 'u' if (r['flats'] or 0) >= 0.5 else 'h',
+            'conf': conf, 'pt': 'u' if (r['flats'] or 0) >= 0.5 else 'h', 'isl': 1 if r.get('island') else 0,
             'min%': rnd(pct(r['mining']), 1), 'top%': rnd(pct(r['topInd']), 1),
-            '_rr21': rr21, '_orent': o_rent, '_dw': float(r['dwellings'] or 0), '_g1raw': g1raw, '_g1n': g1n,
+            '_rr21': rr21, '_orent': o_rent, '_um': unit_model, '_ush': (r['flats'] or 0) + (r['semis'] or 0), '_dw': float(r['dwellings'] or 0), '_g1raw': g1raw, '_g1n': g1n,
             'hist': o.get('history'),
             'off': {k: v for k, v in (o or {}).items() if k in ('house', 'unit', 'rent')} or None,
         })
     calibrate_rents(out, regions)
     shrink_growth(out, regions)
+    held = sanity(out)
     for x in out:
-        for k in ('_rr21', '_orent', '_dw', '_g1raw', '_g1n'):
+        for k in ('_rr21', '_orent', '_dw', '_g1raw', '_g1n', '_um', '_ush'):
             x.pop(k, None)
     scored = score(out)
     meta = {
         'built': pd.Timestamp.now('UTC').isoformat(),
         'count': len(scored),
+        'held': len(held),
+        'areaNow': {'labels': AREA['labels'], 'wpiTo': AREA['wpiTo'], 'unemploymentTo': AREA['unemploymentTo']},
         'model': {'features': feats, 'coef': [round(float(b), 4) for b in beta], 'r2': round(float(r2), 3), 'rmseLog': round(rmse, 3),
                   'unitCoef': [round(float(b), 4) for b in beta_u], 'unitR2': round(float(r2u), 3), 'unitTrainN': int(len(tru)),
                   'trainN': int(len(train)), 'holdout': holdout,
@@ -691,13 +730,16 @@ def main():
             {'title': 'Victorian Property Sales Report, Valuer-General Victoria', 'url': 'https://discover.data.vic.gov.au/dataset/victorian-property-sales-report-median-house-by-suburb'},
             {'title': 'Metropolitan Median House Sales, Land Services SA', 'url': 'https://data.sa.gov.au/data/dataset/metro-median-house-sales'},
             {'title': 'Rent and Sales Report, NSW Department of Communities and Justice', 'url': 'https://dcj.nsw.gov.au/about-us/families-and-communities-statistics/housing-rent-and-sales/rent-and-sales-report.html'},
-            {'title': 'Cotality Home Value Index (regional anchors)', 'url': 'https://www.cotality.com/au/our-data/indices/home-value-index'},
+            {'title': 'Cotality Home Value Index (regional anchors)', 'url': 'https://www.cotality.com/au/our-data/indices'},
             {'title': 'SQM Research asking rents and vacancy rates', 'url': 'https://sqmresearch.com.au/'},
+            {'title': 'ABS Personal Income in Australia 2022-23 (median income by SA2)', 'url': 'https://www.abs.gov.au/statistics/labour/earnings-and-working-conditions/personal-income-australia/latest-release'},
+            {'title': 'ABS Wage Price Index', 'url': 'https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/latest-release'},
+            {'title': 'ABS modelled labour force estimates by SA4', 'url': 'https://www.abs.gov.au/statistics/labour/employment-and-unemployment/labour-force-australia-detailed/latest-release'},
         ],
     }
     os.makedirs(OUT, exist_ok=True)
     # Index: what the explorer, map and ranker need for every suburb (loaded once).
-    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'ocn', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra', 'hou%', 'fla%']
+    index_cols = ['id', 'n', 's', 'pc', 'rg', 'lga', 'lgc', 'sup', 'bh', 'bu', 'cst', 'ocn', 'cbd', 'lat', 'lng', 'pop', 'h', 'u', 'rh', 'ru', 'y', 'g1', 'g1s', 'pt', 'conf', 'hs', 'us', 'pti', 'pg5', 'rsk', 'ra', 'hou%', 'fla%', 'isl']
     comp = ['cash', 'momentum', 'growth', 'demand', 'afford', 'stability']
     rows = [[s_[c] for c in index_cols] + [s_['sc'][k] for k in comp] for s_ in scored]
     with open(os.path.join(OUT, 'suburbs.json'), 'w') as fh:
@@ -709,7 +751,97 @@ def main():
     for st, d in by_state.items():
         with open(os.path.join(OUT, f'suburbs-{st}.json'), 'w') as fh:
             json.dump(d, fh, separators=(',', ':'))
-    log('wrote', len(scored), 'suburbs')
+    routine_n = Counter(h['why'] for h in held)
+    with open(os.path.join(OUT, 'model.json'), 'w') as fh:
+        json.dump({**meta, 'checks': {'rules': SANITY_RULES, 'fewUnits': routine_n['few units'], 'unitCapped': routine_n['modelled unit capped below house'],
+                   'heldForReview': sum(v for k, v in routine_n.items() if k not in ('few units', 'modelled unit capped below house'))}}, fh, separators=(',', ':'))
+    with open(os.path.join(ROOT, 'data', 'sanity-report.json'), 'w') as fh:
+        routine = Counter(h['why'] for h in held if h['why'] in ('few units', 'modelled unit capped below house'))
+        json.dump({'built': meta['built'], 'rules': SANITY_RULES, 'counts': {'unit price not shown (under 5% units)': routine['few units'],
+                   'modelled unit capped below the house price': routine['modelled unit capped below house']},
+                   'checkThese': [h for h in held if h['why'] not in routine]}, fh, indent=1)
+    log('wrote', len(scored), 'suburbs;', len(held), 'figures held back or adjusted (data/sanity-report.json)')
+
+
+UNIT_MIN_SHARE = 0.05  # below 5% flats, townhouses and semis there's no real unit market to price
+SANITY_RULES = [
+    'No unit or townhouse price where they make up under 5% of homes (Census 2021).',
+    'An official unit median above 1.5 times the house price is held back and the modelled figure shown instead, flagged.',
+    'A modelled unit price is never above 95% of the same suburb\'s house price.',
+    'Any modelled price, or unit price, more than double the state\'s 99.5th-percentile house price is held back.',
+    'A gross yield under 1% or over 10% is held back, with the rent behind it.',
+]
+
+
+def sanity(rows):
+    """Checks every figure before it is published. Anything that fails is held back (or replaced by the model and
+    flagged on the page) and listed in data/sanity-report.json for a person to check."""
+    held = []
+    def note(x, field, was, why, now=None):
+        held.append({'id': x['id'], 'n': x['n'], 's': x['s'], 'pc': x['pc'], 'field': field, 'was': was, 'now': now, 'why': why})
+        x.setdefault('held', []).append(why)
+    tops = {}
+    for st in {x['s'] for x in rows}:
+        hs = sorted(x['h'] for x in rows if x['s'] == st and x['h'])
+        tops[st] = hs[min(len(hs) - 1, int(len(hs) * 0.995))] if hs else None
+    for x in rows:
+        if x['_ush'] < UNIT_MIN_SHARE and x['u']:
+            held.append({'id': x['id'], 'n': x['n'], 's': x['s'], 'pc': x['pc'], 'field': 'u', 'was': x['u'], 'now': None, 'why': 'few units'})
+            x['u'] = None; x['ru'] = None; x['us'] = 'few'
+            if x.get('off') and x['off'].get('unit'):
+                x['off'].pop('unit')
+        if x['u'] and x['h'] and x['us'] != 'model' and x['u'] > 1.5 * x['h']:
+            um = x['_um'] if x['_um'] and x['_um'] <= x['h'] * 0.95 else None
+            note(x, 'u', x['u'], f"The official unit median (${x['u']:,.0f}) is more than 1.5 times the house price, so it has been held back for checking" + (' and the modelled figure is shown.' if um else '.'), um)
+            x['u'] = rnd(um, -3) if um else None; x['us'] = 'model' if um else 'held'
+            if x.get('off') and x['off'].get('unit'):
+                x['off'].pop('unit')
+        top = tops.get(x['s'])
+        for f in ('h', 'u'):
+            official = x['hs' if f == 'h' else 'us'] not in ('model', 'few', 'held')
+            if x[f] and top and x[f] > 2 * top and not (f == 'h' and official):
+                note(x, f, x[f], f"{'House' if f == 'h' else 'Unit'} figure of ${x[f]:,.0f} held back: more than double the state's top suburbs.")
+                x[f] = None
+                if f == 'h':
+                    x['rh'] = None; x['y'] = None
+                else:
+                    x['ru'] = None; x['us'] = 'held'
+        if x['u'] and x['h'] and x['us'] == 'model' and x['u'] > x['h'] * 0.95:
+            held.append({'id': x['id'], 'n': x['n'], 's': x['s'], 'pc': x['pc'], 'field': 'u', 'was': x['u'], 'now': rnd(x['h'] * 0.95, -3), 'why': 'modelled unit capped below house'})
+            x['u'] = rnd(x['h'] * 0.95, -3)
+        if x['ru'] and x['rh'] and x['ru'] > x['rh']:
+            x['ru'] = rnd(x['rh'] * 0.92, 0)
+        if x['y'] is not None and not (1 <= x['y'] <= 10):
+            note(x, 'y', x['y'], f"A gross yield of {x['y']:.2f}% is outside 1% to 10%, so the rent and yield are held back for checking.")
+            x['y'] = None; x['rh'] = None
+        if x.get('off') == {}:
+            x['off'] = None
+        if x['pt'] == 'u' and not x['u'] and x['h']:
+            x['pt'] = 'h'
+        elif x['pt'] == 'h' and not x['h'] and x['u']:
+            x['pt'] = 'u'
+    return held
+
+
+AREA = json.load(open(os.path.join(OFFICIAL, 'area-now.json')))  # scripts/area_now.py
+_INC_MED = float(np.median(list(AREA['income'].values())))
+
+
+def inc_now(r):
+    """2021 Census household income carried to today: the area's ABS personal income change to 2022-23, then
+    national wage growth (WPI) since."""
+    if not r['hhinc']:
+        return None
+    return r['hhinc'] * AREA['income'].get(str(r['sa2']), _INC_MED) * AREA['wpi']
+
+
+def une_now(r):
+    """2021 Census unemployment rate moved by the change in the ABS modelled rate for its SA4 labour market."""
+    if r['unemp'] is None or (isinstance(r['unemp'], float) and math.isnan(r['unemp'])):
+        return None
+    u = AREA['unemployment'].get(str(r['sa2'])[:3])
+    ratio = min(2.0, max(0.5, u['now'] / u['aug21'])) if u and u['aug21'] else 1
+    return r['unemp'] * ratio
 
 
 def pct(x):
@@ -845,7 +977,7 @@ def risk_index(r):
 
 
 def score(rows):
-    """Percentile components (0-100) that the site weights into the Market Lenz Score.
+    """Percentile components (0-100) that the site weights into the Ownaroo Score.
     Higher is always better for the investor."""
     import bisect
     def ranker(key, invert=False, filt=lambda r: True):

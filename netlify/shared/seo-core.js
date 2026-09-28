@@ -12,29 +12,29 @@ const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland'
 const W = { cash: 22, momentum: 0, growth: 25, demand: 23, afford: 12, stability: 18 };
 
 const PAGES = {
-  '/': ['What can you comfortably afford, and where?', 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and every lender’s rate.'],
-  '/afford': ['What can I afford? A comfortable price, and your ceiling in every state', 'Enter your savings and income. Market Lenz works out a comfortable price where you want to buy, the most you could stretch to in every state and territory (stamp duty, mortgage insurance, lender buffers), the schemes you qualify for and the suburbs that fit.'],
+  '/': ['What can you comfortably afford, and where?', 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and advertised rates from 90+ lenders.'],
+  '/afford': ['What can I afford? A comfortable price, and your ceiling in every state', 'Enter your savings and income. Ownaroo works out a comfortable price where you want to buy, the most you could stretch to in every state and territory (stamp duty, mortgage insurance, lender buffers), the schemes you qualify for and the suburbs that fit.'],
   '/property': ['Price range for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
-  '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Market Lenz ranks every matching suburb.'],
+  '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Ownaroo ranks every matching suburb.'],
   '/map': ['Highest-scoring suburbs in Australia: map', 'Suburbs scored on yield, growth drivers, rental demand, affordability and stability, ranked within each state, on one map, with how much of each score is measured.'],
   '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank Australian suburbs within each state by price, rent, yield, growth drivers, demand and risk, with every figure marked as measured or modelled.'],
   '/analyse': ['2026 tax-change calculator for investment property', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
   '/borrowing': ['How much can I borrow?', 'Estimate your borrowing power the way Australian lenders do, for a home to live in or an investment: the 3-point rate buffer, living costs, existing debts and 80% of any rent.'],
-  '/rates': ['Home loan rates in Australia, updated several times a day', 'Every advertised home loan rate from 90+ Australian lenders, read from their Open Banking feeds, with offset accounts and fees, ranked by loan type and deposit.'],
-  '/markets': ['Australian property market dashboard', 'Month-end median values, the 3-month and 12-month change, rents, yields, vacancy and days on market for every capital and regional market.'],
+  '/rates': ['Home loan rates in Australia, updated several times a day', 'Advertised home loan rates from 90+ Australian lenders, read from their Open Banking feeds, with offset accounts and fees, ranked by loan type and deposit.'],
+  '/markets': ['Australian housing market dashboard', 'Which way prices are moving in each capital, the RBA cash rate and what borrowers actually pay, lending and housing supply.'],
   '/new-builds': ['New builds and housing supply by council', 'Monthly building approvals by state, council and area, and where new supply is heaviest.'],
   '/weekly': ['Property market update: rates this week, prices at month-end', 'Home loan rates and the RBA outlook checked every week, capital-city values from the latest month-end index, and the week’s housing headlines.'],
   '/news': ['Australian housing news', 'Headlines on prices, rates, rents and housing policy from Australian publishers.'],
   '/guide': ['How to buy property in Australia: first home and investment guide (2026)', 'The whole process in order for first home buyers and investors: federal and state schemes including Keystart, stamp duty by state, finance, the 2026 tax changes and every cost.'],
   '/first-home': ['First home tools: rent vs buy, savings planner and FHSS calculator', 'How long it will take to save a deposit, whether buying beats renting, and how much the First Home Super Saver scheme adds.'],
-  '/why': ['Why Market Lenz: what it does for home buyers and investors', 'How Market Lenz helps first home buyers, upgraders and investors work out what they can afford, what a purchase really costs and which suburbs fit.'],
+  '/why': ['Why Ownaroo: what it does for home buyers and investors', 'How Ownaroo helps first home buyers, upgraders and investors work out what they can afford, what a purchase really costs and which suburbs fit.'],
   '/compare': ['Compare suburbs side by side', 'Compare up to four Australian suburbs on price, rent, yield, growth and risk.'],
-  '/watchlist': ['Your saved suburbs and deals', 'Suburbs and deals you have saved on Market Lenz, kept only in your own browser.'],
-  '/methodology': ['Data sources and methodology', 'Where every Market Lenz figure comes from, how the price and rent models work, and their measured error.'],
-  '/about': ['About Market Lenz', 'Market Lenz is a free, independent calculator site for Australian home buyers and investors: what it does, where its numbers come from, and how it stays independent.'],
-  '/contact': ['Contact Market Lenz', 'Contact Market Lenz with a question, a data correction or a privacy request. Every message gets a reply by email.'],
-  '/privacy': ['Privacy policy', 'What Market Lenz collects, why, and what it does with it.'],
-  '/terms': ['Terms of use', 'The terms for using Market Lenz: general information and calculators, not financial, credit, tax or legal advice, and how estimates and third-party data should be used.'],
+  '/watchlist': ['Your saved suburbs and deals', 'Suburbs and deals you have saved on Ownaroo, kept only in your own browser.'],
+  '/methodology': ['Data sources and methodology', 'Where every Ownaroo figure comes from, how the price and rent models work, and their measured error.'],
+  '/about': ['About Ownaroo', 'Ownaroo is a free, independent calculator site for Australian home buyers and investors: what it does, where its numbers come from, and how it stays independent.'],
+  '/contact': ['Contact Ownaroo', 'Contact Ownaroo with a question, a data correction or a privacy request. Every message gets a reply by email.'],
+  '/privacy': ['Privacy policy', 'What Ownaroo collects, why, and what it does with it.'],
+  '/terms': ['Terms of use', 'The terms for using Ownaroo: general information and calculators, not financial, credit, tax or legal advice, and how estimates and third-party data should be used.'],
 };
 // thin or personal pages: aggregated headlines, comparisons and the browser-only watchlist
 const NOINDEX = new Set(['/compare', '/watchlist', '/news']);
@@ -43,7 +43,7 @@ const NOINDEX = new Set(['/compare', '/watchlist', '/news']);
 
 /** Kept for the call sites; prices are not moved between month-ends. */
 function liveAdjust() {
-  // Market Lenz publishes month-end figures only, so server-rendered prices are the month-end values, as in the app.
+  // Ownaroo publishes month-end figures only, so server-rendered prices are the month-end values, as in the app.
 }
 
 export function buildIndex(sub, market, index = null) {
@@ -83,9 +83,13 @@ export function buildIndex(sub, market, index = null) {
   return { rows, bySlug, byPc, byLga, market, count: rows.length };
 }
 
+// guide sections, one page each (keep in step with site/assets/pages/guide.js)
+export const GUIDE = [["before","Before you buy: goals, budget and timing","What to decide before you look at a single property: why you are buying, what you can hold through a rate rise, and your timeline."],["fhb","Buying your first home in Australia (2026)","The 5% Deposit Scheme, Help to Buy, first home grants, stamp duty concessions and state home lenders like Keystart, and each step to settlement."],["strategy","Property investment strategies: growth, yield or new builds","Capital growth, cash flow and new builds under the 2026 tax rules: what each strategy needs and who it suits."],["finance","Getting your home loan ready","Pre-approval, deposit, lenders mortgage insurance, the 3-point serviceability buffer and the documents lenders ask for."],["research","How to research a suburb before you buy","Prices, rents, vacancy, supply, local economy and hazards: what to check about a suburb and where to find it."],["buy","Finding, inspecting and buying a property","Inspections, building and pest reports, making an offer, auctions and exchanging contracts."],["settle","Property settlement in Australia","What happens between exchange and settlement, and what to check on the day."],["own","Owning an investment property","Tenants, property managers, insurance, depreciation and records for tax time."],["costs","Every cost of buying property, in one place","Deposit, stamp duty, LMI, legal and inspection fees, and the ongoing costs of owning."],["duty","Stamp duty in every state and territory (2026)","Stamp duty at common prices in each state and territory, with first home and owner-occupier concessions."],["landtax","Land tax by state (2026)","Land tax thresholds and rates for investors in each state and territory."],["tax-2026","The 2026 negative gearing and CGT changes, explained","Who keeps negative gearing, how capital gains are taxed from 1 July 2027, and what it means for your weekly cost and return."],["mistakes","Common property buying mistakes","The mistakes that cost buyers most, and how to avoid them."],["glossary","Property and home loan glossary","Plain-English definitions of LVR, LMI, comparison rates, offset accounts and more."],["faq","Property buying questions, answered","Short answers to the questions buyers ask most."]];
+for (const [id, t, d] of GUIDE) PAGES[`/guide/${id}`] = [t, d];
+
 const ROUTES = [
   /^\/$/, /^\/markets$/, /^\/new-builds$/, /^\/weekly$/, /^\/suburbs$/, /^\/suburb\/[a-z]+\/[a-z0-9-]+$/, /^\/postcode\/\d{3,4}$/,
-  /^\/council\/[a-z]+\/[a-z0-9-]+$/, /^\/analyse$/, /^\/afford$/, /^\/rates$/, /^\/listings$/, /^\/news$/, /^\/guide$/, /^\/compare$/, /^\/watchlist$/,
+  /^\/council\/[a-z]+\/[a-z0-9-]+$/, /^\/analyse$/, /^\/afford$/, /^\/rates$/, /^\/listings$/, /^\/news$/, /^\/guide$/, /^\/guide\/[a-z0-9-]+$/, /^\/compare$/, /^\/watchlist$/,
   /^\/borrowing$/, /^\/methodology$/, /^\/find$/, /^\/property$/, /^\/map$/, /^\/(about|privacy|terms|contact)$/, /^\/first-home$/, /^\/why$/,
 ];
 
@@ -106,7 +110,7 @@ export function describe(pathname, search, ix, origin) {
   const canonical = `${origin}${path === '/' ? '/' : path}`;
   const base = { status: 200, canonical, robots: 'index,follow', jsonld: [], body: null, image: `${origin}/assets/og.png` };
   if (!ROUTES.some((re) => re.test(path))) {
-    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Market Lenz. Try the suburb explorer, the affordability calculator or the search box.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
+    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Ownaroo. Try the suburb explorer, the affordability calculator or the search box.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
   }
   const q = new URLSearchParams(search);
   let m = path.match(/^\/suburb\/([a-z]+\/[a-z0-9-]+)$/);
@@ -123,7 +127,7 @@ export function describe(pathname, search, ix, origin) {
     const lgaSlug = s.lga ? `${s.s.toLowerCase()}/${slugify(s.lga)}` : null;
     const body = `<article class="ssr"><div class="crumbs"><a href="/suburbs?state=${s.s}">${esc(STATE_NAMES[s.s] || s.s)}</a> › ${lgaSlug ? `<a href="/council/${lgaSlug}">${esc(s.lga)}</a> › ` : ''}${s.pc ? `<a href="/postcode/${s.pc}">${s.pc}</a>` : ''}</div>
 <h1>${esc(s.name)} ${s.s} ${esc(s.pc || '')}</h1>
-<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)} and the typical unit about ${money(s.u)}. Typical rents are about $${s.rh ?? '—'} a week for a house and $${s.ru ?? '—'} for a unit, a gross yield of about ${pct(s.y, 1)} on a house. ${R.quarterPct != null ? `Over the last 3 months ${esc(R.name || 'the area')} values changed ${pct(R.quarterPct, 1, true)} (${pct(R.annualPct, 1, true)} over 12 months, month-end ${esc(ix.market?.indexMonth || '')}).` : ''} Market Lenz suburb score: ${s.score ?? '—'}/100.</p>
+<p>${esc(s.name)} is in the ${esc(s.lga || '')} council area of ${esc(R.name || STATE_NAMES[s.s] || '')}, with about ${Number(s.pop).toLocaleString('en-AU')} residents. The typical house is about ${money(s.h)}${s.u ? ` and the typical unit or townhouse about ${money(s.u)}` : ''}. The typical house rent is about $${s.rh ?? '—'} a week${s.ru ? ` ($${s.ru} for a unit)` : ''}${s.y ? `, a gross yield of about ${pct(s.y, 1)} on a house` : ''}. ${R.quarterPct != null ? `Over the last 3 months ${esc(R.name || 'the area')} values changed ${pct(R.quarterPct, 1, true)} (${pct(R.annualPct, 1, true)} over 12 months, month-end ${esc(ix.market?.indexMonth || '')}).` : ''} Ownaroo suburb score: ${s.score ?? '—'}/100.</p>
 <ul><li>Price data: ${s.hs === 'model' ? 'modelled (no official suburb sales series)' : 'official government sales'}</li><li>${s.cbd != null ? `${Math.round(s.cbd)} km from the city centre` : 'Regional'}${s.ocn != null ? `, ${Number(s.ocn).toFixed(1)} km from the ocean` : ''}</li></ul>
 <h2>Nearby suburbs</h2><ul>${near.map((x) => `<li><a href="/suburb/${x.slug}">${esc(x.name)} ${x.s} ${esc(x.pc || '')}</a>: typical ${x.pt === 'u' ? 'unit' : 'house'} ${money(x.pt === 'u' ? x.u : x.h)}</li>`).join('')}</ul></article>`;
     const jsonld = [
@@ -157,19 +161,19 @@ export function describe(pathname, search, ix, origin) {
     if (!list.length) return { ...base, status: 404, robots: 'noindex', title: 'Council not found', description: 'No council area matches this address.', body: '<div class="empty"><h1>Council not found</h1></div>' };
     const lga = list[0].lga;
     const title = `${lga} council area: suburbs, house prices, rents and scores`;
-    const description = `${list.length} suburbs in ${lga} (${list[0].s}), with typical prices, rents, yields and Market Lenz suburb scores.`;
+    const description = `${list.length} suburbs in ${lga} (${list[0].s}), with typical prices, rents, yields and Ownaroo suburb scores.`;
     const body = `<article class="ssr"><h1>${esc(lga)}</h1><ul>${list.slice(0, 60).map((x) => `<li><a href="/suburb/${x.slug}">${esc(x.name)} ${esc(x.pc || '')}</a>: typical house ${money(x.h)}, score ${x.score ?? '—'}</li>`).join('')}</ul></article>`;
     return { ...base, title, description, body };
   }
-  const page = PAGES[path] || PAGES[path.replace(/^\/listings$/, '/property')] || ['Market Lenz', PAGES['/'][1]];
+  const page = PAGES[path] || PAGES[path.replace(/^\/listings$/, '/property')] || ['Ownaroo', PAGES['/'][1]];
   let [title, description] = page;
   let robots = NOINDEX.has(path) || [...q.keys()].some((k) => ['q', 'price', 'savings', 'income', 'ids', 'asking'].includes(k)) ? 'noindex,follow' : 'index,follow';
   if (path === '/listings') robots = 'noindex,follow';
   const jsonld =
     path === '/'
       ? [
-          { '@context': 'https://schema.org', '@type': 'Organization', name: 'Market Lenz', url: `${origin}/`, email: 'Keyzing18@gmail.com', logo: `${origin}/assets/marketlenz.svg`, address: { '@type': 'PostalAddress', addressLocality: 'Perth', addressRegion: 'WA', addressCountry: 'AU' } },
-          { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Market Lenz', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
+          { '@context': 'https://schema.org', '@type': 'Organization', name: 'Ownaroo', url: `${origin}/`, email: 'Keyzing18@gmail.com', logo: `${origin}/assets/ownaroo.svg`, address: { '@type': 'PostalAddress', addressLocality: 'Perth', addressRegion: 'WA', addressCountry: 'AU' } },
+          { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Ownaroo', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
         ]
       : [];
   const body = path === '/' ? null : `<article class="ssr"><h1>${esc(title)}</h1><p>${esc(description)}</p></article>`;
@@ -178,12 +182,12 @@ export function describe(pathname, search, ix, origin) {
 
 /** Rewrite the app shell for one URL. */
 export function renderHtml(html, meta) {
-  const full = meta.title === 'Market Lenz' ? 'Market Lenz' : `${meta.title} · Market Lenz`;
+  const full = meta.title === 'Ownaroo' ? 'Ownaroo' : `${meta.title} · Ownaroo`;
   const tags = [
     `<link rel="canonical" href="${esc(meta.canonical)}">`,
     `<meta name="robots" content="${meta.robots}">`,
     `<meta property="og:type" content="website">`,
-    `<meta property="og:site_name" content="Market Lenz">`,
+    `<meta property="og:site_name" content="Ownaroo">`,
     `<meta property="og:title" content="${esc(meta.title)}">`,
     `<meta property="og:description" content="${esc(meta.description)}">`,
     `<meta property="og:url" content="${esc(meta.canonical)}">`,

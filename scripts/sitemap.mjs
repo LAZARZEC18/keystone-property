@@ -1,5 +1,6 @@
 // sitemap.xml + robots.txt for every page and every suburb, postcode and council.
 import { readFile, writeFile } from 'node:fs/promises';
+import { GUIDE } from '../netlify/shared/seo-core.js';
 
 const SITE = (process.env.SITE_URL || 'https://keystone-au.netlify.app').replace(/\/$/, '');
 const d = JSON.parse(await readFile(new URL('../site/data/suburbs.json', import.meta.url), 'utf8'));
@@ -7,7 +8,7 @@ const col = (c) => d.cols.indexOf(c);
 const clean = (n) => n.replace(/\s*\((NSW|Vic\.|Qld|SA|WA|Tas\.|NT|ACT)\)\s*$/i, '');
 const slug = (x) => x.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const today = new Date().toISOString().slice(0, 10);
-const urls = new Set(['/', '/markets', '/suburbs', '/new-builds', '/analyse', '/afford', '/rates', '/news', '/guide', '/weekly', '/borrowing', '/methodology', '/compare', '/map', '/property', '/find', '/about', '/contact', '/privacy', '/terms', '/first-home', '/why']);
+const urls = new Set(['/', '/markets', '/suburbs', '/new-builds', '/analyse', '/afford', '/rates', '/news', '/guide', '/weekly', '/borrowing', '/methodology', '/compare', '/map', '/property', '/find', '/about', '/contact', '/privacy', '/terms', '/first-home', '/why', ...GUIDE.map(([id]) => `/guide/${id}`)]);
 for (const r of d.rows) {
   const n = r[col('n')], s = r[col('s')], pc = r[col('pc')], lga = r[col('lga')], id = r[col('id')];
   // same rule as the page's robots tag: small places with only modelled prices aren't listed

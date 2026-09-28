@@ -1,14 +1,11 @@
-import { cityCard, cityPhoto, CITY_PHOTO } from './home.js';
-import { photoCredits } from '../photos.js';
 import { esc, aud, pct, date, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
 import { load } from '../data.js';
 
 export default async function markets(main) {
-  setMeta({ title: 'Australian housing market dashboard', description: 'Capital city and regional home values, rents, yields, vacancy, the RBA cash rate and mortgage rates.' });
+  setMeta({ title: 'Australian housing market dashboard', description: 'Which way prices are moving in each capital, the RBA cash rate and what borrowers actually pay, lending and housing supply.' });
   const [market, rba, rs] = await Promise.all([load('market'), load('rba'), load('rates-summary')]);
   const R = market.regions;
   const caps = Object.entries(R).filter(([, r]) => r.capital);
-  const all = Object.entries(R);
   const abs = market.abs;
   const since = (arr, from) => arr.filter(([d]) => d >= from).map(([d, v]) => [Date.parse(d), v]);
   const cash = rba.cashRate.decisions.map((d) => [Date.parse(d.date), d.rate]);
@@ -20,42 +17,26 @@ export default async function markets(main) {
   <div class="page-head">
     <div class="eyebrow">Markets</div>
     <h1>The Australian housing market</h1>
-    <p>Where values, rents and rates are heading, city by city. Index figures are Cotality's August 2026 Home Value Index. RBA figures are checked about every hour and lender rates several times a day.</p>
+    <p>Where values, rents and rates are heading, city by city. Price direction is from Cotality's month-end Home Value Index; RBA figures and lender rates are checked several times a day. Full index results are published by <a href="https://www.cotality.com/au/our-data/indices" target="_blank" rel="noopener">Cotality</a>; Ownaroo shows the headline changes only.</p>
   </div>
 
   <div class="grid g4">
-    <div class="card"><div class="stat"><span class="k">National median dwelling</span><span class="v">${aud(market.national.medianDwelling)}</span><span class="s"><span class="${market.national.annualPct >= 0 ? 'up' : 'down'}">${pct(market.national.annualPct, 1, true)}</span> y/y · ${pct(market.national.fromPeakPct, 1)} from peak</span></div></div>
+    <div class="card"><div class="stat"><span class="k">National median dwelling</span><span class="v">${aud(Math.round(market.national.medianDwelling / 1000) * 1000, { compact: true })}</span><span class="s"><span class="${market.national.annualPct >= 0 ? 'up' : 'down'}">${pct(market.national.annualPct, 1, true)}</span> y/y · ${pct(market.national.fromPeakPct, 1)} from peak</span></div></div>
     <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last changed ${date(rba.cashRate.lastChange)}` : `Last changed ${date(rba.cashRate.lastChange)}`} · next decision ${date(market.cashRate.nextMeeting)}</span></div></div>
     <div class="card"><div class="stat"><span class="k">Average new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
     <div class="card"><div class="stat"><span class="k">National rent growth</span><span class="v">${pct(market.national.rentAnnualPct, 1, true)}</span><span class="s">Vacancy ${pct(market.national.vacancySQM, 1)} (SQM)</span></div></div>
   </div>
 
-  <section class="section"><div class="city-grid" id="m-cities">${Object.entries(market.regions).filter(([, r]) => r.capital).map(([code, r]) => cityCard(code, r, cityPhoto(code))).join('')}</div>${photoCredits(Object.entries(market.regions).filter(([, r]) => r.capital).map(([c]) => CITY_PHOTO[c]))}</section>
-
   <section class="section">
-    <h2>Values and recent price change by market</h2>
+    <h2>Which way prices are moving in each capital</h2>
     <div class="grid g2">
-      <div class="card"><h3>Last 3 months: where prices are heading now</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.quarterPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}<h3 style="margin-top:16px">Last 12 months</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.annualPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
-      <div class="card"><h3>Gross rental yield</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.yield })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1) })}</div>
+      <div class="card"><h3>Last 3 months: the direction now</h3>${hbars(caps.map(([, r]) => ({ label: r.name, value: r.quarterPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
+      <div class="card"><h3>Last 12 months</h3>${hbars(caps.map(([, r]) => ({ label: r.name, value: r.annualPct })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1, true), signedScale: true })}</div>
     </div>
-    <div class="tbl-wrap" style="margin-top:16px"><table>
-      <thead><tr><th>Market</th><th class="n">Median dwelling</th><th class="n">House</th><th class="n">Unit</th><th class="n">Month to Aug</th><th class="n">Quarter to Aug</th><th class="n">Year to Aug</th><th class="n">House yield</th><th class="n">Unit yield</th><th class="n">Advertised rent, house (SQM)</th><th class="n">Advertised rent, unit (SQM)</th><th class="n">Vacancy</th><th class="n">Days on market</th><th class="n">A year ago</th></tr></thead>
-      <tbody>${all
-        .map(
-          ([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${r.name}</a></td><td class="n">${aud(r.medianDwelling, { compact: true })}</td><td class="n">${aud(r.medianHouse, { compact: true })}</td><td class="n">${aud(r.medianUnit, { compact: true })}</td>${['monthPct', 'quarterPct', 'annualPct'].map((k) => `<td class="n ${r[k] >= 0 ? 'up' : 'down'}">${pct(r[k], 1, true)}</td>`).join('')}<td class="n">${pct(r.houseYield ?? r.yield, 1)}</td><td class="n">${pct(r.unitYield, 1)}</td><td class="n">${aud(r.rentHouse)}</td><td class="n">${aud(r.rentUnit)}</td><td class="n">${pct(r.vacancy, 1)}</td><td class="n">${r.dom ?? '—'}</td><td class="n">${r.domYearAgo ?? '—'}</td></tr>`,
-        )
-        .join('')}</tbody></table></div>
-    <p class="fine" style="margin-top:8px">Cotality Home Value Index (medians, changes, yields, days on market), SQM Research (asking rents, week ending 4 Sep 2026, and vacancy, August 2026). Regional markets report all dwellings.</p>
+    <p class="fine" style="margin-top:8px">Change in the value of all dwellings, Cotality Home Value Index, month-end ${esc(market.indexMonth || '')}. Cotality publishes the full results, with medians, regional markets and rents, <a href="https://www.cotality.com/au/our-data/indices" target="_blank" rel="noopener">on its website ↗</a>. Suburb-level figures are on each <a href="/suburbs" data-link>suburb report</a>.</p>
   </section>
 
-  <section class="section grid g2">
-    <div class="card">
-      <h3>PropTrack vs Cotality: two views of the same market</h3>
-      <div class="tbl-wrap"><table><thead><tr><th>City</th><th class="n">Cotality</th><th class="n">PropTrack</th><th class="n">Cotality y/y</th><th class="n">PropTrack y/y</th></tr></thead><tbody>
-      ${caps.map(([c, r]) => `<tr><td>${r.name}</td><td class="n">${aud(r.medianDwelling, { compact: true })}</td><td class="n">${aud(market.proptrack[c]?.medianDwelling, { compact: true })}</td><td class="n ${r.annualPct >= 0 ? 'up' : 'down'}">${pct(r.annualPct, 1, true)}</td><td class="n ${market.proptrack[c]?.annualPct >= 0 ? 'up' : 'down'}">${pct(market.proptrack[c]?.annualPct, 1, true)}</td></tr>`).join('')}
-      </tbody></table></div>
-      <p class="note" style="margin-top:10px">The two index providers use different methods, so their medians differ by a few per cent. Where both point the same way, the trend is solid.</p>
-    </div>
+  <section class="section">
     <div class="card">
       <h3>Supply and demand fundamentals</h3>
       <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Mean dwelling price (ABS)</th><th class="n">Dwellings</th><th class="n">Population growth</th></tr></thead><tbody>
@@ -85,7 +66,7 @@ export default async function markets(main) {
         ],
         { height: 260, yFmt: (v) => `${v}%` },
       )}
-      <p class="note" style="margin-top:10px">Banks' "standard variable" headline rates sit far above what new borrowers really pay (RBA F5 vs F6, ${date(rba.actual.newInvVariable.at(-1)?.[0])}). Always negotiate, or refinance: the gap is ${(rba.indicator.invStandardVariable.at(-1)[1] - rba.actual.newInvVariable.at(-1)[1]).toFixed(2)} percentage points.</p>
+      <p class="note" style="margin-top:10px">Banks' "standard variable" headline rates sit far above what new borrowers really pay (RBA F5 vs F6, ${date(rba.actual.newInvVariable.at(-1)?.[0])}). The gap is ${(rba.indicator.invStandardVariable.at(-1)[1] - rba.actual.newInvVariable.at(-1)[1]).toFixed(2)} percentage points, which is why rates differ so much between lenders and between new and existing customers.</p>
     </div>
   </section>
 

@@ -1,7 +1,7 @@
 // Small HTTP helpers shared by the data scripts: timeouts, retries and a concurrency pool.
 
 export const UA =
-  'MarketLenzBot/1.0 (+https://github.com/LAZARZEC18/keystone-property; public data refresh)';
+  'OwnarooBot/1.0 (+https://github.com/LAZARZEC18/keystone-property; public data refresh)';
 
 export async function fetchWithTimeout(url, opts = {}, ms = 20000) {
   const ctrl = new AbortController();

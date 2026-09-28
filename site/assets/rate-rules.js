@@ -17,7 +17,7 @@ export const notPurchase = (r) => NOT_PURCHASE.test(r.product || '');
  * LVR fields. Keeps the stricter reading so nobody sees a rate they can't get.
  */
 // Legal names in the bank feeds -> the names people know
-const LENDER_NAMES = { 'NATIONAL AUSTRALIA BANK': 'NAB', 'COMMONWEALTH BANK OF AUSTRALIA': 'CommBank', 'COMMONWEALTH BANK': 'CommBank', 'WESTPAC BANKING CORPORATION': 'Westpac', 'AUSTRALIA AND NEW ZEALAND BANKING GROUP': 'ANZ', 'BANK OF QUEENSLAND': 'Bank of Queensland' };
+const LENDER_NAMES = { 'NRMA HOME LOANS': 'NRMA Home Loans', 'TMCU': 'TMCU', 'GMCU': 'GMCU', 'CAIRNS BANK': 'Cairns Bank', 'BNK BANK (GOLDFIELDS MONEY/BCHL)': 'BNK Bank', 'QANTAS MONEY BASIC/OFFSET HOME LOANS': 'Qantas Money', 'AMP - MY AMP': 'AMP', 'ME BANK - ME GO': 'ME Bank', 'COMMFCU': 'Community First Bank', 'BANKWAW': 'Bank WAW', 'CENTRAL WEST CUL': 'Central West Credit Union', 'NATIONAL AUSTRALIA BANK': 'NAB', 'COMMONWEALTH BANK OF AUSTRALIA': 'CommBank', 'COMMONWEALTH BANK': 'CommBank', 'WESTPAC BANKING CORPORATION': 'Westpac', 'AUSTRALIA AND NEW ZEALAND BANKING GROUP': 'ANZ', 'BANK OF QUEENSLAND': 'Bank of Queensland' };
 const SHORT_UPPER = new Set(['NAB', 'ANZ', 'ING', 'AMP', 'BOQ', 'ME', 'HSBC', 'LVR', 'P&I', 'IO', 'SMSF', 'ABN', 'RAMS', 'UBANK', 'BCU', 'QBANK', 'CUA', 'IMB', 'P1', 'P2', 'INV', 'OO', 'SMSF', 'LVR', 'CUL', 'BOQ', 'AMP', 'ANZ', 'ING', 'NAB', 'CBA', 'RACQ', 'P&I', 'I/O']);
 const titleCase = (n) => n.toLowerCase().replace(/(^|[\s/(-])([a-z][a-z&']*)/g, (m, pre, w) => pre + (SHORT_UPPER.has(w.toUpperCase()) ? w.toUpperCase() : ['and', 'of', 'for', 'with', 'to', 'the', 'or', 'in'].includes(w) && pre ? w : w.charAt(0).toUpperCase() + w.slice(1)));
 const shouty = (n) => n === n.toUpperCase() && /[A-Z]{4}/.test(n);
@@ -55,6 +55,11 @@ export function normaliseRate(r) {
   // a first home buyer product filed as an investment loan is a feed error: keep it out of the lists
   if (o.purpose === 'INV' && /first home/i.test(n)) o.suspect = true;
   if (o.repay === 'PI' && /interest[\s-]*only|\bI\/?O\b/i.test(n) && !/principal/i.test(n)) o.repay = 'IO';
+  // a variable loan's comparison rate far below its own rate is a feed error (it belongs to another tier): don't show it
+  if (o.comparison != null && o.type === 'variable' && o.comparison < o.rate - 0.25) {
+    o.comparison = null;
+    o.cmpBad = true;
+  }
   const range = n.match(/LVR\s*(\d{2})\s*%?\s*(?:-|–|to)\s*(\d{2})/i);
   const max = n.match(/(?:up to|<=?|≤|max(?:imum)?|under|below)\s*(\d{2})\s*%?\s*LVR/i) || n.match(/LVR\s*(?:of\s*)?(?:<=?|≤|up to|max(?:imum)?|under|below)?\s*(\d{2})\s*%?(?!\s*(?:-|–|to)\s*\d)/i) || n.match(/(\d{2})\s*%\s*LVR/i);
   const min = n.match(/(?:>|over|above|more than)\s*(\d{2})\s*%?\s*LVR/i) || n.match(/LVR\s*(?:>|over|above)\s*(\d{2})/i);

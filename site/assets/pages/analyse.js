@@ -1,6 +1,6 @@
 import { demo } from '../demo.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
-import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
+import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine, copyLinkButton, wireCopyLink } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
 import { RULES, STATES, GROWTH, runningCosts } from '../rules.js';
@@ -30,7 +30,7 @@ export default async function analysePage(main, _p, query) {
   const st = {
     addr: query.addr || '',
     state: st0.state,
-    price: q('price', sub ? (type === 'u' ? sub.u : sub.h) : 850000),
+    price: q('price', sub ? ((type === 'u' && sub.u ? sub.u : sub.h) || 850000) : 850000),
     weeklyRent: q('rent', sub ? (type === 'u' ? sub.ru : sub.rh) : 650),
     type,
     newBuild: query.new === '1',
@@ -63,7 +63,7 @@ export default async function analysePage(main, _p, query) {
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${esc(String(value ?? ''))}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
   <div class="page-head with-demo"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
-  <p>Enter a property and Market Lenz works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>${demo('calculator')}</div>
+  <p>Enter a property and Ownaroo works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>${demo('calculator')}</div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -149,6 +149,8 @@ export default async function analysePage(main, _p, query) {
     return res;
   };
 
+  let shareUrl = '';
+  wireCopyLink(main, () => shareUrl);
   function run() {
     const res = read();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(st.purchaseDate) || Number.isNaN(Date.parse(st.purchaseDate))) res.errors.date = 'Contract date: pick a date.';
@@ -166,20 +168,24 @@ export default async function analysePage(main, _p, query) {
       grandfathered: 'Contracted before 12 May 2026, so grandfathered: rental losses keep reducing your salary tax.',
       'new-build': 'New build: keeps negative gearing and can choose the 50% CGT discount or indexation when sold.',
     }[s.negativeGearing];
-    const url = new URLSearchParams({ state: st.state, price: st.price, rent: st.weeklyRent, type: st.type, new: st.newBuild ? 1 : 0, dep: Math.round(st.deposit * 100), rate: st.ratePct, income: st.income, growth: st.growth, rg: st.rentGrowth, hold: st.hold, date: st.purchaseDate, council: st.councilRates, wi: st.insurance, vac: st.vacancyWeeks, mgmt: st.mgmtPct });
+    const url = new URLSearchParams({ state: st.state, price: st.price, rent: st.weeklyRent, type: st.type, new: st.newBuild ? 1 : 0, dep: Math.round(st.deposit * 100), rate: st.ratePct, growth: st.growth, rg: st.rentGrowth, hold: st.hold, date: st.purchaseDate, council: st.councilRates, wi: st.insurance, vac: st.vacancyWeeks, mgmt: st.mgmtPct });
     if (st.buildYear) url.set('built', st.buildYear);
     if (st.strata) url.set('strata', st.strata);
-    if (st.otherRental) url.set('otherrent', st.otherRental);
     if (st.buyer !== 'investor') url.set('buyer', st.buyer);
-    if (st.owners) {
-      url.set('owners', 2);
-      url.set('share', Math.round(st.owners[0].share * 100));
-      url.set('income2', st.owners[1].income);
-    }
-    if (st.otherLandValue) url.set('otherland', st.otherLandValue);
+    if (st.owners) url.set('owners', 2);
     if (sub) url.set('suburb', sub.id);
     if (st.addr) url.set('addr', st.addr);
+    // the page address keeps the property; your income and other holdings go in only when you copy a link yourself
     history.replaceState(null, '', `/analyse?${url}`);
+    const personal = new URLSearchParams(url);
+    personal.set('income', st.income);
+    if (st.otherRental) personal.set('otherrent', st.otherRental);
+    if (st.owners) {
+      personal.set('share', Math.round(st.owners[0].share * 100));
+      personal.set('income2', st.owners[1].income);
+    }
+    if (st.otherLandValue) personal.set('otherland', st.otherLandValue);
+    shareUrl = `/analyse?${personal}`;
 
     const cf = [
       ['Rent (after vacancy)', y1.grossRent],
@@ -196,22 +202,16 @@ export default async function analysePage(main, _p, query) {
     $('#out').innerHTML = `${example ? '<div class="callout" style="margin:0 0 12px"><b>These are example numbers</b> for an $850k home. Search a suburb or type in the property you\'re looking at, and the results update as you type.</div>' : ''}
       <div class="card">
         <div><div class="eyebrow" style="margin:0">Each week in year 1, after tax${st.addr ? ` · ${esc(st.addr)}` : ''}</div>
-          <div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div>
+          <div class="lead-nums"><div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div><div class="lead-cash"><span class="k">Cash needed up front</span><b>${aud(r.upfront.total, { compact: true })}</b><span class="s">deposit, stamp duty and fees · loan ${aud(s.loan, { compact: true })}</span></div></div>
           <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · projections below use ${st.growth}% a year growth</div>
           ${returnsLine({ bear: { growth: GROWTH.bear, irr: scen.bear.irr }, base: { growth: st.growth, irr: s.irr, yours: true }, bull: { growth: GROWTH.bull, irr: scen.bull.irr } }, v)}
           <p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)}</p></div>
-        <div class="grid g2" style="margin-top:12px;gap:8px 20px">
-          <div>${v.reasons.length ? `<ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
-          <div>${v.risks.length ? `<ul class="cons">${v.risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+        <div class="grid ${v.reasons.length && v.risks.length ? 'g2' : ''}" style="margin-top:12px;gap:8px 20px">
+          ${v.reasons.length ? `<div><ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+          ${v.risks.length ? `<div><ul class="cons">${v.risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
         </div>
       </div>
-      <div class="grid g4" style="margin-top:16px">
-        <div class="card"><div class="stat"><span class="k">Cash needed up front</span><span class="v">${aud(r.upfront.total, { compact: true })}</span><span class="s">Loan ${aud(s.loan, { compact: true })} · LVR ${s.lvr}%</span></div></div>
-        <div class="card"><div class="stat"><span class="k">Each week, year 1, after tax</span><span class="v ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:22px">${cashWeek(s.weeklyCashAfterTax)}</span><span class="s">Year 3: ${cashWeek(y3.cashAfterTax / 52, { short: true })}</span></div></div>
-        <div class="card"><div class="stat"><span class="k">After-tax return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(s.irr, 1)}</span><span class="s">on your cash, ${st.hold} years</span></div></div>
-        <div class="card"><div class="stat"><span class="k">Profit after sale and tax</span><span class="v ${s.totalProfit >= 0 ? 'up' : 'down'}">${aud(s.totalProfit, { compact: true })}</span><span class="s">Equity ${aud(s.equityAtSale, { compact: true })}</span></div></div>
-      </div>
-
+      <details class="fold card" style="margin-top:16px" id="breakdown"><summary><h3 style="display:inline">The full breakdown</h3> <span class="note">up-front costs, year-1 cash flow, equity, tax year by year, the sale, scenarios and rate rises</span></summary>
       <div class="grid g2" style="margin-top:16px">
         <div class="card"><h3>Up-front costs</h3>
           ${stack([{ label: 'Deposit', value: r.upfront.deposit }, { label: 'Stamp duty', value: r.upfront.duty }, { label: 'Legal, inspections, fees', value: r.upfront.other }, { label: 'LMI (paid)', value: r.upfront.lmi }])}
@@ -254,7 +254,7 @@ export default async function analysePage(main, _p, query) {
             <span>Loan repaid</span><span>${aud(-r.sale.balance)}</span>
             <span class="tot">Cash in hand at sale</span><span class="tot">${aud(s.saleProceeds)}</span>
           </div>
-          ${r.sale.cgt.tax === 0 && r.sale.grossGain > 0 ? `<p class="note" style="margin-top:8px"><b>Why no capital gains tax?</b> ${r.sale.cgt.valueAtReform && st.growth <= st.cpi + 0.25 ? `After 1 July 2027 only the gain above inflation is taxed. With prices growing at ${st.growth}% and inflation at ${st.cpi}%, there is almost no real gain after that date, ` : 'The taxable gain is small, '}and the ${aud(r.rows.at(-1).carried)} of rental losses carried forward is used against it first.</p>` : ''}<p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Market Lenz models the law as passed and will update if the detail changes.</p>
+          ${r.sale.cgt.tax === 0 && r.sale.grossGain > 0 ? `<p class="note" style="margin-top:8px"><b>Why no capital gains tax?</b> ${r.sale.cgt.valueAtReform && st.growth <= st.cpi + 0.25 ? `After 1 July 2027 only the gain above inflation is taxed. With prices growing at ${st.growth}% and inflation at ${st.cpi}%, there is almost no real gain after that date, ` : 'The taxable gain is small, '}and the ${aud(r.rows.at(-1).carried)} of rental losses carried forward is used against it first.</p>` : ''}<p class="fine" style="margin-top:8px">Method: ${esc(r.sale.cgt.method)}.${r.sale.cgt.minimumApplied ? ' The 30% minimum tax on post-2027 gains applied.' : ''} Losses carried forward are used against the gain first.${r.sale.cgt.perOwner ? ` Split between owners: ${r.sale.cgt.perOwner.map((t) => aud(t)).join(' and ')}.` : ''} <b>Details still being settled:</b> Treasury is still consulting on how gains either side of 1 July 2027 are measured, and on trusts and part-year residents. Ownaroo models the law as passed and will update if the detail changes.</p>
         </div>
         <div class="card"><h3>Scenarios</h3>
           <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">Low growth</th><th class="n">Your inputs</th><th class="n">High growth</th></tr></thead><tbody>
@@ -270,9 +270,10 @@ export default async function analysePage(main, _p, query) {
           <p class="note" style="margin-top:10px">Lenders test your repayments at ${pct(bp.assessRate, 2)} (rate + 3 points). On a ${aud(st.income, { compact: true })} income with this rent, a lender might lend up to about <b>${aud(bp.amount, { compact: true })}</b> in total. <a href="/borrowing" data-link>Borrowing power calculator →</a></p>
         </div>
       </div>
+      </details>
       <p class="fine" style="margin-top:14px">General information, not advice. Assumes ${st.owners ? `two individual owners (${Math.round(st.owners[0].share * 100)}/${Math.round(st.owners[1].share * 100)})` : 'one individual owner'} who ${st.owners ? 'are' : 'is an'} Australian tax resident${st.owners ? 's' : ''}; trusts, companies and self-managed super funds are taxed differently (and since 10 August 2026 an SMSF can't take out new borrowing to buy residential property). It uses the 2026-27 tax rates, and building depreciation at 2.5% of an estimated construction cost when a build year from 1987 is entered${st.newBuild ? ' plus plant and equipment for a new build' : ''}. Rules checked ${date(RULES.asOf)}: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a>, <a href="${r.duty.source}" target="_blank" rel="noopener">${esc(st.state)} revenue office</a>.</p>`;
     $('#out').insertAdjacentHTML('afterbegin', printHeader(`Deal analysis: ${st.addr || (sub ? `${cleanName(sub.n)} ${sub.s}` : `${st.state} property`)}`));
-    $('#out').insertAdjacentHTML('beforeend', `<div class="card no-print" style="margin-top:16px"><div class="row"><button class="btn primary" type="button" id="save-deal">Save this deal</button><a class="btn" href="/watchlist#deals" data-link>Saved deals</a></div>${brandPanel('Print or save as PDF')}<p class="fine" style="margin-top:8px">Saved deals stay in this browser; the link keeps every input, so you can also bookmark or share it.</p></div>`);
+    $('#out').insertAdjacentHTML('beforeend', `<div class="card no-print" style="margin-top:16px"><div class="row"><button class="btn primary" type="button" id="save-deal">Save this deal</button><a class="btn" href="/watchlist#deals" data-link>Saved deals</a></div>${brandPanel('Print or save as PDF')}<div class="row" style="margin-top:8px">${copyLinkButton()}</div><p class="fine" style="margin-top:8px">Saved deals stay in this browser only, so they won't be on your other devices. The page address holds the property but not your income; "Copy link" includes everything, so only share it with people you'd tell your income to.</p></div>`);
     $('#save-deal').addEventListener('click', (e) => {
       const ok = saveDeal({ url: location.pathname + location.search, name: st.addr || (sub ? `${cleanName(sub.n)} ${sub.s} ${sub.pc || ''}` : `${st.state} property`), price: st.price, rent: st.weeklyRent, grade: v.grade, rank: v.label, beatsDeposit: v.beatsDeposit, weekly: s.weeklyCashAfterTax, irr: s.irr });
       e.currentTarget.textContent = ok ? 'Saved ✓' : 'Couldn’t save in this browser';
@@ -290,13 +291,13 @@ export default async function analysePage(main, _p, query) {
     const c = runningCosts(s.s, t);
     $('#a-council').value = c.council;
     $('#a-waterins').value = c.waterIns;
-    $('#a-price').value = t === 'u' ? s.u : s.h;
-    $('#a-rent').value = t === 'u' ? s.ru : s.rh;
+    $('#a-price').value = (t === 'u' && s.u ? s.u : s.h) || '';
+    $('#a-rent').value = (t === 'u' && s.u ? s.ru : s.rh) || '';
     info();
     run();
   };
   const info = () => {
-    $('#a-subinfo').innerHTML = sub ? `Typical house ${aud(sub.h, { compact: true })} (rent ${aud(sub.rh)}), unit ${aud(sub.u, { compact: true })} (rent ${aud(sub.ru)}) · <a href="${suburbUrl(sub)}" data-link>suburb profile</a>` : '';
+    $('#a-subinfo').innerHTML = sub ? `Typical house ${aud(sub.h, { compact: true })} (rent ${aud(sub.rh)}), ${sub.u ? `unit ${aud(sub.u, { compact: true })} (rent ${aud(sub.ru)})` : 'no unit price (few units here)'} · <a href="${suburbUrl(sub)}" data-link>suburb profile</a>` : '';
   };
   info();
   attachSearch($('#a-sub'), $('#a-ac'), applySuburb);
@@ -312,8 +313,8 @@ export default async function analysePage(main, _p, query) {
     setCosts();
     $('#a-strata').value = t === 'u' ? 3200 : 0;
     if (sub) {
-      $('#a-price').value = t === 'u' ? sub.u : sub.h;
-      $('#a-rent').value = t === 'u' ? sub.ru : sub.rh;
+      $('#a-price').value = (t === 'u' && sub.u ? sub.u : sub.h) || '';
+      $('#a-rent').value = (t === 'u' && sub.u ? sub.ru : sub.rh) || '';
     }
     $('#a-growth').value = GROWTH.base;
   });

@@ -1,4 +1,4 @@
-// Market movement helpers. Market Lenz shows Cotality's public month-end results only (their daily index is
+// Market movement helpers. Ownaroo shows Cotality's public month-end results only (their daily index is
 // proprietary and is not republished). Every price is "as at" the month-end; every change leads with the
 // 3-month figure, because in a turning market the 12-month figure describes the past, not the direction.
 

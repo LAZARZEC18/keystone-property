@@ -9,7 +9,7 @@ export const CLIPS = {
   calculator: ['The 2026 tax-change calculator: change the price or rent and the weekly cost after tax and the 10-year return update.', '/analyse', 'Open the calculator'],
   estimate: ['A price range for a typical home like the one you’re looking at, how far to trust it, and the cash you need.', '/property', 'Try an address'],
   suburb: ['A suburb report: month-end prices and their direction, rents, new building nearby and the cost of buying there.', '/suburb/wa/cottesloe-6011', 'Open a suburb report'],
-  rates: ['Every lender’s advertised rate, filtered for your loan, with offset accounts, fees and your repayment.', '/rates', 'Compare rates'],
+  rates: ['Advertised rates from more than 90 lenders, filtered for your loan, with offset accounts, fees and your repayment.', '/rates', 'Compare rates'],
   firsthome: ['First home tools: how long to save, rent versus buy, and the First Home Super Saver scheme.', '/first-home', 'Open the first home tools'],
 };
 
@@ -17,7 +17,7 @@ export function demo(name, { caption, label = '' } = {}) {
   const [cap, href, cta] = CLIPS[name] || ['', '', ''];
   const text = caption ?? cap;
   return `<figure class="demo" data-demo-fig>
-    <div class="demo-media"><video muted loop playsinline preload="none" poster="/assets/media/clips/${name}.jpg" data-demo aria-label="${esc(label || text)}"><source src="/assets/media/clips/${name}.mp4" type="video/mp4"></video>
+    <div class="demo-media"><video muted loop playsinline preload="none" poster="/assets/media/clips/${name}.jpg" data-demo aria-label="${esc(label || text)}"><source src="/assets/media/clips/${name}-720.mp4" type="video/mp4" media="(max-width: 900px)"><source src="/assets/media/clips/${name}.mp4" type="video/mp4"></video>
       <div class="demo-bar"><button type="button" class="demo-play" aria-label="Pause">❚❚</button><div class="demo-prog" role="slider" aria-label="Position in the clip" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i></i></div>${href ? `<a class="demo-try" href="${href}" data-link>${esc(cta)} →</a>` : ''}</div>
     </div>
     ${text ? `<figcaption>${esc(text)}</figcaption>` : ''}</figure>`;

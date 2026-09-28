@@ -5,8 +5,8 @@ export function valueCall(asking, est, { measured = true } = {}) {
   const gap = (asking / est.value - 1) * 100;
   // Outside the range: say so. Inside it, only a measured (official-sales) estimate is precise enough to say
   // which part of the range a price sits in; a modelled one can't, so it doesn't pretend to.
-  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, pos: 0, note: 'The asking price is under Market Lenz\'s range for a typical home like this. There may be a reason: condition, position, or a seller who needs to move. Recent sales in the street will tell you.' };
-  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, pos: 1, note: 'The asking price is over Market Lenz\'s range for a typical home like this. Better-than-typical homes sell above it; recent sales in the street will show whether this is one.' };
+  if (asking < est.low) return { key: 'below', label: 'Below the likely range', cls: 'up', gap, pos: 0, note: 'The asking price is under Ownaroo\'s range for a typical home like this. There may be a reason: condition, position, or a seller who needs to move. Recent sales in the street will tell you.' };
+  if (asking > est.high) return { key: 'above', label: 'Above the likely range', cls: 'down', gap, pos: 1, note: 'The asking price is over Ownaroo\'s range for a typical home like this. Better-than-typical homes sell above it; recent sales in the street will show whether this is one.' };
   const pos = (asking - est.low) / Math.max(1, est.high - est.low);
   if (!measured) return { key: 'within', label: 'Within the likely range', cls: '', gap, pos, note: 'This suburb\'s estimate is modelled, so its range is too wide to say more than that. Recent sales in the street are the real guide.' };
   if (pos < 1 / 3) return { key: 'lower', label: 'In the lower third of the likely range', cls: 'up', gap, pos, note: 'Toward the bottom of the range for a typical home like this. Recent sales in the street will show why.' };

@@ -41,4 +41,4 @@ createServer(async (req, res) => {
   const body = await readFile(p);
   res.writeHead(200, { 'content-type': TYPES[extname(p)] || 'application/octet-stream', 'cache-control': 'no-cache' });
   res.end(body);
-}).listen(port, () => console.log(`Market Lenz on http://localhost:${port}`));
+}).listen(port, () => console.log(`Ownaroo on http://localhost:${port}`));

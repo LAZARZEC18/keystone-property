@@ -144,5 +144,9 @@ await job('weekly', async () => {
 
 status.finished = new Date().toISOString();
 await w(SITE, 'status.json', status, true);
+// consecutive failures per job, read by scripts/health.mjs (which fails the workflow, so GitHub emails the owner)
+const health = (await r(HIST, 'health.json', {})) || {};
+for (const [k, j] of Object.entries(status.jobs)) health[k] = j.ok ? 0 : (health[k] || 0) + 1;
+await w(HIST, 'health.json', health, true);
 const failed = Object.entries(status.jobs).filter(([, j]) => !j.ok);
 if (failed.length === Object.keys(status.jobs).length) process.exit(1);

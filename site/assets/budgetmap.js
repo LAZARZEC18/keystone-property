@@ -25,7 +25,7 @@ const toSlider = (v) => (logB(v) - logB(MIN)) / (logB(MAX) - logB(MIN));
 export function budgetMapHtml({ budget = 750000, city = 'AU' } = {}) {
   return `<div class="bmap" data-bmap>
     <div class="bmap-top">
-      <div class="bmap-chips" role="tablist" aria-label="Zoom to a city">${Object.entries(CITIES).map(([k, c]) => `<button type="button" class="chip${k === city ? ' on' : ''}" data-city="${k}">${c.name}</button>`).join('')}</div>
+      <div class="bmap-chips" role="group" aria-label="Zoom to a city">${Object.entries(CITIES).map(([k, c]) => `<button type="button" class="chip${k === city ? ' on' : ''}" data-city="${k}" aria-pressed="${k === city}">${c.name}</button>`).join('')}</div>
     </div>
     <div class="bmap-canvas-wrap"><canvas aria-label="Map of Australian suburbs. Suburbs with a typical home under your budget are highlighted." role="img"></canvas>
       <div class="bmap-tip" hidden></div>
@@ -34,7 +34,7 @@ export function budgetMapHtml({ budget = 750000, city = 'AU' } = {}) {
     </div>
     <div class="bmap-controls">
       <label class="bmap-budget"><span>Budget</span><b class="bmap-val">${aud(budget, { compact: true })}</b><input type="range" min="0" max="1000" step="1" value="${Math.round(toSlider(budget) * 1000)}" aria-label="Budget"></label>
-      <div class="seg bmap-type" role="group" aria-label="Home type"><button type="button" data-t="h" class="on">Houses</button><button type="button" data-t="u">Units</button></div>
+      <div class="seg bmap-type" role="group" aria-label="Home type"><button type="button" data-t="h" class="on" aria-pressed="true">Houses</button><button type="button" data-t="u" aria-pressed="false">Units and townhouses</button></div>
     </div>
     <div class="bmap-legend"><span><i class="in"></i>Typical home within budget</span><span><i class="near"></i>Within 10% over</span><span><i class="out"></i>Above budget</span><span class="fine">Typical prices at the latest month-end; most are modelled estimates.</span></div>
   </div>`;
@@ -61,7 +61,10 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
     const [x, y] = proj(c.lat, c.lng);
     Object.assign(target, { x, y, z: c.z });
     if (instant) Object.assign(cam, target);
-    wrap.querySelectorAll('[data-city]').forEach((b) => b.classList.toggle('on', b.dataset.city === k));
+    wrap.querySelectorAll('[data-city]').forEach((b) => {
+      b.classList.toggle('on', b.dataset.city === k);
+      b.setAttribute('aria-pressed', String(b.dataset.city === k));
+    });
     kick();
   };
   const size = () => {
@@ -309,7 +312,10 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
     const b = e.target.closest('button');
     if (!b) return;
     st.type = b.dataset.t;
-    wrap.querySelectorAll('.bmap-type button').forEach((x) => x.classList.toggle('on', x === b));
+    wrap.querySelectorAll('.bmap-type button').forEach((x) => {
+      x.classList.toggle('on', x === b);
+      x.setAttribute('aria-pressed', String(x === b));
+    });
     onChange?.(st);
     kick();
   });

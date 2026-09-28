@@ -8,7 +8,7 @@ const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 const PAGE = 50;
 
 export default async function explorer(main, _p, query) {
-  setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Market Lenz investment score.' });
+  setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Ownaroo investment score.' });
   const [{ list }, market] = await Promise.all([suburbs(), load('market')]);
   const st = {
     state: query.state || '',
@@ -32,8 +32,8 @@ export default async function explorer(main, _p, query) {
   main.innerHTML = `
   <div class="page-head">
     <div class="eyebrow">Suburb explorer</div>
-    <h1>Rank 11,042 suburbs across Australia</h1>
-    <p>Set your budget and strategy. Market Lenz ranks all ${list.length.toLocaleString()} suburbs on yield, growth drivers, rental demand, affordability and stability (recent price change is shown but not scored), and explains every number on the suburb's page.</p>
+    <h1>Rank ${list.length.toLocaleString()} suburbs across Australia</h1>
+    <p>Set your budget and strategy. Ownaroo ranks all ${list.length.toLocaleString()} suburbs on yield, growth drivers, rental demand, affordability and stability (recent price change is shown but not scored), and explains every number on the suburb's page.</p>
   </div>
   <div class="card flat tint">
     <div class="fields">
@@ -53,7 +53,6 @@ export default async function explorer(main, _p, query) {
       <label class="check"><input type="checkbox" id="f-official" ${st.officialOnly ? 'checked' : ''}> Official sales data only (VIC, SA, NSW)</label>
       <div class="row">
         <div class="seg" id="view"><button data-v="table" class="${st.view === 'table' ? 'on' : ''}">Table</button><button data-v="map" class="${st.view === 'map' ? 'on' : ''}">Map</button></div>
-        <button class="btn sm" id="csv">Download CSV</button>
       </div>
     </div>
   </div>
@@ -135,7 +134,7 @@ export default async function explorer(main, _p, query) {
         .join('')}
       </tbody></table></div>
       <div class="pager"><span>Page ${st.page + 1} of ${Math.max(1, pages)}</span><button class="btn sm" id="prev" ${st.page ? '' : 'disabled'}>Previous</button><button class="btn sm" id="next" ${st.page + 1 < pages ? '' : 'disabled'}>Next</button></div>
-      <p class="fine">ʳ Regional 12-month change where the suburb has no official sales series. "Estimate" prices come from Market Lenz's model, calibrated on official medians; "Official" figures are state government sales data rolled forward to today with the regional index.</p>`;
+      <p class="fine">"City-wide" and "region-wide" mark a 12-month change for the whole city or region, shown where the suburb has no official sales series. "Modelled" prices come from Ownaroo's model, calibrated on official medians; "Official" figures are state government sales data rolled forward to today with the area index. Suburb figures can't be downloaded: some of the data behind them is licensed for display only.</p>`;
   }
 
   let map = null;
@@ -167,7 +166,7 @@ export default async function explorer(main, _p, query) {
   function draw() {
     compute();
     syncUrl();
-    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> of ${list.length.toLocaleString()} suburbs match your filters${st.popMin ? ` (including ${st.popMin.toLocaleString()}+ residents)` : ''} · <span class="area-tag">area</span> = city or regional 12-month figure (no suburb sales data) · ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`;
+    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> of ${list.length.toLocaleString()} suburbs match your filters${st.popMin ? ` (including ${st.popMin.toLocaleString()}+ residents)` : ''} · <span class="area-tag">city-wide</span> / <span class="area-tag">region-wide</span> = the 12-month figure for the whole city or region (no suburb sales data) · ${fair ? `ordered by rank within each state (${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score), best of each state first` : `ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`}`;
     if (map) {
       map.remove();
       map = null;
@@ -176,7 +175,8 @@ export default async function explorer(main, _p, query) {
     else {
       $f('#out').innerHTML = table();
       const t = $f('#tbl');
-      t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');
+      // the national list interleaves states, so it isn't sorted by the score column: no arrow on it
+      if (!fair) t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');
       sortable(t, (k, asc) => {
         st.sort = k;
         st.asc = asc;
@@ -237,15 +237,6 @@ export default async function explorer(main, _p, query) {
     st.view = b.dataset.v;
     $f('#view').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
     draw();
-  });
-  $f('#csv').addEventListener('click', () => {
-    const head = ['suburb', 'state', 'postcode', 'council', 'score', 'type', 'price', 'price_source', 'weekly_rent', 'gross_yield', 'growth_12m', 'pop_growth_2016_21', 'price_to_income', 'population', 'lat', 'lng'];
-    const lines = rows.map((r) => [cleanName(r.s.n), r.s.s, r.s.pc, r.s.lga, r.score, r.type === 'u' ? 'unit' : 'house', r.price, r.type === 'u' ? r.s.us : r.s.hs, r.rent, r.yld?.toFixed(2), r.s.g1, r.s.pg5, r.s.pti, r.s.pop, r.s.lat, r.s.lng].map((v) => (v === null || v === undefined ? '' : /[",]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v)).join(','));
-    const blob = new Blob([`${head.join(',')}\n${lines.join('\n')}`], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'marketlenz-suburbs.csv';
-    a.click();
   });
   cmpBar();
   draw();

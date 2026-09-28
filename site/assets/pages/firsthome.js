@@ -80,7 +80,7 @@ export function rentVsBuy(p) {
   return { rows, upfront, lmi: lm, pay, breakEven, last: rows.at(-1) };
 }
 
-export default async function firstHomePage(main) {
+export default async function firstHomePage(main, _p, query = {}) {
   setMeta({ title: 'First home tools: rent vs buy, savings planner, FHSS calculator', description: 'How long it will take to save a deposit, whether buying beats renting over time, and how much the First Home Super Saver scheme adds.' });
   const [rba] = await Promise.all([load('rba')]);
   const rate = rba.actual?.newOOVariable?.at(-1)?.[1] || 6.2;
@@ -198,6 +198,15 @@ export default async function firstHomePage(main) {
       <p class="note" style="margin-top:8px">Voluntary contributions of up to $15,000 a year and $50,000 in total can be released, with deemed earnings at ${pct(r.sic, 2)} (the 90-day bank bill rate plus 3 points). Your employer's 12% super counts toward the $30,000 concessional cap. Request the release from the ATO before you sign a contract or within 14 days after.</p>`;
   };
 
+  // numbers carried over from the affordability tool (/afford → "plan it")
+  const setv = (form, name, v) => { const el = $(`${form} [name=${name}]`); if (el && v !== undefined && v !== '' && !Number.isNaN(+v)) el.value = v; };
+  if (query.price) ['#sv', '#rb'].forEach((f) => setv(f, 'price', query.price));
+  if (query.state && STATES[query.state]) { const el = $('#sv [name=state]'); if (el) el.value = query.state; }
+  if (query.dep && ['0.05', '0.1', '0.2'].includes(query.dep)) ['#sv', '#rb'].forEach((f) => { const el = $(`${f} [name=dep]`); if (el) el.value = query.dep; });
+  setv('#sv', 'now', query.savings);
+  setv('#sv', 'income', query.income);
+  setv('#rb', 'rent', query.rent);
+  if (query.price) $('#save')?.insertAdjacentHTML('afterbegin', '<p class="callout" style="margin:0 0 12px">Filled in from your affordability result. Change anything here.</p>');
   $('#sv').addEventListener('input', runSave);
   $('#rb').addEventListener('input', runRvb);
   $('#fs').addEventListener('input', runFhss);

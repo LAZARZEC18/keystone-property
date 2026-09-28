@@ -42,7 +42,7 @@ export default async function propertyPage(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
-  <p>Enter an address. Market Lenz checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
+  <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
   <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
@@ -71,7 +71,7 @@ export default async function propertyPage(main, _p, query) {
       idx.list.filter((x) => !st || x.s === st).map((x) => [haversine(x, g), x]).sort((a, b) => a[0] - b[0])[0]?.[1];
   }
   if (!s) {
-    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Market Lenz couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Collingwood VIC 3066".</p></div>`;
+    out.innerHTML = `<div class="empty"><h2>Address not found</h2><p>Ownaroo couldn't match "${esc(q)}" to an Australian suburb, so it won't guess a value. Check the spelling and include the suburb and postcode, for example "7 Russell Street, Collingwood VIC 3066".</p></div>`;
     return;
   }
   const facts = prop?.found ? prop : null;
@@ -86,7 +86,7 @@ export default async function propertyPage(main, _p, query) {
   const streetFound = !!facts || (g && g.precision !== 'area' && streetWord && typed.includes(` ${streetWord} `) && haversine(s, g) < 15);
   const typicalUrl = `/property?q=${encodeURIComponent(`${cleanName(s.n)} ${s.s} ${s.pc || ''}`.trim())}`;
   if (streetTyped && !streetFound) {
-    out.innerHTML = `<div class="empty"><h2>We couldn't find that address</h2><p>${geo ? `No street matching "${esc(first.trim())}" was found in or near ${esc(cleanName(s.n))} ${s.s}` : 'The address lookup is unavailable right now'}, so Market Lenz won't put a price on it. Check the spelling, or include the unit number and postcode.</p><p><a class="btn" href="${typicalUrl}" data-link>See the estimate for a typical home in ${esc(cleanName(s.n))}</a> <a class="btn ghost" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></p></div>`;
+    out.innerHTML = `<div class="empty"><h2>We couldn't find that address</h2><p>${geo ? `No street matching "${esc(first.trim())}" was found in or near ${esc(cleanName(s.n))} ${s.s}` : 'The address lookup is unavailable right now'}, so Ownaroo won't put a price on it. Check the spelling, or include the unit number and postcode.</p><p><a class="btn" href="${typicalUrl}" data-link>See the estimate for a typical home in ${esc(cleanName(s.n))}</a> <a class="btn ghost" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></p></div>`;
     return;
   }
   const located = facts ? 'the property record' : !streetTyped ? 'the suburb only (no street given)' : g.precision === 'address' ? 'the address' : 'the street (house number not confirmed)';
@@ -275,7 +275,7 @@ export default async function propertyPage(main, _p, query) {
             <span>Stamp duty (investor)</span><span>${aud(stampDuty(s.s, price).duty)}</span>
             <span>Cash needed at 20% deposit</span><span>${aud(a.upfront.total)}</span>
             <span>${esc(R?.name || '')}: last 3 months / 12 months</span><span>${pct(R?.quarterPct, 1, true)} / ${pct(R?.annualPct, 1, true)}</span>
-            <span>Suburb Market Lenz Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
+            <span>Suburb Ownaroo Score</span><span>${scoreBadge(suburbScore(s.sc))}</span></div>
           </div>
         </div>
         <div class="grid g2" style="margin-top:10px;gap:8px 20px"><ul class="pros">${v.reasons.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul><ul class="cons">${v.risks.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>
@@ -285,7 +285,7 @@ export default async function propertyPage(main, _p, query) {
     }
 
     // Comparable suburbs nearby for less: similar household incomes (a proxy for the kind of street and buyer),
-    // no weaker on Market Lenz Score or concentration risk, and cheaper for the same home by 4-20%.
+    // no weaker on Ownaroo Score or concentration risk, and cheaper for the same home by 4-20%.
     const inc = (x) => (x.h && x.pti ? x.h / x.pti : null);
     const myInc = inc(s);
     const myScore = suburbScore(s.sc);

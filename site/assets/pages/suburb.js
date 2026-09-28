@@ -9,6 +9,7 @@ import { regionMoves } from '../live.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { accuracy } from '../accuracy.js';
 import { seeTheArea } from '../photos.js';
+import { hazardCard } from '../hazards.js';
 
 // 'jul-2026' or '2026-07' -> 'July 2026'
 const monthName = (x) => {
@@ -34,7 +35,7 @@ export default async function suburbPage(main, params) {
   // one price everywhere on the page: the typical home as at the latest month-end
   if (ic.rent) ic.yld = (ic.rent * 52 * 100) / ic.price;
   const links = listingLinks(s);
-  setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Market Lenz investor score and full investment case.` });
+  setMeta({ title: `${name} ${s.s} ${s.pc || ''}: house prices, rents, yield and suburb score`.replace(/\s+/g, ' '), description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Ownaroo investor score and full investment case.` });
 
   const profiles = Object.keys(PROFILES);
   const scores = Object.fromEntries(profiles.map((p) => [p, suburbScore(s.sc, PROFILES[p])]));
@@ -72,6 +73,12 @@ export default async function suburbPage(main, params) {
   const hShare = d['hou%'] ?? s['hou%'] ?? 70;
   const fewHouses = hShare < 35 && s.u > 0;
   const ptiShown = s.pti && fewHouses ? Math.round(((s.u / (s.h / s.pti)) || 0) * 10) / 10 : s.pti;
+  // NSW: the model predicts worse than the regional average there, so modelled NSW prices are shown as a range
+  const nswErr = (idx.meta.model?.holdout?.NSW?.medianAbsPctError || 20) / 100;
+  const rangeOf = (v, src) => (s.s === 'NSW' && src === 'model' && v ? `${aud(v * (1 - nswErr), { compact: true })}–${aud(v * (1 + nswErr), { compact: true })}` : aud(v, { compact: true }));
+  const noUnit = s.us === 'few' ? `Not shown: units and townhouses are under 5% of homes here (${pct((d['fla%'] ?? s['fla%'] ?? 0), 0)} flats)` : s.us === 'held' ? 'Held back: the figure failed a data check' : '';
+  const unitStat = `<div class="stat"><span class="k">Typical unit or townhouse ${s.u ? srcBadge(s.us) : ''}</span><span class="v">${s.u ? rangeOf(s.u, s.us) : '<span class="faint" style="font-size:15px">—</span>'}</span><span class="s">${!s.u ? esc(noUnit) : off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>`;
+  const heldNote = d.held?.length ? `<p class="note held-note">⚠ ${d.held.map(esc).join(' ')} <a href="/methodology#checks" data-link>How figures are checked</a></p>` : '';
   main.innerHTML = `
   <div class="crumbs"><a href="/suburbs?state=${s.s}" data-link>${STATES[s.s]}</a> › <a href="/suburbs?region=${s.rg}" data-link>${esc(R.name || '')}</a> › ${s.lga ? `<a href="/council/${s.s.toLowerCase()}/${lgaSlug}" data-link>${esc(s.lga)}</a> ›` : ''} ${pcLink}</div>
   <div class="spread" style="align-items:flex-start">
@@ -93,18 +100,19 @@ export default async function suburbPage(main, params) {
   <div class="grid g-side section" style="margin-top:20px">
     <div class="card">
       <div class="stats">
-        ${fewHouses ? `<div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
-        <div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}${fewHouses ? ` <span class="tag">only ${Math.round(hShare)}% of homes</span>` : ''}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>` : `<div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}${fewHouses ? ` <span class="tag">only ${Math.round(hShare)}% of homes</span>` : ''}</span><span class="v">${aud(s.h, { compact: true })}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
-        <div class="stat"><span class="k">Typical unit ${srcBadge(s.us)}</span><span class="v">${aud(s.u, { compact: true })}</span><span class="s">${off.unit ? `${esc(off.unit.period)} median ${aud(off.unit.median, { compact: true })}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>`}
-        <div class="stat"><span class="k">Weekly rent (house / unit)</span><span class="v">${aud(s.rh)} <span class="muted" style="font-size:.6em">/ ${aud(s.ru)}</span></span><span class="s">${d.rs === 'NSW postcode' ? `NSW bond data, ${esc(off.rent?.period || '')}` : `Modelled from this suburb’s Census rents and price, centred on typical ${esc(R.name || 'regional')} rents today`}</span></div>
+        ${fewHouses ? `${unitStat}
+        <div class="stat"><span class="k">Typical house ${srcBadge(s.hs)} <span class="tag">only ${Math.round(hShare)}% of homes</span></span><span class="v">${rangeOf(s.h, s.hs)}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>` : `<div class="stat"><span class="k">Typical house ${srcBadge(s.hs)}</span><span class="v">${rangeOf(s.h, s.hs)}</span><span class="s">${off.house ? `${esc(off.house.period)} median ${aud(off.house.median, { compact: true })}${off.house.sales ? `, ${Math.round(off.house.sales)} sales` : ''}, moved to ${esc(market.indexMonth || 'month-end')}` : `Modelled, as at ${esc(market.indexMonth || 'month-end')}`}</span></div>
+        ${unitStat}`}
+        <div class="stat"><span class="k">Weekly rent (house / unit)</span><span class="v">${aud(s.rh)} <span class="muted" style="font-size:.6em">/ ${s.ru ? aud(s.ru) : '—'}</span></span><span class="s">${d.rs === 'NSW postcode' ? `NSW bond data, ${esc(off.rent?.period || '')}` : `Modelled from this suburb’s Census rents and price, centred on typical ${esc(R.name || 'regional')} rents today`}</span></div>
         <div class="stat"><span class="k">Gross yield (${ic.type})</span><span class="v">${pct(ic.yld, 2)}</span><span class="s">${R.name} average ${pct(R.yield, 1)}</span></div>
         <div class="stat"><span class="k">12-month change</span><span class="v ${g12 >= 0 ? 'up' : 'down'}">${pct(g12, 1, true)}</span><span class="s">${esc(s.g1p || '')}</span></div>
         <div class="stat"><span class="k">${d.cagr ? `Houses a year ${esc(d.cagrY || '')}` : 'Price to income'}</span><span class="v">${d.cagr ? pct(d.cagr, 1, true) : `${ptiShown ?? '—'}×`}</span><span class="s">${d.cagr ? 'Valuer-General Victoria' : `typical ${fewHouses ? 'unit' : 'house'} price ÷ household income`}</span></div>
       </div>
+      ${heldNote}
     </div>
     <div class="card" style="display:flex;gap:16px;align-items:center">
       ${scoreBadge(scores.balanced, true)}
-      <div><div class="eyebrow" style="margin:0">Market Lenz Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Top-tier fundamentals' : scores.balanced >= 55 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
+      <div><div class="eyebrow" style="margin:0">Ownaroo Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Top-tier fundamentals' : scores.balanced >= 55 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
       <div class="note">Ranks the area against every Australian suburb. It isn't a rating of any particular home.</div></div>
     </div>
   </div>
@@ -137,8 +145,9 @@ export default async function suburbPage(main, params) {
     <div class="card">
       <div class="eyebrow">Investment case</div>
       <h2 style="font-size:24px">${esc(ic.headline)}</h2>
-      ${ic.pros.length ? `<h3 style="font-size:16px;margin-top:14px">Why invest</h3><ul class="pros">${ic.pros.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      ${ic.pros.length ? `<h3 style="font-size:16px;margin-top:14px">In ${esc(name)}'s favour</h3><ul class="pros">${ic.pros.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
       ${ic.cons.length ? `<h3 style="font-size:16px;margin-top:14px">What to watch</h3><ul class="cons">${ic.cons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      ${ic.wider.length ? `<h3 style="font-size:16px;margin-top:14px">The wider ${esc(R.name || 'area')} market <span class="tag">not specific to ${esc(name)}</span></h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.wider.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
       <h3 style="font-size:16px;margin-top:14px">Tends to suit</h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.suits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
     </div>
     <div class="card">
@@ -193,32 +202,34 @@ export default async function suburbPage(main, params) {
       <div class="kv">
         <span>Population (2021 Census)</span><span>${num(s.pop)}</span>
         <span>Population change ${esc(d.pgS && !/census/i.test(d.pgS) ? '2020-2025 (ABS estimates, surrounding area)' : '2016-2021 (Census)')}</span><span class="${(s.pg5 ?? 0) >= 0 ? 'up' : 'down'}">${pct(s.pg5, 1, true)}</span>
-        <span>Median household income</span><span>${aud(d.inc)}/wk (${aud(d.inc * 52, { compact: true })}/yr)</span>
-        <span>Household income change 2016-2021</span><span>${pct(d.ig5, 1, true)}</span>
-        <span>Median age</span><span>${d.age ?? '—'}</span>
-        <span>Unemployment</span><span>${pct(d.une, 1)}</span>
+        <span>Median household income, ${esc(String(idx.meta.areaNow?.wpiTo || '2026').slice(0, 4))} estimate <span class="fine">(2021 Census: ${aud(d.inc21)}/wk)</span></span><span>${aud(d.inc)}/wk (${aud(d.inc * 52, { compact: true })}/yr)</span>
+        <span>${/SA2/.test(d.igS || '') ? 'Median personal income change, 2018-19 to 2022-23 (surrounding area)' : 'Household income change 2016-2021'}</span><span>${pct(d.ig5, 1, true)}</span>
+        <span>Median age (2021 Census)</span><span>${d.age ?? '—'}</span>
+        <span>Unemployment, estimate for now <span class="fine">(2021 Census: ${pct(d.une21, 1)})</span></span><span>${pct(d.une, 1)}</span>
         <span>Homes rented</span><span>${pct(d['rent%'], 1)}</span>
         <span>Owned outright</span><span>${pct(d['own%'], 1)}</span>
         <span>Social housing</span><span>${pct(d['soc%'], 1)}</span>
         <span>Separate houses / flats</span><span>${pct(d['hou%'] ?? s['hou%'], 0)} / ${pct(d['fla%'] ?? s['fla%'], 0)}</span>
         <span>Census rent change 2016-2021</span><span>${pct(d.rg5, 1, true)}</span>
       </div>
-      <p class="fine" style="margin-top:8px">ABS Census 2016 and 2021, Suburbs and Localities; population change from ABS regional population estimates for the surrounding area (SA2).</p>
+      <p class="fine" style="margin-top:8px">ABS Census 2016 and 2021, Suburbs and Localities. Income is the 2021 Census figure carried forward by the ABS's personal income data for the surrounding area (to 2022-23) and national wage growth since. Unemployment is the 2021 Census rate moved by the change in the ABS modelled rate for the region (to ${esc(monthName(idx.meta.areaNow?.unemploymentTo || ''))}). Population change from ABS estimates for the surrounding area (SA2).</p>
     </div>
     <div class="card">
       <h3>${esc(name)} vs ${esc(R.name && R.name === name ? `greater ${R.name}` : R.name || 'the region')}</h3>
       <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">${esc(name)}</th><th class="n">${esc(R.name || '')}</th></tr></thead><tbody>
         <tr><td>Typical house</td><td class="n">${aud(s.h, { compact: true })}</td><td class="n">${aud(R.medianHouse || R.medianDwelling, { compact: true })}</td></tr>
-        <tr><td>Typical unit</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${R.medianUnit ? aud(R.medianUnit, { compact: true }) : '—'}</td></tr>
+        <tr><td>Typical unit or townhouse</td><td class="n">${s.u ? aud(s.u, { compact: true }) : '—'}</td><td class="n">${R.medianUnit ? aud(R.medianUnit, { compact: true }) : '—'}</td></tr>
         <tr><td>Typical house rent</td><td class="n">${aud(s.rh)}</td><td class="n">${aud(Math.round(rRent / 5) * 5)}</td></tr>
         <tr><td>Gross yield</td><td class="n">${pct(ic.yld, 2)}</td><td class="n">${pct(R.yield, 1)}</td></tr>
         <tr><td>12-month change</td><td class="n">${growth12(s, { suffix: '', short: true })}</td><td class="n">${pct(rYear, 1, true)}</td></tr>
-        <tr><td>Vacancy (city-wide, SQM)</td><td class="n">—</td><td class="n">${pct(R.vacancy, 1)}</td></tr>
+        <tr><td>Rental vacancy (SQM Research, ${/^Regional/.test(R.name || '') ? 'region' : 'city'}-wide)</td><td class="n">—</td><td class="n">${pct(R.vacancy, 1)}</td></tr>
         <tr><td>Days on market</td><td class="n">—</td><td class="n">${R.dom ?? '—'}</td></tr>
       </tbody></table></div>
       ${Object.keys(off).length ? `<h3 style="font-size:16px;margin-top:16px">Official data</h3><div class="kv">${off.house ? `<span>House median (${esc(off.house.period)})</span><span>${aud(off.house.median)}</span>` : ''}${off.house?.medianYearAgo ? `<span>A year earlier</span><span>${aud(off.house.medianYearAgo)}</span>` : ''}${off.house?.annualPct !== undefined ? `<span>Annual change</span><span>${pct(off.house.annualPct, 1, true)}</span>` : ''}${off.house?.sales ? `<span>Sales in period</span><span>${Math.round(off.house.sales)}</span>` : ''}${off.unit ? `<span>Unit median (${esc(off.unit.period)})</span><span>${aud(off.unit.median)}</span>` : ''}${off.rent?.all ? `<span>Median new bond rent (${esc(off.rent.period)})</span><span>${aud(off.rent.all)}/wk</span>` : ''}${off.rent?.bonds ? `<span>New bonds lodged</span><span>${num(off.rent.bonds)}</span>` : ''}</div><p class="fine" style="margin-top:6px">${off.house?.source === 'NSW' || off.rent ? 'NSW figures cover the whole postcode. ' : ''}Sources: ${[off.house?.source, off.unit?.source, off.rent?.source].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map((x) => ({ VIC: 'Valuer-General Victoria', SA: 'Land Services SA', NSW: 'NSW DCJ Rent and Sales Report' })[x]).join(', ')}.</p>` : ''}
     </div>
   </section>
+
+  <section class="section">${hazardCard(s.s, { place: name, coastKm: s.cst })}</section>
 
   <section class="section card">
     <div class="card-head"><h3>Property for sale and rent in ${esc(name)}</h3><span class="note">Opens the listing sites filtered to this suburb</span></div>
@@ -238,7 +249,7 @@ export default async function suburbPage(main, params) {
     <div class="card">
       <h3>Nearby suburbs</h3>
       <div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">Score</th><th class="n">Price</th><th class="n">Yield</th></tr></thead><tbody>
-      ${near.map((x) => `<tr><td><a href="${suburbUrl(x)}" data-link>${esc(cleanName(x.n))}</a> <span class="muted">${x.pc || ''}</span></td><td class="n">${x.km.toFixed(1)}</td><td class="n">${scoreBadge(suburbScore(x.sc))}</td><td class="n">${aud(x.pt === 'u' ? x.u : x.h, { compact: true })}</td><td class="n">${pct(x.y, 1)}</td></tr>`).join('')}
+      ${near.map((x) => `<tr><td><a href="${suburbUrl(x)}" data-link>${esc(cleanName(x.n))}</a> <span class="muted">${x.pc || ''}</span></td><td class="n">${x.km.toFixed(1)}</td><td class="n">${scoreBadge(suburbScore(x.sc))}</td><td class="n">${aud(x.pt === 'u' && x.u ? x.u : x.h, { compact: true })}</td><td class="n">${pct(x.y, 1)}</td></tr>`).join('')}
       </tbody></table></div>
       ${samePc.length ? `<p class="note" style="margin-top:10px">Also in postcode ${pcLink}: ${samePc.map((x) => `<a href="${suburbUrl(x)}" data-link>${esc(cleanName(x.n))}</a>`).join(', ')}</p>` : ''}
     </div>
@@ -246,7 +257,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section">
-    <p class="fine">How these numbers are made: prices marked Modelled come from Market Lenz's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
+    <p class="fine">How these numbers are made: prices marked Modelled come from Ownaroo's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());

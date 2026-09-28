@@ -1,0 +1,206 @@
+{
+ "built": "2026-09-28T13:04:45.946145+00:00",
+ "rules": [
+  "No unit or townhouse price where they make up under 5% of homes (Census 2021).",
+  "An official unit median above 1.5 times the house price is held back and the modelled figure shown instead, flagged.",
+  "A modelled unit price is never above 95% of the same suburb's house price.",
+  "Any modelled price, or unit price, more than double the state's 99.5th-percentile house price is held back.",
+  "A gross yield under 1% or over 10% is held back, with the rent behind it."
+ ],
+ "counts": {
+  "unit price not shown (under 5% units)": 7539,
+  "modelled unit capped below the house price": 145
+ },
+ "checkThese": [
+  {
+   "id": "10192",
+   "n": "Barangaroo",
+   "s": "NSW",
+   "pc": "2000",
+   "field": "y",
+   "was": 0.88,
+   "now": null,
+   "why": "A gross yield of 0.88% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "11015",
+   "n": "Coogee (NSW)",
+   "s": "NSW",
+   "pc": "2034",
+   "field": "u",
+   "was": 8745000,
+   "now": 1231803.1718931329,
+   "why": "The official unit median ($8,745,000) is more than 1.5 times the house price, so it has been held back for checking and the modelled figure is shown."
+  },
+  {
+   "id": "11751",
+   "n": "Great Mackerel Beach",
+   "s": "NSW",
+   "pc": "2108",
+   "field": "y",
+   "was": 18.66,
+   "now": null,
+   "why": "A gross yield of 18.66% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "13595",
+   "n": "South Coogee",
+   "s": "NSW",
+   "pc": "2034",
+   "field": "u",
+   "was": 8745000,
+   "now": 673374.2434151991,
+   "why": "The official unit median ($8,745,000) is more than 1.5 times the house price, so it has been held back for checking and the modelled figure is shown."
+  },
+  {
+   "id": "22547",
+   "n": "Toorak",
+   "s": "VIC",
+   "pc": "3142",
+   "field": "y",
+   "was": 0.88,
+   "now": null,
+   "why": "A gross yield of 0.88% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "50817",
+   "n": "Lake Darlot",
+   "s": "WA",
+   "pc": "6438",
+   "field": "y",
+   "was": 11.52,
+   "now": null,
+   "why": "A gross yield of 11.52% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "51168",
+   "n": "Nungarin",
+   "s": "WA",
+   "pc": "6490",
+   "field": "y",
+   "was": 10.2,
+   "now": null,
+   "why": "A gross yield of 10.20% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70006",
+   "n": "Alpurrurulam",
+   "s": "NT",
+   "pc": "4825",
+   "field": "y",
+   "was": 10.26,
+   "now": null,
+   "why": "A gross yield of 10.26% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70013",
+   "n": "Anmatjere",
+   "s": "NT",
+   "pc": "0872",
+   "field": "y",
+   "was": 10.26,
+   "now": null,
+   "why": "A gross yield of 10.26% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70019",
+   "n": "Arumbera",
+   "s": "NT",
+   "pc": "0873",
+   "field": "y",
+   "was": 12.49,
+   "now": null,
+   "why": "A gross yield of 12.49% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70024",
+   "n": "Batchelor",
+   "s": "NT",
+   "pc": "0845",
+   "field": "y",
+   "was": 10.12,
+   "now": null,
+   "why": "A gross yield of 10.12% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70121",
+   "n": "Hale",
+   "s": "NT",
+   "pc": "0872",
+   "field": "y",
+   "was": 18.27,
+   "now": null,
+   "why": "A gross yield of 18.27% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70136",
+   "n": "Jabiru",
+   "s": "NT",
+   "pc": "0886",
+   "field": "y",
+   "was": 10.46,
+   "now": null,
+   "why": "A gross yield of 10.46% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70140",
+   "n": "Kakadu",
+   "s": "NT",
+   "pc": "0822",
+   "field": "y",
+   "was": 10.26,
+   "now": null,
+   "why": "A gross yield of 10.26% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70184",
+   "n": "Middle Point",
+   "s": "NT",
+   "pc": "0822",
+   "field": "y",
+   "was": 12.92,
+   "now": null,
+   "why": "A gross yield of 12.92% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70222",
+   "n": "Petermann",
+   "s": "NT",
+   "pc": "0872",
+   "field": "y",
+   "was": 10.62,
+   "now": null,
+   "why": "A gross yield of 10.62% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70224",
+   "n": "Pine Creek (NT)",
+   "s": "NT",
+   "pc": "0847",
+   "field": "y",
+   "was": 10.14,
+   "now": null,
+   "why": "A gross yield of 10.14% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70267",
+   "n": "Umbakumba",
+   "s": "NT",
+   "pc": "0822",
+   "field": "y",
+   "was": 10.57,
+   "now": null,
+   "why": "A gross yield of 10.57% is outside 1% to 10%, so the rent and yield are held back for checking."
+  },
+  {
+   "id": "70295",
+   "n": "Wurrumiyanga",
+   "s": "NT",
+   "pc": "0822",
+   "field": "y",
+   "was": 12.28,
+   "now": null,
+   "why": "A gross yield of 12.28% is outside 1% to 10%, so the rent and yield are held back for checking."
+  }
+ ]
+}

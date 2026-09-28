@@ -1,4 +1,4 @@
-// Market Lenz single-page app: router, global search, ticker, theme.
+// Ownaroo single-page app: router, global search, rate strip, theme.
 import { $, $$, esc, aud, pct, ago } from './ui.js';
 import { load, suburbs, searchSuburbs, cleanName, suburbUrl } from './data.js';
 import { looksLikeAddress } from './intent.js';
@@ -19,7 +19,7 @@ const routes = [
   [/^\/rates\/?$/, () => import('./pages/rates.js')],
   [/^\/listings\/?$/, () => Promise.resolve({ default: () => navigate(`/property${location.search.includes('q=') ? location.search : ''}`, true) })],
   [/^\/news\/?$/, () => import('./pages/news.js')],
-  [/^\/guide\/?$/, () => import('./pages/guide.js')],
+  [/^\/guide(?:\/(?<section>[a-z0-9-]+))?\/?$/, () => import('./pages/guide.js')],
   [/^\/compare\/?$/, () => import('./pages/compare.js')],
   [/^\/watchlist\/?$/, () => import('./pages/watchlist.js')],
   [/^\/borrowing\/?$/, () => import('./pages/borrowing.js')],
@@ -35,8 +35,19 @@ const routes = [
 let current = null;
 let firstRender = true;
 
+// cookie-free page count: only the path is sent (see /privacy and netlify/functions/hit.mjs)
+function countView(path) {
+  if (!/netlify\.app$|ownaroo/.test(location.hostname) || navigator.webdriver) return;
+  try {
+    navigator.sendBeacon?.('/api/hit', JSON.stringify({ p: path }));
+  } catch {
+    // never let counting break a page
+  }
+}
+
 async function render() {
   const path = location.pathname.replace(/\/+$/, '') || '/';
+  countView(path);
   const main = $('#main');
   const match = routes.find(([re]) => re.test(path));
   $$('.nav a').forEach((a) => {
@@ -233,30 +244,27 @@ export function attachSearch(input, box, onPick) {
 attachSearch($('#q'), $('#ac'));
 $('.quick').addEventListener('submit', (e) => e.preventDefault());
 
-// ---- ticker
+// ---- rate strip: three figures that change during the month, each a link (reachable by keyboard)
 async function ticker() {
   try {
     const [rs, rba, market] = await Promise.all([load('rates-summary'), load('rba'), load('market')]);
-    const bestInv = rs.best.INV_PI_variable_national?.[0] || rs.best.INV_PI_variable?.[0];
-    const bestOO = rs.best.OO_PI_variable_national?.[0] || rs.best.OO_PI_variable?.[0];
-    const n = market.national;
+    // the same "lowest advertised" figures as the top of the rates page, so the site quotes one number for each
+    const bestOO = rs.best.OO_PI_variable?.[0];
+    const bestInv = rs.best.INV_PI_variable?.[0];
+    const next = market.cashRate?.nextMeeting;
     const items = [
-      `<span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b>`,
-      bestInv && `<span>Lowest investor variable, national lender</span> <b>${pct(bestInv.rate, 2)}</b> <span>${esc(bestInv.lender)}</span>`,
-      bestOO && `<span>Lowest owner-occupier variable, national lender</span> <b>${pct(bestOO.rate, 2)}</b> <span>${esc(bestOO.lender)}</span>`,
-      `<span>National median dwelling</span> <b>${aud(n.medianDwelling, { compact: true })}</b> <span class="${n.quarterPct >= 0 ? 'up' : 'down'}">${pct(n.quarterPct, 1, true)} 3m</span>`,
-      ...Object.values(market.regions)
-        .filter((r) => r.capital)
-        .map((r) => `<span>${r.name}, all homes</span> <b>${aud(r.medianDwelling, { compact: true })}</b> <span class="${r.quarterPct >= 0 ? 'up' : 'down'}">${pct(r.quarterPct, 1, true)} 3m</span>`),
-      `<span>Median of all homes and 3-month change, Cotality, month-end ${esc(market.indexMonth || '')}</span>`,
-      `<span>Rates refreshed</span> <b>${ago(rs.updated)}</b>`,
+      `<a href="/markets" data-link><span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b>${next ? ` <span>· next decision ${esc(new Date(next).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }))}</span>` : ''}</a>`,
+      bestOO && `<a href="/rates" data-link><span>Lowest advertised owner-occupier variable</span> <b>${pct(bestOO.rate, 2)}</b></a>`,
+      bestInv && `<a href="/rates" data-link class="t-inv"><span>Lowest advertised investor variable</span> <b>${pct(bestInv.rate, 2)}</b></a>`,
+      `<span class="t-when">Rates checked ${ago(rs.updated)}</span>`,
     ].filter(Boolean);
-    const html = items.map((i) => `<div>${i}</div>`).join('');
-    $('#ticker').innerHTML = `<div class="ticker-in">${html}</div>`; // static strip (no scrolling ticker)
+    $('#ticker').innerHTML = `<div class="ticker-in">${items.map((i) => `<div>${i}</div>`).join('')}</div>`;
   } catch (e) {
     console.warn('ticker', e);
   }
 }
 ticker();
 wirePhotos(document);
+// printing: open folded sections so the PDF has everything
+window.addEventListener('beforeprint', () => document.querySelectorAll('details.fold').forEach((d) => (d.open = true)));
 render();

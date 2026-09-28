@@ -9,21 +9,21 @@ import { photoCard, figure, strip, photo, photoCredits } from '../photos.js';
 import { budgetMapHtml, wireBudgetMap } from '../budgetmap.js';
 import { comfortableWeekly } from '../rules.js';
 
-// The home page leads with the two tools Market Lenz does best: what you can afford, and the 2026 tax-change numbers.
+// The home page leads with the two tools Ownaroo does best: what you can afford, and the 2026 tax-change numbers.
 // Suburb scores and estimates sit behind them until the suburb data is licensed and measured everywhere.
 export default async function home(main) {
-  setMeta({ title: 'What can you comfortably afford, and where?', description: 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and every lender’s rate.' });
+  setMeta({ title: 'What can you comfortably afford, and where?', description: 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and advertised rates from 90+ lenders.' });
   const [market, rs, rba, idx] = await Promise.all([load('market'), load('rates-summary'), load('rba'), suburbs()]);
-  const oo = rs.best.OO_PI_variable_national?.[0] || rs.best.OO_PI_variable?.[0];
+  const oo = rs.best.OO_PI_variable?.[0];
   const caps = Object.entries(market.regions).filter(([, r]) => r.capital);
   const inv = typicalRate(rba, 'INV');
   const ooRate = typicalRate(rba, 'OO');
   const measured = idx.list.filter((s) => s.conf === 'high' || s.conf === 'medium').length;
 
   const paths = [
-    ['First home', 'sherwood-queenslander', 'Buying your first home', 'A comfortable price where you want to live, the cash you need, which schemes you qualify for (including Keystart in WA), how long saving takes and whether buying beats renting.', [['/afford?buyer=fhb', 'What can I afford?'], ['/first-home', 'Rent vs buy and saving'], ['/guide#fhb', 'First home guide']]],
+    ['First home', 'sherwood-queenslander', 'Buying your first home', 'A comfortable price where you want to live, the cash you need, which schemes you qualify for (including Keystart in WA), how long saving takes and whether buying beats renting.', [['/afford?buyer=fhb', 'What can I afford?'], ['/first-home', 'Rent vs buy and saving'], ['/guide/fhb', 'First home guide']]],
     ['Moving', 'fremantle-coast', 'Selling and buying again', 'What you can comfortably afford for the next home, the full cost of moving (duty, fees, the new loan) and a price range for a typical home like the one you want.', [['/afford?buyer=owner', 'What can I afford?'], ['/property', 'Price range for a home'], ['/rates', 'Compare loan rates']]],
-    ['Investing', 'paddington-fiveways', 'Buying to rent out', 'The weekly cost after tax and the 10-year return under the 2026 negative gearing and CGT rules, with your other properties, for one owner or two, and whether it beats a term deposit.', [['/analyse', '2026 tax-change calculator'], ['/rates', 'Every lender’s rate'], ['/guide#tax-2026', 'What changed in 2026']]],
+    ['Investing', 'paddington-fiveways', 'Buying to rent out', 'The weekly cost after tax and the 10-year return under the 2026 negative gearing and CGT rules, with your other properties, for one owner or two, and whether it beats a term deposit.', [['/analyse', '2026 tax-change calculator'], ['/rates', 'Rates from 90+ lenders'], ['/guide/tax-2026', 'What changed in 2026']]],
   ];
 
   main.innerHTML = `
@@ -31,14 +31,14 @@ export default async function home(main) {
     <div>
       <div class="eyebrow">Free · independent · for Australian home buyers</div>
       <h1>What can you comfortably afford, <em>and where?</em></h1>
-      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income: Market Lenz works out a comfortable price where you want to buy, the cash you need, and the schemes you qualify for.</p>
+      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income: Ownaroo works out a comfortable price where you want to buy, the cash you need, and the schemes you qualify for.</p>
       <div class="row hero-cta"><a class="btn primary lg" href="/afford?buyer=fhb" data-link id="hero-cta">Work out what I can afford →</a></div>
       <p class="hero-alt">Buying to invest? <a href="/analyse" data-link>Run the 2026 tax-change numbers →</a></p>
     </div>
     <div>${budgetMapHtml({ budget: 750000, city: 'AU' })}</div>
   </section>
 
-  <section class="section trust" aria-label="What Market Lenz is built on">
+  <section class="section trust" aria-label="What Ownaroo is built on">
     <div><b>${rs.lenders}</b><span>lenders' rates, read from their Open Banking feeds several times a day</span></div>
     <div><b>8 of 8</b><span>states and territories: stamp duty, first home concessions and land tax</span></div>
     <div><b>${measured.toLocaleString()}</b><span>suburbs with official sales data; the rest are modelled and labelled that way</span></div>
@@ -52,7 +52,7 @@ export default async function home(main) {
         <li><b>Your numbers.</b> Where you want to buy, your savings, income and debts.</li>
         <li><b>A comfortable price,</b> with repayments under 30% of your income, and the most a lender might stretch to.</li>
         <li><b>The real cost.</b> Cash up front, repayments against your rent now, or an investment's weekly cost after tax.</li>
-        <li><b>Your next step:</b> pre-approval from a lender or broker. Market Lenz doesn't sell loans or refer you anywhere.</li>
+        <li><b>Your next step:</b> pre-approval from a lender or broker. Ownaroo doesn't sell loans or refer you anywhere.</li>
       </ol>
       <p class="fine">Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}. <a href="/why" data-link>Two-minute tour →</a></p>
     </div>
@@ -74,10 +74,6 @@ export default async function home(main) {
   </section>
 
   <section class="section">
-    ${strip(['sherwood-queenslanders', 'paddington-selwyn', 'fremantle-cottage', 'melbourne-suburbs-aerial', 'battery-point-sandstone', 'corinda-queenslander', 'paddington-cascade', 'fremantle-stone', 'sherwood-renovated', 'altona-aerial', 'battery-point-lace', 'fremantle-terrace', 'sherwood-heritage', 'brisbane-river-apartments'], { title: 'Homes across Australia', note: 'Tap any photo to view it full screen and zoom in. Real homes and streets photographed by Wikimedia Commons contributors.' })}
-  </section>
-
-  <section class="section">
     <div class="spread"><h2>See it in action</h2><a href="/why" data-link>The full Two-minute tour →</a></div>
     <div class="seg" id="demo-tabs" role="tablist">${[['afford', 'What can I afford?'], ['calculator', '2026 tax calculator'], ['estimate', 'Price range for a home'], ['suburb', 'Suburb report']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}">${l}</button>`).join('')}</div>
     <div class="demo-stage" id="demo-stage">${demo('afford')}</div>
@@ -88,24 +84,17 @@ export default async function home(main) {
     <div class="card tax-band">
       <div><div class="eyebrow">The 2026 tax changes, in numbers</div><h2 style="margin:4px 0 8px">Know what an investment property costs you each week</h2>
       <p class="muted" style="margin:0">Established homes bought after 12 May 2026 can offset rental losses against your salary only until 30 June 2027; after that, losses carry forward or offset rental profit from your other properties. From 1 July 2027 the 50% CGT discount is replaced by indexation with a 30% minimum tax. New builds keep the old treatment. The calculator applies all of it, with stamp duty, mortgage insurance, land tax and depreciation.</p></div>
-      <div class="tax-cta"><a class="btn primary" href="/analyse" data-link>Run the numbers →</a><a class="fine" href="/guide#tax-2026" data-link>What changed, in plain English</a></div>
+      <div class="tax-cta"><a class="btn primary" href="/analyse" data-link>Run the numbers →</a><a class="fine" href="/guide/tax-2026" data-link>What changed, in plain English</a></div>
     </div>
   </section>
 
   <section class="section">
-    <div class="spread"><h2>Prices at month-end</h2><a href="/markets" data-link>All markets →</a></div>
-    <div class="city-grid" id="cities">${caps.map(([code, r]) => cityCard(code, r, cityPhoto(code))).join('')}</div>
-    ${photoCredits(caps.map(([c]) => CITY_PHOTO[c]))}
-    <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end ${esc(market.indexMonth || '')}: median values of all homes, houses and units, and the change for all homes (source: <a href="${esc(market.sources?.[0]?.url || '#')}" target="_blank" rel="noopener">Cotality</a>). The typical investor rate used across Market Lenz is the RBA's average on new investor variable loans, ${pct(inv.rate, 2)} (${esc(inv.month)}). ${oo ? `Lowest advertised owner-occupier variable rate from a national lender: ${pct(oo.rate, 2)} (${esc(oo.lender)}); <a href="/rates" data-link>compare every lender</a>.` : ''}</p>
-    <div style="margin-top:12px">${rateWatchCard(rba, { compact: true })}</div>
+    <div class="spread"><h2>Rates and the RBA</h2><a href="/markets" data-link>Market dashboard →</a></div>
+    ${rateWatchCard(rba, { compact: true })}
   </section>
 
   <section class="section">
-    <div class="card register-band">
-      <div><div class="eyebrow">Register early</div><h2 style="margin:0 0 6px">Rate moves and month-end prices, by email</h2><p class="muted" style="margin:0">The email edition is launching soon; until then the <a href="/weekly" data-link>market update</a> is online.</p></div>
-      ${registerForm('hreg')}
-    </div>
-    <p class="fine" style="margin-top:12px">Market Lenz is general information, not financial advice: it doesn’t know your circumstances and isn’t a lender, broker or agent. Rates last checked ${date(rs.updated)}.</p>
+    <p class="fine" style="margin-top:12px">Ownaroo is general information, not financial advice: it doesn’t know your circumstances and isn’t a lender, broker or agent. Rates last checked ${date(rs.updated)}.</p>
   </section>`;
 
   const destroyMap = wireBudgetMap(main, idx.list, {
@@ -115,7 +104,6 @@ export default async function home(main) {
       main.querySelector('#hero-cta').setAttribute('href', `/afford?buyer=fhb${where}`);
     },
   });
-  wireRegister(main.querySelector('#hreg'));
   main.querySelector('#demo-tabs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-demo-tab]');
     if (!b) return;
@@ -167,31 +155,4 @@ export function cityCard(code, r, photo) {
   const c = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
   const t = trendWord(r.quarterPct);
   return `<div data-city="${code}">${photoCard(photo, `<b>${esc(r.name)}</b>${t ? `<span class="pc-trend pc-${t.toLowerCase()}">${t}</span>` : ''}<span class="pc-stats">3 months <span class="${c(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</span> · 12 months ${pct(r.annualPct, 1, true)}</span><span class="pc-stats">All homes ${aud(r.medianDwelling, { compact: true })} · houses ${aud(r.medianHouse, { compact: true })} · units ${aud(r.medianUnit, { compact: true })}</span>`, { href: `/suburbs?region=${code}`, alt: `${r.name} skyline` })}</div>`;
-}
-
-/** The one sign-up form used across the site (home page and weekly report). */
-export function registerForm(id) {
-  return `<form id="${id}" name="register" method="POST" data-netlify="true" netlify-honeypot="company">
-        <input type="hidden" name="form-name" value="register"><p hidden><label>Leave empty <input name="company"></label></p>
-        <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
-          <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-          <label class="field">I'm a<select name="type"><option>First home buyer</option><option>Home owner moving</option><option>Investor</option><option>Other</option></select></label>
-          <label class="field">Suburbs I'm watching (optional)<input name="suburbs" placeholder="e.g. Newtown 2042, Joondalup 6027"></label>
-        </div>
-        <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Market Lenz's updates. I can unsubscribe any time.</label>
-        <div class="row" style="margin-top:10px"><button class="btn primary">Register</button><span class="fine" data-status>Your email is used only for this. <a href="/privacy" data-link>Privacy</a>.</span></div>
-      </form>`;
-}
-
-export function wireRegister(form) {
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    try {
-      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() });
-      if (!r.ok) throw new Error(r.status);
-      form.innerHTML = '<h3 style="margin:0">You\'re on the list.</h3><p class="note">We\'ll email you when the weekly edition launches.</p>';
-    } catch {
-      form.querySelector('[data-status]').textContent = 'That didn\'t go through. Please try again.';
-    }
-  });
 }

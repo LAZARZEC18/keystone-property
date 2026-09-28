@@ -23,7 +23,7 @@ export function estimateRent(s, item) {
   return Math.round((base * (f || 1)) / 5) * 5;
 }
 
-/** Market Lenz's read on a listing: estimated value for its features vs the asking price, plus an investment grade. */
+/** Ownaroo's read on a listing: estimated value for its features vs the asking price, plus an investment grade. */
 export function rateListing(s, it, { market, index, rate }) {
   const unit = /Apartment|Unit|Flat|Studio|Townhouse|Villa|Terrace|Duplex|Semi/i.test(it.type || '');
   const t = unit ? 'u' : 'h';
@@ -40,10 +40,10 @@ export function rateListing(s, it, { market, index, rate }) {
   return { t, est, rent, gap, value, a, v };
 }
 
-/** Value call from the gap between asking price and Market Lenz's estimate (percent). */
+/** Value call from the gap between asking price and Ownaroo's estimate (percent). */
 /** "Rate a listing you've found": address + asking price -> full valuation and grade. */
 export function rateBox(s) {
-  return `<div class="card flat tint rate-box"><b>Check a listing's asking price</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Market Lenz shows where the price sits against its estimated range for that home, plus the cash and repayments to buy it. Where there's no official suburb sales data (most of WA, QLD, TAS, NT and the ACT) the estimate is modelled: use it as a sense-check alongside recent sales, not a verdict.</p>
+  return `<div class="card flat tint rate-box"><b>Check a listing's asking price</b><p class="note" style="margin:4px 0 10px">${s ? `Open the current listings for ${esc(cleanName(s.n))} above, then paste` : 'Copy'} the address and asking price from any listing on realestate.com.au or Domain. Ownaroo shows where the price sits against its estimated range for that home, plus the cash and repayments to buy it. Where there's no official suburb sales data (most of WA, QLD, TAS, NT and the ACT) the estimate is modelled: use it as a sense-check alongside recent sales, not a verdict.</p>
     <form class="fields rb-form" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;align-items:end" onsubmit="return false">
       <label class="field">Address<input name="addr" type="search" placeholder="${s ? `e.g. 12 Example Street, ${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}` : 'e.g. 12 Example Street, Morley WA 6062'}" required></label>
       <label class="field">Asking price<input name="price" type="number" step="1" placeholder="e.g. 850000"></label>
@@ -102,7 +102,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
         <a href="${esc(it.url)}" target="_blank" rel="noopener"><b>${esc(it.address)}</b></a>
         <div class="note">${esc(it.type || '')} · ${it.beds ?? '?'} bed · ${it.baths ?? '?'} bath · ${it.cars ?? 0} car${it.land ? ` · ${it.land} m²` : ''}${it.isNew ? ' · <b>New build</b>' : ''}</div>
         <div style="margin:4px 0"><b class="mono">${esc(it.displayPrice || 'Contact agent')}</b> ${it.agency ? `<span class="muted">· ${esc(it.agency)}</span>` : ''}</div>
-        ${est ? `<div class="note">Market Lenz value <b>${aud(est.value, { compact: true })}</b> (${aud(est.low, { compact: true })}–${aud(est.high, { compact: true })})${value ? ` · <b class="${value.cls}">${value.label}</b> ${gap >= 0 ? '+' : ''}${gap.toFixed(1)}% vs asking` : ' · no price shown, compare the estimate with the guide'}</div>` : ''}
+        ${est ? `<div class="note">Ownaroo value <b>${aud(est.value, { compact: true })}</b> (${aud(est.low, { compact: true })}–${aud(est.high, { compact: true })})${value ? ` · <b class="${value.cls}">${value.label}</b> ${gap >= 0 ? '+' : ''}${gap.toFixed(1)}% vs asking` : ' · no price shown, compare the estimate with the guide'}</div>` : ''}
         ${a ? `<div class="note">Est. rent ${aud(rent)}/wk · yield ${pct(a.summary.grossYield, 2)} · ${cashWeek(a.summary.weeklyCashAfterTax).toLowerCase()} after tax · 10-yr return ${pct(a.summary.irr, 1)}</div>` : rent ? `<div class="note">Est. rent ${aud(rent)}/wk.</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
@@ -113,7 +113,7 @@ export async function liveListings(el, s, { compact = false, mode = 'buy', filte
     </div>`;
   });
   el.innerHTML = `<div class="spread" style="margin-bottom:10px"><span class="badge-live">Live listings${res.total ? ` · ${res.total.toLocaleString()} found` : ''}</span><span class="powered">Listings powered by <a href="https://www.domain.com.au" target="_blank" rel="noopener"><b>Domain</b></a></span></div>
-  ${mode !== 'rent' && priced ? `<p class="note" style="margin:0 0 10px"><b>${below} of ${priced}</b> priced listings are below Market Lenz's likely range. Sorted best investment grade first, then best value.</p>` : ''}
+  ${mode !== 'rent' && priced ? `<p class="note" style="margin:0 0 10px"><b>${below} of ${priced}</b> priced listings are below Ownaroo's likely range. Sorted best investment grade first, then best value.</p>` : ''}
   <div class="grid">${cards.join('')}</div><p class="fine" style="margin-top:8px">Value estimates use the suburb's sales data adjusted for each home's bedrooms, bathrooms, land and newness, moved forward with the daily index. Grades assume a 20% deposit, a $120k salary and estimated rent. Open a listing in Value or Analyse to use your own numbers.</p>`;
 
   if (mapEl) {
@@ -149,7 +149,7 @@ export default async function listingsPage(main, _p, query) {
   let chosen = query.suburb ? byId.get(query.suburb) : null;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Listings</div><h1>Listings, valued and rated</h1>
-  <p>Found a property for sale? Paste its address and asking price and Market Lenz shows a suburb-based estimate for a typical home like it, estimated rent and yield, the weekly holding cost after tax and a 10-year return.</p></div>
+  <p>Found a property for sale? Paste its address and asking price and Ownaroo shows a suburb-based estimate for a typical home like it, estimated rent and yield, the weekly holding cost after tax and a 10-year return.</p></div>
   <div id="rb"></div>
   <section class="section">
     <h2>Browse what's for sale</h2>

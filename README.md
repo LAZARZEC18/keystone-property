@@ -1,6 +1,6 @@
-# Market Lenz · Australian property investment intelligence
+# Ownaroo · Australian property investment intelligence
 
-Market Lenz prices, scores and explains **every suburb in Australia** (11,000+) for investors and first-home buyers. It tracks **the market live**: daily home values, every advertised home loan rate, the RBA, building approvals and the news. It also runs a **deal analyser** that already knows the 2026 negative gearing and CGT changes.
+Ownaroo prices, scores and explains **every suburb in Australia** (11,000+) for investors and first-home buyers. It tracks **the market live**: daily home values, every advertised home loan rate, the RBA, building approvals and the news. It also runs a **deal analyser** that already knows the 2026 negative gearing and CGT changes.
 
 Plain HTML/JS with no build step, hosted on Netlify. The data is refreshed every hour by GitHub Actions from public, official sources.
 
@@ -11,7 +11,7 @@ Plain HTML/JS with no build step, hosted on Netlify. The data is refreshed every
 | **Live** `/live` | Day, week, month, quarter, year-to-date and 12-month value moves (Cotality daily index), live estimated medians, a 12-month chart, and week-by-week snapshots |
 | **Markets** `/markets` | Capital and regional medians, yields, rents, vacancy and days on market; the RBA cash rate; advertised vs actual lending rates; ABS supply, population, lending and CPI |
 | **Suburbs** `/suburbs` | Rank all suburbs by strategy (balanced, growth, cash flow, first home), filter by budget, yield, state and council, map view, CSV export |
-| **Suburb pages** `/suburb/wa/morley-6062` | Prices (official or modelled), rents, yield, live moves, Market Lenz Score breakdown, a written investment case (why invest, what to watch, who it suits), a typical-deal verdict, buying costs, building approvals, demographics, nearby suburbs, map and listing links |
+| **Suburb pages** `/suburb/wa/morley-6062` | Prices (official or modelled), rents, yield, live moves, Ownaroo Score breakdown, a written investment case (why invest, what to watch, who it suits), a typical-deal verdict, buying costs, building approvals, demographics, nearby suburbs, map and listing links |
 | **Postcodes & councils** | `/postcode/6062`, `/council/wa/bayswater` |
 | **New builds** `/new-builds` | Monthly approvals by state, new dwellings by council (per resident, apartment share), new-build listings, and why new builds matter after 2026 |
 | **Analyse** `/analyse` | Stamp duty for all 8 states (investor, owner-occupier, first home), LMI, land tax, 10-year cash flow, negative gearing with the 2027 cut-off, split CGT with indexation and the 30% minimum, IRR, scenarios, rate stress test and a verdict with reasons |

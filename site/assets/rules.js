@@ -1,4 +1,4 @@
-// Market Lenz tax, duty and lending rules. Every figure is taken from the official source linked in
+// Ownaroo tax, duty and lending rules. Every figure is taken from the official source linked in
 // `sources`, checked 26 September 2026. Brackets: [from, base, rate] where duty = base + rate x (value - from).
 // `per100` means the state charges "per $100 or part", so the excess is rounded up to the next $100.
 
@@ -296,8 +296,26 @@ export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'CommBank economists,
 export const STRESS = {
   share: 0.3,
   label: '30% of your before-tax income',
-  note: 'Repayments above 30% of gross (before-tax) household income are widely treated as mortgage stress. Market Lenz uses this one threshold on every page.',
+  note: 'Repayments above 30% of gross (before-tax) household income are widely treated as mortgage stress. Ownaroo uses this one threshold on every page.',
 };
+/**
+ * Compulsory HELP (HECS) repayments, 2026-27 marginal system (ATO). Lenders count this as a monthly commitment worked
+ * out from income, not from the balance owed, so the tools ask whether you have a study debt, not how much.
+ */
+export const HELP_REPAY = { year: '2026-27', min: 69528, t2: 129717, base2: 9028, r1: 0.15, r2: 0.17, top: 186051, rTop: 0.1, source: 'https://www.ato.gov.au/individuals-and-families/study-and-training-support-loans/study-and-training-loan-repayment-thresholds-and-rates' };
+export function helpRepayment(income) {
+  const h = HELP_REPAY;
+  if (!income || income <= h.min) return 0;
+  if (income >= h.top) return income * h.rTop;
+  if (income <= h.t2) return (income - h.min) * h.r1;
+  return h.base2 + (income - h.t2) * h.r2;
+}
+/** Keystart (WA Government lender) Low Deposit Home Loan: 2% deposit, no LMI. keystart.com.au, checked Sept 2026. */
+export const KEYSTART = { cap: 860000, income: { single: 148000, couple: 218000 }, source: 'https://www.keystart.com.au/loans/low-deposit-home-loan' };
+
+/** Lenders assess a credit card at about 3% of its limit a month, whether or not it's used. */
+export const CARD_LIMIT_RATE = 0.03;
+
 /** Comfortable repayments per week for a gross yearly income. */
 export const comfortableWeekly = (grossIncome) => (grossIncome * STRESS.share) / 52;
 
@@ -327,7 +345,7 @@ export const runningCosts = (state, type) => {
  */
 export const STATE_SCHEMES = {
   WA: [
-    { name: 'Keystart Low Deposit Loan', text: 'The WA Government’s home lender: from a 2% deposit with no lenders mortgage insurance, for homes up to $860,000 in Perth (lower limits in the regions). Income limits apply, and Keystart’s variable rate is usually higher than the major banks’.', url: 'https://www.keystart.com.au/' },
+    { name: 'Keystart Low Deposit Loan', text: 'The WA Government’s home lender: from a 2% deposit with no lenders mortgage insurance, for homes up to $860,000. Income limits of about $148,000 (single) and $218,000 (couples and families) apply, higher in the Pilbara and Kimberley, and Keystart’s variable rate is usually higher than the major banks’. Choose it under Deposit to see what it does for you.', url: 'https://www.keystart.com.au/loans/low-deposit-home-loan' },
     { name: 'Keystart shared equity (Urban Connect, Shared Ownership)', text: 'The state takes a share of the home (Urban Connect up to 35% or $250,000, for homes near transport), so you borrow less. Separate income and price limits.', url: 'https://www.keystart.com.au/' },
   ],
   SA: [
@@ -340,13 +358,13 @@ export const STATE_SCHEMES = {
     { name: 'HomeBuild Access and HomeGrown Territory Grant', text: 'Low-deposit and shared-equity loans from the Territory Government, and a grant for buying or building a new home.', url: 'https://nt.gov.au/property/home-owner-assistance' },
   ],
   QLD: [
-    { name: 'Queensland Housing Finance Loan', text: 'A government loan for people who can afford repayments but can’t get a bank loan, from a small deposit. Eligibility is tested.', url: 'https://www.qld.gov.au/housing/buying-owning-home/financial-help-concessions/queensland-housing-finance-loan' },
+    { name: 'Queensland Housing Finance Loan', text: 'A government loan for people who can afford repayments but can’t get a bank loan, from a small deposit. Eligibility is tested.', url: 'https://www.qld.gov.au/housing/buying-owning-home/home-buyers-financial-help/government-home-loans/low-deposit-home-loan' },
   ],
   VIC: [
     { name: 'Victorian Homebuyer Fund (closed)', text: 'The state shared-equity fund is closed to new applicants. Victorian buyers now use the federal Help to Buy scheme and the state first home duty exemption.', url: 'https://www.sro.vic.gov.au/about-us/our-organisation/closed-taxes-levies-and-grants/victorian-homebuyer-fund' },
   ],
   NSW: [],
   ACT: [
-    { name: 'ACT Home Buyer Concession Scheme', text: 'Income-tested duty relief for first home buyers (Market Lenz’s duty figures apply it). No state low-deposit lender.', url: 'https://www.revenue.act.gov.au/home-buyer-assistance' },
+    { name: 'ACT Home Buyer Concession Scheme', text: 'No stamp duty on a home to live in, at any price, from 1 July 2026, for first home buyers and anyone who hasn’t owned property in the last five years (Ownaroo’s duty figures apply it). You must live there for at least 12 months. No state low-deposit lender.', url: 'https://www.revenue.act.gov.au/home-buyer-assistance/home-buyer-concession-scheme/about-the-home-buyer-concession-scheme' },
   ],
 };

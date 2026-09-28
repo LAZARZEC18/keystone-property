@@ -1,4 +1,4 @@
-"""Frame each recorded clip on a soft gradient with a slow push-in, at 1920x1080. Also writes a poster JPG.
+"""Frame each recorded clip on a soft gradient with a slow push-in, at 1920x1080, plus a 720p copy for phones. Also writes a poster JPG.
    python3 compose.py <out_dir>   (reads clips-raw/*.mp4 and clips-raw/offsets.json)"""
 import json, subprocess, sys, os
 
@@ -23,8 +23,11 @@ for name, o in off.items():
     cmd = ['ffmpeg', '-y', '-loglevel', 'error', '-ss', str(ss), '-t', str(D), '-i', f'clips-raw/{name}.mp4',
            '-f', 'lavfi', '-t', str(D), '-i', f'gradients=s=1920x1080:c0={c0}:c1={c1}:x0=0:y0=0:x1=1920:y1=1080:speed=0.004:r=30',
            '-loop', '1', '-t', str(D), '-i', f'{here}/shadow.png', '-loop', '1', '-t', str(D), '-i', f'{here}/mask.png',
-           '-filter_complex', fc, '-map', '[out]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-tune', 'stillimage',
+           '-filter_complex', fc, '-map', '[out]', '-c:v', 'libx264', '-preset', 'slow', '-crf', os.environ.get('CRF', '25'), '-tune', 'stillimage',
            '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', f'{out}/{name}.mp4']
     r = subprocess.run(cmd, capture_output=True, text=True)
     print(name, D, r.returncode, r.stderr[-300:])
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-ss', '2', '-i', f'{out}/{name}.mp4', '-frames:v', '1', '-vf', 'scale=1280:-2', '-q:v', '3', f'{out}/{name}.jpg'])
+    # a 720p copy for phones (demo.js serves it below 900px wide)
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', f'{out}/{name}.mp4', '-vf', 'scale=1280:720:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow',
+                    '-crf', '26', '-tune', 'stillimage', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', f'{out}/{name}-720.mp4'])
