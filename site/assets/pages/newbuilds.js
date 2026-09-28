@@ -1,5 +1,5 @@
 import { esc, aud, pct, num, date, setMeta, lineChart, wireCharts, sortable } from '../ui.js';
-import { load, suburbs } from '../data.js';
+import { load, suburbs, lgaSlug } from '../data.js';
 import { STATES, RULES } from '../rules.js';
 import { liveListings } from './listings.js';
 import { attachSearch } from '../app.js';
@@ -20,7 +20,11 @@ export default async function newBuildsPage(main) {
   const sum12 = (arr) => (arr || []).slice(-12).reduce((t, [, v]) => t + v, 0);
   // council population from the suburb index (2021 Census)
   const pop = {};
-  for (const s of list) pop[s.lgc] = (pop[s.lgc] || 0) + s.pop;
+  const lgaName = {};
+  for (const s of list) {
+    pop[s.lgc] = (pop[s.lgc] || 0) + s.pop;
+    lgaName[s.lgc] ||= s.lga;
+  }
   const lgas = Object.entries(ap.lga)
     .filter(([code, v]) => v.fy && pop[code] > 2000)
     .map(([code, v]) => ({ code, name: v.name, s: v.s, fy: v.fy, ytd: v.ytd, per1000: (v.fy.total / pop[code]) * 1000, share: v.fy.total ? (v.fy.other / v.fy.total) * 100 : 0, pop: pop[code] }));
@@ -80,7 +84,7 @@ export default async function newBuildsPage(main) {
     const key = { name: (l) => l.name, total: (l) => l.fy.total, per1000: (l) => l.per1000, share: (l) => l.share, value: (l) => l.fy.value, ytd: (l) => l.ytd?.total ?? 0 }[st.sort];
     rows.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0) * (st.asc ? 1 : -1));
     main.querySelector('#nb-tbl').innerHTML = `<div class="tbl-wrap"><table id="nbt"><thead><tr><th data-k="name">Council</th><th>State</th><th data-k="total" class="n">New dwellings</th><th class="n">Houses</th><th class="n">Other</th><th data-k="share" class="n">% apartments / townhouses</th><th data-k="per1000" class="n">Per 1,000 residents</th><th data-k="value" class="n">Value</th><th data-k="ytd" class="n">This FY to date</th></tr></thead><tbody>
-    ${rows.slice(0, 150).map((l) => `<tr><td><a href="/council/${l.s.toLowerCase()}/${l.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}" data-link>${esc(l.name)}</a></td><td>${l.s}</td><td class="n">${num(l.fy.total)}</td><td class="n">${num(l.fy.houses)}</td><td class="n">${num(l.fy.other)}</td><td class="n">${pct(l.share, 0)}</td><td class="n ${l.per1000 > 15 ? 'warn' : ''}">${l.per1000.toFixed(1)}</td><td class="n">${aud((l.fy.value || 0) * 1000, { compact: true })}</td><td class="n">${num(l.ytd?.total)}</td></tr>`).join('')}
+    ${rows.slice(0, 150).map((l) => `<tr><td><a href="/council/${l.s.toLowerCase()}/${lgaSlug(lgaName[l.code] || l.name)}" data-link>${esc(l.name)}</a></td><td>${l.s}</td><td class="n">${num(l.fy.total)}</td><td class="n">${num(l.fy.houses)}</td><td class="n">${num(l.fy.other)}</td><td class="n">${pct(l.share, 0)}</td><td class="n ${l.per1000 > 15 ? 'warn' : ''}">${l.per1000.toFixed(1)}</td><td class="n">${aud((l.fy.value || 0) * 1000, { compact: true })}</td><td class="n">${num(l.ytd?.total)}</td></tr>`).join('')}
     </tbody></table></div>`;
     const t = main.querySelector('#nbt');
     t.querySelector(`th[data-k="${st.sort}"]`)?.classList.add(st.asc ? 'asc' : 'desc');

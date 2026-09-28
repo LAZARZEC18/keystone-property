@@ -106,7 +106,7 @@ export function describe(pathname, search, ix, origin) {
   const canonical = `${origin}${path === '/' ? '/' : path}`;
   const base = { status: 200, canonical, robots: 'index,follow', jsonld: [], body: null, image: `${origin}/assets/og.png` };
   if (!ROUTES.some((re) => re.test(path))) {
-    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Keyzing.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
+    return { ...base, status: 404, robots: 'noindex', title: 'Page not found', description: 'This page does not exist on Keyzing. Try the suburb explorer, the affordability calculator or the search box.', body: '<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs">suburb explorer</a> or search above.</p></div>' };
   }
   const q = new URLSearchParams(search);
   let m = path.match(/^\/suburb\/([a-z]+\/[a-z0-9-]+)$/);
@@ -149,7 +149,9 @@ export function describe(pathname, search, ix, origin) {
   }
   m = path.match(/^\/council\/([a-z]+\/[a-z0-9-]+)$/);
   if (m) {
-    const list = (ix.byLga.get(m[1]) || []).sort((a, b) => b.pop - a.pop);
+    // older links ended in '-' ('campbelltown-nsw-'); treat them as the same council
+    const key = m[1].replace(/-+$/, '');
+    const list = (ix.byLga.get(key) || []).sort((a, b) => b.pop - a.pop);
     if (!list.length) return { ...base, status: 404, robots: 'noindex', title: 'Council not found', description: 'No council area matches this address.', body: '<div class="empty"><h1>Council not found</h1></div>' };
     const lga = list[0].lga;
     const title = `${lga} council area: suburbs, house prices, rents and scores`;

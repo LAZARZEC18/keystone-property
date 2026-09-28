@@ -1,5 +1,5 @@
 import { esc, aud, pct, num, setMeta } from '../ui.js';
-import { suburbs, load } from '../data.js';
+import { suburbs, load, lgaSlug } from '../data.js';
 import { suburbScore } from '../engine.js';
 import { STATES } from '../rules.js';
 import { suburbTable, summary } from './postcode.js';
@@ -7,8 +7,9 @@ import { suburbTable, summary } from './postcode.js';
 export default async function councilPage(main, params) {
   const [{ list }, market] = await Promise.all([suburbs(), load('market')]);
   const st = params.state.toUpperCase();
-  const slugOf = (l) => (l || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const rows = list.filter((s) => s.s === st && slugOf(s.lga) === params.lga).sort((a, b) => suburbScore(b.sc) - suburbScore(a.sc));
+  // old links ended in '-' ('campbelltown-nsw-'): accept both
+  const want = lgaSlug(params.lga);
+  const rows = list.filter((s) => s.s === st && lgaSlug(s.lga) === want).sort((a, b) => suburbScore(b.sc) - suburbScore(a.sc));
   if (!rows.length) {
     main.innerHTML = '<div class="empty"><h1>Council not found</h1></div>';
     return;

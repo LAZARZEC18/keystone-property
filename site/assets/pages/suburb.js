@@ -66,7 +66,7 @@ export default async function suburbPage(main, params) {
   const sApp = d.sa2 ? approvals?.sa2?.[d.sa2] : null;
   const analyseUrl = `/analyse?suburb=${s.id}&price=${ic.price}&rent=${ic.rent || ''}&type=${s.pt}`;
   const pcLink = s.pc ? `<a href="/postcode/${s.pc}" data-link>${s.pc}</a>` : '';
-  const lgaSlug = (s.lga || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const lgaSlug = (s.lga || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   // in apartment suburbs (a CBD), lead with units and work price-to-income off units, not the few houses
   const hShare = d['hou%'] ?? s['hou%'] ?? 70;

@@ -208,3 +208,6 @@ export function fairOrder(rows, scoreOf = (r) => r.score, stateOf = (r) => r.s.s
   }
   return rows.sort((a, b) => a.statePct - b.statePct || scoreOf(b) - scoreOf(a));
 }
+
+/** One slug for council pages everywhere (matches the server's). 'Campbelltown (NSW)' -> 'campbelltown-nsw'. */
+export const lgaSlug = (x) => String(x || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
