@@ -561,3 +561,4 @@ abbr.jargon { text-decoration: underline dotted; text-underline-offset: 3px; cur
 .returns-line { margin: 10px 0 0; } .rl-head { font-size: 13px; color: var(--muted); margin-bottom: 6px; } .rl-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .rl-grid > div { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; } .rl-grid .k { font-size: 12px; color: var(--muted); } .rl-grid b { font-family: var(--mono); font-size: 18px; } @media (max-width: 600px) { .rl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .demo-stage { max-width: 980px; margin: 12px auto 0; }
 #demo-tabs { flex-wrap: wrap; }
+.see-area { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px 16px; }

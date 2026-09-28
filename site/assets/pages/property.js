@@ -6,7 +6,7 @@ import { liveFactor, regionMoves } from '../live.js';
 import { baseTiles } from '../map.js';
 import { liveListings, valueCall, rangeBar } from './listings.js';
 import { accuracy } from '../accuracy.js';
-import { fillSuburbPhotos } from '../photos.js';
+import { seeTheArea } from '../photos.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { reaSearch } from './find.js';
 import { navigate } from '../app.js';
@@ -120,7 +120,7 @@ export default async function propertyPage(main, _p, query) {
 
   out.innerHTML = `
   <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')}· located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
-  <div id="pphotos" style="margin-top:14px"></div>
+  <div style="margin-top:14px">${seeTheArea(point.lat, point.lng, { place: facts?.address || (streetTyped ? first.trim() : cleanName(s.n)), sold: listingLinks(s).reaSold })}</div>
   <div class="grid split-spec" style="gap:20px;margin-top:16px" id="pgrid">
     <form class="card" id="spec" onsubmit="return false" style="align-self:start">
       <div class="seg" id="pmode" role="tablist" style="width:100%;margin-bottom:14px"><button type="button" data-m="home" style="flex:1">Buying to live in</button><button type="button" data-m="invest" style="flex:1">Buying to invest</button></div>
@@ -150,7 +150,6 @@ export default async function propertyPage(main, _p, query) {
   </section>
   <section class="section card"><div class="card-head"><h3>Similar homes for sale</h3><span class="note" id="simnote"></span></div><div class="row" id="simlinks"></div><div id="simlive" style="margin-top:14px"></div><p class="fine" style="margin-top:10px">Recent sales nearby are the best guide to value: <a href="${listingLinks(s).reaSold}" target="_blank" rel="noopener">sold homes in ${esc(cleanName(s.n))} ↗</a>.</p></section>`;
 
-  fillSuburbPhotos(main.querySelector('#pphotos'), s, { n: 4, place: `${cleanName(s.n)} ${s.s}` });
   const form = main.querySelector('#spec');
   form.type.value = spec.type;
   // same default as the affordability tool: first home buyers start on the 5% Deposit Scheme

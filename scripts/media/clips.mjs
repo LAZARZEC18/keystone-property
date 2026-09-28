@@ -6,6 +6,7 @@ rmSync(OUT, { recursive: true, force: true }); mkdirSync(OUT, { recursive: true 
 const b = await chromium.launch({ args: [`--proxy-server=${process.env.HTTPS_PROXY}`, '--proxy-bypass-list=localhost;127.0.0.1'] });
 const offsets = {};
 async function clip(name, url, act) {
+  if (process.env.ONLY && !process.env.ONLY.split(',').includes(name)) return;
   const dir = `${OUT}/${name}`; mkdirSync(dir);
   const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 1280, height: 720 } }, colorScheme: 'light' });
   const p = await ctx.newPage();

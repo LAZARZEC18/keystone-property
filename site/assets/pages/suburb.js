@@ -8,7 +8,7 @@ import { liveListings } from './listings.js';
 import { regionMoves } from '../live.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { accuracy } from '../accuracy.js';
-import { fillSuburbPhotos } from '../photos.js';
+import { seeTheArea } from '../photos.js';
 
 export default async function suburbPage(main, params) {
   const [idx, market, rs, approvals, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('approvals').catch(() => null), load('rba').catch(() => null)]);
@@ -76,7 +76,7 @@ export default async function suburbPage(main, params) {
     </div>
   </div>
   ${brandPanel(null)}
-  <section class="section" id="sphotos" style="margin-top:14px"><div class="photo-strip">${'<div class="photo skeleton-photo"></div>'.repeat(3)}</div></section>
+  <section class="section" style="margin-top:14px">${seeTheArea(s.lat, s.lng, { place: name, sold: listingLinks(s).reaSold })}</section>
 
   <div class="grid g-side section" style="margin-top:20px">
     <div class="card">
@@ -237,7 +237,6 @@ export default async function suburbPage(main, params) {
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());
-  fillSuburbPhotos(main.querySelector('#sphotos'), s, { place: `${name} ${s.s}` });
   wireBrand(main, `Suburb report: ${name} ${s.s} ${s.pc || ''}`);
   main.querySelector('#watch').addEventListener('click', (e) => {
     const on = toggleWatch(s.id);
