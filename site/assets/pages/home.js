@@ -9,7 +9,7 @@ import { photoCard, figure, strip, photo, photoCredits } from '../photos.js';
 import { budgetMapHtml, wireBudgetMap } from '../budgetmap.js';
 import { comfortableWeekly } from '../rules.js';
 
-// The home page leads with the two tools Keyzing does best: what you can afford, and the 2026 tax-change numbers.
+// The home page leads with the two tools Market Lenz does best: what you can afford, and the 2026 tax-change numbers.
 // Suburb scores and estimates sit behind them until the suburb data is licensed and measured everywhere.
 export default async function home(main) {
   setMeta({ title: 'What can you comfortably afford, and where?', description: 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and every lender’s rate.' });
@@ -31,14 +31,14 @@ export default async function home(main) {
     <div>
       <div class="eyebrow">Free · independent · for Australian home buyers</div>
       <h1>What can you comfortably afford, <em>and where?</em></h1>
-      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income: Keyzing works out a comfortable price where you want to buy, the cash you need, and the schemes you qualify for.</p>
+      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income: Market Lenz works out a comfortable price where you want to buy, the cash you need, and the schemes you qualify for.</p>
       <div class="row hero-cta"><a class="btn primary lg" href="/afford?buyer=fhb" data-link id="hero-cta">Work out what I can afford →</a></div>
       <p class="hero-alt">Buying to invest? <a href="/analyse" data-link>Run the 2026 tax-change numbers →</a></p>
     </div>
     <div>${budgetMapHtml({ budget: 750000, city: 'AU' })}</div>
   </section>
 
-  <section class="section trust" aria-label="What Keyzing is built on">
+  <section class="section trust" aria-label="What Market Lenz is built on">
     <div><b>${rs.lenders}</b><span>lenders' rates, read from their Open Banking feeds several times a day</span></div>
     <div><b>8 of 8</b><span>states and territories: stamp duty, first home concessions and land tax</span></div>
     <div><b>${measured.toLocaleString()}</b><span>suburbs with official sales data; the rest are modelled and labelled that way</span></div>
@@ -52,7 +52,7 @@ export default async function home(main) {
         <li><b>Your numbers.</b> Where you want to buy, your savings, income and debts.</li>
         <li><b>A comfortable price,</b> with repayments under 30% of your income, and the most a lender might stretch to.</li>
         <li><b>The real cost.</b> Cash up front, repayments against your rent now, or an investment's weekly cost after tax.</li>
-        <li><b>Your next step:</b> pre-approval from a lender or broker. Keyzing doesn't sell loans or refer you anywhere.</li>
+        <li><b>Your next step:</b> pre-approval from a lender or broker. Market Lenz doesn't sell loans or refer you anywhere.</li>
       </ol>
       <p class="fine">Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}. <a href="/why" data-link>Two-minute tour →</a></p>
     </div>
@@ -96,7 +96,7 @@ export default async function home(main) {
     <div class="spread"><h2>Prices at month-end</h2><a href="/markets" data-link>All markets →</a></div>
     <div class="city-grid" id="cities">${caps.map(([code, r]) => cityCard(code, r, cityPhoto(code))).join('')}</div>
     ${photoCredits(caps.map(([c]) => CITY_PHOTO[c]))}
-    <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end ${esc(market.indexMonth || '')}: median values of all homes, houses and units, and the change for all homes (source: <a href="${esc(market.sources?.[0]?.url || '#')}" target="_blank" rel="noopener">Cotality</a>). The typical investor rate used across Keyzing is the RBA's average on new investor variable loans, ${pct(inv.rate, 2)} (${esc(inv.month)}). ${oo ? `Lowest advertised owner-occupier variable rate from a national lender: ${pct(oo.rate, 2)} (${esc(oo.lender)}); <a href="/rates" data-link>compare every lender</a>.` : ''}</p>
+    <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end ${esc(market.indexMonth || '')}: median values of all homes, houses and units, and the change for all homes (source: <a href="${esc(market.sources?.[0]?.url || '#')}" target="_blank" rel="noopener">Cotality</a>). The typical investor rate used across Market Lenz is the RBA's average on new investor variable loans, ${pct(inv.rate, 2)} (${esc(inv.month)}). ${oo ? `Lowest advertised owner-occupier variable rate from a national lender: ${pct(oo.rate, 2)} (${esc(oo.lender)}); <a href="/rates" data-link>compare every lender</a>.` : ''}</p>
     <div style="margin-top:12px">${rateWatchCard(rba, { compact: true })}</div>
   </section>
 
@@ -105,7 +105,7 @@ export default async function home(main) {
       <div><div class="eyebrow">Register early</div><h2 style="margin:0 0 6px">Rate moves and month-end prices, by email</h2><p class="muted" style="margin:0">The email edition is launching soon; until then the <a href="/weekly" data-link>market update</a> is online.</p></div>
       ${registerForm('hreg')}
     </div>
-    <p class="fine" style="margin-top:12px">Keyzing is general information, not financial advice: it doesn’t know your circumstances and isn’t a lender, broker or agent. Rates last checked ${date(rs.updated)}.</p>
+    <p class="fine" style="margin-top:12px">Market Lenz is general information, not financial advice: it doesn’t know your circumstances and isn’t a lender, broker or agent. Rates last checked ${date(rs.updated)}.</p>
   </section>`;
 
   const destroyMap = wireBudgetMap(main, idx.list, {
@@ -178,7 +178,7 @@ export function registerForm(id) {
           <label class="field">I'm a<select name="type"><option>First home buyer</option><option>Home owner moving</option><option>Investor</option><option>Other</option></select></label>
           <label class="field">Suburbs I'm watching (optional)<input name="suburbs" placeholder="e.g. Newtown 2042, Joondalup 6027"></label>
         </div>
-        <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Keyzing's updates. I can unsubscribe any time.</label>
+        <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Market Lenz's updates. I can unsubscribe any time.</label>
         <div class="row" style="margin-top:10px"><button class="btn primary">Register</button><span class="fine" data-status>Your email is used only for this. <a href="/privacy" data-link>Privacy</a>.</span></div>
       </form>`;
 }

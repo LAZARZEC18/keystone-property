@@ -1,4 +1,4 @@
-// Keyzing investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
+// Market Lenz investment engine. Pure functions, no DOM: runs in the browser and in Node tests.
 import { RULES } from './rules.js';
 import { DEAL_BANDS } from './deal-bands.js';
 import { GROWTH, runningCosts } from './rules.js';
@@ -392,7 +392,7 @@ export function IRR(flows) {
 }
 
 /**
- * Keyzing verdict: turns the numbers into a plain-English call with the reasons behind it.
+ * Market Lenz verdict: turns the numbers into a plain-English call with the reasons behind it.
  * suburb: optional index row (scores, vacancy etc). Returns {grade, label, score, reasons[], risks[]}.
  */
 export function verdict(result, suburb = null, market = null, { depositRate = 4.35 } = {}) {
@@ -435,7 +435,7 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   if (suburb) {
     const sc = suburb.score ?? null;
     if (sc !== null) {
-      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Keyzing's suburb fundamentals.`); }
+      if (sc >= 70) { pts += 8; reasons.push(`${suburb.n} scores ${sc}/100 on Market Lenz's suburb fundamentals.`); }
       else if (sc < 40) { pts -= 6; risks.push(`${suburb.n} scores only ${sc}/100 on suburb fundamentals.`); }
     }
     const reg = market?.regions?.[suburb.rg];
@@ -474,7 +474,7 @@ export function dealPercentile(score, bands = DEAL_BANDS) {
   return Math.round(((below + equal / 2) / q.length) * 100);
 }
 
-/** Weighted Keyzing Score from a suburb's component percentiles. */
+/** Weighted Market Lenz Score from a suburb's component percentiles. */
 export const PROFILES = {
   // Momentum (the past 12 months' price change) carries no weight: it exists only where official suburb sales do
   // (NSW, VIC, SA), so weighting it made scores incomparable across states, and it rewards trailing growth just as
@@ -525,7 +525,7 @@ export function riskNote(s) {
 }
 
 /**
- * Keyzing estimate for one specific home, built up from the suburb's typical price.
+ * Market Lenz estimate for one specific home, built up from the suburb's typical price.
  * s: suburb index row (h/u typical prices, bh/bu typical bedrooms, conf)
  * spec: {type:'h'|'u', beds, baths, land (m²), cars, condition:'new'|'renovated'|'average'|'original'|'needs-work', pool, liveFactor}
  * Returns {value, low, high, rent, adjustments:[{label, pct}], basis}

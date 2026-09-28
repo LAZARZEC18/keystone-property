@@ -15,7 +15,7 @@ export default async function weeklyPage(main) {
   const cls = (v) => (v > 0 ? 'up' : v < 0 ? 'down' : '');
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Market update</div><h1>Rates this week, prices at month-end</h1>
-  <p>Week of ${date(cur?.week)} · updated ${ago(cur?.updated)}. Lender rates and the RBA outlook change week to week and are checked every week. Home values come from Cotality's index, which is published monthly, so those figures change once a month (latest: ${esc(market.indexMonth || '')}). Keyzing doesn't have weekly sales, clearance rates or listing volumes.</p></div>
+  <p>Week of ${date(cur?.week)} · updated ${ago(cur?.updated)}. Lender rates and the RBA outlook change week to week and are checked every week. Home values come from Cotality's index, which is published monthly, so those figures change once a month (latest: ${esc(market.indexMonth || '')}). Market Lenz doesn't have weekly sales, clearance rates or listing volumes.</p></div>
   <div class="grid g-side">
     <div>
       <div class="card"><h3>Prices at month-end</h3><p>${esc(commentary(market, rba))}</p>
@@ -35,7 +35,7 @@ export default async function weeklyPage(main) {
         <h3>Register for updates</h3>
         <p class="note">Register for the email edition (launching soon) and tell us which suburbs you're watching so we can flag big moves.</p>
         ${registerForm('reg-form')}
-        <p class="fine">Your details are stored by Netlify for Keyzing only and never sold. <a href="/privacy" data-link>Privacy</a>.</p>
+        <p class="fine">Your details are stored by Netlify for Market Lenz only and never sold. <a href="/privacy" data-link>Privacy</a>.</p>
       </div>
     </div>
   </div>`;

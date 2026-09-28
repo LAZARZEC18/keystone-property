@@ -1,4 +1,4 @@
-// How far to trust a Keyzing value estimate, stated per state from the model's own out-of-sample test.
+// How far to trust a Market Lenz value estimate, stated per state from the model's own out-of-sample test.
 import { pct } from './ui.js';
 
 const STATE_NAMES = { NSW: 'NSW', VIC: 'Victoria', QLD: 'Queensland', SA: 'South Australia', WA: 'Western Australia', TAS: 'Tasmania', NT: 'the Northern Territory', ACT: 'the ACT' };

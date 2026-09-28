@@ -3,17 +3,17 @@ import { load } from '../data.js';
 import { RULES } from '../rules.js';
 
 export default async function methodologyPage(main) {
-  setMeta({ title: 'Data sources and methodology', description: 'Where every Keyzing number comes from, how often it updates, and how the suburb price model and investor score work.' });
+  setMeta({ title: 'Data sources and methodology', description: 'Where every Market Lenz number comes from, how often it updates, and how the suburb price model and investor score work.' });
   const [model, status, rs, news, approvals, market] = await Promise.all([load('model'), load('status').catch(() => null), load('rates-summary'), load('news').catch(() => null), load('approvals').catch(() => null), load('market').catch(() => null)]);
   const ran = (job) => (status?.jobs?.[job]?.ok ? `OK, ${date(status.finished)}` : status?.jobs?.[job] ? 'Failed on the last run; previous data kept' : 'Not yet run');
   const pubs = news ? [...new Set(news.items.map((i) => i.source))].sort() : [];
   const m = model.model;
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Methodology</div><h1>Where the numbers come from</h1>
-  <p>Keyzing uses publicly released official and industry data, credits every source where it appears, and marks clearly which figures are official and which are Keyzing estimates. Third-party figures belong to their owners; commercial use of some of them may need a licence, which Keyzing will arrange before offering any paid service.</p></div>
+  <p>Market Lenz uses publicly released official and industry data, credits every source where it appears, and marks clearly which figures are official and which are Market Lenz estimates. Third-party figures belong to their owners; commercial use of some of them may need a licence, which Market Lenz will arrange before offering any paid service.</p></div>
 
   <section class="section"><h2>Update schedule</h2>
-  <div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Source</th><th>Keyzing checks</th><th>Source publishes</th><th>Last run</th></tr></thead><tbody>
+  <div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Source</th><th>Market Lenz checks</th><th>Source publishes</th><th>Last run</th></tr></thead><tbody>
     <tr><td>Home loan rates (${rs.lenders} lenders)</td><td>Consumer Data Right product feeds, via the <a href="https://api.cdr.gov.au" target="_blank" rel="noopener">CDR register</a></td><td>Several times a day</td><td>Whenever lenders change rates</td><td>${ran('rates')}</td></tr>
     <tr><td>Home values, changes, yields, days on market (capitals and regions)</td><td><a href="https://www.cotality.com/au/our-data/indices" target="_blank" rel="noopener">Cotality Home Value Index</a>, PropTrack, SQM Research</td><td>After each month-end release</td><td>Monthly</td><td>Month-end ${esc(market?.indexMonth || '')}</td></tr>
     <tr><td>Cash rate, lending rates, bank bills</td><td>RBA tables A2, F1.1, F5, F6</td><td>About every hour</td><td>After each RBA meeting; monthly</td><td>${ran('rba')}</td></tr>
@@ -27,13 +27,13 @@ export default async function methodologyPage(main) {
 
   <section class="section grid g2">
     <div class="card"><h3>Suburb prices</h3>
-      <p class="note">Where a state publishes suburb sales medians openly (Victoria, South Australia metro, NSW by postcode), Keyzing uses them, rolled forward to the latest month-end with the regional index. These are marked <span class="tag tag-official">Official</span>.</p>
+      <p class="note">Where a state publishes suburb sales medians openly (Victoria, South Australia metro, NSW by postcode), Market Lenz uses them, rolled forward to the latest month-end with the regional index. These are marked <span class="tag tag-official">Official</span>.</p>
       <p class="note">Everywhere else, prices are <span class="tag tag-model">Modelled</span>: estimates from a regression model trained on ${m.trainN.toLocaleString()} official suburb medians. It uses each suburb's Census mortgage repayments, rents and incomes relative to its region, home ownership, dwelling mix, density, distance to the CBD and the coast, and remoteness. It then anchors the result to Cotality's current median for the region. Fit: R² ${m.r2} (houses), ${m.unitR2} (units).</p>
       <p class="note">Tested on states it hadn't seen: median error ${Object.entries(m.holdout).map(([s, h]) => `${s} ${pct(h.medianAbsPctError, 1)} (${pct(h.within20pct, 0)} within 20%)`).join(', ')}. Estimates are least reliable in very small, remote or unusual suburbs, which carry a low-confidence flag.</p>
     </div>
     <div class="card"><h3>Rents</h3>
       <p class="note">NSW rents are median new bonds by postcode (DCJ). Everywhere else, a rent model fitted on those official bond medians (407 postcodes for houses, median error about 9%) sets each suburb's rent relative to its region from its 2021 Census rent and its current price, and each region is centred on its typical rent from Cotality's gross yields (typical rents, not asking rents, which skew high). A suburb's typical unit is never rented above its typical house.</p>
-      <h3 style="margin-top:14px">Keyzing Score</h3>
+      <h3 style="margin-top:14px">Market Lenz Score</h3>
       <p class="note">Five scored components, each a percentile against every Australian suburb: rental yield, growth drivers, rental demand (vacancy, days on market, unemployment), affordability (price ÷ household income) and stability (employment, social-housing share, market size, concentration risk). Strategies weight them differently: balanced, growth, cash flow, first home, new builds. Scores are banded against their actual spread: 65+ is about the top 1% of suburbs, 55+ the top 10%, 45+ above the median.</p>
       <p class="note"><b>Past price growth is shown but not scored.</b> Suburb-level 12-month changes exist only where official sales are published (NSW, VIC, SA), so scoring them made suburbs in different states incomparable, and it rewarded trailing growth just as markets turned. Every price display leads with the area's 3-month change and says whether prices are rising, flat or falling.</p>
       <p class="note"><b>Growth drivers reward demand, not construction.</b> Population growth 2020-25 (ABS estimates for the surrounding SA2) is counted net of new supply: growth above about 2.5% a year, which usually means a new estate or apartment towers being built, earns less credit, and the council area's approvals rate (new dwellings a year per 100 existing) counts against it. Census 2016-21 income and rent growth keep a small weight until the 2026 Census is released.</p>
@@ -48,8 +48,8 @@ export default async function methodologyPage(main) {
       <p class="note">Stamp duty uses each state's published schedule and concessions. LMI uses a published premium table plus state duty on LMI. Land tax is for an individual holding one property. Income tax is 2026-27 resident rates with the Medicare levy and the low income tax offset. Negative gearing and CGT follow the Tax Reform No. 1 Act 2026: offset share by date, carried-forward losses, value at 1 July 2027, CPI indexation and the 30% minimum. Building depreciation is 2.5% a year of an estimated construction cost, only when you give a build year of 1987 or later (none if it's left blank), plus plant and equipment for new builds. Running costs start from typical figures for the state (council rates, water charges, landlord insurance) and should be replaced with the property's own. Losses the 2026 rules stop you offsetting against salary can be offset against net rental profit from your other properties, if you enter it. Return is the internal rate of return on your actual cash flows, including the sale.</p>
       <p class="fine">It handles one or two individual owners (each taxed on their share at their own rate) and adds any other investment land you own in the state for land tax. Trusts, companies, SMSFs and foreign buyers are treated differently and aren't modelled.</p>
     </div>
-    <div class="card" id="privacy"><h3>Privacy</h3><p class="note">Keyzing doesn't use tracking cookies. Your saved suburbs, deals and theme are stored only in your browser. If you register for updates, your email, buyer type and any suburbs you list are stored in Netlify Forms for Keyzing's use only.</p>
-    <h3 style="margin-top:14px">Not advice</h3><p class="note">Keyzing is general information. It doesn't know your circumstances and isn't a licensed financial, credit, tax or legal adviser. Estimates and projections can be wrong. Check with independent professionals before you buy.</p></div>
+    <div class="card" id="privacy"><h3>Privacy</h3><p class="note">Market Lenz doesn't use tracking cookies. Your saved suburbs, deals and theme are stored only in your browser. If you register for updates, your email, buyer type and any suburbs you list are stored in Netlify Forms for Market Lenz's use only.</p>
+    <h3 style="margin-top:14px">Not advice</h3><p class="note">Market Lenz is general information. It doesn't know your circumstances and isn't a licensed financial, credit, tax or legal adviser. Estimates and projections can be wrong. Check with independent professionals before you buy.</p></div>
   </section>
 
   <section class="section"><h3>All sources</h3><ul class="note">${model.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}

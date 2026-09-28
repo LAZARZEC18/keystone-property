@@ -90,7 +90,7 @@ export function showErrors(root, errors, ids, box) {
   }
   if (box) {
     box.innerHTML = keys.length
-      ? `<div class="card callout warn-box"><b>Check ${keys.length === 1 ? 'this input' : 'these inputs'} before Keyzing runs the numbers</b><ul>${keys.map((k) => `<li>${errors[k].replace(/</g, '&lt;')}</li>`).join('')}</ul><p class="fine" style="margin:6px 0 0">Nothing is calculated until every value is in a realistic range, so a result always matches what you entered.</p></div>`
+      ? `<div class="card callout warn-box"><b>Check ${keys.length === 1 ? 'this input' : 'these inputs'} before Market Lenz runs the numbers</b><ul>${keys.map((k) => `<li>${errors[k].replace(/</g, '&lt;')}</li>`).join('')}</ul><p class="fine" style="margin:6px 0 0">Nothing is calculated until every value is in a realistic range, so a result always matches what you entered.</p></div>`
       : '';
   }
   return keys.length > 0;

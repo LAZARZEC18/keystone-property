@@ -44,7 +44,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (s.g1 !== null && s.g1 !== undefined) {
     const regional = String(s.g1s).startsWith('region');
     const src = regional ? `${R.name}-wide values (there's no sales series for this suburb)` : 'Values here';
-    if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keyzing holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
+    if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Market Lenz holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
     const per = regional || !s.g1p ? 'the past year' : `the past year (${s.g1p})`;
     if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over ${per}: strong buyer demand.`);
     else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over ${per}. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
@@ -58,7 +58,7 @@ export function investmentCase(s, d, region, rs, market) {
   // Population and income
   if (s.pg5 !== null && s.pg5 !== undefined) {
     const per = /census/i.test(d?.pgS || '') ? 'between the 2016 and 2021 Censuses' : 'from 2020 to 2025 (ABS estimates)';
-    if (s.pg5 > 12.5) cons.push(`Population grew ${pct(s.pg5, 1)} ${per}, faster than about 2.5% a year: that usually means a lot of new housing being built (a new estate or apartment towers), so new homes compete with resales and rentals. Keyzing gives growth this fast less credit, not more.`);
+    if (s.pg5 > 12.5) cons.push(`Population grew ${pct(s.pg5, 1)} ${per}, faster than about 2.5% a year: that usually means a lot of new housing being built (a new estate or apartment towers), so new homes compete with resales and rentals. Market Lenz gives growth this fast less credit, not more.`);
     else if (s.pg5 >= 6) pros.push(`Population grew ${pct(s.pg5, 1)} ${per} without an estate-scale building boom: steady demand for homes and rentals.`);
     else if (s.pg5 < -2) cons.push(`Population shrank ${pct(Math.abs(s.pg5), 1)} ${per}. Falling demand is a long-term risk.`);
   }
@@ -83,7 +83,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (s.pop < 1500) cons.push(`Small market (${s.pop.toLocaleString()} residents), so there are fewer buyers and tenants and it's harder to sell quickly.`);
   if (['Remote', 'Very Remote'].includes(s.ra || d.ra)) cons.push(`${s.ra || d.ra} area. Remote markets swing with local industry (often mining) and can fall sharply.`);
   if (s.pt === 'u' && (d['fla%'] ?? 0) >= 60) cons.push('Unit-dominated market. Check apartment supply in the pipeline, strata levies and building defects before buying off the plan.');
-  if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Keyzing estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
+  if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Market Lenz estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
   if (R.dom && R.domYearAgo && R.dom - R.domYearAgo >= 10) cons.push(`Homes in ${R.name} now take ${R.dom} days to sell, up from ${R.domYearAgo} a year ago: the market is cooling.`);
 
   // Who it suits
@@ -136,7 +136,7 @@ export function scoreVsDeal(score, grade) {
   return `<details class="explain"><summary>Suburb score ${score ?? '—'}/100 and the deal's rank: why they can differ</summary><p>The <b>suburb score</b> ranks the area against every other suburb in Australia. The <b>deal's rank</b> tests one purchase: a typical home at today's price, a 20% deposit, the RBA's average investor rate and a $120k salary, over 10 years, compared with the typical home in every other suburb run the same way. It is relative: at current rates most established homes cost their owner money every week, so even a "top 15%" deal usually does, which is why the weekly cost and the term-deposit test are shown first. The 5% a year growth assumption is the same everywhere; change it in the deal analyser.</p></details>`;
 }
 
-/** The human next step after the numbers: pre-approval. Neutral: Keyzing doesn't refer or earn from this. */
+/** The human next step after the numbers: pre-approval. Neutral: Market Lenz doesn't refer or earn from this. */
 export function nextStepsCard({ fhb = false } = {}) {
   return `<div class="card next-steps"><div class="eyebrow">Your next step</div><h3 style="margin-top:4px">Get pre-approval before you make offers</h3>
     <ol class="note" style="padding-left:18px;margin:8px 0 0;line-height:1.6">
@@ -145,5 +145,5 @@ export function nextStepsCard({ fhb = false } = {}) {
       <li><b>Have ready:</b> photo ID, your last two payslips (or two years of tax returns if self-employed), three months of bank and savings statements, and details of any debts, cards and buy-now-pay-later accounts.</li>
       ${fhb ? '<li><b>For the 5% Deposit Scheme or Help to Buy,</b> you apply through a participating lender, not the government. Ask the broker or bank whether they offer it.</li>' : ''}
     </ol>
-    <p class="fine" style="margin-top:8px"><a href="https://moneysmart.gov.au/home-loans/choosing-a-mortgage-broker" target="_blank" rel="noopener">Moneysmart: choosing a mortgage broker ↗</a>${fhb ? ' · <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia: schemes and participating lenders ↗</a>' : ''} · Keyzing doesn't refer you to anyone or earn anything from this.</p></div>`;
+    <p class="fine" style="margin-top:8px"><a href="https://moneysmart.gov.au/home-loans/choosing-a-mortgage-broker" target="_blank" rel="noopener">Moneysmart: choosing a mortgage broker ↗</a>${fhb ? ' · <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia: schemes and participating lenders ↗</a>' : ''} · Market Lenz doesn't refer you to anyone or earn anything from this.</p></div>`;
 }

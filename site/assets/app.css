@@ -1,4 +1,4 @@
-/* Keyzing design system: warm paper + deep green, brass keystone, editorial serif headlines, mono numbers. */
+/* Market Lenz design system: warm paper + deep green, brass keystone, editorial serif headlines, mono numbers. */
 :root {
   --bg: #f6f4ef;
   --surface: #ffffff;
@@ -432,7 +432,7 @@ details.faq summary { cursor: pointer; font-weight: 600; }
   .card { box-shadow: none !important; break-inside: avoid; border-color: #ddd; }
   .grid { gap: 10px !important; }
   a { color: #111; text-decoration: none; }
-  main::after { content: 'General information only, not financial advice or a formal valuation. Estimates are modelled from public data and can be wrong; the methodology and each figure’s source are on the Keyzing site.'; display: block; margin-top: 16px; font-size: 8.5pt; color: #666; }
+  main::after { content: 'General information only, not financial advice or a formal valuation. Estimates are modelled from public data and can be wrong; the methodology and each figure’s source are on the Market Lenz site.'; display: block; margin-top: 16px; font-size: 8.5pt; color: #666; }
 }
 @media (max-width: 1080px) { .top-in { position: relative; z-index: 3; } .nav { z-index: 90; } }
 @media (max-width: 1080px) { .nav .nav-link { color: var(--ink); padding: 12px 8px; font-size: 15.5px; } }

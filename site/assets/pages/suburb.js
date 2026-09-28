@@ -34,7 +34,7 @@ export default async function suburbPage(main, params) {
   // one price everywhere on the page: the typical home as at the latest month-end
   if (ic.rent) ic.yld = (ic.rent * 52 * 100) / ic.price;
   const links = listingLinks(s);
-  setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Keyzing investor score and full investment case.` });
+  setMeta({ title: `${name} ${s.s} ${s.pc || ''} property investment: prices, rents, yield, score`, description: `${name}, ${STATES[s.s]}: median ${ic.type} price ${aud(ic.price)}, rent ${aud(ic.rent)}/wk, yield ${pct(ic.yld, 2)}, Market Lenz investor score and full investment case.` });
 
   const profiles = Object.keys(PROFILES);
   const scores = Object.fromEntries(profiles.map((p) => [p, suburbScore(s.sc, PROFILES[p])]));
@@ -104,7 +104,7 @@ export default async function suburbPage(main, params) {
     </div>
     <div class="card" style="display:flex;gap:16px;align-items:center">
       ${scoreBadge(scores.balanced, true)}
-      <div><div class="eyebrow" style="margin:0">Keyzing Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Top-tier fundamentals' : scores.balanced >= 55 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
+      <div><div class="eyebrow" style="margin:0">Market Lenz Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Top-tier fundamentals' : scores.balanced >= 55 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
       <div class="note">Ranks the area against every Australian suburb. It isn't a rating of any particular home.</div></div>
     </div>
   </div>
@@ -246,7 +246,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section">
-    <p class="fine">How these numbers are made: prices marked Modelled come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
+    <p class="fine">How these numbers are made: prices marked Modelled come from Market Lenz's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());

@@ -1,4 +1,4 @@
-// Keyzing tax, duty and lending rules. Every figure is taken from the official source linked in
+// Market Lenz tax, duty and lending rules. Every figure is taken from the official source linked in
 // `sources`, checked 26 September 2026. Brackets: [from, base, rate] where duty = base + rate x (value - from).
 // `per100` means the state charges "per $100 or part", so the excess is rounded up to the next $100.
 
@@ -296,7 +296,7 @@ export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'CommBank economists,
 export const STRESS = {
   share: 0.3,
   label: '30% of your before-tax income',
-  note: 'Repayments above 30% of gross (before-tax) household income are widely treated as mortgage stress. Keyzing uses this one threshold on every page.',
+  note: 'Repayments above 30% of gross (before-tax) household income are widely treated as mortgage stress. Market Lenz uses this one threshold on every page.',
 };
 /** Comfortable repayments per week for a gross yearly income. */
 export const comfortableWeekly = (grossIncome) => (grossIncome * STRESS.share) / 52;
@@ -347,6 +347,6 @@ export const STATE_SCHEMES = {
   ],
   NSW: [],
   ACT: [
-    { name: 'ACT Home Buyer Concession Scheme', text: 'Income-tested duty relief for first home buyers (Keyzing’s duty figures apply it). No state low-deposit lender.', url: 'https://www.revenue.act.gov.au/home-buyer-assistance' },
+    { name: 'ACT Home Buyer Concession Scheme', text: 'Income-tested duty relief for first home buyers (Market Lenz’s duty figures apply it). No state low-deposit lender.', url: 'https://www.revenue.act.gov.au/home-buyer-assistance' },
   ],
 };

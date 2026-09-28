@@ -1,11 +1,11 @@
 // Printable reports. Agent/broker branding was removed (review #5): an agent's name must not sit on
-// untested, modelled estimates built on third-party data Keyzing isn't licensed to redistribute.
+// untested, modelled estimates built on third-party data Market Lenz isn't licensed to redistribute.
 import { esc } from './ui.js';
 
 /** Header line for a printed report. */
 export function printHeader(title) {
   const date = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
-  return `<div class="print-only report-brand"><div class="report-head">${esc(title)} · ${date} · Keyzing (${esc(location.host || 'Keyzing')}) · general information, modelled estimates, not a valuation or appraisal</div></div>`;
+  return `<div class="print-only report-brand"><div class="report-head">${esc(title)} · ${date} · Market Lenz (${esc(location.host || 'Market Lenz')}) · general information, modelled estimates, not a valuation or appraisal</div></div>`;
 }
 
 /** Print / save-as-PDF button (for your own records). */

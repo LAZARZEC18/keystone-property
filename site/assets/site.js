@@ -1,6 +1,6 @@
 // Business details shown on About, Contact and Terms. Leave a value empty to hide it.
 export const SITE = {
-  businessName: 'Keyzing',
+  businessName: 'Market Lenz',
   abn: '',
   email: 'Keyzing18@gmail.com',
   location: 'Perth, Western Australia',

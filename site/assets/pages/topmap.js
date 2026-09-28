@@ -145,7 +145,7 @@ export default async function topMap(main, _p, query) {
     const lines = rows.map((r, i) => [i + 1, `"${cleanName(r.s.n)}"`, r.s.s, r.s.pc, r.v, r.t === 'u' ? 'unit' : 'house', r.e.value, r.e.rent, r.e.yield?.toFixed(2), r.s.g1?.toFixed(1)].join(','));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([[head.join(','), ...lines].join('\n')], { type: 'text/csv' }));
-    a.download = `keyzing-top-suburbs-${st.strategy}.csv`;
+    a.download = `marketlenz-top-suburbs-${st.strategy}.csv`;
     a.click();
   });
   form.addEventListener('change', compute);

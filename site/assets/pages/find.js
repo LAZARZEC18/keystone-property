@@ -18,13 +18,13 @@ const EXAMPLES = [
 
 export default async function findPage(main, _p, query) {
   const q = (query.q || '').trim();
-  setMeta({ title: q ? `${q}: property search` : 'Smart property search', description: 'Describe what you want in plain English. Keyzing understands bedrooms, budget, location, lifestyle and investment goals, and ranks every matching suburb.' });
+  setMeta({ title: q ? `${q}: property search` : 'Smart property search', description: 'Describe what you want in plain English. Market Lenz understands bedrooms, budget, location, lifestyle and investment goals, and ranks every matching suburb.' });
   if (q && looksLikeAddress(q)) return navigate(`/property?q=${encodeURIComponent(q)}`, true);
   const [{ list }, market, index] = await Promise.all([suburbs(), load('market'), Promise.resolve(null)]);
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Smart search</div><h1>Tell us what you're looking for</h1>
-  <p>Search the way you'd describe it to an agent. Keyzing reads your budget, bedrooms, property type, location, lifestyle (beach, city, regional) and goal (yield, growth, first home), then ranks every matching suburb and prices the kind of home you described.</p></div>
+  <p>Search the way you'd describe it to an agent. Market Lenz reads your budget, bedrooms, property type, location, lifestyle (beach, city, regional) and goal (yield, growth, first home), then ranks every matching suburb and prices the kind of home you described.</p></div>
   <form class="hero-search" id="fs" style="max-width:none" onsubmit="return false"><input id="fq" type="search" value="${esc(q)}" placeholder="e.g. 3 bed house under $800k near the beach in Perth with good yield" aria-label="Describe what you're looking for"></form>
   <div class="row" style="margin-bottom:8px">${EXAMPLES.map((e) => `<button class="pill" data-ex="${esc(e)}" style="cursor:pointer">${esc(e)}</button>`).join('')}</div>
   <div id="fout"></div>`;
@@ -77,8 +77,8 @@ export default async function findPage(main, _p, query) {
 
   const out = main.querySelector('#fout');
   out.innerHTML = `
-  <div class="card flat tint" style="margin-top:8px"><div class="row"><b>Keyzing understood:</b> ${chips.length ? chips.map((c) => `<span class="pill" style="background:var(--accent-soft);color:var(--accent);border-color:transparent">${esc(c)}</span>`).join('') : '<span class="muted">no specific filters, showing the best suburbs overall</span>'}</div>
-  <p class="note" style="margin:8px 0 0">${rows.length.toLocaleString()} suburbs match. Prices are Keyzing estimates for ${p.beds ? `a ${p.beds}-bedroom ` : 'a typical '}${type === 'u' ? 'unit' : type === 'h' ? 'house' : 'home'} in each suburb, ranked by ${p.strategy === 'cashflow' ? 'cash flow' : p.strategy === 'growth' ? 'growth' : p.strategy === 'firsthome' ? 'affordability' : 'overall'} score.</p></div>
+  <div class="card flat tint" style="margin-top:8px"><div class="row"><b>Market Lenz understood:</b> ${chips.length ? chips.map((c) => `<span class="pill" style="background:var(--accent-soft);color:var(--accent);border-color:transparent">${esc(c)}</span>`).join('') : '<span class="muted">no specific filters, showing the best suburbs overall</span>'}</div>
+  <p class="note" style="margin:8px 0 0">${rows.length.toLocaleString()} suburbs match. Prices are Market Lenz estimates for ${p.beds ? `a ${p.beds}-bedroom ` : 'a typical '}${type === 'u' ? 'unit' : type === 'h' ? 'house' : 'home'} in each suburb, ranked by ${p.strategy === 'cashflow' ? 'cash flow' : p.strategy === 'growth' ? 'growth' : p.strategy === 'firsthome' ? 'affordability' : 'overall'} score.</p></div>
   ${top.length ? `
   <div class="grid split section" style="margin-top:16px">
     <div class="card" style="padding:8px 16px">${top

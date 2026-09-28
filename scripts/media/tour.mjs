@@ -23,7 +23,7 @@ const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
 const card = (i, [, t, s]) => `<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>html,body{margin:0;width:1920px;height:1080px;background:radial-gradient(circle at 70% 40%,#12303a,#07141b 70%);color:#e8f3f1;font-family:'IBM Plex Sans',sans-serif;overflow:hidden}
 .w{position:absolute;left:150px;top:370px;right:150px}.n{font:500 30px 'IBM Plex Mono';letter-spacing:.2em;color:#34d3a6}.t{font:600 104px/1.05 Fraunces;margin:18px 0 26px;letter-spacing:-.01em}.s{font-size:40px;color:#a9c4bf;max-width:1400px;line-height:1.35}
-.k{position:absolute;right:150px;bottom:90px;font:500 26px 'IBM Plex Mono';letter-spacing:.24em;color:#7fa39d}</style></head><body><div class="w"><div class="n">${String(i + 1).padStart(2, '0')} / ${String(CH.length).padStart(2, '0')}</div><div class="t">${t}</div><div class="s">${s}</div></div><div class="k">KEYZING</div></body></html>`;
+.k{position:absolute;right:150px;bottom:90px;font:500 26px 'IBM Plex Mono';letter-spacing:.24em;color:#7fa39d}</style></head><body><div class="w"><div class="n">${String(i + 1).padStart(2, '0')} / ${String(CH.length).padStart(2, '0')}</div><div class="t">${t}</div><div class="s">${s}</div></div><div class="k">MARKET LENZ</div></body></html>`;
 const parts = [];
 const chapters = [];
 const captions = [];
@@ -45,9 +45,9 @@ for (const [i, ch] of CH.entries()) {
 }
 await b.close();
 writeFileSync(`${TMP}/list.txt`, parts.map((f) => `file '${f}'`).join('\n'));
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', `${TMP}/list.txt`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', `${OUT}/keyzing-tour.mp4`]);
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', String(CARD + 4), '-i', `${OUT}/keyzing-tour.mp4`, '-frames:v', '1', '-vf', 'scale=1280:-2', '-q:v', '3', `${OUT}/tour-poster.jpg`]);
-writeFileSync(`${OUT}/keyzing-tour.chapters.vtt`, `WEBVTT\n\n${chapters.join('\n\n')}\n`);
-writeFileSync(`${OUT}/keyzing-tour.en.vtt`, `WEBVTT\n\n${captions.join('\n\n')}\n`);
-writeFileSync(`${OUT}/keyzing-tour.json`, JSON.stringify(CH.map(([id, title], i) => ({ id, title, start: +chapters[i].split('\n')[1].split(' --> ')[0].split(':').reduce((a, v) => a * 60 + +v, 0) }))));
+execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', `${TMP}/list.txt`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', `${OUT}/marketlenz-tour.mp4`]);
+execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', String(CARD + 4), '-i', `${OUT}/marketlenz-tour.mp4`, '-frames:v', '1', '-vf', 'scale=1280:-2', '-q:v', '3', `${OUT}/tour-poster.jpg`]);
+writeFileSync(`${OUT}/marketlenz-tour.chapters.vtt`, `WEBVTT\n\n${chapters.join('\n\n')}\n`);
+writeFileSync(`${OUT}/marketlenz-tour.en.vtt`, `WEBVTT\n\n${captions.join('\n\n')}\n`);
+writeFileSync(`${OUT}/marketlenz-tour.json`, JSON.stringify(CH.map(([id, title], i) => ({ id, title, start: +chapters[i].split('\n')[1].split(' --> ')[0].split(':').reduce((a, v) => a * 60 + +v, 0) }))));
 console.log('tour', t.toFixed(1), 's');

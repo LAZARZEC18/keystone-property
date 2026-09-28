@@ -1,4 +1,4 @@
-// Keyzing single-page app: router, global search, ticker, theme.
+// Market Lenz single-page app: router, global search, ticker, theme.
 import { $, $$, esc, aud, pct, ago } from './ui.js';
 import { load, suburbs, searchSuburbs, cleanName, suburbUrl } from './data.js';
 import { looksLikeAddress } from './intent.js';

@@ -12,7 +12,7 @@ export default async function newsPage(main) {
   <div class="toolbar"><div class="seg" id="nt">${tags.map((t, i) => `<button data-t="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
   <label class="field">Source<select id="ns"><option value="">All sources</option>${sources.map((s) => `<option>${esc(s)}</option>`).join('')}</select></label></div>
   <div class="card"><div class="news-list" id="nl"></div></div>
-  <p class="fine" style="margin-top:10px">Keyzing shows headlines only and links to the original article. Updated ${date(news.updated)}.</p>`;
+  <p class="fine" style="margin-top:10px">Market Lenz shows headlines only and links to the original article. Updated ${date(news.updated)}.</p>`;
   let tag = 'All';
   const draw = () => {
     const src = main.querySelector('#ns').value;

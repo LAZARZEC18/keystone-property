@@ -32,7 +32,7 @@ export default async function newBuildsPage(main) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">New builds</div><h1>Where Australia is building</h1>
-  <p>Every new home needs a building approval. Keyzing reads the ABS figures for every council and SA2 as soon as they're released (latest: <b>${monthName(ap.latestMonth)}</b>), so you can see where supply is rising, which affects rents and prices, and find new builds that keep the 2026 tax advantages.</p></div>
+  <p>Every new home needs a building approval. Market Lenz reads the ABS figures for every council and SA2 as soon as they're released (latest: <b>${monthName(ap.latestMonth)}</b>), so you can see where supply is rising, which affects rents and prices, and find new builds that keep the 2026 tax advantages.</p></div>
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">Dwellings approved, ${monthName(last(S.AUS.total)?.[0])} (seasonally adj.)</span><span class="v">${num(last(S.AUS.total)?.[1])}</span><span class="s">${pct(yoy(S.AUS.total), 1, true)} on a year ago</span></div></div>
     <div class="card"><div class="stat"><span class="k">Last 12 months, Australia</span><span class="v">${num(sum12(S.AUS.total))}</span><span class="s">vs the 240,000 a year needed for the national 1.2m homes target</span></div></div>

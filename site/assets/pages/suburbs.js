@@ -8,7 +8,7 @@ const STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
 const PAGE = 50;
 
 export default async function explorer(main, _p, query) {
-  setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Keyzing investment score.' });
+  setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Market Lenz investment score.' });
   const [{ list }, market] = await Promise.all([suburbs(), load('market')]);
   const st = {
     state: query.state || '',
@@ -33,7 +33,7 @@ export default async function explorer(main, _p, query) {
   <div class="page-head">
     <div class="eyebrow">Suburb explorer</div>
     <h1>Rank 11,042 suburbs across Australia</h1>
-    <p>Set your budget and strategy. Keyzing ranks all ${list.length.toLocaleString()} suburbs on yield, growth drivers, rental demand, affordability and stability (recent price change is shown but not scored), and explains every number on the suburb's page.</p>
+    <p>Set your budget and strategy. Market Lenz ranks all ${list.length.toLocaleString()} suburbs on yield, growth drivers, rental demand, affordability and stability (recent price change is shown but not scored), and explains every number on the suburb's page.</p>
   </div>
   <div class="card flat tint">
     <div class="fields">
@@ -135,7 +135,7 @@ export default async function explorer(main, _p, query) {
         .join('')}
       </tbody></table></div>
       <div class="pager"><span>Page ${st.page + 1} of ${Math.max(1, pages)}</span><button class="btn sm" id="prev" ${st.page ? '' : 'disabled'}>Previous</button><button class="btn sm" id="next" ${st.page + 1 < pages ? '' : 'disabled'}>Next</button></div>
-      <p class="fine">ʳ Regional 12-month change where the suburb has no official sales series. "Estimate" prices come from Keyzing's model, calibrated on official medians; "Official" figures are state government sales data rolled forward to today with the regional index.</p>`;
+      <p class="fine">ʳ Regional 12-month change where the suburb has no official sales series. "Estimate" prices come from Market Lenz's model, calibrated on official medians; "Official" figures are state government sales data rolled forward to today with the regional index.</p>`;
   }
 
   let map = null;
@@ -244,7 +244,7 @@ export default async function explorer(main, _p, query) {
     const blob = new Blob([`${head.join(',')}\n${lines.join('\n')}`], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'keyzing-suburbs.csv';
+    a.download = 'marketlenz-suburbs.csv';
     a.click();
   });
   cmpBar();
