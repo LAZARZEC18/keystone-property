@@ -2,19 +2,21 @@
 // Returns bedrooms, bathrooms, land size, property type, sale history and Domain's own price estimate when the plan allows it.
 const API = 'https://api.domain.com.au/v1';
 
-const json = (body, status = 200) =>
+const json = (body, status = 200, extra = {}) =>
   new Response(JSON.stringify(body), {
     status,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'public, max-age=0, must-revalidate',
       'netlify-cdn-cache-control': status === 200 ? 'public, s-maxage=86400' : 'no-store',
+      ...extra,
     },
   });
 
 export default async (req) => {
   const key = process.env.DOMAIN_API_KEY;
-  if (!key) return json({ configured: false }, 501);
+  // not set up yet: answer normally (no console error) and don't cache, so adding the key takes effect at once
+  if (!key) return json({ configured: false }, 200, { 'netlify-cdn-cache-control': 'no-store' });
   const q = (new URL(req.url).searchParams.get('q') || '').trim().slice(0, 160);
   if (q.length < 5) return json({ error: 'address too short' }, 400);
   const h = { 'X-Api-Key': key, accept: 'application/json' };

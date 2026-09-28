@@ -35,7 +35,7 @@ const STATES = new Set(['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']);
 export default async (req) => {
   const key = process.env.DOMAIN_API_KEY;
   if (!key) {
-    return json({ configured: false, message: 'Live listings need a Domain API key. Add DOMAIN_API_KEY in Netlify > Site configuration > Environment variables.' }, 501);
+    return json({ configured: false, message: 'Live listings need a Domain API key. Add DOMAIN_API_KEY in Netlify > Site configuration > Environment variables.' }, 200, { 'netlify-cdn-cache-control': 'no-store' });
   }
   const u = new URL(req.url);
   const suburb = (u.searchParams.get('suburb') || '').slice(0, 60);

@@ -3,9 +3,9 @@ import { load, typicalRate, suburbs, suburbUrl } from '../data.js';
 import { navigate } from '../app.js';
 import { rateWatchCard } from '../ratewatch.js';
 import { RULES } from '../rules.js';
-import { demo } from '../demo.js';
+import { demo, wireDemos } from '../demo.js';
 import { trendWord } from '../live.js';
-import { wikiPhoto, photoCard, figure, strip, photo } from '../photos.js';
+import { photoCard, figure, strip, photo, photoCredits } from '../photos.js';
 import { budgetMapHtml, wireBudgetMap } from '../budgetmap.js';
 import { comfortableWeekly } from '../rules.js';
 
@@ -54,7 +54,7 @@ export default async function home(main) {
         <li><b>The real cost.</b> Cash up front, repayments against your rent now, or an investment's weekly cost after tax.</li>
         <li><b>Your next step:</b> pre-approval from a lender or broker. Keyzing doesn't sell loans or refer you anywhere.</li>
       </ol>
-      <p class="fine">Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}. <a href="/why" data-link>90-second tour →</a></p>
+      <p class="fine">Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}. <a href="/why" data-link>Two-minute tour →</a></p>
     </div>
   </section>
 
@@ -74,11 +74,11 @@ export default async function home(main) {
   </section>
 
   <section class="section">
-    ${strip(['sherwood-queenslanders', 'paddington-selwyn', 'fremantle-cottage', 'melbourne-suburbs-aerial', 'battery-point-sandstone', 'corinda-queenslander', 'paddington-cascade', 'fremantle-stone', 'sherwood-renovated', 'altona-aerial', 'battery-point-lace', 'fremantle-terrace', 'sherwood-heritage', 'brisbane-river-apartments'], { title: 'Homes across Australia', note: 'Tap any photo to view it full screen and zoom in. Photos by Wikimedia Commons contributors, credited on each photo.' })}
+    ${strip(['sherwood-queenslanders', 'paddington-selwyn', 'fremantle-cottage', 'melbourne-suburbs-aerial', 'battery-point-sandstone', 'corinda-queenslander', 'paddington-cascade', 'fremantle-stone', 'sherwood-renovated', 'altona-aerial', 'battery-point-lace', 'fremantle-terrace', 'sherwood-heritage', 'brisbane-river-apartments'], { title: 'Homes across Australia', note: 'Tap any photo to view it full screen and zoom in. Real homes and streets photographed by Wikimedia Commons contributors.' })}
   </section>
 
   <section class="section">
-    <div class="spread"><h2>See it in action</h2><a href="/why" data-link>The full 90-second tour →</a></div>
+    <div class="spread"><h2>See it in action</h2><a href="/why" data-link>The full Two-minute tour →</a></div>
     <div class="seg" id="demo-tabs" role="tablist">${[['afford', 'What can I afford?'], ['calculator', '2026 tax calculator'], ['estimate', 'Price range for a home'], ['suburb', 'Suburb report']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}">${l}</button>`).join('')}</div>
     <div class="demo-stage" id="demo-stage">${demo('afford')}</div>
     <p class="fine" style="margin-top:6px">Recorded with example inputs in September 2026; the live figures change as the data updates.</p>
@@ -95,6 +95,7 @@ export default async function home(main) {
   <section class="section">
     <div class="spread"><h2>Prices at month-end</h2><a href="/markets" data-link>All markets →</a></div>
     <div class="city-grid" id="cities">${caps.map(([code, r]) => cityCard(code, r, cityPhoto(code))).join('')}</div>
+    ${photoCredits(caps.map(([c]) => CITY_PHOTO[c]))}
     <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end ${esc(market.indexMonth || '')}: median values of all homes, houses and units, and the change for all homes (source: <a href="${esc(market.sources?.[0]?.url || '#')}" target="_blank" rel="noopener">Cotality</a>). The typical investor rate used across Keyzing is the RBA's average on new investor variable loans, ${pct(inv.rate, 2)} (${esc(inv.month)}). ${oo ? `Lowest advertised owner-occupier variable rate from a national lender: ${pct(oo.rate, 2)} (${esc(oo.lender)}); <a href="/rates" data-link>compare every lender</a>.` : ''}</p>
     <div style="margin-top:12px">${rateWatchCard(rba, { compact: true })}</div>
   </section>
@@ -120,6 +121,7 @@ export default async function home(main) {
     if (!b) return;
     main.querySelectorAll('#demo-tabs button').forEach((x) => x.classList.toggle('on', x === b));
     main.querySelector('#demo-stage').innerHTML = demo(b.dataset.demoTab);
+    wireDemos(main);
   });
 
   // income slider: comfortable price vs median house and unit in each capital
@@ -137,7 +139,7 @@ export default async function home(main) {
         const h = c.medianHouse || c.medianDwelling;
         const u = c.medianUnit;
         const verdict = price >= h ? 'A median house is within reach' : u && price >= u ? `A median unit is within reach; a median house needs ${aud(h - price, { compact: true })} more` : `${aud((u || h) - price, { compact: true })} short of a median ${u ? 'unit' : 'home'}`;
-        return `<div class="incbar"><span>${esc(c.name)}</span><div class="incbar-track"><div class="incbar-fill" style="width:${(price / top) * 100}%"></div><span class="incbar-val">${aud(price, { compact: true })}</span><i class="incbar-mark" style="left:${(h / top) * 100}%" data-l="house ${aud(h, { compact: true })}"></i>${u ? `<i class="incbar-mark unit" style="left:${(u / top) * 100}%" data-l="unit ${aud(u, { compact: true })}"></i>` : ''}</div><span class="incbar-verdict">${verdict}</span></div>`;
+        return `<div class="incbar"><span>${esc(c.name)}</span><div class="incbar-track"><div class="incbar-fill" style="width:${(price / top) * 100}%"></div><span class="incbar-val">${aud(price, { compact: true })}</span><i class="incbar-mark" style="left:${(h / top) * 100}%" data-l="house ${aud(h, { compact: true })}"></i>${u ? `<i class="incbar-mark unit" style="left:${(u / top) * 100}%" data-l="unit ${aud(u, { compact: true })}"></i>` : ''}</div><span class="incbar-verdict">${verdict}. <span class="incbar-meds">Median unit ${u ? aud(u, { compact: true }) : '—'} · house ${aud(h, { compact: true })}</span></span></div>`;
       })
       .join('');
   };
@@ -150,18 +152,10 @@ export default async function home(main) {
     bars();
   });
   bars();
-  // cities without a curated photo get their Wikipedia lead image
-  caps.forEach(([code, r]) => {
-    if (cityPhoto(code)) return;
-    wikiPhoto(CITY_ARTICLE[code] || r.name).then((ph) => {
-      const el = main.querySelector(`#cities [data-city="${code}"]`);
-      if (ph && el) el.outerHTML = cityCard(code, r, ph);
-    });
-  });
   return { destroy: destroyMap };
 }
 
-const CITY_PHOTO = { SYD: 'sydney-millers-point', MEL: 'melbourne-southbank', BNE: 'sherwood-queenslanders', PER: 'fremantle-coast', HBA: 'battery-point-lace', CBR: 'canberra-anzac-parade' };
+export const CITY_PHOTO = { SYD: 'sydney-millers-point', MEL: 'melbourne-southbank', BNE: 'sherwood-queenslanders', PER: 'fremantle-coast', ADL: 'adelaide-torrens', HBA: 'battery-point-lace', CBR: 'canberra-anzac-parade', DRW: 'darwin-waterfront' };
 /** A curated photo in the shape photoCard expects. */
 export function cityPhoto(code) {
   const p = photo(CITY_PHOTO[code]);
@@ -181,7 +175,7 @@ export function registerForm(id) {
         <input type="hidden" name="form-name" value="register"><p hidden><label>Leave empty <input name="company"></label></p>
         <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
           <label class="field">Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-          <label class="field">I'm a<select name="type"><option>First home buyer</option><option>Home owner moving</option><option>Investor</option><option>Agent or broker</option></select></label>
+          <label class="field">I'm a<select name="type"><option>First home buyer</option><option>Home owner moving</option><option>Investor</option><option>Other</option></select></label>
           <label class="field">Suburbs I'm watching (optional)<input name="suburbs" placeholder="e.g. Newtown 2042, Joondalup 6027"></label>
         </div>
         <label class="check" style="margin-top:10px"><input type="checkbox" name="consent" required> Email me Keyzing's updates. I can unsubscribe any time.</label>

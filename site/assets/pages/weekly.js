@@ -4,6 +4,7 @@ import { load } from '../data.js';
 import { commentary } from './markets.js';
 import { rateWatchCard } from '../ratewatch.js';
 import { trendWord } from '../live.js';
+import { lenderName } from '../rate-rules.js';
 
 export default async function weeklyPage(main) {
   setMeta({ title: 'Property market update: rates this week, prices at month-end', description: 'Home loan rates and the RBA outlook checked every week, capital-city values from the latest month-end index, and the week’s housing headlines.' });
@@ -22,7 +23,7 @@ export default async function weeklyPage(main) {
       ${Object.entries(market.regions).filter(([, r]) => r.capital).map(([k, r]) => `<tr><td>${esc(r.name)}</td><td class="n ${cls(r.monthPct)}">${pct(r.monthPct, 1, true)}</td><td class="n ${cls(r.quarterPct)}">${pct(r.quarterPct, 1, true)}</td><td class="n ${cls(r.annualPct)}">${pct(r.annualPct, 1, true)}</td><td class="muted">${trendWord(r.quarterPct)}</td></tr>`).join('')}
       </tbody></table></div>
       <div class="kv" style="margin-top:14px"><span>RBA cash rate</span><span>${pct(cur?.cash, 2)}</span>
-      <span>Lowest investor variable</span><span>${pct(cur?.bestInv?.rate, 2)} (${esc(cur?.bestInv?.lender || '')})${prev?.bestInv ? ` · last week ${pct(prev.bestInv.rate, 2)}` : ''}</span>
+      <span>Lowest investor variable</span><span>${pct(cur?.bestInv?.rate, 2)} (${esc(lenderName(cur?.bestInv?.lender || ''))})${prev?.bestInv ? ` · last week ${pct(prev.bestInv.rate, 2)}` : ''}</span>
       <span>Median advertised investor variable</span><span>${pct(cur?.medianInv, 2)}</span></div>
       <p class="fine" style="margin-top:8px">Cotality Home Value Index, month-end results to ${esc(market.indexMonth || '')} as published. This report describes what moved; it isn’t a recommendation to buy, sell or wait.</p></div>
       <div style="margin-top:16px">${rateWatchCard(rba)}</div>

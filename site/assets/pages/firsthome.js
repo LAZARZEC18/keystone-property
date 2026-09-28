@@ -117,7 +117,7 @@ export default async function firstHomePage(main) {
         <label class="field">Rent for a similar home ($/wk)<input name="rent" type="number" step="1" value="600"></label>
         <label class="field">Years you'll stay<input name="years" type="number" min="1" max="30" value="10"></label>
         <label class="field">Home price growth (%/yr)<input name="growth" type="number" step="0.1" value="3"></label>
-        <label class="field">Rent growth (%/yr)<input name="rentGrowth" type="number" step="0.1" value="4"></label>
+        <label class="field">Rent growth (%/yr)<input name="rentGrowth" type="number" step="0.1" value="3.5"></label>
         <label class="field">Return on invested savings (%/yr)<input name="invest" type="number" step="0.1" value="6"></label>
         <label class="field">Owner costs (% of value/yr)<input name="ownCost" type="number" step="0.1" value="1.2"></label>
         <label class="field" style="grid-column:1/-1">Strata levies ($/yr, units)<input name="strata" type="number" step="1" value="0"></label>

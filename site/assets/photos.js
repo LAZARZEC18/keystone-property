@@ -61,6 +61,7 @@ export function strip(ids, { title = '', note = '' } = {}) {
       .map((p) => `<button type="button" class="pstrip-item" data-photo="${p.id}" data-set="${set}" aria-label="View larger: ${esc(p.caption)}, ${esc(p.city)}">${img(p.id, { sizes: '(max-width: 700px) 80vw, 340px' })}<span class="pstrip-cap"><b>${esc(p.city)}</b> ${esc(p.caption)}</span></button>`)
       .join('')}</div>
     ${note ? `<p class="fine" style="margin-top:6px">${note}</p>` : ''}
+    <details class="fine pstrip-credits"><summary>Photo credits</summary>${list.map((p) => `${esc(p.caption)}, ${esc(p.city)}: <a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.author)}</a>, <a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener">${esc(p.license)}</a>`).join(' · ')}</details>
   </div>`;
 }
 
@@ -170,4 +171,11 @@ export function wirePhotos(root = document) {
       t.scrollBy({ left: +nav.dataset.dir * t.clientWidth * 0.85, behavior: 'smooth' });
     }
   });
+}
+
+/** A one-line credit list for several curated photos (for cards that are links themselves). */
+export function photoCredits(ids) {
+  const list = ids.map((id) => byId.get(id)).filter(Boolean);
+  if (!list.length) return '';
+  return `<p class="fine photo-credits">Photos: ${list.map((p) => `${esc(p.city)} by <a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.author)}</a> (<a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener">${esc(p.license)}</a>)`).join('; ')}, via Wikimedia Commons.</p>`;
 }

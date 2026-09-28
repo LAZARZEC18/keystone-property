@@ -5,14 +5,14 @@ import { cleanName } from './data.js';
 
 const CITIES = {
   AU: { name: 'Australia', lat: -28.2, lng: 134, z: 1 },
-  SYD: { name: 'Sydney', lat: -33.84, lng: 151.0, z: 13 },
-  MEL: { name: 'Melbourne', lat: -37.84, lng: 145.02, z: 13 },
-  BNE: { name: 'Brisbane', lat: -27.5, lng: 153.0, z: 12 },
-  PER: { name: 'Perth', lat: -31.95, lng: 115.88, z: 13 },
-  ADL: { name: 'Adelaide', lat: -34.92, lng: 138.62, z: 15 },
-  CBR: { name: 'Canberra', lat: -35.3, lng: 149.1, z: 22 },
-  HBA: { name: 'Hobart', lat: -42.86, lng: 147.3, z: 20 },
-  DRW: { name: 'Darwin', lat: -12.44, lng: 130.9, z: 22 },
+  SYD: { name: 'Sydney', lat: -33.83, lng: 151.0, z: 34 },
+  MEL: { name: 'Melbourne', lat: -37.83, lng: 145.05, z: 32 },
+  BNE: { name: 'Brisbane', lat: -27.5, lng: 153.02, z: 30 },
+  PER: { name: 'Perth', lat: -31.98, lng: 115.87, z: 34 },
+  ADL: { name: 'Adelaide', lat: -34.9, lng: 138.62, z: 46 },
+  CBR: { name: 'Canberra', lat: -35.28, lng: 149.1, z: 60 },
+  HBA: { name: 'Hobart', lat: -42.86, lng: 147.33, z: 60 },
+  DRW: { name: 'Darwin', lat: -12.43, lng: 130.9, z: 56 },
 };
 const K = Math.cos((27 * Math.PI) / 180);
 const proj = (lat, lng) => [(lng - 134) * K, -(lat + 28.2)];
@@ -49,7 +49,7 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
   const countEl = wrap.querySelector('.bmap-count');
   const pts = list.filter((s) => s.lat && s.lng && (s.h || s.u)).map((s) => {
     const [x, y] = proj(s.lat, s.lng);
-    return { s, x, y, r: 0.7 + Math.min(2.4, Math.sqrt(s.pop || 0) / 60) };
+    return { s, x, y, r: 0.7 + Math.min(1.8, Math.sqrt(s.pop || 0) / 70) };
   });
   const st = { budget, type: 'h', city, hover: null, W: 0, H: 0, dpr: 1 };
   const cam = { x: 0, y: 0, z: 1 };
@@ -86,7 +86,7 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
     bg.addColorStop(1, '#07141b');
     g.fillStyle = bg;
     g.fillRect(0, 0, st.W, st.H);
-    const zr = Math.min(3, 0.8 + Math.log2(cam.z) * 0.45);
+    const zr = Math.min(2.2, 0.8 + Math.log2(cam.z) * 0.3);
     let n = 0;
     let nIn = 0;
     const lit = [];
@@ -108,7 +108,8 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
       }
     }
     g.globalAlpha = 1;
-    g.globalCompositeOperation = 'lighter';
+    // additive glow reads well for the whole country; at city zoom plain dots stay legible
+    g.globalCompositeOperation = cam.z < 6 ? 'lighter' : 'source-over';
     for (const [X, Y, p, cls] of lit) {
       g.fillStyle = cls === 'in' ? 'rgba(52,211,166,0.85)' : 'rgba(242,193,78,0.8)';
       g.beginPath();
@@ -123,8 +124,8 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
     }
     g.globalCompositeOperation = 'source-over';
     // labels for the biggest visible suburbs when zoomed in
-    if (cam.z >= 8) {
-      const vis = pts.filter((p) => priceOf(p.s)).map((p) => [p, toScreen(p)]).filter(([, [X, Y]]) => X > 40 && Y > 20 && X < st.W - 40 && Y < st.H - 20).sort((a, b) => (b[0].s.pop || 0) - (a[0].s.pop || 0)).slice(0, cam.z >= 20 ? 16 : 10);
+    if (cam.z >= 10) {
+      const vis = pts.filter((p) => priceOf(p.s)).map((p) => [p, toScreen(p)]).filter(([, [X, Y]]) => X > 40 && Y > 20 && X < st.W - 40 && Y < st.H - 20).sort((a, b) => (b[0].s.pop || 0) - (a[0].s.pop || 0)).slice(0, cam.z >= 30 ? 18 : 10);
       g.font = '600 12px "IBM Plex Sans", system-ui, sans-serif';
       g.textAlign = 'center';
       const placed = [];
@@ -147,21 +148,29 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
       g.stroke();
     }
     const where = st.city === 'AU' ? 'across Australia' : `in and around ${CITIES[st.city].name}`;
-    countEl.innerHTML = `<b>${nIn.toLocaleString()}</b> of ${n.toLocaleString()} suburbs ${where} have a typical ${st.type === 'u' ? 'unit' : 'house'} under <b>${aud(st.budget, { compact: true })}</b>`;
+    countEl.innerHTML = `<b>${nIn.toLocaleString()}</b> of the ${n.toLocaleString()} suburbs ${where} with a ${st.type === 'u' ? 'unit' : 'house'} price have a typical ${st.type === 'u' ? 'unit' : 'house'} under <b>${aud(st.budget, { compact: true })}</b>`;
   }
 
   let raf = 0;
   function frame() {
     raf = 0;
-    const k = 0.18;
     let moving = false;
-    for (const a of ['x', 'y', 'z']) {
+    const zoomingIn = target.z > cam.z * 1.01;
+    const kxy = zoomingIn ? 0.24 : 0.13;
+    const panLeft = Math.hypot(target.x - cam.x, target.y - cam.y) * base * cam.z; // pixels still to pan
+    const kz = zoomingIn ? (panLeft > 40 ? 0.03 : 0.16) : 0.2;
+    for (const a of ['x', 'y']) {
       const d = target[a] - cam[a];
-      if (Math.abs(d) > (a === 'z' ? 0.002 : 0.0005)) {
-        cam[a] += d * k;
+      if (Math.abs(d) * base * cam.z > 0.3) {
+        cam[a] += d * kxy;
         moving = true;
       } else cam[a] = target[a];
     }
+    const lz = Math.log(target.z) - Math.log(cam.z);
+    if (Math.abs(lz) > 0.004) {
+      cam.z = Math.exp(Math.log(cam.z) + lz * kz);
+      moving = true;
+    } else cam.z = target.z;
     draw();
     if (moving) kick();
   }
@@ -228,7 +237,7 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
     if (pointers.has(e.pointerId)) pointers.set(e.pointerId, [mx, my]);
     if (pinch && pointers.size === 2) {
       const [a, b] = [...pointers.values()];
-      target.z = Math.max(0.8, Math.min(60, (pinch.z * Math.hypot(a[0] - b[0], a[1] - b[1])) / pinch.d));
+      target.z = Math.max(0.8, Math.min(160, (pinch.z * Math.hypot(a[0] - b[0], a[1] - b[1])) / pinch.d));
       cam.z = target.z;
       kick();
       return;
@@ -275,7 +284,7 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
       e.preventDefault();
       const [mx, my] = local(e);
       const f = e.deltaY < 0 ? 1.25 : 0.8;
-      const nz = Math.max(0.8, Math.min(60, target.z * f));
+      const nz = Math.max(0.8, Math.min(160, target.z * f));
       // keep the point under the cursor fixed
       const wx = target.x + (mx - st.W / 2) / (base * target.z);
       const wy = target.y + (my - st.H / 2) / (base * target.z);

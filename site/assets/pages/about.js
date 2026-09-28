@@ -30,7 +30,8 @@ const PAGES = {
         <li><b>If you register for updates:</b> your email, whether you're a first home buyer, owner or investor, and (optionally) the suburbs you're watching. Used only to send the update once it launches and to flag moves in your suburbs.</li>
         <li><b>If you send a message:</b> your name, email and message, used only to reply.</li>
         <li><b>Addresses you look up:</b> sent to OpenStreetMap's Nominatim service through Keyzing's server to find the location. Keyzing doesn't store them.</li>
-        <li><b>Your watchlist and theme:</b> saved in your own browser, not on Keyzing's servers.</li>
+        <li><b>Your saved suburbs, deals and theme:</b> saved in your own browser, not on Keyzing's servers.</li>
+        <li><b>Property details:</b> when you look up an address, it may also be sent to Domain's property data service to fill in bedrooms, bathrooms and land size. Keyzing doesn't store it.</li>
         <li><b>Server logs:</b> the hosting provider (Netlify) keeps standard request logs, such as IP address and pages requested, for security and reliability.</li>
       </ul>
       <h2>Where it's stored</h2>
@@ -40,7 +41,7 @@ const PAGES = {
   },
   terms: {
     title: 'Terms of use',
-    description: 'The terms for using Keyzing.',
+    description: 'The terms for using Keyzing: general information and calculators, not financial, credit, tax or legal advice, and how estimates and third-party data should be used.',
     body: (h) => `
       <p class="note">Last updated ${h.updated}.</p>
       <h2>General information, not advice</h2>
@@ -58,7 +59,7 @@ const PAGES = {
   },
   contact: {
     title: 'Contact',
-    description: 'Get in touch with Keyzing.',
+    description: 'Contact Keyzing with a question, a data correction or a privacy request. Every message gets a reply by email.',
     body: (h) => `
       <p>Questions, corrections, data you think is wrong, or partnership enquiries (Keyzing doesn't sell advertising, placements or rankings): email <a href="mailto:${h.email}">${h.email}</a> or send a message below and you'll get a reply by email.</p>
       ${h.business}

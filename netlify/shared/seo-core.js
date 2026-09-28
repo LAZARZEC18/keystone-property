@@ -12,46 +12,38 @@ const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland'
 const W = { cash: 22, momentum: 0, growth: 25, demand: 23, afford: 12, stability: 18 };
 
 const PAGES = {
-  '/': ['What can you afford, and what will it really cost?', 'Free and independent: your price ceiling in every state and territory with the 5% Deposit Scheme and stamp duty concessions, and a calculator for the 2026 negative gearing and CGT changes. Plus every lender’s advertised rate.'],
-  '/afford': ['What can I afford? Your buying ceiling in every state and territory', 'Enter your savings and income to see the most you can pay in every state and territory, with stamp duty, first home concessions, the 5% Deposit Scheme and lender buffers, then the best suburbs within reach.'],
-  '/property': ['Suburb estimate for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
+  '/': ['What can you comfortably afford, and where?', 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and every lender’s rate.'],
+  '/afford': ['What can I afford? A comfortable price, and your ceiling in every state', 'Enter your savings and income. Keyzing works out a comfortable price where you want to buy, the most you could stretch to in every state and territory (stamp duty, mortgage insurance, lender buffers), the schemes you qualify for and the suburbs that fit.'],
+  '/property': ['Price range for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Keyzing ranks every matching suburb.'],
-  '/map': ['Highest-scoring suburbs in Australia: map', 'Every Australian suburb scored on yield, growth, demand, affordability and stability, on one map, with how much of each score is measured.'],
-  '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank 11,000 Australian suburbs by price, rent, yield, growth, demand and risk.'],
+  '/map': ['Highest-scoring suburbs in Australia: map', 'Suburbs scored on yield, growth drivers, rental demand, affordability and stability, ranked within each state, on one map, with how much of each score is measured.'],
+  '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank Australian suburbs within each state by price, rent, yield, growth drivers, demand and risk, with every figure marked as measured or modelled.'],
   '/analyse': ['2026 tax-change calculator for investment property', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
-  '/borrowing': ['How much can I borrow? Borrowing power calculator', 'Estimate your borrowing power the way Australian lenders do: 3-point buffer, 80% of rent, debts and dependants.'],
-  '/rates': ['Home loan rates in Australia, compared', 'Every advertised home loan rate from Australian lenders, read from their Open Banking feeds, ranked by loan type and deposit.'],
-  '/markets': ['Australian property market dashboard', 'Median values, growth, rents, yields, vacancy and days on market for every capital and regional market.'],
+  '/borrowing': ['How much can I borrow?', 'Estimate your borrowing power the way Australian lenders do, for a home to live in or an investment: the 3-point rate buffer, living costs, existing debts and 80% of any rent.'],
+  '/rates': ['Home loan rates in Australia, updated several times a day', 'Every advertised home loan rate from 90+ Australian lenders, read from their Open Banking feeds, with offset accounts and fees, ranked by loan type and deposit.'],
+  '/markets': ['Australian property market dashboard', 'Month-end median values, the 3-month and 12-month change, rents, yields, vacancy and days on market for every capital and regional market.'],
   '/new-builds': ['New builds and housing supply by council', 'Monthly building approvals by state, council and area, and where new supply is heaviest.'],
-  '/weekly': ['Weekly Australian property market report', 'What moved in home values and rates this week, the RBA outlook and the headlines.'],
+  '/weekly': ['Property market update: rates this week, prices at month-end', 'Home loan rates and the RBA outlook checked every week, capital-city values from the latest month-end index, and the week’s housing headlines.'],
   '/news': ['Australian housing news', 'Headlines on prices, rates, rents and housing policy from Australian publishers.'],
-  '/guide': ['How to buy property in Australia: first home and investment guide (2026)', 'The whole process in order for first home buyers and investors: schemes and grants, stamp duty by state, finance, the 2026 tax changes and every cost.'],
+  '/guide': ['How to buy property in Australia: first home and investment guide (2026)', 'The whole process in order for first home buyers and investors: federal and state schemes including Keystart, stamp duty by state, finance, the 2026 tax changes and every cost.'],
   '/first-home': ['First home tools: rent vs buy, savings planner and FHSS calculator', 'How long it will take to save a deposit, whether buying beats renting, and how much the First Home Super Saver scheme adds.'],
-  '/why': ['Why Keyzing: what it does for home buyers and investors', 'How Keyzing helps first home buyers, upgraders and investors find, value and pay for the right property, and how it differs from listing portals, paid data tools and rate comparison sites.'],
+  '/why': ['Why Keyzing: what it does for home buyers and investors', 'How Keyzing helps first home buyers, upgraders and investors work out what they can afford, what a purchase really costs and which suburbs fit.'],
   '/compare': ['Compare suburbs side by side', 'Compare up to four Australian suburbs on price, rent, yield, growth and risk.'],
-  '/watchlist': ['Your suburb watchlist', 'Suburbs you have saved on Keyzing.'],
+  '/watchlist': ['Your saved suburbs and deals', 'Suburbs and deals you have saved on Keyzing, kept only in your own browser.'],
   '/methodology': ['Data sources and methodology', 'Where every Keyzing figure comes from, how the price and rent models work, and their measured error.'],
-  '/about': ['About Keyzing', 'Independent Australian property research for home buyers and investors.'],
-  '/contact': ['Contact Keyzing', 'Questions, corrections and partnership enquiries.'],
+  '/about': ['About Keyzing', 'Keyzing is a free, independent calculator site for Australian home buyers and investors: what it does, where its numbers come from, and how it stays independent.'],
+  '/contact': ['Contact Keyzing', 'Contact Keyzing with a question, a data correction or a privacy request. Every message gets a reply by email.'],
   '/privacy': ['Privacy policy', 'What Keyzing collects, why, and what it does with it.'],
-  '/terms': ['Terms of use', 'The terms for using Keyzing.'],
+  '/terms': ['Terms of use', 'The terms for using Keyzing: general information and calculators, not financial, credit, tax or legal advice, and how estimates and third-party data should be used.'],
 };
 // thin or personal pages: aggregated headlines, comparisons and the browser-only watchlist
 const NOINDEX = new Set(['/compare', '/watchlist', '/news']);
 
 /** Build lookup tables from site/data/suburbs.json and market.json. */
-const DAILY = { SYD: 'SYD', MEL: 'MEL', BNE: 'BNEGC', ADL: 'ADL', PER: 'PER' };
 
-/** Same adjustments the app makes on load: prices moved to today with the daily index. 12-month figures stay on the monthly index. */
-function liveAdjust(o, index, market) {
-  const d = DAILY[o.rg] ? index?.daily?.[DAILY[o.rg]] : null;
-  const R = market?.regions?.[o.rg];
-  if (!d || !R) return;
-  let base = null;
-  for (const [dt, v] of d.series || []) if (dt <= '2026-08-31') base = v;
-  const lf = base ? d.value / base : 1;
-  o.h = o.h ? Math.round((o.h * lf) / 1000) * 1000 : o.h;
-  o.u = o.u ? Math.round((o.u * lf) / 1000) * 1000 : o.u;
+/** Kept for the call sites; prices are not moved between month-ends. */
+function liveAdjust() {
+  // Keyzing publishes month-end figures only, so server-rendered prices are the month-end values, as in the app.
 }
 
 export function buildIndex(sub, market, index = null) {

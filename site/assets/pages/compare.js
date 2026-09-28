@@ -44,7 +44,7 @@ export default async function comparePage(main, _p, query) {
     <thead><tr><th></th>${picks.map((s, i) => `<th class="n" style="text-transform:none;font-size:14px;color:var(--ink)"><a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))}</a> <span class="muted">${s.s} ${s.pc}</span><br><button class="btn sm ghost" data-rm="${i}">Remove</button></th>`).join('')}</tr></thead>
     <tbody>
       <tr><td class="muted">Keyzing Score</td>${picks.map((s) => `<td class="n">${scoreBadge(suburbScore(s.sc))}</td>`).join('')}</tr>
-      ${Object.keys(PROFILES).filter((p) => p !== 'balanced').map((p) => row(`Score · ${p === 'firsthome' ? 'first home' : p}`, picks.map((s) => suburbScore(s.sc, PROFILES[p])), (v) => v ?? '—')).join('')}
+      ${Object.keys(PROFILES).filter((p) => p !== 'balanced').map((p) => row(`Score · ${{ firsthome: 'first home', newbuild: 'new builds', cashflow: 'cash flow', growth: 'growth' }[p] || p}`, picks.map((s) => suburbScore(s.sc, PROFILES[p])), (v) => v ?? '—')).join('')}
       ${Object.keys(COMPONENT_NAMES).map((k) => `<tr><td class="muted">${COMPONENT_NAMES[k]}</td>${picks.map((s) => `<td class="n" style="min-width:140px">${bar(s.sc[k])} <span class="mono">${s.sc[k] ?? '—'}</span></td>`).join('')}</tr>`).join('')}
       <tr><td class="muted">Market</td>${picks.map((s) => `<td class="n">${esc(market.regions[s.rg]?.name || '')}</td>`).join('')}</tr>
       <tr><td class="muted">Council</td>${picks.map((s) => `<td class="n">${esc(s.lga || '')}</td>`).join('')}</tr>
@@ -56,7 +56,7 @@ export default async function comparePage(main, _p, query) {
       ${row('House yield', yH, (v) => pct(v, 2))}
       ${row('Unit yield', yU, (v) => pct(v, 2))}
       ${row('12-month change', P('g1'), (v) => pct(v, 1, true))}
-      ${row('10-yr house growth p.a. (VIC)', D('cagr'), (v) => pct(v, 1, true))}
+      ${D('cagr').some((v) => v != null) ? row('10-yr house growth a year (Valuer-General Victoria)', D('cagr'), (v) => pct(v, 1, true)) : ''}
       ${row('Stamp duty on typical house (investor)', picks.map((s) => (s.h ? stampDuty(s.s, s.h).duty : null)), aud, false)}
       ${row('Price ÷ household income', P('pti'), (v) => (v ? `${v}×` : '—'), false)}
       ${row('Population', P('pop'), num, true, true)}

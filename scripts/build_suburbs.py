@@ -827,6 +827,11 @@ RA_RISK = {'Major Cities': 0, 'Inner Regional': 10, 'Outer Regional': 30, 'Remot
 def risk_index(r):
     """0-100 concentration and liquidity risk: mining dependence, one dominant industry, remoteness, shrinking population."""
     parts = []
+    pg = r.get('pg5')
+    if r.get('ra') == 'Major Cities':
+        # residents of a capital commute into a diverse job market, so what they work in says little about the local
+        # housing market (Perth has many mine workers living in ordinary suburbs); only a shrinking population counts
+        return round(min(100, -pg * 6)) if pg is not None and pg < 0 else 0
     m = (r.get('min%') or 0)
     # resource towns: many mine and gas workers fly or drive in and don't count as residents, so the resident share
     # understates dependence. 3% of resident workers in mining -> 0, 18%+ -> 100
@@ -834,7 +839,6 @@ def risk_index(r):
     t = (r.get('top%') or 0)
     parts.append(max(0, min(100, (t - 22) / 20 * 100)))  # largest industry 22% -> 0, 42%+ -> 100
     parts.append(RA_RISK.get(r.get('ra'), 20))
-    pg = r.get('pg5')
     if pg is not None and pg < 0:
         parts.append(min(100, -pg * 6))  # -5% over 5 years -> 30, -17% -> 100
     return round(max(parts))

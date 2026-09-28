@@ -18,21 +18,25 @@ export const notPurchase = (r) => NOT_PURCHASE.test(r.product || '');
  */
 // Legal names in the bank feeds -> the names people know
 const LENDER_NAMES = { 'NATIONAL AUSTRALIA BANK': 'NAB', 'COMMONWEALTH BANK OF AUSTRALIA': 'CommBank', 'COMMONWEALTH BANK': 'CommBank', 'WESTPAC BANKING CORPORATION': 'Westpac', 'AUSTRALIA AND NEW ZEALAND BANKING GROUP': 'ANZ', 'BANK OF QUEENSLAND': 'Bank of Queensland' };
-const SHORT_UPPER = new Set(['NAB', 'ANZ', 'ING', 'AMP', 'BOQ', 'ME', 'HSBC', 'LVR', 'P&I', 'IO', 'SMSF', 'ABN', 'RAMS', 'UBANK', 'BCU', 'QBANK', 'CUA', 'IMB', 'P1', 'P2', 'INV', 'OO', 'SMSF', 'LVR']);
+const SHORT_UPPER = new Set(['NAB', 'ANZ', 'ING', 'AMP', 'BOQ', 'ME', 'HSBC', 'LVR', 'P&I', 'IO', 'SMSF', 'ABN', 'RAMS', 'UBANK', 'BCU', 'QBANK', 'CUA', 'IMB', 'P1', 'P2', 'INV', 'OO', 'SMSF', 'LVR', 'CUL', 'BOQ', 'AMP', 'ANZ', 'ING', 'NAB', 'CBA', 'RACQ', 'P&I', 'I/O']);
 const titleCase = (n) => n.toLowerCase().replace(/(^|[\s/(-])([a-z][a-z&']*)/g, (m, pre, w) => pre + (SHORT_UPPER.has(w.toUpperCase()) ? w.toUpperCase() : ['and', 'of', 'for', 'with', 'to', 'the', 'or', 'in'].includes(w) && pre ? w : w.charAt(0).toUpperCase() + w.slice(1)));
 const shouty = (n) => n === n.toUpperCase() && /[A-Z]{4}/.test(n);
 /** 'NATIONAL AUSTRALIA BANK' -> 'NAB'; other all-caps names in title case. */
 export function lenderName(raw = '') {
   const n = String(raw).trim();
-  const clean = n.replace(/\s+(Limited|Ltd\.?|Pty\.? Ltd\.?)$/i, '');
-  return LENDER_NAMES[clean.toUpperCase()] || (shouty(clean) ? titleCase(clean) : clean);
+  const clean = n.replace(/\s+(Limited|Ltd\.?|Pty\.? Ltd\.?)$/i, '').replace(/\s*\(Australia\)$/i, '');
+  if (LENDER_NAMES[clean.toUpperCase()]) return LENDER_NAMES[clean.toUpperCase()];
+  if (shouty(clean)) return titleCase(clean);
+  // 'ING BANK' -> 'ING Bank': fix long all-caps words, keep known acronyms
+  return clean.replace(/\b[A-Z]{4,}\b/g, (w) => (SHORT_UPPER.has(w) ? w : w.charAt(0) + w.slice(1).toLowerCase()));
 }
 /** 'STREET SMART VARIABLE HOME LOAN SPECIAL' -> 'Street Smart Variable Home Loan Special'; drops ': Our lowest…' marketing text and a repeated lender name. */
 export function productName(raw = '', lender = '') {
   let n = String(raw).trim().replace(/\s+/g, ' ');
   n = n.replace(/\s+[:|–—-]\s+(our|the|get|enjoy|save|great|low(est)?|special offer|limited|new customers?)\b.*?(?=\s*\((?:owner|investor|investment|oo|inv)[^)]*\)\s*$|$)/i, '');
   // word by word, so 'STREET SMART VARIABLE - INVESTMENT (Principal and Interest)' is fixed too
-  if ((n.match(/\b[A-Z][A-Z'&]{3,}\b/g) || []).length >= 2) {
+  const capsWords = (n.match(/\b[A-Z][A-Z'&]{2,}\b/g) || []).filter((w) => !SHORT_UPPER.has(w));
+  if (capsWords.length) {
     n = n.replace(/\b[A-Z][A-Z'&]{2,}\b/g, (w, i) => (SHORT_UPPER.has(w) ? w : i && ['AND', 'FOR', 'WITH', 'THE'].includes(w) ? w.toLowerCase() : w.charAt(0) + w.slice(1).toLowerCase()));
   }
   const l = lenderName(lender);

@@ -33,7 +33,7 @@ export default async function ratesPage(main, _p, query) {
   <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each bank's public Consumer Data Right (Open Banking) product feed, checked several times a day. Last check ${ago(R.updated)}.</p></div>${demo('rates')}</div>
   <div style="margin-bottom:16px">${rateWatchCard(rba, { compact: true })}</div>
   <div class="grid g4">
-    ${[['INV_PI_variable', 'Investor variable P&I'], ['INV_PI_fixed3', 'Investor 3-yr fixed'], ['OO_PI_variable', 'Owner-occupier variable'], ['OO_PI_fixed2', 'Owner-occupier 2-yr fixed']]
+    ${[['INV_PI_variable', 'investor variable P&I'], ['INV_PI_fixed3', 'investor 3-year fixed'], ['OO_PI_variable', 'owner-occupier variable'], ['OO_PI_fixed2', 'owner-occupier 2-year fixed']]
       .map(([k, l]) => {
         const b = rs.best[k]?.[0];
         const nb = rs.best[`${k}_national`]?.[0];

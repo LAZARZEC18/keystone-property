@@ -33,17 +33,19 @@ export function investmentCase(s, d, region, rs, market) {
   const rent = s.pt === 'u' ? s.ru : s.rh;
   const yld = rent && price ? (rent * 52 * 100) / price : null;
 
-  // Yield vs region
-  if (yld && rs.y) {
-    const diff = yld - (s.pt === 'u' ? rs.y * 1.15 : rs.y);
-    if (diff > 0.6) pros.push(`Rental yield of ${pct(yld, 2)} on a typical ${type} is well above the ${R.name} norm (about ${pct(rs.y, 1)}), so rent covers more of the holding cost.`);
-    else if (diff < -0.6) cons.push(`Yield of ${pct(yld, 2)} is below the ${R.name} norm (about ${pct(rs.y, 1)}). Returns here lean on capital growth, and the cash shortfall each week is larger.`);
+  // Yield vs region (the same regional yield the page shows)
+  const ry = R.yield ?? rs.y;
+  if (yld && ry) {
+    const diff = yld - (s.pt === 'u' ? ry * 1.15 : ry);
+    if (diff > 0.6) pros.push(`Rental yield of ${pct(yld, 2)} on a typical ${type} is well above the ${R.name} average (about ${pct(ry, 1)}), so rent covers more of the holding cost.`);
+    else if (diff < -0.6) cons.push(`Yield of ${pct(yld, 2)} is below the ${R.name} average (about ${pct(ry, 1)}). Returns here lean on capital growth, and the cash shortfall each week is larger.`);
   }
   // Momentum
   if (s.g1 !== null && s.g1 !== undefined) {
-    const src = String(s.g1s).startsWith('region') ? `${R.name} values (no suburb-level series here)` : 'Values here';
+    const regional = String(s.g1s).startsWith('region');
+    const src = regional ? `${R.name}-wide values (there's no sales series for this suburb)` : 'Values here';
     if (String(s.g1s).includes('capped')) cons.push(`The suburb's own 12-month change was extreme and comes from few sales, so Keyzing holds it to within 12 points of ${R.name} (${pct(s.g1, 1, true)} shown). Treat it as unreliable.`);
-    const per = s.g1p ? `the past year (${s.g1p})` : 'the past year';
+    const per = regional || !s.g1p ? 'the past year' : `the past year (${s.g1p})`;
     if (s.g1 >= 8) pros.push(`${src} rose ${pct(s.g1, 1)} over ${per}: strong buyer demand.`);
     else if (s.g1 < 0) cons.push(`${src} fell ${pct(Math.abs(s.g1), 1)} over ${per}. Softer prices can be a buying window, but they can also keep falling while rates are high.`);
   }
@@ -56,7 +58,7 @@ export function investmentCase(s, d, region, rs, market) {
   // Population and income
   if (s.pg5 !== null && s.pg5 !== undefined) {
     const per = /census/i.test(d?.pgS || '') ? 'between the 2016 and 2021 Censuses' : 'from 2020 to 2025 (ABS estimates)';
-    if (s.pg5 > 12.5) cons.push(`Population grew ${pct(s.pg5, 1)} ${per}, faster than about 2.5% a year: that usually means a new estate being built out, so new homes compete with resales and rentals. Keyzing gives growth this fast less credit, not more.`);
+    if (s.pg5 > 12.5) cons.push(`Population grew ${pct(s.pg5, 1)} ${per}, faster than about 2.5% a year: that usually means a lot of new housing being built (a new estate or apartment towers), so new homes compete with resales and rentals. Keyzing gives growth this fast less credit, not more.`);
     else if (s.pg5 >= 6) pros.push(`Population grew ${pct(s.pg5, 1)} ${per} without an estate-scale building boom: steady demand for homes and rentals.`);
     else if (s.pg5 < -2) cons.push(`Population shrank ${pct(Math.abs(s.pg5), 1)} ${per}. Falling demand is a long-term risk.`);
   }
@@ -69,9 +71,11 @@ export function investmentCase(s, d, region, rs, market) {
   }
   if (d['rent%'] >= 45) pros.push(`${pct(d['rent%'] ?? s['rent%'], 0)} of homes are rented: a deep tenant pool.`);
   // Affordability
-  if (s.pti) {
-    if (s.pti <= 6) pros.push(`Prices are ${s.pti}× local household income, affordable by Australian standards, which supports resale demand.`);
-    else if (s.pti >= 12) cons.push(`Prices are ${s.pti}× local household income. Growth here depends on buyers from outside the area.`);
+  // price-to-income on the suburb's usual home type, as in the page header
+  const ptiT = s.pti && s.h && price ? Math.round(((s.pti * price) / s.h) * 10) / 10 : s.pti;
+  if (ptiT) {
+    if (ptiT <= 6) pros.push(`A typical ${type} costs ${ptiT}× local household income, affordable by Australian standards, which supports resale demand.`);
+    else if (ptiT >= 12) cons.push(`A typical ${type} costs ${ptiT}× local household income. Growth here depends on buyers from outside the area.`);
   }
   // Risk factors
   if (d.une >= 8) cons.push(`Unemployment was ${pct(d.une, 1)} at the 2021 Census, well above the national average. Tenant arrears risk is higher.`);
@@ -136,7 +140,7 @@ export function scoreVsDeal(score, grade) {
 export function nextStepsCard({ fhb = false } = {}) {
   return `<div class="card next-steps"><div class="eyebrow">Your next step</div><h3 style="margin-top:4px">Get pre-approval before you make offers</h3>
     <ol class="note" style="padding-left:18px;margin:8px 0 0;line-height:1.6">
-      <li><b>Pre-approval</b> is a lender's conditional yes to a loan amount, usually valid for about 90 days (some lenders allow up to 6 months). It turns the ceiling above into a real number and makes your offers stronger.</li>
+      <li><b>Pre-approval</b> is a lender's conditional yes to a loan amount, usually valid for about 90 days (some lenders allow up to 6 months). It turns these estimates into a real borrowing limit and makes your offers stronger.</li>
       <li><b>Talk to a mortgage broker or go direct to a lender.</b> A broker compares many lenders and must act in your best interests by law; they are usually paid by the lender. A bank quotes only its own loans.</li>
       <li><b>Have ready:</b> photo ID, your last two payslips (or two years of tax returns if self-employed), three months of bank and savings statements, and details of any debts, cards and buy-now-pay-later accounts.</li>
       ${fhb ? '<li><b>For the 5% Deposit Scheme or Help to Buy,</b> you apply through a participating lender, not the government. Ask the broker or bank whether they offer it.</li>' : ''}

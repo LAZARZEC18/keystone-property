@@ -36,12 +36,12 @@ export function suburbFromText(q, list) {
 
 export default async function propertyPage(main, _p, query) {
   const q = (query.q || '').trim();
-  setMeta({ title: q ? `${q}: suburb price range for a typical home` : 'Suburb estimate for a typical home', description: 'Enter any Australian address for an estimated value and range, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
+  setMeta({ title: q ? `${q}: suburb price range for a typical home` : 'Price range for a typical home', description: 'Enter any Australian address for a likely price range for a typical home like it, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
   const [idx, market, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
   const index = null;
 
   main.innerHTML = `
-  <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Suburb estimate for a typical home</div><h1>What would a home like this cost?</h1>
+  <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
   <p>Enter an address. Keyzing checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
   <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
@@ -120,7 +120,7 @@ export default async function propertyPage(main, _p, query) {
   let mode = query.mode === 'invest' ? 'invest' : 'home';
 
   out.innerHTML = `
-  <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')}· located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
+  <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')} · located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
   <div style="margin-top:14px">${seeTheArea(point.lat, point.lng, { place: facts?.address || (streetTyped ? first.trim() : cleanName(s.n)), sold: listingLinks(s).reaSold })}</div>
   <div class="grid split-spec" style="gap:20px;margin-top:16px" id="pgrid">
     <form class="card" id="spec" onsubmit="return false" style="align-self:start">
@@ -193,9 +193,9 @@ export default async function propertyPage(main, _p, query) {
     const newBuild = f.condition === 'new';
     const fhbDuty = stampDuty(s.s, price, { buyer: 'fhb', newBuild });
     const head = `
-        ${printHeader(`Suburb estimate: ${facts?.address || q}`)}
+        ${printHeader(`Price range for a typical home: ${facts?.address || q}`)}
         <div class="spread" style="align-items:flex-start">
-          <div><div class="eyebrow" style="margin:0">Suburb estimate for a typical home like this · ${date(new Date().toISOString())}</div>
+          <div><div class="eyebrow" style="margin:0">Price range for a typical home like this · ${date(new Date().toISOString())}</div>
           <div class="big-num" style="margin:6px 0">${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })}</div>
           <div class="note">Likely range for a typical ${e.beds}-bed ${e.type === 'u' ? 'unit' : 'house'} like this${acc.level === 'untested' ? '. No single figure is shown: the model hasn’t been tested against sales in this state.' : ` · middle of the range about ${aud(e.value, { compact: true })}`}</div></div>
           __BADGE__
@@ -234,9 +234,9 @@ export default async function propertyPage(main, _p, query) {
       res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">${esc(R?.name || 'Area')}, last 3 months</div><div class="mono ${(R?.quarterPct ?? 0) < 0 ? 'down' : 'up'}" style="font-size:22px">${pct(R?.quarterPct, 1, true)}</div><div class="note">${s.trend ? `${s.trend} · ` : ''}12 months ${pct(R?.annualPct, 1, true)}${s.g1s === 'region' ? ' (area-wide)' : ''}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
           <div class="stat"><span class="k">Cash you need up front</span><span class="v">${aud(upfront, { compact: true })}</span><span class="s">${Math.round(dep * 100)}% deposit + duty + fees</span></div>
-          <div class="stat"><span class="k">Repayments</span><span class="v">${aud(monthly)}<span class="muted" style="font-size:.55em">/mth</span></span><span class="s">${aud(weekly)}/wk at ${pct(ooRate, 2)}</span></div>
-          <div class="stat"><span class="k">${myRent ? 'vs your rent now' : 'Renting a similar home'}</span><span class="v ${myRent ? (weekly > myRent ? 'down' : 'up') : ''}">${myRent ? `${weekly > myRent ? '+' : '−'}${aud(Math.abs(weekly - myRent))}` : aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span><span class="s">${myRent ? `${aud(weekly)} repayments vs ${aud(myRent)} rent` : 'estimated weekly rent'}</span></div>
-          <div class="stat"><span class="k">If rates rise 2 points</span><span class="v down">${aud(weekly2)}<span class="muted" style="font-size:.55em">/wk</span></span><span class="s">+${aud(weekly2 - weekly)} a week</span></div>
+          <div class="stat"><span class="k">Repayments</span><span class="v">${aud(monthly)}<span class="muted unit">/mth</span></span><span class="s">${aud(weekly)}/wk at ${pct(ooRate, 2)}</span></div>
+          <div class="stat"><span class="k">${myRent ? 'vs your rent now' : 'Renting a similar home'}</span><span class="v ${myRent ? (weekly > myRent ? 'down' : 'up') : ''}">${myRent ? `${weekly > myRent ? '+' : '−'}${aud(Math.abs(weekly - myRent))}` : aud(e.rent)}<span class="muted unit">/wk</span></span><span class="s">${myRent ? `${aud(weekly)} repayments vs ${aud(myRent)} rent` : 'estimated weekly rent'}</span></div>
+          <div class="stat"><span class="k">If rates rise 2 points</span><span class="v down">${aud(weekly2)}<span class="muted unit">/wk</span></span><span class="s">+${aud(weekly2 - weekly)} a week</span></div>
         </div>
         ${stretch ? `<div class="callout warn-box" style="margin-top:14px"><b>A ${Math.round(dep * 100)}% deposit at this price is a stretch.</b> The loan would be ${aud(loan, { compact: true })}${lm.premium ? `, including ${aud(lm.premium)} of LMI` : ''}. A lender would typically want a household income of about <b>${aud(incNeeded, { compact: true })}</b> a year for it, and about ${aud(incComfort, { compact: true })} to keep repayments under ${STRESS.label}.${buyer === 'fhb' && price > cap ? ` It's also above the ${aud(cap, { compact: true })} 5% Deposit Scheme price cap here, so the no-LMI scheme doesn't apply.` : ''} Few lenders offer 95% loans this large.</div>` : ''}
         <p class="note" style="margin-top:10px">Household income for comfortable repayments (under ${STRESS.label}): <b>about ${aud(incComfort, { compact: true })} a year</b>.</p>
@@ -263,7 +263,7 @@ export default async function propertyPage(main, _p, query) {
       const v = verdict(a, { ...s, score: suburbScore(s.sc) }, market, { depositRate: rba.cashRate.current });
       res.innerHTML = `<div class="card">${head.replace('__BADGE__', `<div style="text-align:right"><div class="note">Each week after tax</div><div class="cost-head ${a.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}" style="font-size:22px">${cashWeek(a.summary.weeklyCashAfterTax)}</div></div>`)}
         <div class="grid g4" style="margin-top:14px;gap:12px">
-          <div class="stat"><span class="k">Estimated rent</span><span class="v">${aud(e.rent)}<span class="muted" style="font-size:.55em">/wk</span></span></div>
+          <div class="stat"><span class="k">Estimated rent</span><span class="v">${aud(e.rent)}<span class="muted unit">/wk</span></span></div>
           <div class="stat"><span class="k">Gross yield</span><span class="v">${pct((e.rent * 52 * 100) / price, 2)}</span></div>
           <div class="stat"><span class="k">Cash needed at 20% deposit</span><span class="v">${aud(a.upfront.total, { compact: true })}</span></div>
           <div class="stat"><span class="k">10-yr return (<abbr title="Internal rate of return: the average yearly return on your cash after costs, tax and sale">IRR</abbr>)</span><span class="v">${pct(a.summary.irr, 1)}</span></div>
@@ -295,7 +295,7 @@ export default async function propertyPage(main, _p, query) {
       .filter((o) => o.e && o.e.value <= e.value * 0.96 && o.e.value >= e.value * 0.8 && suburbScore(o.x.sc) >= myScore)
       .sort((a1, b1) => suburbScore(b1.x.sc) - suburbScore(a1.x.sc) || a1.x.km - b1.x.km)
       .slice(0, 6);
-    main.querySelector('#alts').innerHTML = `<h3>Comparable suburbs nearby for less</h3><p class="note" style="margin-top:-4px">Within 15 km, household incomes within 12% of ${esc(cleanName(s.n))}'s, rated as well or better, and 4–20% cheaper for this same home.</p>${alts.length ? `<div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">This home there</th><th class="n">Less by</th><th class="n">Score</th></tr></thead><tbody>${alts.map((o) => `<tr><td><a href="${suburbUrl(o.x)}" data-link>${esc(cleanName(o.x.n))}</a></td><td class="n">${o.x.km.toFixed(1)}</td><td class="n">${aud(o.e.value, { compact: true })}</td><td class="n up">${aud(e.value - o.e.value, { compact: true })}</td><td class="n">${scoreBadge(suburbScore(o.x.sc))}</td></tr>`).join('')}</tbody></table></div>` : `<p class="note">No nearby suburb with similar incomes is both cheaper and rated as well. For this kind of home, ${esc(cleanName(s.n))} is already fair value against its neighbours.</p>`}`;
+    main.querySelector('#alts').innerHTML = `<h3>Comparable suburbs nearby for less</h3><p class="note" style="margin-top:-4px">Within 15 km, household incomes within 12% of ${esc(cleanName(s.n))}'s, rated as well or better, and 4–20% cheaper for this same home.</p>${alts.length ? `<div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">This home there</th><th class="n">Less by</th><th class="n">Score</th></tr></thead><tbody>${alts.map((o) => `<tr><td><a href="${suburbUrl(o.x)}" data-link>${esc(cleanName(o.x.n))}</a></td><td class="n">${o.x.km.toFixed(1)}</td><td class="n">${aud(o.e.value, { compact: true })}</td><td class="n up">${aud(e.value - o.e.value, { compact: true })}</td><td class="n">${scoreBadge(suburbScore(o.x.sc))}</td></tr>`).join('')}</tbody></table></div>` : `<p class="note">No nearby suburb with similar incomes is both cheaper and rated as well. On these measures none of its neighbours is cheaper for the same home.</p>`}`;
 
     // Similar homes for sale: deep links + live listings (Domain) filtered to match
     const lo = Math.round((e.value * 0.85) / 10000) * 10000;

@@ -216,7 +216,7 @@
   "INV_IO_variable": [
    {
     "lender": "The Mac",
-    "product": "Govt LOW DEP Variable OOC PI",
+    "product": "Govt Low Dep Variable Ooc PI",
     "rate": 5.92,
     "comparison": 5.98,
     "lvrMax": null,
@@ -450,7 +450,7 @@
    },
    {
     "lender": "Summerland Bank",
-    "product": "ECO Home Loan",
+    "product": "Eco Home Loan",
     "rate": 5.84,
     "comparison": 5.9,
     "lvrMax": null,
@@ -542,7 +542,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "LJH 5star Home Loan",
+    "product": "Ljh 5star Home Loan",
     "rate": 6.09,
     "comparison": 6.31,
     "lvrMax": 95,
@@ -626,7 +626,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "LJH 5star Home Loan",
+    "product": "Ljh 5star Home Loan",
     "rate": 6.29,
     "comparison": 6.44,
     "lvrMax": 95,
@@ -836,7 +836,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "LJH 5star Home Loan",
+    "product": "Ljh 5star Home Loan",
     "rate": 6.49,
     "comparison": 6.52,
     "lvrMax": 95,
@@ -861,7 +861,7 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "ING BANK (Australia)",
+    "lender": "ING Bank",
     "product": "Mortgage Simplifier",
     "rate": 6.19,
     "comparison": 6.22,
@@ -1046,7 +1046,7 @@
    },
    {
     "lender": "Qantas Money Basic/Offset Home Loans",
-    "product": "QANTAS Money Offset Home Loan",
+    "product": "Qantas Money Offset Home Loan",
     "rate": 6.64,
     "comparison": 6.67,
     "lvrMax": 80,
@@ -1087,7 +1087,7 @@
     "url": "https://www.mebank.com.au/home-loans/"
    },
    {
-    "lender": "ING BANK (Australia)",
+    "lender": "ING Bank",
     "product": "Mortgage Simplifier",
     "rate": 6.34,
     "comparison": 6.28,

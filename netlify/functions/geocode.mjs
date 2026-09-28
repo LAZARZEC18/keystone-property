@@ -14,9 +14,14 @@ const json = (body, status = 200) =>
 
 async function nominatim(q) {
   const url = `https://nominatim.openstreetmap.org/search?${new URLSearchParams({ q, format: 'jsonv2', addressdetails: '1', countrycodes: 'au', limit: '3' })}`;
-  const r = await fetch(url, { headers: { 'user-agent': UA, 'accept-language': 'en-AU' }, signal: AbortSignal.timeout(8000) });
-  if (!r.ok) throw new Error(`geocoder ${r.status}`);
-  return r.json();
+  // Nominatim allows about one request a second; if it's busy, wait and try once more before giving up
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const r = await fetch(url, { headers: { 'user-agent': UA, 'accept-language': 'en-AU' }, signal: AbortSignal.timeout(8000) });
+    if (r.ok) return r.json();
+    if (attempt === 0 && (r.status === 429 || r.status >= 500)) await new Promise((res) => setTimeout(res, 1300));
+    else throw new Error(`geocoder ${r.status}`);
+  }
+  throw new Error('geocoder busy');
 }
 
 export default async (req) => {

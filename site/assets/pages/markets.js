@@ -1,5 +1,5 @@
-import { cityCard, CITY_ARTICLE } from './home.js';
-import { wikiPhoto } from '../photos.js';
+import { cityCard, cityPhoto, CITY_PHOTO } from './home.js';
+import { photoCredits } from '../photos.js';
 import { esc, aud, pct, date, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
 import { load } from '../data.js';
 
@@ -25,12 +25,12 @@ export default async function markets(main) {
 
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">National median dwelling</span><span class="v">${aud(market.national.medianDwelling)}</span><span class="s"><span class="${market.national.annualPct >= 0 ? 'up' : 'down'}">${pct(market.national.annualPct, 1, true)}</span> y/y · ${pct(market.national.fromPeakPct, 1)} from peak</span></div></div>
-    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">Last move ${date(rba.cashRate.lastChange)} · next meeting ${date(market.cashRate.nextMeeting)}</span></div></div>
-    <div class="card"><div class="stat"><span class="k">Median new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
+    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last changed ${date(rba.cashRate.lastChange)}` : `Last changed ${date(rba.cashRate.lastChange)}`} · next decision ${date(market.cashRate.nextMeeting)}</span></div></div>
+    <div class="card"><div class="stat"><span class="k">Average new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
     <div class="card"><div class="stat"><span class="k">National rent growth</span><span class="v">${pct(market.national.rentAnnualPct, 1, true)}</span><span class="s">Vacancy ${pct(market.national.vacancySQM, 1)} (SQM)</span></div></div>
   </div>
 
-  <section class="section"><div class="city-grid" id="m-cities">${Object.entries(market.regions).filter(([, r]) => r.capital).map(([code, r]) => cityCard(code, r, null)).join('')}</div></section>
+  <section class="section"><div class="city-grid" id="m-cities">${Object.entries(market.regions).filter(([, r]) => r.capital).map(([code, r]) => cityCard(code, r, cityPhoto(code))).join('')}</div>${photoCredits(Object.entries(market.regions).filter(([, r]) => r.capital).map(([c]) => CITY_PHOTO[c]))}</section>
 
   <section class="section">
     <h2>Values and recent price change by market</h2>
@@ -39,7 +39,7 @@ export default async function markets(main) {
       <div class="card"><h3>Gross rental yield</h3>${hbars(all.map(([, r]) => ({ label: r.name, value: r.yield })).sort((a, b) => b.value - a.value), { fmt: (v) => pct(v, 1) })}</div>
     </div>
     <div class="tbl-wrap" style="margin-top:16px"><table>
-      <thead><tr><th>Market</th><th class="n">Median dwelling</th><th class="n">House</th><th class="n">Unit</th><th class="n">Month to Aug</th><th class="n">Quarter to Aug</th><th class="n">Year to Aug</th><th class="n">House yield</th><th class="n">Unit yield</th><th class="n">Advertised rent, house (SQM)</th><th class="n">Advertised rent, unit (SQM)</th><th class="n">Vacancy</th><th class="n">DOM</th><th class="n">DOM yr ago</th></tr></thead>
+      <thead><tr><th>Market</th><th class="n">Median dwelling</th><th class="n">House</th><th class="n">Unit</th><th class="n">Month to Aug</th><th class="n">Quarter to Aug</th><th class="n">Year to Aug</th><th class="n">House yield</th><th class="n">Unit yield</th><th class="n">Advertised rent, house (SQM)</th><th class="n">Advertised rent, unit (SQM)</th><th class="n">Vacancy</th><th class="n">Days on market</th><th class="n">A year ago</th></tr></thead>
       <tbody>${all
         .map(
           ([code, r]) => `<tr><td><a href="/suburbs?region=${code}" data-link>${r.name}</a></td><td class="n">${aud(r.medianDwelling, { compact: true })}</td><td class="n">${aud(r.medianHouse, { compact: true })}</td><td class="n">${aud(r.medianUnit, { compact: true })}</td>${['monthPct', 'quarterPct', 'annualPct'].map((k) => `<td class="n ${r[k] >= 0 ? 'up' : 'down'}">${pct(r[k], 1, true)}</td>`).join('')}<td class="n">${pct(r.houseYield ?? r.yield, 1)}</td><td class="n">${pct(r.unitYield, 1)}</td><td class="n">${aud(r.rentHouse)}</td><td class="n">${aud(r.rentUnit)}</td><td class="n">${pct(r.vacancy, 1)}</td><td class="n">${r.dom ?? '—'}</td><td class="n">${r.domYearAgo ?? '—'}</td></tr>`,
@@ -61,7 +61,7 @@ export default async function markets(main) {
       <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Mean dwelling price (ABS)</th><th class="n">Dwellings</th><th class="n">Population growth</th></tr></thead><tbody>
       ${Object.keys(abs.meanPrice).map((s) => `<tr><td>${s}</td><td class="n">${aud(abs.meanPrice[s], { compact: true })}</td><td class="n">${(abs.dwellingsThousands[s] * 1000).toLocaleString()}</td><td class="n">${pct(abs.populationGrowthPct[s], 1)}</td></tr>`).join('')}
       </tbody></table></div>
-      <p class="fine" style="margin-top:8px">ABS Total Value of Dwellings (${esc(abs.dwellingsQuarter)}); ABS population, ${esc(abs.populationPeriod)}. Total housing stock is worth ${aud(abs.totalValueBn * 1e9, { compact: true })}.</p>
+      <p class="fine" style="margin-top:8px">ABS Total Value of Dwellings, ${esc(abs.dwellingsQuarter)}; ABS population, ${esc(abs.populationPeriod)}. Total housing stock is worth ${aud(abs.totalValueBn * 1e9, { compact: true })}.</p>
     </div>
   </section>
 
@@ -85,7 +85,7 @@ export default async function markets(main) {
         ],
         { height: 260, yFmt: (v) => `${v}%` },
       )}
-      <p class="note" style="margin-top:10px">Banks' "standard variable" headline rates sit far above what new borrowers really pay (RBA F5 vs F6, ${date(rba.actual.newInvVariable.at(-1)?.[0])}). Always negotiate, or refinance: the gap is ${pct(rba.indicator.invStandardVariable.at(-1)[1] - rba.actual.newInvVariable.at(-1)[1], 2)}.</p>
+      <p class="note" style="margin-top:10px">Banks' "standard variable" headline rates sit far above what new borrowers really pay (RBA F5 vs F6, ${date(rba.actual.newInvVariable.at(-1)?.[0])}). Always negotiate, or refinance: the gap is ${(rba.indicator.invStandardVariable.at(-1)[1] - rba.actual.newInvVariable.at(-1)[1]).toFixed(2)} percentage points.</p>
     </div>
   </section>
 
@@ -110,10 +110,7 @@ export default async function markets(main) {
   <section class="section"><h3>Sources</h3><ul class="note">${market.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}<li><a href="https://www.rba.gov.au/statistics/tables/" target="_blank" rel="noopener">RBA statistical tables A2, F1.1, F5, F6</a> (auto-updated ${date(rba.updated)})</li></ul>
   <p class="fine">${market.caveats.map(esc).join(' ')}</p></section>`;
   wireCharts(main, (v) => `${v.toFixed(2)}%`);
-  Object.entries(market.regions).filter(([, r]) => r.capital).forEach(([code, r]) => wikiPhoto(CITY_ARTICLE[code] || r.name).then((ph) => {
-    const el = main.querySelector(`#m-cities [data-city="${code}"]`);
-    if (ph && el) el.outerHTML = cityCard(code, r, ph);
-  }));
+
 }
 
 /** Plain-English description of the current numbers, generated from the data. Describes what moved; never says what to do. */

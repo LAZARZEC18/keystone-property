@@ -220,5 +220,27 @@ export const PHOTOS = [
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
   "source": "https://commons.wikimedia.org/wiki/File:ANZAC_Parade_from_the_Australian_War_Memorial,_Canberra_ACT.jpg"
+ },
+ {
+  "id": "adelaide-torrens",
+  "caption": "The city across the River Torrens",
+  "city": "Adelaide",
+  "state": "SA",
+  "kind": "city",
+  "author": "Yu Chu Chin",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Adelaide_CBD_skyline_across_the_River_Torrens,_July_2026_(028A8463).jpg"
+ },
+ {
+  "id": "darwin-waterfront",
+  "caption": "Apartments around the Waterfront lagoon",
+  "city": "Darwin",
+  "state": "NT",
+  "kind": "apartments",
+  "author": "DaHuzyBru",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Darwin_Waterfront,_September_2025_08.jpg"
  }
 ];

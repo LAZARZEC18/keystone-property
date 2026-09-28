@@ -10,6 +10,14 @@ import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { accuracy } from '../accuracy.js';
 import { seeTheArea } from '../photos.js';
 
+// 'jul-2026' or '2026-07' -> 'July 2026'
+const monthName = (x) => {
+  const m = String(x).match(/([a-z]{3})[a-z]*-(\d{4})/i) || String(x).match(/(\d{4})-(\d{2})/);
+  if (!m) return x;
+  const d = /^\d{4}$/.test(m[1]) ? new Date(+m[1], +m[2] - 1, 1) : new Date(`${m[1]} 1, ${m[2]}`);
+  return Number.isNaN(+d) ? x : d.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+};
+
 export default async function suburbPage(main, params) {
   const [idx, market, rs, approvals, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('approvals').catch(() => null), load('rba').catch(() => null)]);
   const index = null;
@@ -120,8 +128,8 @@ export default async function suburbPage(main, params) {
         ${sApp?.fy ? `<span>Local area (SA2: ${esc(sApp.name)})</span><span>${num(sApp.fy.total)} approved</span>` : ''}
         <span>Value of new residential building</span><span>${aud((cApp.fy.value || 0) * 1000, { compact: true })}</span>
       </div>
-      <p class="note" style="margin-top:10px">${(s.sup ?? 0) > 2.5 ? 'Heavy new supply: rents and resale prices for similar stock (especially apartments) can be held back while it is absorbed.' : (s.sup ?? 0) < 0.8 ? 'Very little new housing is being approved here, which supports prices and rents if demand keeps growing.' : 'A moderate amount of new housing is coming, broadly in line with population growth.'} <a href="/new-builds" data-link>New builds across Australia →</a></p>` : '<p class="note">No building approvals data for this council.</p>'}
-      <p class="fine">ABS Building Approvals (${esc(approvals?.release || '')}). The ABS suppresses very small counts by type, so the parts can add up to slightly less than the total.</p>
+      <p class="note" style="margin-top:10px">${(s.sup ?? 0) > 2.5 ? 'Heavy new supply: rents and resale prices for similar stock (especially apartments) can be held back while it is absorbed.' : (s.sup ?? 0) < 0.8 ? (cApp?.ytd?.total > (cApp?.fy?.total || 0) ? `Few homes were approved here last financial year, but ${num(cApp.ytd.total)} have been approved so far this year, so watch for new supply.` : 'Very little new housing is being approved here, which supports prices and rents if demand keeps growing.') : 'A moderate amount of new housing is coming, broadly in line with population growth.'} <a href="/new-builds" data-link>New builds across Australia →</a></p>` : '<p class="note">No building approvals data for this council.</p>'}
+      <p class="fine">ABS Building Approvals, data to ${esc(monthName(approvals?.latestMonth || approvals?.release || ''))}. The ABS suppresses very small counts by type, so the parts can add up to slightly less than the total.</p>
     </div>
   </section>
 
@@ -192,13 +200,13 @@ export default async function suburbPage(main, params) {
         <span>Homes rented</span><span>${pct(d['rent%'], 1)}</span>
         <span>Owned outright</span><span>${pct(d['own%'], 1)}</span>
         <span>Social housing</span><span>${pct(d['soc%'], 1)}</span>
-        <span>Separate houses / flats</span><span>${pct(d['hou%'], 0)} / ${pct(d['fla%'], 0)}</span>
+        <span>Separate houses / flats</span><span>${pct(d['hou%'] ?? s['hou%'], 0)} / ${pct(d['fla%'] ?? s['fla%'], 0)}</span>
         <span>Census rent change 2016-2021</span><span>${pct(d.rg5, 1, true)}</span>
       </div>
       <p class="fine" style="margin-top:8px">ABS Census 2016 and 2021, Suburbs and Localities; population change from ABS regional population estimates for the surrounding area (SA2).</p>
     </div>
     <div class="card">
-      <h3>${esc(name)} vs ${esc(R.name || 'region')}</h3>
+      <h3>${esc(name)} vs ${esc(R.name && R.name === name ? `greater ${R.name}` : R.name || 'the region')}</h3>
       <div class="tbl-wrap"><table><thead><tr><th></th><th class="n">${esc(name)}</th><th class="n">${esc(R.name || '')}</th></tr></thead><tbody>
         <tr><td>Typical house</td><td class="n">${aud(s.h, { compact: true })}</td><td class="n">${aud(R.medianHouse || R.medianDwelling, { compact: true })}</td></tr>
         <tr><td>Typical unit</td><td class="n">${aud(s.u, { compact: true })}</td><td class="n">${R.medianUnit ? aud(R.medianUnit, { compact: true }) : '—'}</td></tr>
@@ -238,7 +246,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section">
-    <p class="fine">How these numbers are made: prices marked Estimate come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
+    <p class="fine">How these numbers are made: prices marked Modelled come from Keyzing's model, which is trained on ${idx.meta.model.trainN.toLocaleString()} official suburb medians and anchored to Cotality's current ${esc(R.name || '')} median. ${esc(accuracy(s, s.pt, { model: idx.meta.model }).text)} <a href="/methodology" data-link>Full methodology</a>. Suburb data built ${date(idx.meta.built)}.</p>
   </section>`;
 
   main.querySelector('#print').addEventListener('click', () => window.print());

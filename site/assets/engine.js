@@ -402,12 +402,15 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   const risks = [];
   let pts = 50;
 
+  // Absolute test: would the same cash have done better, risk-free, in a term deposit after tax?
+  const mr = marginalRate(p.income || 0);
+  const tdAfterTax = Math.round(depositRate * (1 - mr) * 10) / 10;
   // 1. Return on the cash you put in
   if (s.irr !== null) {
     if (s.irr >= 12) { pts += 20; reasons.push(`Projected after-tax return on your cash of ${s.irr.toFixed(1)}% a year beats shares' long-run ~9-10%.`); }
     else if (s.irr >= 9) { pts += 10; reasons.push(`Projected after-tax return of ${s.irr.toFixed(1)}% a year is in line with a diversified share portfolio, with leverage risk on top.`); }
     else if (s.irr >= 6) { pts -= 2; risks.push(`Projected after-tax return of ${s.irr.toFixed(1)}% a year is modest for the risk and effort of a leveraged property.`); }
-    else { pts -= 15; risks.push(`Projected after-tax return of only ${s.irr.toFixed(1)}% a year: you could do about as well in an offset account or term deposit.`); }
+    else { pts -= 15; risks.push(s.irr < tdAfterTax ? `Projected after-tax return of only ${s.irr.toFixed(1)}% a year: less than the ~${tdAfterTax.toFixed(1)}% a deposit at the cash rate would pay after tax, with no price risk.` : `Projected after-tax return of only ${s.irr.toFixed(1)}% a year: little more than the ~${tdAfterTax.toFixed(1)}% a deposit at the cash rate would pay after tax, with far more risk.`); }
   }
   // 2. Cash flow
   const wk = s.weeklyCashAfterTax;
@@ -456,9 +459,6 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   // Shown as a rank, never as a letter: an "A" read as "buy" when most deals lose money each week.
   const label = { A: 'Top 15%', B: 'Upper 40%', C: 'Middle 30%', D: 'Bottom 30%' }[grade];
   const absolute = s.weeklyCashAfterTax >= 0 ? `Pays its own way: about $${Math.round(s.weeklyCashAfterTax)} a week in your pocket after tax.` : `On its own numbers you pay about $${Math.abs(Math.round(s.weeklyCashAfterTax))} a week after tax to hold it.`;
-  // Absolute test: would the same cash have done better, risk-free, in a term deposit after tax?
-  const mr = marginalRate(p.income || 0);
-  const tdAfterTax = Math.round(depositRate * (1 - mr) * 10) / 10;
   const beatsDeposit = s.irr !== null && s.irr > tdAfterTax;
   const vsDeposit = s.irr === null ? null : `A projected ${s.irr.toFixed(1)}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;
   return { score, grade, label, percentile, absolute, beatsDeposit, tdAfterTax, depositRate, vsDeposit, reasons, risks };

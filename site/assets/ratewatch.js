@@ -26,7 +26,7 @@ export function sensitivity(rate, loans = [500000, 750000, 1000000]) {
   });
 }
 
-const srcLinks = (o) => `<span class="fine">(${(o.links || [['Source', o.source]]).map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(', ')})</span>`;
+const srcLinks = (o) => `<span class="fine">Sources: ${(o.links || [['Source', o.source]]).map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(', ')}.</span>`;
 
 export function rateWatchCard(rba, { compact = false } = {}) {
   const next = nextDecision();
