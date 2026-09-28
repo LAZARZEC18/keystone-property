@@ -14,6 +14,7 @@ function group(path) {
 
 export default async (req) => {
   if (req.method !== 'POST') return new Response(null, { status: 405 });
+  let counted = false;
   try {
     const body = await req.text();
     const { p } = JSON.parse(body || '{}');
@@ -22,10 +23,11 @@ export default async (req) => {
     const key = `${day}${group(p)}`;
     const n = Number(await store.get(key)) || 0;
     await store.set(key, String(n + 1));
+    counted = true;
   } catch {
     // counting must never break a page
   }
-  return new Response(null, { status: 204, headers: { 'cache-control': 'no-store' } });
+  return new Response(null, { status: 204, headers: { 'cache-control': 'no-store', 'x-counted': String(counted) } });
 };
 
 export const config = { path: '/api/hit' };
