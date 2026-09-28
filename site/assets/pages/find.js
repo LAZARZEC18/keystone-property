@@ -25,7 +25,7 @@ export default async function findPage(main, _p, query) {
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Smart search</div><h1>Tell us what you're looking for</h1>
   <p>Search the way you'd describe it to an agent. Ownaroo reads your budget, bedrooms, property type, location, lifestyle (beach, city, regional) and goal (yield, growth, first home), then ranks every matching suburb and prices the kind of home you described.</p></div>
-  <form class="hero-search" id="fs" style="max-width:none" onsubmit="return false"><input id="fq" type="search" value="${esc(q)}" placeholder="e.g. 3 bed house under $800k near the beach in Perth with good yield" aria-label="Describe what you're looking for"></form>
+  <form class="hero-search" id="fs" style="max-width:none" data-nosubmit><input id="fq" type="search" value="${esc(q)}" placeholder="e.g. 3 bed house under $800k near the beach in Perth with good yield" aria-label="Describe what you're looking for"></form>
   <div class="row" style="margin-bottom:8px">${EXAMPLES.map((e) => `<button class="pill" data-ex="${esc(e)}" style="cursor:pointer">${esc(e)}</button>`).join('')}</div>
   <div id="fout"></div>`;
   const input = main.querySelector('#fq');

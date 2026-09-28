@@ -43,7 +43,7 @@ export default async function propertyPage(main, _p, query) {
   main.innerHTML = `
   <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
   <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
-  <form class="hero-search" id="pf" style="max-width:none" onsubmit="return false"><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
+  <form class="hero-search" id="pf" style="max-width:none" data-nosubmit><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
   const go = () => input.value.trim() && navigate(`/property?q=${encodeURIComponent(input.value.trim())}`);
@@ -123,7 +123,7 @@ export default async function propertyPage(main, _p, query) {
   <div class="card flat tint"><div class="spread"><div><b>${esc(facts?.address || q)}</b><div class="note">In <a href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} ${s.s} ${s.pc || ''}</a> · ${esc(s.lga || '')} council · ${esc(R?.name || '')} · located from ${located}</div></div>${facts ? '<span class="powered">Property facts powered by <b>Domain</b></span>' : ''}</div></div>
   <div style="margin-top:14px">${seeTheArea(point.lat, point.lng, { place: facts?.address || (streetTyped ? first.trim() : cleanName(s.n)), sold: listingLinks(s).reaSold })}</div>
   <div class="grid split-spec" style="gap:20px;margin-top:16px" id="pgrid">
-    <form class="card" id="spec" onsubmit="return false" style="align-self:start">
+    <form class="card" id="spec" data-nosubmit style="align-self:start">
       <div class="seg" id="pmode" role="tablist" style="width:100%;margin-bottom:14px"><button type="button" data-m="home" style="flex:1">Buying to live in</button><button type="button" data-m="invest" style="flex:1">Buying to invest</button></div>
       <h3>The property</h3>
       <div class="fields" style="grid-template-columns:1fr 1fr">

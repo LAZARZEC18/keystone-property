@@ -94,7 +94,7 @@ export default async function firstHomePage(main, _p, query = {}) {
 
   <section class="section card" id="save"><h2>How long will it take to save?</h2>
     <div class="grid split-spec" style="gap:20px">
-      <form class="fields" id="sv" style="grid-template-columns:1fr 1fr;align-content:start" onsubmit="return false">
+      <form class="fields" id="sv" style="grid-template-columns:1fr 1fr;align-content:start" data-nosubmit>
         <label class="field">Home price ($)<input name="price" type="number" step="1" value="650000"></label>
         <label class="field">State<select name="state">${stOpts}</select></label>
         <label class="field">Deposit<select name="dep"><option value="0.05">5% (5% Deposit Scheme)</option><option value="0.1">10%</option><option value="0.2">20%</option></select></label>
@@ -109,7 +109,7 @@ export default async function firstHomePage(main, _p, query = {}) {
 
   <section class="section card" id="rvb"><h2>Rent or buy?</h2>
     <div class="grid split-spec" style="gap:20px">
-      <form class="fields" id="rb" style="grid-template-columns:1fr 1fr;align-content:start" onsubmit="return false">
+      <form class="fields" id="rb" style="grid-template-columns:1fr 1fr;align-content:start" data-nosubmit>
         <label class="field">Home price ($)<input name="price" type="number" step="1" value="650000"></label>
         <label class="field">State<select name="state">${stOpts}</select></label>
         <label class="field">Deposit<select name="dep"><option value="0.05">5% (5% Deposit Scheme)</option><option value="0.1">10% (LMI)</option><option value="0.2" selected>20%</option></select></label>
@@ -128,7 +128,7 @@ export default async function firstHomePage(main, _p, query = {}) {
 
   <section class="section card" id="fhss"><h2>First Home Super Saver calculator</h2>
     <div class="grid split-spec" style="gap:20px">
-      <form class="fields" id="fs" style="grid-template-columns:1fr 1fr;align-content:start" onsubmit="return false">
+      <form class="fields" id="fs" style="grid-template-columns:1fr 1fr;align-content:start" data-nosubmit>
         <label class="field">Your income ($/yr)<input name="income" type="number" step="1" value="90000"></label>
         <label class="field">Extra to super each year ($)<input name="c" type="number" step="1" value="15000"></label>
         <label class="field">Years<input name="years" type="number" min="1" max="10" value="4"></label>

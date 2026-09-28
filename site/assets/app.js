@@ -265,6 +265,10 @@ async function ticker() {
 }
 ticker();
 wirePhotos(document);
+// calculator forms never submit (inline onsubmit handlers are blocked by the content security policy)
+document.addEventListener('submit', (e) => {
+  if (e.target.matches?.('form[data-nosubmit]')) e.preventDefault();
+}, true);
 // printing: open folded sections so the PDF has everything
 window.addEventListener('beforeprint', () => document.querySelectorAll('details.fold').forEach((d) => (d.open = true)));
 render();

@@ -94,7 +94,7 @@ export default async function affordPage(main, _p, query) {
   <div class="page-head"><div class="eyebrow">Affordability analyst</div><h1>What can I afford, and where should I buy?</h1>
   <p class="lede-short">Three numbers: a comfortable price where you want to buy, the cash you need, and the weekly repayment. Then the schemes you qualify for and the suburbs that fit.</p></div>
   <div class="grid" style="grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px" id="aff-grid">
-    <form class="card" id="af" onsubmit="return false" style="align-self:start;position:sticky;top:110px">
+    <form class="card" id="af" data-nosubmit style="align-self:start;position:sticky;top:110px">
       <h3>Your situation</h3>
       <div class="fields" style="grid-template-columns:1fr 1fr">
         <label class="field" style="grid-column:1/-1">I'm buying as<select name="buyer"><option value="fhb">First home buyer (to live in)</option><option value="owner">Owner-occupier (not first home)</option><option value="investor">Investor</option></select></label>

@@ -100,3 +100,13 @@ test('no page still uses the old names', () => {
     assert.ok(!/Market Lenz|Keyzing(?!18@gmail)/.test(t), f);
   }
 });
+
+test('no inline event handlers (the content security policy blocks them)', async () => {
+  const { readdirSync } = await import('node:fs');
+  const dir = new URL('../site/assets/pages/', import.meta.url);
+  const files = [...readdirSync(dir).map((f) => new URL(f, dir)), new URL('../site/index.html', import.meta.url), new URL('../site/assets/app.js', import.meta.url)];
+  for (const f of files) {
+    const t = readFileSync(f, 'utf8');
+    assert.ok(!/\son(submit|click|load|error|change|input)="/.test(t), `inline handler in ${f.pathname}`);
+  }
+});
