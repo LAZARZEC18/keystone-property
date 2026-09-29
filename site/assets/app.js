@@ -286,9 +286,17 @@ async function ticker() {
       `<a href="/markets" data-link><span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b><span>${after}${next ? ` · next decision ${day(next)}` : ''}</span></a>`,
       bestOO && `<a href="/rates" data-link><span>Lowest owner-occupier variable, open to anyone</span> <b>${pct(bestOO.rate, 2)}</b></a>`,
       bestInv && `<a href="/rates" data-link class="t-inv"><span>Lowest investor variable, open to anyone</span> <b>${pct(bestInv.rate, 2)}</b></a>`,
+      openRate(rs, 'OO_PI_fixed2') && `<a href="/rates" data-link><span>Lowest 2-year fixed, owner-occupier</span> <b>${pct(openRate(rs, 'OO_PI_fixed2').rate, 2)}</b></a>`,
+      // each capital's 12-month change in home values (month-end), most to least
+      ...Object.values(market.regions || {})
+        .filter((r) => r.capital && r.annualPct != null)
+        .sort((x, y) => y.annualPct - x.annualPct)
+        .map((r) => `<a href="/markets" data-link><span>${r.name} homes, 12 months</span> <b class="${r.annualPct >= 0 ? 'up' : 'down'}">${pct(r.annualPct, 1, true)}</b></a>`),
       `<span class="t-when">Rates checked ${ago(rs.updated)}</span>`,
     ].filter(Boolean);
-    $('#ticker').innerHTML = `<div class="ticker-in">${items.map((i) => `<div>${i}</div>`).join('')}</div>`;
+    // the strip scrolls; a second copy makes the loop seamless (hidden from screen readers), and it pauses on hover or focus
+    const row = items.map((i) => `<div>${i}</div>`).join('');
+    $('#ticker').innerHTML = `<div class="ticker-track"><div class="ticker-in">${row}</div><div class="ticker-in" aria-hidden="true" inert>${row}</div></div>`;
   } catch (e) {
     console.warn('ticker', e);
   }

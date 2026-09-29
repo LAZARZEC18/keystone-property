@@ -809,3 +809,11 @@ details.fold[open] > summary { margin-bottom: 10px; }
   table.cards-sm.name-first td:last-child { justify-content: space-between; padding-top: 3px; }
 }
 table.cards-sm.name-first td:first-child, table.cards-sm.name-first td:first-child .fine { white-space: normal; }
+/* rate strip: a slow scrolling ticker (pauses on hover or keyboard focus; still for reduced motion) */
+.ticker { white-space: nowrap; overflow: hidden; }
+.ticker-track { display: flex; width: max-content; animation: tick 75s linear infinite; }
+.ticker-in { display: flex; flex-wrap: nowrap; gap: 30px; padding: 7px 15px; animation: none !important; max-width: none; margin: 0; }
+.ticker:hover .ticker-track, .ticker:focus-within .ticker-track { animation-play-state: paused; }
+.ticker b.up { color: var(--up); } .ticker b.down { color: var(--down); }
+@media (max-width: 640px) { .ticker .t-inv, .ticker .t-when { display: flex; } .ticker-in { gap: 22px; padding: 6px 11px; } .ticker-track { animation-duration: 60s; } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } .ticker { overflow-x: auto; scrollbar-width: none; } }

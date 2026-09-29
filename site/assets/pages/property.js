@@ -1,3 +1,4 @@
+import { demo } from '../demo.js';
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek, returnsLine } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
 import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment, scenarioReturns, incomeFor } from '../engine.js';
@@ -59,8 +60,8 @@ export default async function propertyPage(main, _p, query) {
   const index = null;
 
   main.innerHTML = `
-  <div class="page-head"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
-  <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div></div>
+  <div class="page-head${q ? '' : ' with-demo'}"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
+  <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
   <form class="hero-search" id="pf" style="max-width:none" data-nosubmit><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');

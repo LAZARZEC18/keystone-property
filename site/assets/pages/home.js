@@ -1,3 +1,4 @@
+import { rateWatchCard } from '../ratewatch.js';
 import { esc, aud, pct, setMeta, date } from '../ui.js';
 import { load, typicalRate, suburbs, suburbUrl } from '../data.js';
 import { navigate } from '../app.js';
@@ -60,9 +61,23 @@ export default async function home(main) {
   </section>
 
   <section class="section">
-    <div class="spread"><h2>See it in action</h2><a href="/about" data-link>Two-minute tour →</a></div>
+    <div class="spread"><h2>See it in action</h2><a href="/about" data-link>The full two-minute tour →</a></div>
+    <div class="seg" id="demo-tabs" role="tablist">${[['afford', 'What can I afford?'], ['calculator', '2026 tax calculator'], ['budgetmap', 'Budget map'], ['estimate', 'Price range for a home'], ['suburb', 'Suburb report'], ['rates', 'Rates']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}">${l}</button>`).join('')}</div>
     <div class="demo-stage" id="demo-stage">${demo('afford')}</div>
-    <p class="fine" style="margin-top:6px">Recorded with example inputs in September 2026.</p>
+    <p class="fine" style="margin-top:6px">Recorded with example inputs on 29 September 2026; the live figures change as the data updates.</p>
+  </section>
+
+  <section class="section">
+    <div class="card tax-band">
+      <div><div class="eyebrow">The 2026 tax changes, in numbers</div><h2 style="margin:4px 0 8px">Know what an investment property costs you each week</h2>
+      <p class="muted" style="margin:0">Established homes bought after 12 May 2026 can offset rental losses against your salary only until 30 June 2027; after that, losses carry forward or offset rental profit from your other properties. From 1 July 2027 the 50% CGT discount is replaced by indexation with a 30% minimum tax. New builds keep negative gearing and, on sale, can choose the old 50% discount or the new method. The calculator runs your deal both ways, side by side.</p></div>
+      <div class="tax-cta"><a class="btn primary" href="/analyse" data-link>Run the numbers →</a><a class="fine" href="/guide/tax-2026" data-link>What changed, in plain English</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="spread"><h2>Rates and the RBA</h2><a href="/markets" data-link>Market update →</a></div>
+    ${rateWatchCard(rba, { compact: true })}
   </section>
 
   <section class="section">
@@ -77,6 +92,13 @@ export default async function home(main) {
     },
   });
   wireDemos(main);
+  main.querySelector('#demo-tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-demo-tab]');
+    if (!b) return;
+    main.querySelectorAll('#demo-tabs button').forEach((x) => x.classList.toggle('on', x === b));
+    main.querySelector('#demo-stage').innerHTML = demo(b.dataset.demoTab);
+    wireDemos(main);
+  });
 
   // income slider: comfortable price vs median house and unit in each capital
   let dep = 0.2;

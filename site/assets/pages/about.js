@@ -1,16 +1,13 @@
 import { setMeta, esc } from '../ui.js';
 import { SITE } from '../site.js';
-import { WHO, tourFigure, wireTour } from './why.js';
+import { showcase, wireTour } from './why.js';
+import { load } from '../data.js';
 
 const PAGES = {
   about: {
     title: 'About Ownaroo',
     description: 'What Ownaroo does for home buyers and investors, who runs it, where its numbers come from and how it stays independent.',
     body: (h) => `
-      <p class="lead" style="font-size:18px">Ownaroo is a free, independent calculator site for Australian home buyers and investors. It answers four questions: what can I afford, what will this investment really cost, what is this suburb like, and what rate can I get.</p>
-      ${h.tour}
-      <h2>Built for people buying a home</h2>
-      <div class="grid g3 why-who" style="margin-bottom:8px">${WHO.map(([t, d, href]) => `<a class="card product" href="${href}" data-link><h3>${t}</h3><p class="muted">${d}</p></a>`).join('')}</div>
       <h2>Who runs it</h2>
       ${h.owner}
       <h2>Where the numbers come from</h2>
@@ -106,8 +103,14 @@ export default async function infoPage(main, params) {
   const business = SITE.abn || SITE.email || SITE.businessName
     ? `<div class="card flat tint" style="margin:18px 0"><div class="kv">${SITE.businessName ? `<span>Business</span><span>${esc(SITE.businessName)}</span>` : ''}${SITE.abn ? `<span>ABN</span><span>${esc(SITE.abn)}</span>` : ''}${SITE.email ? `<span>Email</span><span><a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></span>` : ''}${SITE.location ? `<span>Based in</span><span>${esc(SITE.location)}</span>` : ''}</div></div>`
     : '';
-  main.innerHTML = `<div class="page-head"><div class="eyebrow">Ownaroo</div><h1>${P.title}</h1></div><div class="prose" style="max-width:760px">${P.body({ business, owner, tour: key === 'about' ? tourFigure() : '', updated: SITE.policyUpdated, abn: esc(SITE.abn || ''), entity: esc(SITE.entity || SITE.businessName), email: esc(SITE.email), location: esc(SITE.location), law: esc(SITE.governingLaw || 'Western Australia') })}</div>`;
-  if (key === 'about') wireTour(main);
+  const args = { business, owner, updated: SITE.policyUpdated, abn: esc(SITE.abn || ''), entity: esc(SITE.entity || SITE.businessName), email: esc(SITE.email), location: esc(SITE.location), law: esc(SITE.governingLaw || 'Western Australia') };
+  if (key === 'about') {
+    const rs = await load('rates-summary').catch(() => null);
+    main.innerHTML = showcase(rs, P.body(args));
+    wireTour(main);
+    return;
+  }
+  main.innerHTML = `<div class="page-head"><div class="eyebrow">Ownaroo</div><h1>${P.title}</h1></div><div class="prose" style="max-width:760px">${P.body({ business, owner, tour: '', updated: SITE.policyUpdated, abn: esc(SITE.abn || ''), entity: esc(SITE.entity || SITE.businessName), email: esc(SITE.email), location: esc(SITE.location), law: esc(SITE.governingLaw || 'Western Australia') })}</div>`;
   const form = main.querySelector('#contact-form');
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
