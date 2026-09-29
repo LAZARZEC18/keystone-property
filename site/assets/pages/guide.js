@@ -7,6 +7,9 @@ import { HOME_GUARANTEE, STATE_SCHEMES } from '../rules.js';
 // one page per section (keep in step with netlify/shared/seo-core.js GUIDE): [id, page title, description]
 export const GUIDE = [["before", "Before you buy: goals, budget and timing", "What to decide before you look at a single property: why you are buying, what you can hold through a rate rise, and your timeline."], ["fhb", "Buying your first home in Australia (2026)", "The 5% Deposit Scheme, Help to Buy, first home grants, stamp duty concessions and state home lenders like Keystart, and each step to settlement."], ["strategy", "Property investment strategies: growth, yield or new builds", "Capital growth, cash flow and new builds under the 2026 tax rules: what each strategy needs and who it suits."], ["finance", "Getting your home loan ready", "Pre-approval, deposit, lenders mortgage insurance, the 3-point serviceability buffer and the documents lenders ask for."], ["research", "How to research a suburb before you buy", "Prices, rents, vacancy, supply, local economy and hazards: what to check about a suburb and where to find it."], ["buy", "Finding, inspecting and buying a property", "Inspections, building and pest reports, making an offer, auctions and exchanging contracts."], ["settle", "Property settlement in Australia", "What happens between exchange and settlement, and what to check on the day."], ["own", "Owning an investment property", "Tenants, property managers, insurance, depreciation and records for tax time."], ["costs", "Every cost of buying property, in one place", "Deposit, stamp duty, LMI, legal and inspection fees, and the ongoing costs of owning."], ["duty", "Stamp duty in every state and territory (2026)", "Stamp duty at common prices in each state and territory, with first home and owner-occupier concessions."], ["landtax", "Land tax by state (2026)", "Land tax thresholds and rates for investors in each state and territory."], ["tax-2026", "The 2026 negative gearing and CGT changes, explained", "Who keeps negative gearing, how capital gains are taxed from 1 July 2027, and what it means for your weekly cost and return."], ["mistakes", "Common property buying mistakes", "The mistakes that cost buyers most, and how to avoid them."], ["glossary", "Property and home loan glossary", "Plain-English definitions of LVR, LMI, comparison rates, offset accounts and more."], ["faq", "Property buying questions, answered", "Short answers to the questions buyers ask most."]];
 
+// Land titles office fees to register the transfer and the mortgage on a $750,000 purchase, rounded (2026).
+const REG_FEES = { NSW: 330, VIC: 1900, QLD: 2900, WA: 560, SA: 3600, TAS: 500, ACT: 950, NT: 330 };
+
 export default async function guidePage(main, params = {}) {
   const section = params.section || '';
   // old single-page links (/guide/fhb, /guide/fhb#state-schemes) open the section's own page
@@ -53,7 +56,7 @@ export default async function guidePage(main, params = {}) {
       <section id="before" class="section" style="margin-top:0"><h2>1. Before you start</h2>
         <p>Property is the biggest purchase most people make, it's expensive to buy and sell, and it's usually bought with borrowed money. Whether it's a home to live in or an investment, be clear on three things before you look at listings.</p>
         <div class="grid g3">
-          <div class="card flat tint"><h3>Your buffer</h3><p class="note">Keep 3–6 months of repayments in an offset or savings account for rate rises, repairs and, for investors, vacancies. Test your repayments at 2 points above today's rate.</p></div>
+          <div class="card flat tint"><h3>Your buffer</h3><p class="note">Keep 3–6 months of repayments in an offset or savings account for rate rises, repairs and, for investors, vacancies. Test your repayments at 3 points above your rate, the same buffer lenders must use.</p></div>
           <div class="card flat tint"><h3>Your horizon</h3><p class="note">Buying and selling costs 6–8% of the price. Plan to stay or hold for 7–10 years or more, or the costs eat any gain.</p></div>
           <div class="card flat tint"><h3>Your goal</h3><p class="note">A home: commute, space, schools and the street. An investment: cash flow now or growth later, rarely both. The goal decides the suburb.</p></div>
         </div>
@@ -63,15 +66,15 @@ export default async function guidePage(main, params = {}) {
         <p>Buying a home to live in is a different decision from buying an investment. Location, commute and the kind of street you want matter more than yield, and first home buyers get help that investors don't.</p>
         <h3>The 5% Deposit Scheme</h3>
         <p>Since 1 October 2025 the federal 5% Deposit Scheme has no income caps and no limit on places. Eligible first home buyers can buy with a 5% deposit and pay no lenders mortgage insurance, which saves roughly $10,000 to $30,000 on a typical loan. The home must be under the price cap for its area:</p>
-        <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Capital city and regional centres</th><th class="n">Rest of state</th></tr></thead><tbody>
-          ${Object.entries(HOME_GUARANTEE.caps).map(([st, [a, b]]) => `<tr><td>${st}</td><td class="n">${aud(a)}</td><td class="n">${st === 'ACT' || st === 'NT' ? '—' : aud(b)}</td></tr>`).join('')}
+        <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Capital city and regional centres (Darwin in the NT)</th><th class="n">Rest of state</th></tr></thead><tbody>
+          ${Object.entries(HOME_GUARANTEE.caps).map(([st, [a, b]]) => `<tr><td>${st}</td><td class="n">${aud(a)}</td><td class="n">${st === 'ACT' ? '—' : aud(b)}</td></tr>`).join('')}
         </tbody></table></div>
-        <p class="fine">Regional centres on the capital-city cap: Newcastle and Lake Macquarie, the Illawarra, Geelong, the Gold Coast and the Sunshine Coast. Confirm the cap for a specific postcode with a participating lender.</p>
+        <p class="fine">Regional centres on the capital-city cap: in NSW, Newcastle and Lake Macquarie, the Illawarra, the Central Coast, Coffs Harbour–Grafton, the Mid North Coast and Richmond–Tweed; in Victoria, Geelong; in Queensland, the Gold Coast and the Sunshine Coast. In the NT the cap is $750,000 in Darwin and $600,000 elsewhere. Confirm the cap for a specific postcode with a participating lender. <a href="https://firsthomebuyers.gov.au/australian-government-5-percent-deposit-scheme/property-price-caps" target="_blank" rel="noopener">Official price caps ↗</a></p>
         <h3>Stamp duty concessions</h3>
         <ul class="pros">
           <li><b>NSW</b>: no duty up to $800,000 and a concession to $1,000,000 (new and existing homes).</li>
           <li><b>VIC</b>: no duty up to $600,000 and a concession to $750,000.</li>
-          <li><b>QLD</b>: no duty on new homes of any value (contracts from 1 May 2025); no duty on established homes to $700,000, phasing out by $800,000.</li>
+          <li><b>QLD</b>: no duty on new homes of any value (contracts from 1 May 2025); no duty on established homes to $700,000, phasing out by $800,000. From 1 August 2026 the concessions are only for Australian citizens and permanent residents.</li>
           <li><b>WA</b>: from 7 May 2026, no duty up to $600,000 and a concessional rate to $800,000.</li>
           <li><b>SA</b>: no duty on new homes, off-the-plan and vacant land of any value; no relief on established homes.</li>
           <li><b>ACT</b>: from 1 July 2026 the Home Buyer Concession Scheme removes stamp duty at any price for first home buyers and for anyone who hasn't owned property in the last five years, if they live in the home for at least 12 months.</li>
@@ -81,16 +84,16 @@ export default async function guidePage(main, params = {}) {
         <div class="tbl-wrap"><table><thead><tr><th>State</th><th class="n">Grant</th><th>Applies to</th><th>Value cap</th></tr></thead><tbody>
           <tr><td>NSW</td><td class="n">$10,000</td><td>New homes</td><td>$600,000 (house and land $750,000)</td></tr>
           <tr><td>VIC</td><td class="n">$10,000</td><td>New homes</td><td>$750,000</td></tr>
-          <tr><td>QLD</td><td class="n">$15,000</td><td>New homes</td><td>$750,000 ($30,000 for contracts to 30 June 2026)</td></tr>
+          <tr><td>QLD</td><td class="n">$30,000</td><td>New homes</td><td>$750,000 (continued in the 2026–27 Budget, no end date set)</td></tr>
           <tr><td>WA</td><td class="n">$10,000</td><td>New homes</td><td>$800,000 south of the 26th parallel, $1,000,000 north</td></tr>
           <tr><td>SA</td><td class="n">$15,000</td><td>New homes</td><td>No cap</td></tr>
-          <tr><td>TAS</td><td class="n">$10,000</td><td>New homes</td><td>No cap</td></tr>
-          <tr><td>NT</td><td class="n">$50,000 new / $10,000 established</td><td>New and established</td><td>No cap</td></tr>
+          <tr><td>TAS</td><td class="n">$20,000</td><td>New homes, contracts 1 July 2026 to 30 June 2027</td><td>No cap</td></tr>
+          <tr><td>NT</td><td class="n">$50,000</td><td>New homes, to 30 September 2027 (HomeGrown Territory Grant). The $10,000 grant for established homes ended on 30 September 2025. A separate $30,000 FreshStart New Home Grant helps existing owners buy or build a new home.</td><td>No cap</td></tr>
           <tr><td>ACT</td><td class="n">—</td><td colspan="2">No grant; the Home Buyer Concession Scheme removes stamp duty instead</td></tr>
         </tbody></table></div>
         <p class="fine">Amounts as published in September 2026. Grants change often: confirm with your state revenue office before you sign.</p>
         <h3>First Home Super Saver scheme</h3>
-        <p>You can make voluntary contributions to your super of up to $15,000 a year and later withdraw up to $50,000 of them, plus deemed earnings, for a first home deposit. Before-tax (salary sacrifice) contributions are taxed at 15% going in instead of your marginal rate, which can grow a deposit faster. You must request a release from the ATO before you sign a contract (or within 14 days of signing).</p>
+        <p>You can make voluntary contributions to your super of up to $15,000 a year and later withdraw up to $50,000 of them, plus deemed earnings, for a first home deposit. Before-tax (salary sacrifice) contributions are taxed at 15% going in instead of your marginal rate, which can grow a deposit faster. You can sign a contract first and then request the release from the ATO, up to 90 days after signing (this changed on 15 September 2024). Contributions count toward the concessional cap, which is $32,500 a year from 1 July 2026, together with your employer's super. Deemed earnings use the shortfall interest charge rate: 7.43% for July to September 2026 and 7.51% from 1 October.</p>
         <h3>Help to Buy (shared equity)</h3>
         <p>The federal Help to Buy scheme contributes up to 40% of the price of a new home or 30% of an existing one, so you need a deposit of just 2% and a much smaller loan. The government owns that share and you buy it back over time or when you sell. It has income limits ($103,000 single, $165,000 for couples and single parents), price caps by area and 10,000 places a year. Weigh it carefully: you give up part of any capital gain.</p>
         <h3 id="state-schemes">State home lenders and shared equity (including Keystart)</h3>
@@ -99,14 +102,14 @@ export default async function guidePage(main, params = {}) {
         <p class="fine">New South Wales has no state low-deposit lender; buyers there use the federal schemes and the state's first home duty exemption. Limits change often, so check each program's site. Checked September 2026.</p>
         <h3>First home, step by step</h3>
         <ol>
-          <li><b>Set a budget you can live with.</b> Keep repayments under 30% of your before-tax household income (above that is commonly called mortgage stress), and test them at 2 points above today's rate. The <a href="/afford?buyer=fhb" data-link>affordability analyst</a> does this for every state, using the 5% Deposit Scheme and your state's duty concessions.</li>
+          <li><b>Set a budget you can live with.</b> Keep repayments under 30% of your before-tax household income (above that is commonly called mortgage stress), and test them at 3 points above your rate (the buffer lenders use). The <a href="/afford?buyer=fhb" data-link>affordability analyst</a> does this for every state, using the 5% Deposit Scheme and your state's duty concessions.</li>
           <li><b>Choose where to live.</b> Start from where you work and how far you're willing to travel, then look at the local economy, services and price trend. Enter your workplace in the affordability analyst to rank suburbs within your commute.</li>
           <li><b>Get pre-approval.</b> A broker or lender confirms what you can borrow and whether you qualify for the 5% Deposit Scheme.</li>
           <li><b>Check value before you offer.</b> Recent sales in the same street are the real guide. Ownaroo's <a href="/property" data-link>price range tool</a> gives a price range for a typical home like it as a sense-check, not a valuation.</li>
           <li><b>Inspect properly.</b> Building and pest inspection for houses; strata report for units and townhouses.</li>
           <li><b>Exchange and settle.</b> Your conveyancer handles contracts, duty and settlement (sections 6 and 7 below apply to you too).</li>
         </ol>
-        <p class="note">Live, then invest: if you buy a home to live in first, you get the owner-occupier concessions and rates. If you later rent it out, check the six-year main-residence CGT rule with your accountant.</p>
+        <p class="note">Live, then invest: if you buy a home to live in first, you get the owner-occupier concessions and rates. If you later rent it out, check the six-year main-residence CGT rule with your accountant. <b>Watch the 2026 rules:</b> an established home bought after 12 May 2026 that you later rent out can't be negatively geared against your wages, because the losses can only offset rental income or later gains. Plan the numbers on that basis.</p>
       </section>
 
       <section id="strategy" class="section"><h2>3. Pick a strategy</h2>
@@ -114,7 +117,7 @@ export default async function guidePage(main, params = {}) {
           <tr><td><b>Capital growth</b></td><td>Houses on land in established, supply-constrained suburbs near jobs</td><td>Land drives long-run growth; easier to sell</td><td>Low yields (3-4%), negative cash flow, bigger deposit</td></tr>
           <tr><td><b>Cash flow</b></td><td>Regional towns and outer suburbs, yields 5%+</td><td>Rent covers more of the loan; lower entry price</td><td>Slower or patchier growth; mining-town and single-employer risk</td></tr>
           <tr><td><b>New build</b></td><td>House and land, or a new townhouse</td><td>Keeps negative gearing and CGT choice after 2027; high depreciation; low maintenance</td><td>Premium price, off-the-plan valuation risk, suburbs with heavy supply</td></tr>
-          <tr><td><b>Rent-vest</b></td><td>Rent where you live, buy where you can afford</td><td>Get into the market sooner</td><td>No first home concessions on an investment; you pay rent and a mortgage</td></tr>
+          <tr><td><b>Rent-vest</b></td><td>Rent where you live, buy where you can afford</td><td>Get into the market sooner</td><td>No first home concessions on an investment; you pay rent and a mortgage. An established home bought after 12 May 2026 can't be negatively geared against your wages</td></tr>
           <tr><td><b>Value-add</b></td><td>Renovate, subdivide or add a granny flat</td><td>Can create equity quickly</td><td>Building costs and approvals risk; needs skills or trades</td></tr>
         </tbody></table></div>
         <p class="note" style="margin-top:10px">Ownaroo's <a href="/suburbs" data-link>suburb explorer</a> has a strategy switch that re-ranks all 11,000+ suburbs for growth, cash flow or first-home affordability.</p>
@@ -124,7 +127,7 @@ export default async function guidePage(main, params = {}) {
         <div class="steps">
           <div class="card step"><h3>Check your borrowing power</h3><p>Lenders test your repayments at the loan rate plus 3 percentage points and usually count only about 80% of rent. Use the <a href="/borrowing" data-link>borrowing power calculator</a> to get a realistic ceiling.</p></div>
           <div class="card step"><h3>Save the deposit and costs</h3><p>At 20% deposit you avoid lenders mortgage insurance (LMI). At 10% you'll pay LMI: on a ${aud(630000)} loan for a ${aud(700000)} property in Victoria that's about <b>${aud(lmi(630000, 700000, 'VIC').premium)}</b>. On top of the deposit, budget for stamp duty (see below) and about $2,000-3,500 of legal, inspection and government fees.</p></div>
-          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest investor variable rate open to anyone today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and the average rate on new investor variable loans (RBA) is ${pct(rate, 2)}. Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare 90+ lenders →</a></p></div>
+          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest investor variable rate open to anyone today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and a typical new investor variable loan is about ${pct(rate, 2)} (${esc(typicalRate(rba, 'INV').label)}). Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare 90+ lenders →</a></p></div>
           <div class="card step"><h3>Get pre-approval</h3><p>Pre-approval (conditional approval) tells you what a lender will likely lend and lets you bid with confidence. It usually lasts 90 days. A mortgage broker is paid by the lender and can compare dozens of banks at no cost to you.</p></div>
         </div>
       </section>
@@ -148,7 +151,7 @@ export default async function guidePage(main, params = {}) {
           <div class="card step"><h3>Run the numbers</h3><p>Put each serious contender through the <a href="/analyse" data-link>2026 tax-change calculator</a>: all costs, the weekly shortfall after tax, a rate-rise stress test and the 10-year return. Walk away if it only works in the high-growth case.</p></div>
           <div class="card step"><h3>Check the property</h3><p>Get a building and pest inspection (about $400-800). For strata, get a strata report (about $250-400) covering levies, the sinking fund, defects and disputes. Ask a property manager for a rental appraisal before you buy.</p></div>
           <div class="card step"><h3>Have the contract reviewed</h3><p>A conveyancer or solicitor ($1,000-2,500) checks the title, zoning, easements, special conditions and the vendor statement. In most states you can make the offer "subject to finance" and "subject to building and pest".</p></div>
-          <div class="card step"><h3>Negotiate or bid</h3><p>Private sale: offer below your walk-away price and negotiate. Auction: sales are unconditional, with no cooling-off period, so finance and inspections must be done beforehand. You'll usually pay a 10% deposit on the day. In NSW and QLD you must register to bid.</p></div>
+          <div class="card step"><h3>Negotiate or bid</h3><p>Private sale: offer below your walk-away price and negotiate. Auction: sales are unconditional, with no cooling-off period, so finance and inspections must be done beforehand. You'll usually pay a 10% deposit on the day. In NSW, QLD, SA and the ACT you must register to bid (with photo ID) before the auction.</p></div>
           <div class="card step"><h3>Exchange and cooling off</h3><p>Once contracts are signed, cooling-off periods for private sales vary by state: NSW 5 business days, VIC 3, QLD 5, SA 2, ACT 5, NT 4. WA and TAS have none unless written into the contract. Pulling out usually costs 0.2-0.25% of the price.</p></div>
         </div>
       </section>
@@ -165,15 +168,17 @@ export default async function guidePage(main, params = {}) {
       </section>
 
       <section id="costs" class="section"><h2>9. Every cost, in one place</h2>
-        <p>Using a ${aud(750000)} house bought by an investor with 20% down, a ${pct(rate, 2)} loan (the RBA average rate on new investor variable loans) and ${aud(620)}/wk rent:</p>
+        <p>Using a ${aud(750000)} house bought by an investor with 20% down, a ${pct(rate, 2)} loan (${esc(typicalRate(rba, 'INV').label)}) and ${aud(620)}/wk rent:</p>
         <div class="tbl-wrap"><table><thead><tr><th>Cost</th>${sts.map((s) => `<th class="n">${s}</th>`).join('')}</tr></thead><tbody>
           <tr><td>Deposit (20%)</td>${sts.map(() => `<td class="n">${aud(150000)}</td>`).join('')}</tr>
           <tr><td>Stamp duty (investor)</td>${sts.map((s) => `<td class="n">${aud(stampDuty(s, 750000).duty)}</td>`).join('')}</tr>
-          <tr><td>Legal, inspections, fees</td>${sts.map(() => `<td class="n">${aud(2500)}</td>`).join('')}</tr>
-          <tr><td><b>Cash to buy</b></td>${sts.map((s) => `<td class="n"><b>${aud(152500 + stampDuty(s, 750000).duty)}</b></td>`).join('')}</tr>
+          <tr><td>Legal, inspections, loan fees</td>${sts.map(() => `<td class="n">${aud(2500)}</td>`).join('')}</tr>
+          <tr><td>Land titles registration (transfer and mortgage), about</td>${sts.map((s) => `<td class="n">${aud(REG_FEES[s] || 500)}</td>`).join('')}</tr>
+          <tr><td><b>Cash to buy</b></td>${sts.map((s) => `<td class="n"><b>${aud(152500 + (REG_FEES[s] || 500) + stampDuty(s, 750000).duty)}</b></td>`).join('')}</tr>
           <tr><td>Monthly repayment (P&amp;I, 30 yrs)</td>${sts.map(() => `<td class="n">${aud(repayment(600000, rate, 30))}</td>`).join('')}</tr>
           <tr><td>Land tax a year (land ≈ 55%)</td>${sts.map((s) => `<td class="n">${aud(landTax(s, 412500, { perth: s === 'WA' }).tax)}</td>`).join('')}</tr>
         </tbody></table></div>
+        <p class="fine" style="margin-top:6px">Registration fees are rounded 2026 figures at ${aud(750000)}. Victoria, Queensland and South Australia charge transfer registration by value, so they cost far more there; check your state's land titles office for the exact fee.</p>
       </section>
 
       <section id="duty" class="section"><h2>10. Stamp duty by state</h2>
@@ -204,7 +209,9 @@ export default async function guidePage(main, params = {}) {
         <p class="fine">Sources: <a href="${RULES.reform.source}" target="_blank" rel="noopener">ATO</a> · <a href="${RULES.reform.factsheet}" target="_blank" rel="noopener">Budget factsheet</a>. General information only. See a registered tax agent about your situation.</p>
               <h3>Self-managed super funds</h3>
         <p>From 10 August 2026 (45 days after Royal Assent on 26 June), an SMSF can no longer enter a new limited recourse borrowing arrangement to buy residential property. Arrangements (including signed contracts) made before then are unaffected, and business real property can still be bought with borrowing.</p>
-        <p class="note"><b>Details still being settled.</b> Treasury is still consulting on parts of the new rules, including exactly how gains either side of 1 July 2027 are measured, trusts, and part-year residents. Ownaroo models the law as passed and will update as the detail is finalised. Get tax advice for your own situation.</p>
+        <h3>Trusts and companies</h3>
+        <p>The 2026–27 Budget also announced a 30% minimum tax on discretionary (family) trusts from 1 July 2028, paid by the trustee. Beneficiaries get a non-refundable credit for it, so distributing rent or gains to a low-earning family member will no longer cut the tax below 30%. It is not law yet (exposure draft consultation ran in September 2026), and a three-year rollover from 1 July 2027 lets assets move out of trusts. Ownaroo models individual owners only; get advice before buying through a trust or company. <a href="https://www.ato.gov.au/about-ato/new-legislation/in-detail/businesses/tax-reform-introducing-a-minimum-tax-on-discretionary-trusts" target="_blank" rel="noopener">ATO ↗</a></p>
+        <p class="note"><b>Details still being settled.</b> Treasury is still consulting on parts of the new rules, including exactly how gains either side of 1 July 2027 are measured, trusts, part-year residents, and the definition of a "new build" (the Tranche 2 consultation proposes a 24-month test on whether anyone has lived in it), so a home sold as new may not count. Ownaroo models the law as passed and will update as the detail is finalised. Get tax advice for your own situation.</p>
       </section>
 
 
@@ -231,7 +238,7 @@ export default async function guidePage(main, params = {}) {
           ["House or apartment?", "Land drives long-run growth, so houses have usually grown faster. Apartments have higher yields and lower entry prices but carry strata costs and supply risk. Townhouses and villas sit in between."],
           ["How accurate are Ownaroo's prices?", "Where a state publishes official suburb sales (VIC, SA, NSW), Ownaroo uses them. Elsewhere it's a calibrated model, typically within about 12-20% of the true median. Always check recent sales for the specific street and property."],
         ]
-          .map(([q, a]) => `<details class="faq"><summary>${q}</summary><p class="note" style="margin-top:8px">${esc(a)}</p></details>`)
+          .map(([q, a]) => `<div class="faq-item"><h3 class="faq-q">${q}</h3><p class="note">${esc(a)}</p></div>`)
           .join('')}
       </section>
       <p class="fine section">General information only, not financial, tax or legal advice.</p>

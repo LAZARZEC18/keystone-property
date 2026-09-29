@@ -32,20 +32,33 @@ export function durationYears(s) {
 export function productExtras(p) {
   const feats = (p.features || []).map((f) => String(f.featureType || ''));
   const amt = (f) => num(f.fixedAmount?.amount ?? f.amount) ?? 0;
+  const fees = Array.isArray(p.fees) ? p.fees : null;
   let annualFee = 0;
   let upfrontFee = 0;
-  for (const f of p.fees || []) {
+  const setup = {};
+  for (const f of fees || []) {
     const per = String(f.additionalValue || '');
-    // optional feature fees (an offset account you may not use) aren't part of the loan's own cost
-    if (f.feeType === 'PERIODIC' && /offset|feature|redraw/i.test(f.name || '')) continue;
-    if (f.feeType === 'PERIODIC') annualFee += /P1M|P30D/.test(per) ? amt(f) * 12 : /P3M/.test(per) ? amt(f) * 4 : /P6M/.test(per) ? amt(f) * 2 : /P1Y|P12M/.test(per) || !per ? amt(f) : 0;
-    else if (f.feeType === 'UPFRONT') upfrontFee += amt(f);
+    const name = `${f.name || ''} ${f.additionalInfo || ''}`;
+    // optional feature fees (an offset account you may not use) and one-off event fees aren't the loan's own cost
+    if (f.feeType === 'PERIODIC' && /offset|feature|redraw|statement|paper/i.test(name)) continue;
+    // a package fee is ongoing even when a feed files it as an event
+    const periodic = f.feeType === 'PERIODIC' || (/package|annual|yearly|monthly (?:account|service|loan) fee|service fee/i.test(name) && !/discharge|exit|break/i.test(name));
+    if (periodic) annualFee += /P1M|P30D|month/i.test(per + name) ? amt(f) * 12 : /P3M/.test(per) ? amt(f) * 4 : /P6M/.test(per) ? amt(f) * 2 : amt(f);
+    else {
+      // the lender's own set-up fees for a standard purchase, one of each kind; not government registration,
+      // construction, variation or discharge fees that only some borrowers pay
+      const m = name.match(/establishment|application|settlement|valuation|\bval\b/i)?.[0].toLowerCase();
+      const kind = m && (m.startsWith('val') ? 'valuation' : m);
+      if (kind && !/building|bridging|construction|variation|discharge|additional|progress|switch|\breg\b|registration|government|top.?up|increase/i.test(name)) setup[kind] = Math.max(setup[kind] || 0, amt(f));
+    }
   }
+  upfrontFee = Object.values(setup).reduce((t, v) => t + v, 0);
   return {
-    offset: feats.some((t) => /OFFSET/.test(t)) ? 1 : 0,
-    redraw: feats.some((t) => /REDRAW/.test(t)) ? 1 : 0,
-    annualFee: Math.round(annualFee),
-    upfrontFee: Math.round(upfrontFee),
+    // null = the feed doesn't say; never read a missing feature as "no"
+    offset: feats.some((t) => /OFFSET/.test(t)) ? 1 : feats.length ? 0 : null,
+    redraw: feats.some((t) => /REDRAW/.test(t)) ? 1 : feats.length ? 0 : null,
+    annualFee: fees && fees.length ? Math.round(annualFee) : null,
+    upfrontFee: fees && fees.length ? Math.round(upfrontFee) : null,
   };
 }
 
@@ -153,7 +166,7 @@ async function negotiate(url, candidates, state, key) {
   return null;
 }
 
-async function listProducts(base, state) {
+export async function listProducts(base, state) {
   const products = [];
   let url = `${base.replace(/\/$/, '')}/cds-au/v1/banking/products?product-category=RESIDENTIAL_MORTGAGES&page-size=100`;
   for (let page = 0; page < 10 && url; page++) {
@@ -166,7 +179,7 @@ async function listProducts(base, state) {
   return { products };
 }
 
-async function productDetail(base, id, state) {
+export async function productDetail(base, id, state) {
   const url = `${base.replace(/\/$/, '')}/cds-au/v1/banking/products/${encodeURIComponent(id)}`;
   const r = await negotiate(url, ['6', '5', '4', '7', '3', '2', '1'], state, 'detail');
   return r?.ok ? r.json.data : null;

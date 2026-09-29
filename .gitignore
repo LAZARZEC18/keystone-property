@@ -5,3 +5,4 @@ __pycache__/
 .DS_Store
 .netlify/
 data/history/daily-index.json
+.wrangler/

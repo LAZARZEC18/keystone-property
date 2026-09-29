@@ -1,4 +1,4 @@
-import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
+import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, confLevel, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch, typicalRate, openRate } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict, scenarioReturns, valueEstimate, repayment } from '../engine.js';
@@ -101,9 +101,10 @@ export default async function suburbPage(main, params) {
     </div>
   </div>
   ${brandPanel(null)}
+  <nav class="page-menu no-print" aria-label="On this page"><a href="#s-price">Price</a><a href="#s-sale">For sale</a><a href="#condition">Condition</a><a href="#s-hazards">Hazards</a><a href="#s-moves">Trends</a><a href="#s-case">Investment case</a><a href="#s-score">Score</a><a href="#s-people">People</a><a href="#s-nearby">Nearby</a></nav>
   <section class="section" style="margin-top:14px">${seeTheArea(s.lat, s.lng, { place: name, sold: listingLinks(s).reaSold })}</section>
 
-  <div class="grid g-side section" style="margin-top:20px">
+  <div class="grid g-side section" style="margin-top:20px" id="s-price">
     <div class="card">
       <div class="stats">
         ${fewHouses ? `${unitStat}
@@ -123,7 +124,7 @@ export default async function suburbPage(main, params) {
     </div>
   </div>
 
-  <section class="section card">
+  <section class="section card" id="s-sale">
     <div class="card-head"><h3>Homes for sale in ${esc(name)} now</h3><span class="note">and what homes here actually sold for</span></div>
     <div class="row">
       <a class="btn primary" href="${links.reaBuy}" target="_blank" rel="noopener">For sale · realestate.com.au ↗</a>
@@ -138,7 +139,7 @@ export default async function suburbPage(main, params) {
   </section>
 
   <section class="section card" id="condition">
-    <div class="card-head"><h3>What the typical price hides</h3><span class="note">condition matters as much as the suburb</span></div>
+    <div class="card-head"><h3>What the typical price hides</h3><span class="tag tag-model" title="The same percentages for every suburb, not local sales">Rule of thumb</span></div>
     <p class="note" style="margin-top:0">The typical ${condType === 'u' ? 'unit' : 'house'} price is the middle of every sale here, from homes that need a lot of work to fully renovated ones. A low typical price can simply mean many homes need work, so compare the <b>all-in cost</b>: price plus renovation.</p>
     <div class="grid g3" style="gap:10px">${condRows.map(([label, v, note]) => `<div class="stat"><span class="k">${label}</span><span class="v">${aud(v, { compact: true })}</span><span class="s">${note}</span></div>`).join('')}</div>
     <form class="fields reno" data-nosubmit style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;margin-top:14px">
@@ -146,10 +147,11 @@ export default async function suburbPage(main, params) {
       <label class="field">Renovation it needs ($)<input name="rr" type="number" step="1000" min="0" value="${Math.round((condRows[2][1] - condRows[0][1]) / 5000) * 5000}"></label>
       <div class="reno-out note" aria-live="polite"></div>
     </form>
-    <p class="fine" style="margin-top:8px">Condition ranges are Ownaroo estimates from the typical price (needs work about 18% below, renovated about 7% above). Get builder's quotes and a building inspection before relying on a renovation figure. For a particular home, use the <a href="/property" data-link>price range tool</a> and set its condition.</p>
+    <p class="fine" style="margin-top:8px">These condition figures are a rule of thumb, not local sales data: the same percentages (needs work about 18% below the typical price, renovated about 7% above) are applied in every suburb, and in some suburbs the real gap is much bigger or smaller. Get builder's quotes and a building inspection before relying on a renovation figure. For a particular home, use the <a href="/property" data-link>price range tool</a> and set its condition.</p>
   </section>
+  <section class="section" id="s-hazards">${hazardCard(s.s, { place: name, coastKm: s.cst })}</section>
 
-  <section class="section grid g2">
+  <section class="section grid g2" id="s-moves">
     <div class="card">
       <div class="card-head"><h3>How prices have moved</h3><span class="note">Month-end ${esc(String(mv.monthEnd || ''))}</span></div>
       ${s.trend ? `<div class="trend-banner trend-${s.trend.toLowerCase()}">${esc(R.name || 'This area')}: <b>${s.trend.toLowerCase()}</b>, ${pct(R.quarterPct, 1, true)} over the last 3 months${R.annualPct != null ? ` (${pct(R.annualPct, 1, true)} over 12)` : ''}.</div>` : ''}
@@ -173,14 +175,21 @@ export default async function suburbPage(main, params) {
     </div>
   </section>
 
-  <section class="section grid g2">
+  <section class="section grid g2" id="s-case">
     <div class="card">
       <div class="eyebrow">Investment case</div>
       <h2 style="font-size:24px">${esc(ic.headline)}</h2>
       ${ic.pros.length ? `<h3 style="font-size:16px;margin-top:14px">In ${esc(name)}'s favour</h3><ul class="pros">${ic.pros.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
       ${ic.cons.length ? `<h3 style="font-size:16px;margin-top:14px">What to watch</h3><ul class="cons">${ic.cons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
       ${ic.wider.length ? `<h3 style="font-size:16px;margin-top:14px">The wider ${esc(R.name || 'area')} market <span class="tag">not specific to ${esc(name)}</span></h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.wider.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-      <h3 style="font-size:16px;margin-top:14px">Tends to suit</h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${ic.suits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${(() => {
+        // never suggest an investor profile when the typical deal here fails the deposit test
+        const failsTest = qv && qv.beatsDeposit === false;
+        let suits = failsTest ? ic.suits.filter((x) => !/investor/i.test(x)) : ic.suits;
+        const dropped = suits.length < ic.suits.length;
+        if (!suits.length) suits = ['Buyers with a specific reason to be here (work, family, lifestyle) rather than a pure investment play'];
+        return `<h3 style="font-size:16px;margin-top:14px">Tends to suit</h3><ul class="note" style="margin:6px 0 0;padding-left:18px">${suits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${dropped ? `<p class="fine" style="margin-top:6px">Not investors, on today's numbers: a typical ${esc(ic.type)} here returns less than a term deposit after tax at 3% growth (see the deal on the right).</p>` : ''}`;
+      })()}
     </div>
     <div class="card">
       <div class="card-head"><h3>What a typical ${ic.type} here would do for you</h3>${rankPill(qv)}</div>
@@ -189,7 +198,8 @@ export default async function suburbPage(main, params) {
       <div class="kv" style="margin-top:14px">
         <span>Cash needed up front</span><span>${aud(quick.upfront.total)}</span>
         <span>Stamp duty (investor)</span><span>${aud(quick.upfront.duty)}</span>
-        <span>Each week, year 1 (after tax)</span><span class="${quick.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(quick.summary.weeklyCashAfterTax)}</span>
+        ${quick.summary.split2027 ? `<span>Each week until 30 June 2027 (after tax)</span><span class="${quick.summary.split2027.before >= 0 ? 'up' : 'down'}">${cashWeek(quick.summary.split2027.before)}</span>
+        <span>Each week from 1 July 2027 (after tax)</span><span class="${quick.summary.split2027.after >= 0 ? 'up' : 'down'}">${cashWeek(quick.summary.split2027.after)}</span>` : `<span>Each week, year 1 (after tax)</span><span class="${quick.summary.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(quick.summary.weeklyCashAfterTax)}</span>`}
         <span>Each week, year 3 (after tax)</span><span class="${quick.rows[2].cashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(quick.rows[2].cashAfterTax / 52)}</span>
         <span>After-tax return on your cash (IRR)</span><span>${pct(quick.summary.irr, 1)}</span>
         <span>Equity after 10 years</span><span>${aud(quick.summary.equityAtSale, { compact: true })}</span>
@@ -201,11 +211,11 @@ export default async function suburbPage(main, params) {
     </div>
   </section>
 
-  <section class="section grid g2">
+  <section class="section grid g2" id="s-score">
     <div class="card">
       <h3>Score breakdown</h3>
       ${Object.keys(COMPONENT_NAMES).map((k) => `<div class="comp" title="${esc(COMPONENT_HELP[k])}"><span>${COMPONENT_NAMES[k]}</span>${bar(s.sc[k])}<b>${s.sc[k] ?? '—'}</b></div><div class="fine" style="margin:-4px 0 8px 130px">${esc(COMPONENT_HELP[k])}</div>`).join('')}
-      <p class="fine">Each component is a percentile against every Australian suburb (100 = best). The overall score weights them by strategy.</p>
+      <p class="fine">Each component is a percentile against every Australian suburb (100 = best). The overall score weights them by strategy.${confLevel(s) !== 'high' ? ` <b>${esc(name)} has no suburb-level sales series</b>, so rental demand uses ${esc(R.name || 'city')}-wide vacancy and days on market, and growth uses the ${esc(R.name || 'city')} index. Here the score mostly separates suburbs by yield, affordability and population growth.` : ''}</p>
     </div>
     <div class="card">
       <h3>Cost to buy a typical ${ic.type} (${aud(ic.price, { compact: true })})</h3>
@@ -228,7 +238,7 @@ export default async function suburbPage(main, params) {
       : ''
   }
 
-  <section class="section grid g2">
+  <section class="section grid g2" id="s-people">
     <div class="card">
       <h3>People and housing</h3>
       <div class="kv">
@@ -261,10 +271,9 @@ export default async function suburbPage(main, params) {
     </div>
   </section>
 
-  <section class="section">${hazardCard(s.s, { place: name, coastKm: s.cst })}</section>
 
 
-  <section class="section grid g2">
+  <section class="section grid g2" id="s-nearby">
     <div class="card">
       <h3>Nearby suburbs</h3>
       <div class="tbl-wrap"><table><thead><tr><th>Suburb</th><th class="n">km</th><th class="n">Score</th><th class="n">Price</th><th class="n">Yield</th></tr></thead><tbody>
@@ -281,6 +290,9 @@ export default async function suburbPage(main, params) {
 
   main.querySelector('#print').addEventListener('click', () => window.print());
   wireBrand(main, `Suburb report: ${name} ${s.s} ${s.pc || ''}`);
+  // the in-page menu sticks just under the site header, whatever its height on this screen
+  const topBar = document.querySelector('.top');
+  if (topBar) main.style.setProperty('--menu-top', `${topBar.offsetHeight}px`);
   main.querySelector('#watch').addEventListener('click', (e) => {
     const on = toggleWatch(s.id);
     e.currentTarget.classList.toggle('on', on);

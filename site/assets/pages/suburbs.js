@@ -1,6 +1,7 @@
 import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
-import { suburbs, suburbUrl, cleanName, load, MIN_POP, stateRanks, tzState } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, MIN_POP, stateRanks, typicalRate } from '../data.js';
+import { STATE_COSTS } from '../rules.js';
 import { suburbScore, PROFILES, PROFILE_FILTERS } from '../engine.js';
 import { navigate } from '../app.js';
 
@@ -9,10 +10,11 @@ const PAGE = 50;
 
 export default async function explorer(main, _p, query) {
   setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Ownaroo investment score.' });
-  const [{ list }, market] = await Promise.all([suburbs(), load('market')]);
+  const [{ list }, market, rba] = await Promise.all([suburbs(), load('market'), load('rba')]);
+  const invRate = typicalRate(rba, 'INV').rate;
   const st = {
-    // start in the visitor's own state (device time zone); '?state=all' is the whole country
-    state: query.state === 'all' ? '' : query.state || (query.region || query.lga || query.q ? '' : tzState()) || '',
+    // the whole country unless a state is asked for (the heading promises all of Australia)
+    state: query.state === 'all' ? '' : query.state || '',
     region: query.region || '',
     lga: query.lga || '',
     type: query.type || 'auto',
@@ -22,6 +24,7 @@ export default async function explorer(main, _p, query) {
     popMin: query.pop ? +query.pop : MIN_POP,
     profile: query.profile || 'balanced',
     officialOnly: query.official === '1',
+    paysWay: query.cash === '1',
     q: query.q || '',
     sort: query.sort || 'score',
     asc: false,
@@ -52,6 +55,7 @@ export default async function explorer(main, _p, query) {
     </div>
     <div class="row" style="margin-top:12px;justify-content:space-between">
       <label class="check"><input type="checkbox" id="f-official" ${st.officialOnly ? 'checked' : ''}> Official sales data only (VIC, SA, NSW)</label>
+      <label class="check" title="Rent covers the interest on an 80% loan at the typical investor rate, plus council rates, water, insurance, management, maintenance and (for units) strata, before tax"><input type="checkbox" id="f-cash" ${st.paysWay ? 'checked' : ''}> Pays its own way before tax (20% deposit)</label>
       <div class="row">
         <div class="seg" id="view"><button data-v="table" class="${st.view === 'table' ? 'on' : ''}">Table</button><button data-v="map" class="${st.view === 'map' ? 'on' : ''}">Map</button></div>
       </div>
@@ -85,6 +89,12 @@ export default async function explorer(main, _p, query) {
       const rent = type === 'u' ? s.ru : s.rh;
       const yld = rent ? (rent * 52 * 100) / price : null;
       if (st.yieldMin && (yld ?? 0) < st.yieldMin) continue;
+      // cash-flow neutral or better before tax at a 20% deposit: the filter investors want under the 2026 rules
+      if (st.paysWay) {
+        const c = STATE_COSTS[s.s] || STATE_COSTS.NSW;
+        const yearly = (rent || 0) * 50 * 0.925 - price * 0.8 * (invRate / 100) - c.council - c.water - (type === 'u' ? c.insUnit + 3200 : c.insHouse) - price * (type === 'u' ? 0.75 : 0.45) * 0.012;
+        if (yearly < 0) continue;
+      }
       rows.push({ s, type, price, rent, yld, score: suburbScore(s.sc, w) });
     }
     const key = { score: (r) => r.score, price: (r) => r.price, yld: (r) => r.yld, g1: (r) => r.s.g1, g3: (r) => r.s.g3, pop: (r) => r.s.pop, pg5: (r) => r.s.pg5, name: (r) => cleanName(r.s.n), rent: (r) => r.rent, pti: (r) => r.s.pti }[st.sort] || ((r) => r.score);
@@ -114,6 +124,7 @@ export default async function explorer(main, _p, query) {
     if (st.popMin !== MIN_POP) p.set('pop', st.popMin);
     if (st.profile !== 'balanced') p.set('profile', st.profile);
     if (st.officialOnly) p.set('official', '1');
+    if (st.paysWay) p.set('cash', '1');
     if (st.q) p.set('q', st.q);
     if (st.view !== 'table') p.set('view', st.view);
     history.replaceState(null, '', `/suburbs${p.toString() ? `?${p}` : ''}`);
@@ -236,6 +247,7 @@ export default async function explorer(main, _p, query) {
   bind('#f-profile', 'profile');
   bind('#f-q', 'q');
   bind('#f-official', 'officialOnly');
+  bind('#f-cash', 'paysWay');
   $f('#view').addEventListener('click', (e) => {
     const b = e.target.closest('button');
     if (!b) return;

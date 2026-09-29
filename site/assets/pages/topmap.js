@@ -1,5 +1,5 @@
 import { esc, aud, pct, scoreBadge, setMeta, growth12, confBadge } from '../ui.js';
-import { suburbs, suburbUrl, cleanName, load, MIN_POP, fairOrder } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, MIN_POP, stateRanks } from '../data.js';
 import { suburbScore, PROFILES, PROFILE_FILTERS, valueEstimate } from '../engine.js';
 import { liveFactor } from '../live.js';
 import { baseTiles } from '../map.js';
@@ -25,7 +25,7 @@ export default async function topMap(main, _p, query) {
 
   main.innerHTML = `
   <div class="page-head"><div class="eyebrow">Suburb scores map</div><h1>Highest-scoring suburbs, on one map</h1>
-  <p>Every suburb and locality with Census data is scored on yield, growth drivers, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, ranked within each state (states publish different amounts of sales data, so raw scores aren't comparable across them), priced for the kind of home you want as at the latest month-end. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>price range tool</a> and <a href="/analyse" data-link>tax-change calculator</a> test the numbers of buying a specific home, which at today's rates often cost their owner money each week even in high-scoring suburbs. The <b>New builds</b> strategy only includes council areas approving at least one new home a year per 100 existing, since new builds keep negative gearing and the CGT discount under the 2026 rules.</p></div>
+  <p>Every suburb and locality with Census data is scored on yield, growth drivers, rental demand, affordability and stability. This map shows the highest-rated for your strategy and budget, ranked across Australia by score like the suburb explorer and compare pages, with each suburb's rank in its own state alongside (states publish different amounts of sales data, so scores in NSW, VIC and SA rest on more measured prices), priced for the kind of home you want as at the latest month-end. Select any suburb for its numbers and current listings. A suburb score ranks the area, not a particular purchase: the <a href="/property" data-link>price range tool</a> and <a href="/analyse" data-link>tax-change calculator</a> test the numbers of buying a specific home, which at today's rates often cost their owner money each week even in high-scoring suburbs. The <b>New builds</b> strategy only includes council areas approving at least one new home a year per 100 existing, since new builds keep negative gearing and the CGT discount under the 2026 rules.</p></div>
   <form class="card flat tint" id="mf" data-nosubmit>
     <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
       <label class="field">Strategy<select name="strategy">${Object.entries(STRATS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
@@ -37,7 +37,7 @@ export default async function topMap(main, _p, query) {
     </div>
   </form>
   <div class="split-map section" style="margin-top:16px">
-    <div class="card" style="padding:6px 0 0"><div class="spread" style="padding:8px 16px 6px"><b id="mcount"></b><a class="fine" id="mcsv" href="#">Download CSV</a></div><div id="mlist" style="max-height:640px;overflow:auto;border-top:1px solid var(--line)"></div></div>
+    <div class="card" style="padding:6px 0 0"><div class="spread" style="padding:8px 16px 6px"><b id="mcount"></b></div><div id="mlist" style="max-height:640px;overflow:auto;border-top:1px solid var(--line)"></div></div>
     <div><div class="card" style="padding:10px"><div id="bmap" class="map tall"></div>
       <div class="map-legend"><span><i style="background:var(--sc-a)"></i>65+ top 1%</span><span><i style="background:var(--sc-b)"></i>55–64 top 10%</span><span><i style="background:var(--sc-c)"></i>45–54 above median</span><span><i style="background:var(--sc-d)"></i>under 45</span><span>Larger dot = higher rank</span></div><p class="fine" style="margin-top:6px">Badges show how much of each ranking rests on official sales: <b>Measured · high confidence</b>, <b>Estimate · medium confidence</b> or <b>Estimate · low confidence</b>. Outside NSW, Victoria and SA, most suburbs share their city's growth figure, so rankings there lean on yield, affordability, population trend and stability.</p></div></div>
   </div>
@@ -67,9 +67,9 @@ export default async function topMap(main, _p, query) {
       out.push({ s, t, e, v: suburbScore(s.sc, PROFILES[st.strategy]) });
     }
     out.sort((a, b) => b.v - a.v);
-    if (st.area === 'AU') fairOrder(out, (r) => r.v);
+    if (st.area === 'AU') stateRanks(out, (r) => r.v);
     rows = out.slice(0, st.n);
-    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} matching suburbs · ${STRATS[st.strategy]}${st.area === 'AU' ? ' · ranked within each state' : ''}`;
+    main.querySelector('#mcount').textContent = `Top ${rows.length} of ${out.length.toLocaleString()} matching suburbs · ${STRATS[st.strategy]}${st.area === 'AU' ? ' · ranked nationally, with each suburb\'s rank in its own state' : ''}`;
     main.querySelector('#mlist').innerHTML = rows.length
       ? rows
           .map(
@@ -138,15 +138,6 @@ export default async function topMap(main, _p, query) {
     e.preventDefault();
     select(+a.dataset.sel);
     main.querySelector('#msel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-  main.querySelector('#mcsv').addEventListener('click', (e) => {
-    e.preventDefault();
-    const head = ['rank', 'suburb', 'state', 'postcode', 'score', 'type', 'estimated_value', 'weekly_rent', 'gross_yield', 'change_12m'];
-    const lines = rows.map((r, i) => [i + 1, `"${cleanName(r.s.n)}"`, r.s.s, r.s.pc, r.v, r.t === 'u' ? 'unit' : 'house', r.e.value, r.e.rent, r.e.yield?.toFixed(2), r.s.g1?.toFixed(1)].join(','));
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([[head.join(','), ...lines].join('\n')], { type: 'text/csv' }));
-    a.download = `ownaroo-top-suburbs-${st.strategy}.csv`;
-    a.click();
   });
   form.addEventListener('change', compute);
   form.addEventListener('input', (e) => e.target.name === 'max' && (clearTimeout(compute.t), (compute.t = setTimeout(compute, 400))));

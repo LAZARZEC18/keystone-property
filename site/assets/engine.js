@@ -225,6 +225,8 @@ export function analyse(input) {
   upfront.total = upfront.deposit + upfront.duty + upfront.lmi + upfront.other;
 
   const monthly = repayment(loan, p.ratePct, p.years, p.interestOnly);
+  const ioYears = p.interestOnly ? Math.max(1, Math.min(p.ioYears ?? 5, p.years - 1)) : 0;
+  const afterIo = p.interestOnly ? repayment(loan, p.ratePct, p.years - ioYears) : monthly;
   const buildCost = p.buildCost ?? (p.buildYear >= 1987 ? p.price * (1 - p.landValuePct) * 0.6 : 0);
   const div43 = p.buildYear >= 1987 ? buildCost * RULES.depreciation.capitalWorks : 0;
   const plant = p.newBuild ? p.plantValue || p.price * 0.02 : 0;
@@ -262,10 +264,13 @@ export function analyse(input) {
     let interest = 0;
     let principal = 0;
     const r = p.ratePct / 100 / 12;
+    // interest-only lasts a set period (usually 5 years); then the loan must be repaid over the rest of the term
+    const ioNow = p.interestOnly && y <= ioYears;
+    const pay = p.interestOnly && !ioNow ? afterIo : monthly;
     for (let m = 0; m < 12; m++) {
       const i = balance * r;
       interest += i;
-      const pr = p.interestOnly ? 0 : Math.max(0, monthly - i);
+      const pr = ioNow ? 0 : Math.max(0, pay - i);
       principal += pr;
       balance -= pr;
     }
@@ -344,6 +349,8 @@ export function analyse(input) {
     loan: Math.round(loan),
     lvr: round((loan0 / p.price) * 100, 1),
     monthlyRepayment: Math.round(monthly),
+    interestOnlyYears: ioYears || null,
+    monthlyAfterIo: p.interestOnly ? Math.round(afterIo) : null,
     grossYield: round(((p.weeklyRent * 52) / p.price) * 100, 2),
     netYield: round(((y1.grossRent - (y1.mgmt + y1.maintenance + y1.landTax + y1.otherCosts)) / p.price) * 100, 2),
     weeklyCashBeforeTax: round(y1.cashBeforeTax / 52),
@@ -360,6 +367,13 @@ export function analyse(input) {
     marginalRate: round(owners.reduce((t, o) => t + marginalRate(o.income) * o.share, 0) * 100, 1),
     owners: owners.length,
     negativeGearing: p.newBuild ? 'new-build' : grandfathered ? 'grandfathered' : 'restricted',
+    // an established home bought after 12 May 2026 changes cost on 1 July 2027: two weekly figures, not a blend
+    split2027: (() => {
+      if (p.newBuild || grandfathered || y1.offsetShare >= 1 || y1.netRental >= 0) return null;
+      const loss = -y1.netRental;
+      const fullRefund = owners.reduce((t, o) => t + incomeTax(o.income) - incomeTax(Math.max(0, o.income - loss * o.share)), 0);
+      return { before: round((y1.cashBeforeTax + fullRefund) / 52), after: round(y1.cashBeforeTax / 52), refundLost: Math.round(fullRefund) };
+    })(),
   };
   return { input: p, upfront, duty, lmi: lmiRes, rows, sale: { saleDate, salePrice: Math.round(salePrice), sellCosts: Math.round(sellCosts), costBase: Math.round(costBase), grossGain: Math.round(gross), balance: Math.round(balance), cgt }, summary };
 }
@@ -490,7 +504,8 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
   const percentile = dealPercentile(score);
   const grade = percentile === null ? (score >= 72 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D') : percentile >= 85 ? 'A' : percentile >= 60 ? 'B' : percentile >= 30 ? 'C' : 'D';
   // Shown as a rank, never as a letter: an "A" read as "buy" when most deals lose money each week.
-  const label = { A: 'Top 15%', B: 'Upper 40%', C: 'Middle 30%', D: 'Bottom 30%' }[grade];
+  // the label is the percentile itself when the benchmark is loaded, so it can never disagree with the sentence under it
+  const label = percentile !== null ? `Better than ${Math.round(percentile)}%` : { A: 'Top 15%', B: 'Next 25%', C: 'Middle 30%', D: 'Bottom 30%' }[grade];
   const absolute = s.weeklyCashAfterTax >= 0 ? `Pays its own way: about $${Math.round(s.weeklyCashAfterTax)} a week in your pocket after tax.` : `On its own numbers you pay about $${Math.abs(Math.round(s.weeklyCashAfterTax))} a week after tax to hold it.`;
   const beatsDeposit = s.irr !== null && s.irr > tdAfterTax;
   const vsDeposit = s.irr === null ? null : `A projected ${s.irr.toFixed(1)}% a year after tax on your cash, against about ${tdAfterTax}% from a ${depositRate}% deposit after tax at your ${Math.round(mr * 100)}% rate. Unlike the deposit, the property return depends on the growth assumption and isn't guaranteed.`;

@@ -230,11 +230,14 @@ export const STATES = {
  * Source: Housing Australia via MFAA, "Changes to the Australian Government 5% Deposit Scheme".
  */
 export const HOME_GUARANTEE = {
-  caps: { NSW: [1500000, 800000], VIC: [950000, 650000], QLD: [1000000, 700000], WA: [850000, 600000], SA: [900000, 500000], TAS: [700000, 550000], ACT: [1000000, 1000000], NT: [600000, 600000] },
-  // regional centres that take the capital-city cap
-  centres: ['Newcastle', 'Lake Macquarie', 'Wollongong', 'Shellharbour', 'Kiama', 'Greater Geelong', 'Gold Coast', 'Sunshine Coast'],
+  caps: { NSW: [1500000, 800000], VIC: [950000, 650000], QLD: [1000000, 700000], WA: [850000, 600000], SA: [900000, 500000], TAS: [700000, 550000], ACT: [1000000, 1000000], NT: [750000, 600000] },
+  // regional centres that take the capital-city cap (Darwin takes NT's higher cap). Local councils in each listed region:
+  // NSW: Newcastle and Lake Macquarie, Illawarra, Central Coast, Coffs Harbour-Grafton, Mid North Coast, Richmond-Tweed.
+  centres: ['Newcastle', 'Lake Macquarie', 'Wollongong', 'Shellharbour', 'Kiama', 'Central Coast', 'Coffs Harbour', 'Bellingen', 'Clarence Valley',
+    'Kempsey', 'Nambucca Valley', 'Port Macquarie-Hastings', 'Mid-Coast', 'Tweed', 'Byron', 'Ballina', 'Lismore', 'Richmond Valley', 'Kyogle',
+    'Greater Geelong', 'Gold Coast', 'Sunshine Coast'],
   capitals: ['SYD', 'MEL', 'BNE', 'PER', 'ADL', 'HBA', 'CBR', 'DRW'],
-  source: 'https://www.mfaa.com.au/news/changes-to-the-australian-government-5-deposit-scheme-what-brokers-need-to-know',
+  source: 'https://firsthomebuyers.gov.au/australian-government-5-percent-deposit-scheme/property-price-caps',
 };
 
 /** 5% Deposit Scheme price cap for a suburb (index row with s, rg, lga). */
@@ -249,10 +252,10 @@ export function guaranteeCap(s) {
 export const RBA_DECISIONS = ['2026-02-03', '2026-03-17', '2026-05-05', '2026-06-16', '2026-08-11', '2026-09-29', '2026-11-03', '2026-12-08'];
 /** Optional outlook for the next decision; shown only until that date passes. */
 export const RBA_OUTLOOK = {
-  date: '2026-09-29',
-  text: 'Major-bank economists expect a 0.25-point rise to 4.60% (CommBank, September 2026). Market pricing changes daily: the ASX RBA Rate Tracker shows the current implied chance of a move.',
-  links: [['CommBank economists', 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html'], ['ASX RBA Rate Tracker', 'https://www.asx.com.au/markets/trade-our-derivatives-market/futures-market/rba-rate-tracker']],
-  source: 'https://www.commbank.com.au/articles/newsroom/2026/09/rba-expected-to-lift-interest-rates-next-week.html',
+  date: '2026-11-03',
+  text: 'After the 29 September rise, CommBank, Westpac and NAB see it as the last rise for now; ANZ expects one more in November, to 4.85%. Market pricing changes daily: the ASX RBA Rate Tracker shows the current implied chance of a move.',
+  links: [['Bank forecasts (YBR, 29 Sept 2026)', 'https://ybr.com.au/articles/rba-lifts-cash-rate-to-460-september-2026'], ['ASX RBA Rate Tracker', 'https://www.asx.com.au/markets/trade-our-derivatives-market/futures-market/rba-rate-tracker']],
+  source: 'https://ybr.com.au/articles/rba-lifts-cash-rate-to-460-september-2026',
 };
 
 /**
@@ -274,15 +277,33 @@ export function helpToBuyCap(s) {
   return metro ? c[0] : c[1];
 }
 
+/**
+ * First Home Super Saver. Release can be requested up to 90 days after signing a contract (since 15 Sept 2024).
+ * Concessional cap $32,500 from 1 July 2026. Deemed earnings use the ATO shortfall interest charge (SIC) rate by quarter.
+ * Source: ATO FHSS, concessional cap and SIC rate pages.
+ */
+export const FHSS = {
+  yearly: 15000, total: 50000, concessionalCap: 32500, afterSigningDays: 90,
+  sic: [['2026-07-01', 7.43, 'July to September 2026'], ['2026-10-01', 7.51, 'October to December 2026']],
+  source: 'https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/withdrawing-and-using-your-super/early-access-to-super/first-home-super-saver-scheme',
+};
+/** The published SIC rate for today's quarter, or null when the table has run out (callers then use the bank bill rate + 3). */
+export function fhssRate(today = new Date().toISOString().slice(0, 10)) {
+  const hit = FHSS.sic.filter(([d]) => d <= today).pop();
+  if (!hit) return null;
+  const next = new Date(hit[0]); next.setMonth(next.getMonth() + 3);
+  return today < next.toISOString().slice(0, 10) ? { rate: hit[1], label: hit[2] } : null;
+}
+
 /** First Home Owner Grant by state, September 2026 (see the buying guide). [amount, what it applies to]. Confirm with the state revenue office. */
 export const FHOG = {
   NSW: [10000, 'new homes up to $600,000 (house and land up to $750,000)'],
   VIC: [10000, 'new homes up to $750,000'],
-  QLD: [15000, 'new homes up to $750,000'],
+  QLD: [30000, 'new homes up to $750,000 (continued in the 2026-27 Budget with no end date)'],
   WA: [10000, 'new homes up to $800,000 (south of the 26th parallel)'],
   SA: [15000, 'new homes, no price cap'],
-  TAS: [10000, 'new homes, no price cap'],
-  NT: [50000, 'new homes ($10,000 for established homes)'],
+  TAS: [20000, 'new homes, contracts from 1 July 2026 to 30 June 2027, no price cap'],
+  NT: [50000, 'new homes, to 30 September 2027 (the $10,000 established-home grant ended 30 September 2025)'],
   ACT: [0, 'no grant; a stamp duty concession instead'],
 };
 
@@ -314,7 +335,7 @@ export function helpRepayment(income) {
   return h.base2 + (income - h.t2) * h.r2;
 }
 /** Keystart (WA Government lender) Low Deposit Home Loan: 2% deposit, no LMI. keystart.com.au, checked Sept 2026. */
-export const KEYSTART = { cap: 860000, income: { single: 155000, couple: 228000 }, asOf: '15 April 2026', source: 'https://www.keystart.com.au/loans/low-deposit-home-loan' };
+export const KEYSTART = { cap: 860000, income: { single: 155000, couple: 228000 }, rate: 7.85, rateAsOf: 'September 2026', asOf: '15 April 2026', source: 'https://www.keystart.com.au/loans/low-deposit-home-loan' };
 
 /** Lenders assess a credit card at about 3% of its limit a month, whether or not it's used. */
 export const CARD_LIMIT_RATE = 0.03;

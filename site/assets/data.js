@@ -206,7 +206,18 @@ export function removeDeal(url) {
  */
 export function typicalRate(rba, kind = 'INV') {
   const row = (kind === 'OO' ? rba?.actual?.newOOVariable : rba?.actual?.newInvVariable)?.at?.(-1);
-  return { rate: row?.[1] ?? (kind === 'OO' ? 6.2 : 6.4), month: row?.[0] ? new Date(`${row[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '' };
+  const base = row?.[1] ?? (kind === 'OO' ? 6.24 : 6.4);
+  const month = row?.[0] ? new Date(`${row[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : '';
+  // The RBA average lags by about two months; add any cash rate moves that took effect after that month,
+  // because lenders pass them on to new loans within days.
+  const moves = (rba?.cashRate?.decisions || []).filter((d) => row?.[0] && d.date > row[0] && d.change);
+  const adj = moves.reduce((t, d) => t + d.change / 100, 0);
+  const rate = Math.round((base + adj) * 100) / 100;
+  const fmt = (x) => `${x.toFixed(2)}%`;
+  const when = (d) => new Date(`${d}T00:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const moveText = moves.map((d) => `the ${Math.abs(d.change / 100).toFixed(2)}-point ${d.change > 0 ? 'rise' : 'cut'} from ${when(d.date)}`).join(' and ');
+  const label = `${month ? `the RBA's ${month.split(' ')[0]} average for new ${kind === 'OO' ? 'owner-occupier' : 'investor'} variable loans` : 'the RBA average'} (${fmt(base)})${moves.length ? `, plus ${moveText}` : ''}`;
+  return { rate, base, adj, month, moves, label };
 }
 
 /** One minimum population for every suburb ranking (explorer, map, affordability). */

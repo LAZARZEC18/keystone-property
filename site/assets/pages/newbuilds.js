@@ -74,10 +74,10 @@ export default async function newBuildsPage(main) {
     </div>
     <div class="card"><h3>New homes and land for sale</h3>
       <label class="field" style="position:relative">Suburb<input id="nb-sub" type="search" placeholder="Suburb or postcode"><div class="ac" id="nb-ac" hidden style="top:62px;left:0;right:auto"></div></label>
-      <div id="nb-live" style="margin-top:12px"><p class="note">Pick a suburb to see new apartments, house-and-land packages and land for sale.</p></div>
+      <div id="nb-live" style="margin-top:12px"><p class="note">Pick a suburb to see links to new apartments, house-and-land packages and land for sale. They open searches on realestate.com.au and Domain in a new tab; Ownaroo doesn't list or sell property.</p></div>
     </div>
   </section>
-  <p class="fine">Source: <a href="${esc(ap.sourceUrl)}" target="_blank" rel="noopener">ABS Building Approvals, Australia</a> (${esc(ap.release)}), refreshed ${date(ap.updated)}. Approvals per 1,000 residents use 2021 Census population.</p>`;
+  <p class="fine">Source: <a href="${esc(ap.sourceUrl)}" target="_blank" rel="noopener">ABS Building Approvals, Australia</a> (${esc(ap.release)}), refreshed ${date(ap.updated)}. Approvals per 1,000 residents use 2021 Census population. The ABS suppresses very small counts by type to protect privacy, so a council's houses and other dwellings can add up to slightly less than its total.</p>`;
 
   const draw = () => {
     const rows = lgas.filter((l) => !st.state || l.s === st.state);

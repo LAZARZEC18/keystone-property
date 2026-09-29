@@ -217,7 +217,7 @@
    "annualPct": 5.3,
    "yield": 4.1,
    "rentAnnualPct": 5.2,
-   "dom": 49
+   "dom": null
   },
   "RVIC": {
    "name": "Regional Victoria",
@@ -229,7 +229,7 @@
    "annualPct": 4.6,
    "yield": 4.3,
    "rentAnnualPct": 3.8,
-   "dom": 45
+   "dom": null
   },
   "RQLD": {
    "name": "Regional Queensland",
@@ -241,7 +241,7 @@
    "annualPct": 9.1,
    "yield": 4.2,
    "rentAnnualPct": 6.5,
-   "dom": 37
+   "dom": null
   },
   "RSA": {
    "name": "Regional SA",
@@ -253,7 +253,7 @@
    "annualPct": 11.4,
    "yield": 4.4,
    "rentAnnualPct": 5.3,
-   "dom": 43
+   "dom": null
   },
   "RWA": {
    "name": "Regional WA",
@@ -265,7 +265,7 @@
    "annualPct": 16.7,
    "yield": 5.1,
    "rentAnnualPct": 7.5,
-   "dom": 23
+   "dom": null
   },
   "RTAS": {
    "name": "Regional Tasmania",
@@ -277,7 +277,7 @@
    "annualPct": 12.7,
    "yield": 4.4,
    "rentAnnualPct": 9.7,
-   "dom": 41
+   "dom": null
   },
   "RNT": {
    "name": "Regional NT",
@@ -290,7 +290,7 @@
    "annualPct": 4.8,
    "yield": 7.9,
    "rentAnnualPct": 4.4,
-   "dom": 83,
+   "dom": null,
    "note": "Houses only; Cotality does not publish a dwelling series for regional NT."
   }
  },
@@ -472,8 +472,7 @@
  ],
  "caveats": [
   "Vacancy rates are SQM Research (capital cities); Cotality uses a different method, so the two aren't mixed.",
-  "Capital-city weekly rents are SQM Research asking rents (week ending 4 September 2026).",
-  "Regional days on market were read from chart labels and are approximate."
+  "Capital-city weekly rents are SQM Research asking rents (week ending 4 September 2026)."
  ],
  "indexMonth": "31 August 2026"
 }

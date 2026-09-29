@@ -28,7 +28,8 @@ for name, o in off.items():
            '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', f'{out}/{name}.mp4']
     r = subprocess.run(cmd, capture_output=True, text=True)
     print(name, D, r.returncode, r.stderr[-300:])
-    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-ss', '2', '-i', f'{out}/{name}.mp4', '-frames:v', '1', '-vf', 'scale=1280:-2', '-q:v', '3', f'{out}/{name}.jpg'])
+    # poster: a frame with results on screen (just past the middle), never the empty form at the start
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-ss', str(round(D * float(os.environ.get('POSTER_AT', '0.55')), 2)), '-i', f'{out}/{name}.mp4', '-frames:v', '1', '-vf', 'scale=1280:-2', '-q:v', '3', f'{out}/{name}.jpg'])
     # a 720p copy for phones (demo.js serves it below 900px wide)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', f'{out}/{name}.mp4', '-vf', 'scale=1280:720:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow',
                     '-crf', '26', '-tune', 'stillimage', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', f'{out}/{name}-720.mp4'])

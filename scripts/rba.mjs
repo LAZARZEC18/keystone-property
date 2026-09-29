@@ -1,6 +1,7 @@
 // Reserve Bank of Australia statistical tables: cash rate decisions, indicator and actual
 // housing lending rates, and money-market pricing (OIS = what markets expect the cash rate to do).
-import { getText } from './lib/http.mjs';
+import { getText, fetchWithTimeout } from './lib/http.mjs';
+import { readXlsx, excelDate } from './lib/xlsx.mjs';
 
 const BASE = 'https://www.rba.gov.au/statistics/tables/csv/';
 
@@ -88,6 +89,27 @@ export async function collectRba() {
     const r = await getText(`${BASE}${t}-data.csv`);
     if (!r.ok) throw new Error(`RBA ${t} ${r.status}`);
     tables[t] = parseRbaTable(r.text);
+  }
+  // The CSV rounds F6 to one decimal (6.2); the spreadsheet has two (6.24). Overlay the precise values when it loads.
+  try {
+    const x = await fetchWithTimeout('https://www.rba.gov.au/statistics/tables/xls/f06hist.xlsx', {}, 30000);
+    if (x.ok) {
+      const rows = await readXlsx(await x.arrayBuffer());
+      const idRow = rows.find((r) => r?.[0] === 'Series ID');
+      const byDate = new Map(rows.filter((r) => typeof r?.[0] === 'number').map((r) => [excelDate(r[0]), r]));
+      if (idRow) {
+        idRow.forEach((id, j) => {
+          const series = tables.f6.series[id];
+          if (!j || !series) return;
+          for (const pt of series) {
+            const v = byDate.get(pt[0])?.[j];
+            if (typeof v === 'number' && Math.abs(v - pt[1]) < 0.06) pt[1] = Math.round(v * 100) / 100;
+          }
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('RBA F6 spreadsheet not read; using the CSV values', e.message);
   }
   const a2 = tables.a2.series;
   // Cash-rate changes: new target column is a number since 2000 (older rows are ranges).

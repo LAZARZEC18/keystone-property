@@ -31,6 +31,10 @@ export const JARGON = {
   'pre-approval': 'A lender’s conditional yes to a loan amount, usually valid for about 90 days.',
   'mortgage stress': 'Repayments above 30% of your before-tax household income.',
   'serviceability': 'The lender’s test of whether you could still repay if rates rose 3 points.',
+  'stretch': 'The most a lender might approve, tested at your rate plus 3 points. Repayments there are usually above 30% of your income.',
+  'ceiling': 'The highest price your savings and the most a lender might lend could reach, including stamp duty and costs.',
+  'buffer': 'Either the 3-point margin lenders add to your rate when they test repayments, or savings kept aside after buying (ideally about three months of repayments) for rate rises and repairs.',
+  'comfortable price': 'The price where repayments stay within 30% of your before-tax household income and your savings cover the deposit, duty and fees.',
 };
 const SKIP = new Set(['A', 'ABBR', 'BUTTON', 'INPUT', 'SELECT', 'OPTION', 'TEXTAREA', 'SCRIPT', 'STYLE', 'CODE', 'SVG', 'LABEL', 'H1', 'SUMMARY']);
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);

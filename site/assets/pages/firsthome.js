@@ -2,9 +2,10 @@ import { demo } from '../demo.js';
 import { check, showErrors } from '../validate.js';
 import { nextStepsCard } from '../insights.js';
 import { esc, aud, pct, setMeta, lineChart, wireCharts } from '../ui.js';
-import { load } from '../data.js';
+import { load, typicalRate } from '../data.js';
+import { rateNewsBanner } from '../ratewatch.js';
 import { stampDuty, repayment, lmi, marginalRate } from '../engine.js';
-import { STATES } from '../rules.js';
+import { STATES, FHSS, fhssRate } from '../rules.js';
 
 const COSTS = 3000; // conveyancing, inspections, registration
 
@@ -20,15 +21,15 @@ export function monthsToSave(start, monthly, target, ratePct) {
 }
 
 /**
- * First Home Super Saver. Salary-sacrifice `c` a year for `years` (max $15k a year, $50k in total, within the $30k
- * concessional cap alongside 12% employer super). Compared with taking the same pre-tax money as salary and saving it.
- * Deemed earnings use the shortfall interest charge rate (90-day bank bill + 3%). Released concessional amounts are
+ * First Home Super Saver. Salary-sacrifice `c` a year for `years` (max $15k a year, $50k in total, within the $32,500
+ * concessional cap from 1 July 2026, alongside 12% employer super). Compared with taking the same pre-tax money as salary and saving it.
+ * Deemed earnings use the ATO's published shortfall interest charge rate for the quarter, or the 90-day bank bill + 3% when none is on file. Released concessional amounts are
  * taxed at the marginal rate less a 30% offset.
  */
-export function fhss({ income, c, years, bab = 3.8, savingsRate = 4.5 }) {
-  const cap = Math.max(0, Math.min(15000, 30000 - income * 0.12, c));
+export function fhss({ income, c, years, bab = 3.8, savingsRate = 4.5, sicRate = null }) {
+  const cap = Math.max(0, Math.min(FHSS.yearly, FHSS.concessionalCap - income * 0.12, c));
   const mr = marginalRate(income);
-  const sic = bab + 3;
+  const sic = sicRate ?? bab + 3;
   let eligible = 0;
   let earnings = 0;
   let bank = 0;
@@ -83,13 +84,13 @@ export function rentVsBuy(p) {
 export default async function firstHomePage(main, _p, query = {}) {
   setMeta({ title: 'First home tools: rent vs buy, savings planner, FHSS calculator', description: 'How long it will take to save a deposit, whether buying beats renting over time, and how much the First Home Super Saver scheme adds.' });
   const [rba] = await Promise.all([load('rba')]);
-  const rate = rba.actual?.newOOVariable?.at(-1)?.[1] || 6.2;
+  const rate = typicalRate(rba, 'OO').rate;
   const bab = rba.market?.bab3m ?? 3.8;
   const stOpts = Object.keys(STATES).map((s) => `<option value="${s}" ${s === 'WA' ? 'selected' : ''}>${s}</option>`).join('');
 
   main.innerHTML = `
   <div class="page-head with-demo"><div><div class="eyebrow">First home tools</div><h1>Plan your first home</h1>
-  <p>Three calculators for the questions that come before the property search: how long it will take to save, whether buying beats renting over the years you'll stay, and how much faster the First Home Super Saver scheme gets you there. When you're ready, the <a href="/afford?buyer=fhb" data-link>affordability tool</a> finds where you can buy.</p></div>${demo('firsthome')}</div>
+  <p>Three calculators for the questions that come before the property search: how long it will take to save, whether buying beats renting over the years you'll stay, and how much faster the First Home Super Saver scheme gets you there. When you're ready, the <a href="/afford?buyer=fhb" data-link>affordability tool</a> finds where you can buy.</p>${rateNewsBanner(rba)}</div>${demo('firsthome')}</div>
   <div class="row" style="margin-bottom:16px"><a class="pill" href="#save">How long to save</a><a class="pill" href="#rvb">Rent vs buy</a><a class="pill" href="#fhss">First Home Super Saver</a></div>
 
   <section class="section card" id="save"><h2>How long will it take to save?</h2>
@@ -112,7 +113,7 @@ export default async function firstHomePage(main, _p, query = {}) {
       <form class="fields" id="rb" style="grid-template-columns:1fr 1fr;align-content:start" data-nosubmit>
         <label class="field">Home price ($)<input name="price" type="number" step="1" value="650000"></label>
         <label class="field">State<select name="state">${stOpts}</select></label>
-        <label class="field">Deposit<select name="dep"><option value="0.05">5% (5% Deposit Scheme)</option><option value="0.1">10% (LMI)</option><option value="0.2" selected>20%</option></select></label>
+        <label class="field">Deposit<select name="dep"><option value="0.05" selected>5% (5% Deposit Scheme)</option><option value="0.1">10% (LMI)</option><option value="0.2">20%</option></select></label>
         <label class="field">Interest rate (%)<input name="rate" type="number" step="0.05" value="${rate}"></label>
         <label class="field">Rent for a similar home ($/wk)<input name="rent" type="number" step="1" value="600"></label>
         <label class="field">Years you'll stay<input name="years" type="number" min="1" max="30" value="10"></label>
@@ -189,13 +190,14 @@ export default async function firstHomePage(main, _p, query = {}) {
     const v = f('#fs');
     const c = check(v, { income: 'income', c: 'super', years: 'years10', sr: 'pctReturn' });
     if (showErrors($('#fs'), c.errors, { income: '[name=income]', c: '[name=c]', years: '[name=years]', sr: '[name=sr]' }, $('#fs-out'))) return;
-    const r = fhss({ income: +v.income, c: +v.c, years: Math.max(1, Math.min(10, +v.years)), bab, savingsRate: +v.sr });
+    const sicNow = fhssRate();
+    const r = fhss({ income: +v.income, c: +v.c, years: Math.max(1, Math.min(10, +v.years)), bab, savingsRate: +v.sr, sicRate: sicNow?.rate });
     $('#fs-out').innerHTML = `<div class="stats">
       <div class="stat"><span class="k">Contributed through super</span><span class="v">${aud(r.contributed)}</span><span class="s">${aud(r.perYear)} a year${r.perYear < +v.c ? ' (limited by the caps)' : ''}</span></div>
       <div class="stat"><span class="k">Released for your deposit</span><span class="v up">${aud(r.net)}</span><span class="s">after 15% contributions tax and ${pct(Math.max(0, r.mr - 0.3) * 100, 0)} release tax</span></div>
       <div class="stat"><span class="k">Saved the normal way</span><span class="v">${aud(r.bank)}</span><span class="s">same pre-tax money, after ${pct(r.mr * 100, 0)} tax, in a savings account</span></div>
       <div class="stat"><span class="k">FHSS advantage</span><span class="v ${r.gain >= 0 ? 'up' : 'down'}">${aud(r.gain)}</span><span class="s">extra deposit</span></div></div>
-      <p class="note" style="margin-top:8px">Voluntary contributions of up to $15,000 a year and $50,000 in total can be released, with deemed earnings at ${pct(r.sic, 2)} (the 90-day bank bill rate plus 3 points). Your employer's 12% super counts toward the $30,000 concessional cap. Request the release from the ATO before you sign a contract or within 14 days after.</p>`;
+      <p class="note" style="margin-top:8px">Voluntary contributions of up to $15,000 a year and $50,000 in total can be released, with deemed earnings at ${pct(r.sic, 2)} (${sicNow ? `the ATO shortfall interest charge rate for ${sicNow.label}; ${FHSS.sic.filter(([d]) => d > new Date().toISOString().slice(0, 10)).map(([d, x, l]) => `${pct(x, 2)} for ${l}`).join(', ') || 'it is reset each quarter'}` : 'the 90-day bank bill rate plus 3 points'}). Your employer's 12% super counts toward the ${aud(FHSS.concessionalCap)} concessional cap (from 1 July 2026). You can sign a contract first: request the release from the ATO up to ${FHSS.afterSigningDays} days after signing. <a href="${FHSS.source}" target="_blank" rel="noopener">ATO rules ↗</a></p>`;
   };
 
   // numbers carried over from the affordability tool (/afford → "plan it")

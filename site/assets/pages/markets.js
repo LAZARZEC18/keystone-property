@@ -1,7 +1,8 @@
 import { esc, aud, pct, date, ago, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
-import { load, loadStaleFirst } from '../data.js';
+import { load, loadStaleFirst, typicalRate } from '../data.js';
 import { lenderName } from '../rate-rules.js';
 import { nextDecision } from '../ratewatch.js';
+import { RBA_DECISIONS } from '../rules.js';
 
 export default async function markets(main) {
   setMeta({ title: 'Australian housing market update', description: 'Which way prices are moving in each capital, the RBA cash rate, rates week by week, and the housing headlines that matter for your numbers.' });
@@ -15,7 +16,10 @@ export default async function markets(main) {
   const cash = rba.cashRate.decisions.map((d) => [Date.parse(d.date), d.rate]);
   cash.push([Date.now(), rba.cashRate.current]);
   const bab6 = rba.market.bab6m;
-  const expect = bab6 > rba.cashRate.current + 0.25 ? 'higher' : bab6 < rba.cashRate.current - 0.25 ? 'lower' : 'about the same';
+  // compare bank bills with the cash rate on the day they were read, not today's (a rise since then is already priced in)
+  const cashAt = [...rba.cashRate.decisions].reverse().find((d) => d.date <= (rba.market.asAt || ''))?.rate ?? rba.cashRate.current;
+  const gap = bab6 - cashAt;
+  const expect = gap > 0.2 ? 'higher' : gap < -0.2 ? 'lower' : 'about the same';
 
   main.innerHTML = `
   <div class="page-head">
@@ -26,8 +30,8 @@ export default async function markets(main) {
 
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">National median dwelling</span><span class="v">${aud(Math.round(market.national.medianDwelling / 1000) * 1000, { compact: true })}</span><span class="s"><span class="${market.national.annualPct >= 0 ? 'up' : 'down'}">${pct(market.national.annualPct, 1, true)}</span> y/y · ${pct(market.national.fromPeakPct, 1)} from peak</span></div></div>
-    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last changed ${date(rba.cashRate.lastChange)}` : `Last changed ${date(rba.cashRate.lastChange)}`} ${nextDecision() ? ` · next decision ${date(nextDecision())}` : ''}</span></div></div>
-    <div class="card"><div class="stat"><span class="k">Average new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
+    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last ${(rba.cashRate.decisions?.at(-1)?.change || 0) > 0 ? 'raised' : 'cut'} with effect from ${date(rba.cashRate.lastChange)}` : `${(rba.cashRate.decisions?.at(-1)?.change || 0) > 0 ? 'Raised' : 'Cut'} ${(() => { const d = RBA_DECISIONS.filter((x) => x < rba.cashRate.lastChange).at(-1); return d ? `${date(d)} (takes effect ${date(rba.cashRate.lastChange)})` : `with effect from ${date(rba.cashRate.lastChange)}`; })()}`} ${nextDecision() ? ` · next decision ${date(nextDecision())}` : ''}</span></div></div>
+    <div class="card"><div class="stat"><span class="k">Average new investor variable (RBA, ${new Date(`${rba.actual.newInvVariable.at(-1)?.[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long' })})</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised open to anyone ${pct((rs.best.INV_PI_variable_national?.[0] || rs.best.INV_PI_variable?.[0])?.rate, 2)} (the figure in the ticker)${rs.best.INV_PI_variable?.[0] && rs.best.INV_PI_variable[0].rate < (rs.best.INV_PI_variable_national?.[0]?.rate ?? 99) ? `, or ${pct(rs.best.INV_PI_variable[0].rate, 2)} from a lender with eligibility rules` : ''}</span></div></div>
     <div class="card"><div class="stat"><span class="k">National rent growth</span><span class="v">${pct(market.national.rentAnnualPct, 1, true)}</span><span class="s">Vacancy ${pct(market.national.vacancySQM, 1)} (SQM)</span></div></div>
   </div>
 
@@ -54,7 +58,7 @@ export default async function markets(main) {
     <div class="card">
       <div class="card-head"><h3>RBA cash rate since 2000</h3><span class="pill">Now ${pct(rba.cashRate.current, 2)}</span></div>
       ${lineChart([{ name: 'Cash rate target', points: cash }], { height: 240, yFmt: (v) => `${v}%`, area: true, zero: true })}
-      <p class="note" style="margin-top:10px">Six-month bank bills are trading at ${pct(bab6, 2)} (RBA F1.1, ${date(rba.market.asAt)}), which suggests markets expect the cash rate to be <b>${expect}</b> over the next six months.</p>
+      <p class="note" style="margin-top:10px">On ${date(rba.market.asAt)} six-month bank bills were at ${pct(bab6, 2)} against a cash rate of ${pct(cashAt, 2)} (RBA F1.1, month-end), so markets were pricing a cash rate <b>${expect}</b> over the following six months${gap > 0.2 ? `, roughly ${Math.round(gap / 0.25)} rise${Math.round(gap / 0.25) === 1 ? '' : 's'} of 0.25 points` : ''}.${rba.cashRate.lastChange > (rba.market.asAt || '') ? ` The cash rate has since ${rba.cashRate.current > cashAt ? 'risen' : 'fallen'} to ${pct(rba.cashRate.current, 2)} (from ${date(rba.cashRate.lastChange)}), which uses up part of that.` : ''} This reading updates monthly; the ASX RBA Rate Tracker shows today's pricing.</p>
       <div class="tbl-wrap"><table><thead><tr><th>Effective date</th><th class="n">Change</th><th class="n">Cash rate</th></tr></thead><tbody>
         ${rba.cashRate.decisions.slice(-8).reverse().map((d) => `<tr><td>${date(d.date)}</td><td class="n ${d.change > 0 ? 'down' : d.change < 0 ? 'up' : ''}">${d.change ? `${d.change > 0 ? '+' : ''}${d.change} bp` : '—'}</td><td class="n">${pct(d.rate, 2)}</td></tr>`).join('')}
       </tbody></table></div>
@@ -93,8 +97,8 @@ export default async function markets(main) {
   </section>
 
   <section class="section" id="weekly"><h2>Rates week by week</h2>
-    <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">Cash rate</th><th class="n">Lowest owner-occupier variable</th><th class="n">Lowest investor variable</th></tr></thead><tbody>${[...weekly].reverse().slice(0, 12).map((x, i) => `<tr><td>${date(x.week)}${i === 0 ? ' <span class="fine">(this week)</span>' : ''}</td><td class="n">${pct(x.cash, 2)}</td><td class="n">${pct(x.bestOO?.rate, 2)}${x.bestOO?.lender ? ` <span class="fine">${esc(lenderName(x.bestOO.lender))}</span>` : ''}</td><td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>
-    <p class="fine" style="margin-top:8px">A snapshot is saved each week from the lenders' own feeds and the RBA. <a href="/rates" data-link>Today's rates →</a></p></div>
+    <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">Cash rate</th><th class="n">Lowest owner-occupier variable</th><th class="n">Lowest investor variable</th></tr></thead><tbody>${[...weekly].reverse().slice(0, 12).map((x, i) => `<tr><td>${date(x.week)}${i === 0 ? ` <span class="fine">(latest snapshot, ${date(x.updated)})</span>` : ''}</td><td class="n">${pct(x.cash, 2)}${i === 0 && x.cash !== rba.cashRate.current ? ` <span class="fine">now ${pct(rba.cashRate.current, 2)}</span>` : ''}</td><td class="n">${pct(x.bestOO?.rate, 2)}${x.bestOO?.lender ? ` <span class="fine">${esc(lenderName(x.bestOO.lender))}</span>` : ''}</td><td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="fine" style="margin-top:8px">A snapshot is saved each week from the lenders' own feeds and the RBA; each row shows the rates on the day it was taken${weekly.at(-1)?.cash !== rba.cashRate.current ? `, so the latest row is from before the ${rba.cashRate.current > weekly.at(-1)?.cash ? 'rise' : 'cut'} to ${pct(rba.cashRate.current, 2)} that took effect ${date(rba.cashRate.lastChange)}` : ''}. <a href="/rates" data-link>Today's rates →</a></p></div>
   </section>
 
   <section class="section" id="news"><div class="spread"><h2>Housing news</h2><span class="note" id="n-when"></span></div>
@@ -151,6 +155,7 @@ export function commentary(market, rba) {
   if (falling.length >= 5) s += ` Values eased over the last three months in ${falling.length} of 8 capitals${hikes ? ` after ${hikes} RBA rate rise${hikes > 1 ? 's' : ''} this year` : ''}.`;
   if (n.rentAnnualPct > n.annualPct) s += ` Nationally, rents (${pct(n.rentAnnualPct, 1, true)}) have risen faster than values (${pct(n.annualPct, 1, true)}) over the year, so gross yields have risen.`;
   const oo = rba.actual?.newOOVariable?.at?.(-1);
-  s += ` The cash rate is ${pct(rba.cashRate.current, 2)}${oo ? `; the average variable rate on new owner-occupier loans was ${pct(oo[1], 2)} in ${new Date(`${oo[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long' })} (RBA)` : ''}.`;
+  const t = typicalRate(rba, 'OO');
+  s += ` The cash rate is ${pct(rba.cashRate.current, 2)}${oo ? `; the average variable rate on new owner-occupier loans was ${pct(oo[1], 2)} in ${new Date(`${oo[0]}T00:00:00`).toLocaleDateString('en-AU', { month: 'long' })} (RBA)${t.adj ? `, so new loans are now about ${pct(t.rate, 1)} after the latest ${t.adj > 0 ? 'rise' : 'cut'}` : ''}` : ''}.`;
   return s;
 }

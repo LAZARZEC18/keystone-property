@@ -16,8 +16,8 @@ export const PAGES = {
   '/afford': ['What can I afford? A comfortable price, and your ceiling in every state', 'Enter your savings and income. Ownaroo works out a comfortable price where you want to buy, the most you could stretch to in every state and territory (stamp duty, mortgage insurance, lender buffers), the schemes you qualify for and the suburbs that fit.'],
   '/property': ['Price range for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Ownaroo ranks every matching suburb.'],
-  '/map': ['Highest-scoring suburbs in Australia: map', 'Suburbs scored on yield, growth drivers, rental demand, affordability and stability, ranked within each state, on one map, with how much of each score is measured.'],
-  '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank Australian suburbs within each state by price, rent, yield, growth drivers, demand and risk, with every figure marked as measured or modelled.'],
+  '/map': ['Highest-scoring suburbs in Australia: map', 'Suburbs scored on yield, growth drivers, rental demand, affordability and stability, ranked across Australia, on one map, with how much of each score is measured.'],
+  '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank Australian suburbs by price, rent, yield, growth drivers, demand and risk, with every figure marked as measured or modelled.'],
   '/analyse': ['2026 tax-change investment property calculator', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
   '/borrowing': ['How much can I borrow?', 'Estimate your borrowing power the way Australian lenders do, for a home to live in or an investment: the 3-point rate buffer, living costs, existing debts and 80% of any rent.'],
   '/rates': ['Home loan rates in Australia, updated several times a day', 'Advertised home loan rates from 90+ Australian lenders, read from their Open Banking feeds, with offset accounts and fees, ranked by loan type and deposit.'],
@@ -43,7 +43,7 @@ const NOINDEX = new Set(['/compare', '/watchlist']);
 const TOOL = {
   '/afford': {
     how: ['Choose where you want to buy, then enter your savings and before-tax income.', 'Ownaroo finds a comfortable price: repayments within 30% of before-tax household income, with your savings covering the deposit, stamp duty and fees.', 'It also shows the most a lender might stretch to (tested at your rate plus 3 points), the schemes you qualify for and the suburbs where a typical home fits.'],
-    example: 'Example (September 2026 rates): a first home buyer couple in Perth with $110,000 saved and $155,000 combined income. A comfortable price is about $720,000, needing about $110,000 in cash with repayments of about $894 a week; a lender might stretch to about $735,000.',
+    example: 'Example (rates after the RBA rise of 29 September 2026): a first home buyer couple in Perth with $110,000 saved and $155,000 combined income. A comfortable price is about $700,000, needing about $105,000 in cash with repayments of about $894 a week; a lender might stretch to about $820,000.',
     faq: [['What is a comfortable price?', 'The price at which repayments stay within 30% of your before-tax household income, a common measure of mortgage stress, and your savings cover the deposit, stamp duty and fees.'], ['Why is the most I could borrow different?', 'Lenders test whether you could still pay at your rate plus 3 percentage points, after living costs and debts. That limit is often higher than a comfortable price.'], ['Does it include first home schemes?', 'Yes: the 5% Deposit Scheme, Help to Buy, Keystart in WA and state first home concessions, with the price caps where you want to buy.']],
   },
   '/analyse': {
@@ -65,7 +65,7 @@ const TOOL = {
   },
   '/first-home': {
     how: ['See how long it takes to save a deposit at your savings rate.', 'Compare buying with renting over the years you expect to stay.', 'Work out how much the First Home Super Saver scheme adds to your deposit.'],
-    faq: [['What is the First Home Super Saver scheme?', 'You can make voluntary super contributions and later withdraw up to $50,000 of them, with earnings, for a first home deposit, taxed at a discount.']],
+    faq: [['What is the First Home Super Saver scheme?', 'You can make voluntary super contributions and later withdraw up to $50,000 of them, with earnings, for a first home deposit, taxed at a discount. Contributions count toward the $32,500 concessional cap (from 1 July 2026), and you can request the release up to 90 days after signing a contract.']],
   },
   '/price-check': {
     how: ['Enter a listing price and suburb.', 'Ownaroo shows which first home buyer schemes, grants and duty concessions still apply at that price, and the prices that bring buyers back.', 'It makes a "Can you afford this home?" link and QR code for the listing.'],

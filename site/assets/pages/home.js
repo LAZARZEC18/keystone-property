@@ -53,11 +53,11 @@ export default async function home(main) {
     <div class="spread"><div><div class="eyebrow">Same income, different cities</div><h2 style="margin:4px 0 4px">What one household income comfortably buys in each capital</h2></div><a href="/afford?buyer=fhb" data-link>Use your own numbers →</a></div>
     <div class="inc-controls">
       <label><span>Household income</span><b id="inc-val">$110k</b><input id="inc" type="range" min="50000" max="400000" step="5000" value="110000" aria-label="Household income before tax"></label>
-      <div class="seg" id="inc-dep" role="group" aria-label="Deposit"><button type="button" data-d="0.2" class="on">20% deposit</button><button type="button" data-d="0.05">5% deposit</button></div>
+      <div class="seg" id="inc-dep" role="group" aria-label="Deposit"><button type="button" data-d="0.05" class="on" aria-pressed="true">5% deposit (first home)</button><button type="button" data-d="0.2" aria-pressed="false">20% deposit</button></div>
     </div>
     <div class="incbars" id="incbars"></div>
     <p class="note" style="margin:10px 0 0">The comfortable price is the same in every city; what changes is how far it goes against each city's median.</p>
-    <p class="fine" style="margin-top:12px">Repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (RBA average on new owner-occupier loans, ${esc(ooRate.month)}), 30 years, plus the deposit. Savings, debts and stamp duty are in the full tool. Medians: Cotality, month-end ${esc(market.indexMonth || '')}.</p>
+    <p class="fine" style="margin-top:12px">Repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (${esc(ooRate.label)}), 30 years, plus the deposit (a 5% deposit assumes the 5% Deposit Scheme: no mortgage insurance, up to each area's price cap). Savings, debts and stamp duty are in the full tool. Medians: Cotality, month-end ${esc(market.indexMonth || '')}.</p>
   </section>
 
   <section class="section">
@@ -101,7 +101,7 @@ export default async function home(main) {
   });
 
   // income slider: comfortable price vs median house and unit in each capital
-  let dep = 0.2;
+  let dep = 0.05;
   const bars = () => {
     const income = +main.querySelector('#inc').value;
     main.querySelector('#inc-val').textContent = aud(income, { compact: true });
@@ -124,7 +124,7 @@ export default async function home(main) {
     const b = e.target.closest('button');
     if (!b) return;
     dep = +b.dataset.d;
-    main.querySelectorAll('#inc-dep button').forEach((x) => x.classList.toggle('on', x === b));
+    main.querySelectorAll('#inc-dep button').forEach((x) => (x.classList.toggle('on', x === b), x.setAttribute('aria-pressed', String(x === b))));
     bars();
   });
   bars();

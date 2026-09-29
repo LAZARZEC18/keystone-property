@@ -1,5 +1,5 @@
 // Turns a suburb's numbers into a plain-English investment case: why buy, what to watch, who it suits.
-import { aud, pct } from './ui.js';
+import { aud, pct, confLevel } from './ui.js';
 import { cleanName } from './data.js';
 import { riskNote } from './engine.js';
 
@@ -87,7 +87,7 @@ export function investmentCase(s, d, region, rs, market) {
   if (s.pop < 1500) cons.push(`Small market (${s.pop.toLocaleString()} residents), so there are fewer buyers and tenants and it's harder to sell quickly.`);
   if (['Remote', 'Very Remote'].includes(s.ra || d.ra)) cons.push(`${s.ra || d.ra} area. Remote markets swing with local industry (often mining) and can fall sharply.`);
   if (s.pt === 'u' && (d['fla%'] ?? 0) >= 60) cons.push('Unit-dominated market. Check apartment supply in the pipeline, strata levies and building defects before buying off the plan.');
-  if (s.conf === 'low' || s.conf === 'medium-low') cons.push(`The price is a Ownaroo estimate (${s.conf === 'low' ? 'low' : 'moderate'} confidence). Check recent sales on the listings links below before you rely on it.`);
+  if (confLevel(s) !== 'high' && !(s.hs && s.hs !== 'model' && s.hs !== 'region')) cons.push(`The price is an Ownaroo estimate (${confLevel(s)} confidence). Check recent sales on the listings links below before you rely on it.`);
   if (R.dom && R.domYearAgo && R.dom - R.domYearAgo >= 10) wider.push(`Homes across ${R.name} now take ${R.dom} days to sell, up from ${R.domYearAgo} a year ago: the market is cooling.`);
 
   // Who it suits

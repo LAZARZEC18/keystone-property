@@ -68,7 +68,7 @@ export default async function propertyPage(main, _p, query) {
   const go = () => input.value.trim() && navigate(/^\s*(unit\s*)?\d/i.test(input.value) ? stash(input.value.trim()) : `/property?q=${encodeURIComponent(input.value.trim())}`);
   input.addEventListener('keydown', (e) => e.key === 'Enter' && go());
   if (!q) {
-    main.querySelector('#pout').innerHTML = '<p class="note">Include the suburb and postcode for the best match, for example "12 Smith Street, Bayswater WA 6053".</p>';
+    main.querySelector('#pout').innerHTML = '<p class="note">Include the suburb and postcode for the best match, for example "40 King William Street, Bayswater WA 6053".</p>';
     return;
   }
   const out = main.querySelector('#pout');
@@ -105,7 +105,7 @@ export default async function propertyPage(main, _p, query) {
   const streetFound = !!facts || (g && g.precision !== 'area' && streetWord && typed.includes(` ${streetWord} `) && haversine(s, g) < 15);
   const typicalUrl = `/property?q=${encodeURIComponent(`${cleanName(s.n)} ${s.s} ${s.pc || ''}`.trim())}`;
   if (streetTyped && !streetFound) {
-    out.innerHTML = `<div class="empty"><h2>We couldn't find that address</h2><p>${geo ? `No street matching "${esc(first.trim())}" was found in or near ${esc(cleanName(s.n))} ${s.s}` : 'The address lookup is unavailable right now'}, so Ownaroo won't put a price on it. Check the spelling, or include the unit number and postcode.</p><p><a class="btn" href="${typicalUrl}" data-link>See the estimate for a typical home in ${esc(cleanName(s.n))}</a> <a class="btn ghost" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></p></div>`;
+    out.innerHTML = `<div class="empty"><h2>We couldn't find that address</h2><p>${geo ? `No street matching "${esc(first.trim())}" was found in or near ${esc(cleanName(s.n))} ${s.s}` : 'The address lookup is unavailable right now'}, so Ownaroo won't put a price on it. Check the spelling, or include the unit number and postcode.</p><p><a class="btn" href="${typicalUrl}" data-link>See the estimate for a typical home in ${esc(cleanName(s.n))}</a> <a class="btn ghost" href="${suburbUrl(s)}" data-link>Suburb report</a></p></div>`;
     return;
   }
   const located = facts ? 'the property record' : !streetTyped ? 'the suburb only (no street given)' : g.precision === 'address' ? 'the address' : 'the street (house number not confirmed)';
@@ -178,7 +178,7 @@ export default async function propertyPage(main, _p, query) {
   const res = main.querySelector('#res');
   wireBrand(res);
   const invRate = typicalRate(rba, 'INV').rate;
-  const ooRate = rba.actual?.newOOVariable?.at(-1)?.[1] || 6.2;
+  const ooRate = typicalRate(rba, 'OO').rate;
   const setMode = (m) => {
     mode = m;
     try {
@@ -280,7 +280,7 @@ export default async function propertyPage(main, _p, query) {
           </div>
         </div>
         <div class="row" style="margin-top:12px"><a class="btn primary" href="/afford?buyer=${buyer}" data-link>What can I afford?</a><a class="btn" href="${suburbUrl(s)}" data-link>${esc(cleanName(s.n))} suburb report</a></div>
-        <p class="fine" style="margin-top:10px">Repayments use the average rate on new owner-occupier variable loans (RBA), 30 years, principal and interest. ${esc(STRESS.note)}</p>
+        <p class="fine" style="margin-top:10px">Repayments use ${pct(ooRate, 2)}, ${esc(typicalRate(rba, 'OO').label)}, over 30 years, principal and interest. ${esc(STRESS.note)}</p>
         <div style="margin-top:12px">${nextStepsCard({ fhb: buyer === 'fhb' })}</div>
         ${foot}</div>`;
     } else {

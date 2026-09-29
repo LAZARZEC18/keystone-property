@@ -280,13 +280,14 @@ async function ticker() {
       // a change takes effect the day after the announcement, so compare dates, not equality
       const moved = (rba.cashRate.lastChange || '') >= recent;
       const known = moved || (rba.cashRate.published || '') >= recent;
-      after = known ? ` · ${moved ? 'changed' : 'held'} ${day(recent)}` : ` · ${day(recent)} decision announced, updating`;
+      const up = (rba.cashRate.decisions?.at(-1)?.change || 0) > 0;
+      after = known ? ` · ${moved ? `${up ? 'raised' : 'cut'} ${day(recent)}${rba.cashRate.lastChange > recent ? ` (takes effect ${day(rba.cashRate.lastChange)})` : ''}` : `held ${day(recent)}`}` : ` · ${day(recent)} decision announced, updating`;
     }
     const items = [
       `<a href="/markets" data-link><span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b><span>${after}${next ? ` · next decision ${day(next)}` : ''}</span></a>`,
       bestOO && `<a href="/rates" data-link><span>Lowest owner-occupier variable, open to anyone</span> <b>${pct(bestOO.rate, 2)}</b></a>`,
       bestInv && `<a href="/rates" data-link class="t-inv"><span>Lowest investor variable, open to anyone</span> <b>${pct(bestInv.rate, 2)}</b></a>`,
-      openRate(rs, 'OO_PI_fixed2') && `<a href="/rates" data-link><span>Lowest 2-year fixed, owner-occupier</span> <b>${pct(openRate(rs, 'OO_PI_fixed2').rate, 2)}</b></a>`,
+      openRate(rs, 'OO_PI_fixed2') && `<a href="/rates" data-link><span>Lowest 2-year fixed, owner-occupier, open to anyone</span> <b>${pct(openRate(rs, 'OO_PI_fixed2').rate, 2)}</b></a>`,
       // each capital's 12-month change in home values (month-end), most to least
       ...Object.values(market.regions || {})
         .filter((r) => r.capital && r.annualPct != null)
@@ -296,7 +297,17 @@ async function ticker() {
     ].filter(Boolean);
     // the strip scrolls; a second copy makes the loop seamless (hidden from screen readers), and it pauses on hover or focus
     const row = items.map((i) => `<div>${i}</div>`).join('');
-    $('#ticker').innerHTML = `<div class="ticker-track"><div class="ticker-in">${row}</div><div class="ticker-in" aria-hidden="true" inert>${row}</div></div>`;
+    $('#ticker').innerHTML = `<div class="ticker-track"><div class="ticker-in">${row}</div><div class="ticker-in" aria-hidden="true" inert>${row}</div></div><button type="button" class="ticker-pause" aria-pressed="false" aria-label="Pause the moving rate strip" title="Pause">❚❚</button>`;
+    // WCAG 2.2.2: moving content needs a pause control that works without a mouse
+    $('#ticker .ticker-pause').addEventListener('click', (e) => {
+      const on = $('#ticker').classList.toggle('paused');
+      e.currentTarget.setAttribute('aria-pressed', String(on));
+      e.currentTarget.setAttribute('aria-label', on ? 'Play the moving rate strip' : 'Pause the moving rate strip');
+      e.currentTarget.textContent = on ? '▶' : '❚❚';
+      e.currentTarget.title = on ? 'Play' : 'Pause';
+      try { localStorage.setItem('ownaroo.tickerPaused', on ? '1' : ''); } catch {}
+    });
+    try { if (localStorage.getItem('ownaroo.tickerPaused')) $('#ticker .ticker-pause').click(); } catch {}
   } catch (e) {
     console.warn('ticker', e);
   }

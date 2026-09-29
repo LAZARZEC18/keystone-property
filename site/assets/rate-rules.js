@@ -6,7 +6,7 @@ export const MEMBERS_ONLY_LENDER = /^(Police Bank|Border Bank|Police Credit Unio
 // Products restricted to an occupation even at an open lender.
 export const MEMBERS_ONLY_PRODUCT = /\b(police|customs|essential worker|nurses?|teachers?|emergency services?|first responders?|defence force|health professionals?|members? only)\b/i;
 // Not a loan to buy a home: equity loans, lines of credit, refinance-only offers.
-export const NOT_PURCHASE = /equity loan|home equity|line of credit|equity access|refinanc/i;
+export const NOT_PURCHASE = /equity loan|home equity|line of credit|equity access|refinanc|\brefi\b|switch(ing)? offer/i;
 
 export const membersOnly = (r) => MEMBERS_ONLY_LENDER.test(r.lenderRaw || r.lender || '') || MEMBERS_ONLY_LENDER.test(r.lender || '') || MEMBERS_ONLY_PRODUCT.test(r.product || '');
 export const notPurchase = (r) => NOT_PURCHASE.test(r.product || '');
@@ -44,6 +44,21 @@ export function productName(raw = '', lender = '') {
   return n.charAt(0).toUpperCase() + n.slice(1);
 }
 
+const N = '(\\d{2}(?:\\.\\d+)?)';
+/** LVR band written in a product name: 'LVR >60-70', '(60.01 - 80.00% LVR)', '60-80LVR', 'LVR<80%', 'up to 60% LVR', '>90 LVR'. */
+export function lvrFromName(name = '') {
+  const n = String(name);
+  if (!/LVR|loan[- ]to[- ]value/i.test(n)) return null;
+  const pick = (re) => n.match(new RegExp(re, 'i'));
+  const range = pick(`LVR\\s*[:>]?\\s*${N}\\s*%?\\s*(?:-|–|to)\\s*${N}`) || pick(`>?\\s*${N}\\s*%?\\s*(?:-|–|to)\\s*${N}\\s*%?\\s*LVR`);
+  if (range) return { min: Math.round(+range[1]), max: Math.round(+range[2]) };
+  const min = pick(`(?:>|over|above|more than)\\s*${N}\\s*%?\\s*LVR`) || pick(`LVR\\s*(?:>|over|above)\\s*${N}`);
+  if (min) return { min: Math.round(+min[1]), max: null };
+  const max = pick(`(?:up to|<=?|≤|max(?:imum)?|under|below)\\s*${N}\\s*%?\\s*LVR`) || pick(`LVR\\s*(?:of\\s*)?(?:<=?|≤|up to|max(?:imum)?|under|below)?\\s*${N}\\s*%?`) || pick(`${N}\\s*%?\\s*LVR`);
+  if (max) return { min: null, max: Math.round(+max[1]) };
+  return null;
+}
+
 export function normaliseRate(r) {
   const n = String(r.product || '');
   const o = { ...r, lenderRaw: r.lender, lender: lenderName(r.lender), product: productName(r.product, r.lender) };
@@ -60,22 +75,25 @@ export function normaliseRate(r) {
     o.comparison = null;
     o.cmpBad = true;
   }
-  const range = n.match(/LVR\s*(\d{2})\s*%?\s*(?:-|–|to)\s*(\d{2})/i);
-  const max = n.match(/(?:up to|<=?|≤|max(?:imum)?|under|below)\s*(\d{2})\s*%?\s*LVR/i) || n.match(/LVR\s*(?:of\s*)?(?:<=?|≤|up to|max(?:imum)?|under|below)?\s*(\d{2})\s*%?(?!\s*(?:-|–|to)\s*\d)/i) || n.match(/(\d{2})\s*%\s*LVR/i);
-  const min = n.match(/(?:>|over|above|more than)\s*(\d{2})\s*%?\s*LVR/i) || n.match(/LVR\s*(?:>|over|above)\s*(\d{2})/i);
-  if (range) {
-    o.lvrMin = Math.max(o.lvrMin ?? 0, +range[1]);
-    o.lvrMax = Math.min(o.lvrMax ?? 100, +range[2]);
-  } else if (min) {
-    o.lvrMin = Math.max(o.lvrMin ?? 0, +min[1]);
-  } else if (max) {
-    o.lvrMax = Math.min(o.lvrMax ?? 100, +max[1]);
+  // an LVR band written in the product name is more specific than the feed's tiers, so it wins
+  const band = lvrFromName(n);
+  if (band) {
+    o.lvrFeed = [o.lvrMin, o.lvrMax];
+    const [fMin, fMax] = o.lvrFeed;
+    if (band.min != null) {
+      o.lvrMin = band.min + 0.01; // "60-70" and ">60" mean above 60%
+      o.lvrMax = band.max ?? (fMax != null && fMax > band.min ? fMax : null);
+    } else {
+      o.lvrMax = band.max;
+      o.lvrMin = fMin != null && fMin < band.max ? fMin : 0;
+    }
   }
   return o;
 }
 
-// Lenders anyone in Australia can apply to, online or through branches in every state.
-export const NATIONAL_LENDER = /^(CommBank|Westpac|NATIONAL AUSTRALIA BANK|NAB|ANZ|ANZ Plus|ING|Macquarie|St\.?George|Bank of Melbourne|BankSA|Bankwest|Suncorp|Bank of Queensland|BOQ\b|Bendigo|UBank|Up$|ME Bank|AMP|Virgin Money|Great Southern Bank|Unloan|Tiimely|Qantas Money|Aussie|Liberty|Bank Australia|Beyond Bank|HSBC|Citi|Athena|Bank of us)/i;
+// Lenders anyone in Australia can apply to, online, by phone or through brokers, with no job, employer or regional
+// membership test. Includes customer-owned banks that lend Australia-wide (joining is part of opening the loan).
+export const NATIONAL_LENDER = /^(CommBank|Westpac|NATIONAL AUSTRALIA BANK|NAB|ANZ|ANZ Plus|ING|Macquarie|St\.?George|Bank of Melbourne|BankSA|Bankwest|Suncorp|Bank of Queensland|BOQ\b(?! Specialist)|Bendigo|UBank|Up$|ME Bank|AMP|Virgin Money|Great Southern Bank|Unloan|Tiimely|Qantas Money|Aussie|Liberty|Bank Australia|Beyond Bank|HSBC|Citi|Athena|Bank of us|Greater Bank|Newcastle Permanent|People First|Heritage|People'?s Choice|IMB|Hume Bank|Bank First|MyState|Auswide|Qudos|Regional Australia Bank|BCU)/i;
 export const isNational = (r) => NATIONAL_LENDER.test(r.lender || '') || NATIONAL_LENDER.test(r.lenderRaw || '');
 /**
  * Customer-owned and regional lenders (credit unions, mutuals, regional banks): you usually join as a member, and some

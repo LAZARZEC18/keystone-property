@@ -38,7 +38,7 @@ await job('rates', async () => {
   const { rows, failed, brandsChecked } = await collectRates({ log: () => {} });
   if (rows.length < 1000) throw new Error(`only ${rows.length} rows, keeping previous data`);
   const updated = new Date().toISOString();
-  const cols = ['lender', 'product', 'type', 'term', 'purpose', 'repay', 'rate', 'comparison', 'lvrMin', 'lvrMax', 'url', 'tailored', 'special'];
+  const cols = ['lender', 'product', 'type', 'term', 'purpose', 'repay', 'rate', 'comparison', 'lvrMin', 'lvrMax', 'url', 'tailored', 'special', 'offset', 'redraw', 'annualFee', 'upfrontFee'];
   const lenders = [...new Set(rows.map((x) => x.lender))].sort();
   const li = new Map(lenders.map((l, i) => [l, i]));
   await w(SITE, 'rates.json', { updated, source: 'Consumer Data Right product reference data (api.cdr.gov.au)', brandsChecked, failed, cols, lenders, rows: rows.map((x) => cols.map((c) => (c === 'lender' ? li.get(x.lender) : x[c]))) });

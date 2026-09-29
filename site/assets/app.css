@@ -818,3 +818,36 @@ table.cards-sm.name-first td:first-child, table.cards-sm.name-first td:first-chi
 @media (max-width: 640px) { .ticker .t-inv, .ticker .t-when { display: flex; } .ticker-in { gap: 22px; padding: 6px 11px; } .ticker-track { animation-duration: 60s; } }
 @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } .ticker { overflow-x: auto; scrollbar-width: none; } }
 @media (max-width: 700px) { form.reno { grid-template-columns: 1fr !important; } }
+/* price check: print only the buyer sheet */
+@media print {
+  body.print-sheet-mode main * { visibility: hidden; }
+  body.print-sheet-mode #pc-sheet, body.print-sheet-mode #pc-sheet * { visibility: visible; }
+  body.print-sheet-mode #pc-sheet { position: absolute; left: 0; top: 0; width: 100%; border: 0; }
+  body.print-sheet-mode main::after { content: none; }
+  body.print-sheet-mode #pc-sheet .print-only { display: block; }
+}
+#pc-sheet-qr:not([src]) { display: none !important; }
+/* the tax-change calculator's two columns stack on tablets and phones (the inline desktop split can't win here) */
+@media (max-width: 980px) { .g-side { grid-template-columns: minmax(0, 1fr) !important; } }
+@media (max-width: 700px) { .g-side .fields { grid-template-columns: minmax(0, 1fr) !important; } .g-side input, .g-side select { min-width: 0; max-width: 100%; } }
+.ticker { position: relative; }
+.ticker.paused .ticker-track { animation-play-state: paused; }
+.ticker-pause { position: absolute; right: 0; top: 0; bottom: 0; width: 34px; border: 0; border-left: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 11px; cursor: pointer; }
+.ticker-pause:hover, .ticker-pause:focus-visible { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .ticker-pause { display: none; } }
+/* in-page menu on long reports: sticks under the header while scrolling */
+.page-menu { position: sticky; top: var(--menu-top, 64px); z-index: 20; display: flex; gap: 4px 14px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; padding: 8px 2px; margin: 10px 0 0; background: var(--bg); border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.page-menu::-webkit-scrollbar { display: none; }
+.page-menu a { color: var(--muted); text-decoration: none; padding: 5px 0; }
+.page-menu a:hover, .page-menu a:focus-visible { color: var(--ink); text-decoration: underline; }
+[id^='s-'], #condition { scroll-margin-top: 120px; }
+.faq-item { border-top: 1px solid var(--line); padding: 12px 0 4px; }
+.faq-item .faq-q { font-size: 16px; margin: 0 0 4px; }
+.faq-item .note { margin: 0; }
+details.more-results > summary { list-style: none; display: inline-flex; }
+details.more-results > summary::-webkit-details-marker { display: none; }
+details.more-results[open] > summary { opacity: .75; }
+.split27 { display: flex; gap: 18px; flex-wrap: wrap; }
+.split27 .k { display: block; font-size: 12.5px; color: var(--muted); }
+.split27 .cost-head { font-size: 26px; }
+.rate-watch a, .home-banner a, a.note { display: inline-block; padding: 3px 0; }

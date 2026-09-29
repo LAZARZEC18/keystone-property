@@ -55,11 +55,21 @@ export function srcBadge(src) {
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
 }
 
+/** One confidence level for a suburb, used by the badge and every sentence that mentions it: 'high' | 'medium' | 'low'. */
+export function confLevel(s) {
+  const priceOfficial = s.hs && s.hs !== 'model' && s.hs !== 'region';
+  const growthLocal = s.g1s && !String(s.g1s).startsWith('region');
+  return priceOfficial && growthLocal && !String(s.hs).includes('postcode') ? 'high' : priceOfficial || growthLocal ? 'medium' : 'low';
+}
+
+/** The confidence level in words, for sentences. */
+export const confLabel = (s) => ({ high: 'measured (high confidence)', medium: 'an estimate (medium confidence)', low: 'an estimate (low confidence)' })[confLevel(s)];
+
 /** How much of a suburb's ranking rests on measured data rather than the model. */
 export function confBadge(s) {
   const priceOfficial = s.hs && s.hs !== 'model' && s.hs !== 'region';
   const growthLocal = s.g1s && !String(s.g1s).startsWith('region');
-  if (priceOfficial && growthLocal && !String(s.hs).includes('postcode')) return '<span class="tag tag-conf tag-conf-h" title="Price and 12-month change come from official sales for this suburb">Measured · high confidence</span>';
+  if (confLevel(s) === 'high') return '<span class="tag tag-conf tag-conf-h" title="Price and 12-month change come from official sales for this suburb">Measured · high confidence</span>';
   if (priceOfficial || growthLocal) return `<span class="tag tag-conf tag-conf-m" title="${priceOfficial ? 'Price from official sales' : 'Price is modelled'}${String(s.hs).includes('postcode') ? ' for the postcode' : ''}; ${growthLocal ? '12-month change measured locally' : '12-month change is the city or regional index'}. Rent is modelled.">Estimate · medium confidence</span>`;
   return '<span class="tag tag-conf tag-conf-l" title="No official suburb sales series here: price and rent are modelled and the 12-month change is the city or regional index. Treat the ranking as a guide.">Estimate · low confidence</span>';
 }
