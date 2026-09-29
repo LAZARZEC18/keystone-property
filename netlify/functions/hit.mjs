@@ -1,7 +1,7 @@
 // Cookie-free page counts. The browser sends only the page path; nothing that identifies a visitor (no IP address,
-// device ID or cookie) is stored. Counts are kept per day and page in the site's Netlify Blobs store "analytics",
-// which can be browsed in the Netlify dashboard (Site → Blobs).
-import { getStore } from '@netlify/blobs';
+// device ID or cookie) is stored. Counts are kept per day and page under "analytics/"
+// in the site's key-value store (Cloudflare: the KV namespace bound as STORE; Netlify: the Blobs store "analytics").
+import { getStore } from '../shared/store.mjs';
 
 // suburb, postcode and council pages are grouped so the counts show which tools are used, not who looked at what
 function group(path) {
@@ -19,7 +19,7 @@ export default async (req) => {
     const body = await req.text();
     const { p, e } = JSON.parse(body || '{}');
     const day = new Date().toISOString().slice(0, 10);
-    const store = getStore('analytics');
+    const store = await getStore('analytics');
     // events: a tool finished, a link copied, a plan printed, a listing link opened (names only, nothing personal)
     const ev = e ? String(e).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) : '';
     const key = ev ? `${day}/event/${ev}` : `${day}${group(p)}`;

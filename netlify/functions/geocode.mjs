@@ -2,9 +2,8 @@
 // production traffic); otherwise OpenStreetMap Nominatim, server-side with an identifying User-Agent and a cache, as
 // its usage policy requires. One lookup per search, never autocomplete. The address arrives in the request body, so
 // it isn't written into request logs, and results are cached by a hash of the address, not the address itself.
-import { getStore } from '@netlify/blobs';
-import { createHash } from 'node:crypto';
-const UA = 'OwnarooAU/1.0 (+https://keystone-au.netlify.app; property research site)';
+import { getStore, sha256 } from '../shared/store.mjs';
+const UA = 'OwnarooAU/1.0 (+https://github.com/LAZARZEC18/keystone-property; property research site)';
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -57,10 +56,10 @@ async function readQuery(req) {
 export default async (req) => {
   const q = (await readQuery(req)).trim().slice(0, 160);
   if (q.length < 4) return json({ error: 'address too short' }, 400);
-  const key = createHash('sha256').update(q.toLowerCase()).digest('hex').slice(0, 32);
+  const key = (await sha256(q.toLowerCase())).slice(0, 32);
   let store = null;
   try {
-    store = getStore('geocode');
+    store = await getStore('geocode');
     const hit = await store.get(key, { type: 'json' });
     if (hit && Date.now() - hit.at < 30 * 864e5) return json(hit.body);
   } catch {

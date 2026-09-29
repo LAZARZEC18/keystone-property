@@ -2,7 +2,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { GUIDE } from '../netlify/shared/seo-core.js';
 
-const SITE = (process.env.SITE_URL || 'https://keystone-au.netlify.app').replace(/\/$/, '');
+const SITE = (process.env.SITE_URL || 'https://ownaroo.pages.dev').replace(/\/$/, '');
 const d = JSON.parse(await readFile(new URL('../site/data/suburbs.json', import.meta.url), 'utf8'));
 const col = (c) => d.cols.indexOf(c);
 const clean = (n) => n.replace(/\s*\((NSW|Vic\.|Qld|SA|WA|Tas\.|NT|ACT)\)\s*$/i, '');

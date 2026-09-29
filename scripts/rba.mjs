@@ -1,6 +1,5 @@
 // Reserve Bank of Australia statistical tables: cash rate decisions, indicator and actual
 // housing lending rates, and money-market pricing (OIS = what markets expect the cash rate to do).
-import { writeFile, mkdir } from 'node:fs/promises';
 import { getText } from './lib/http.mjs';
 
 const BASE = 'https://www.rba.gov.au/statistics/tables/csv/';
@@ -146,9 +145,13 @@ export async function collectRba() {
   };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const d = await collectRba();
-  await mkdir(new URL('../site/data/', import.meta.url), { recursive: true });
-  await writeFile(new URL('../site/data/rba.json', import.meta.url), JSON.stringify(d));
-  console.log('cash', d.cashRate.current, d.cashRate.lastChange, 'bab6m', d.market.bab6m, d.actual.titles);
+// run from the command line (the refresh job); on a server host this module only exports the collector
+if (typeof process !== 'undefined' && process.argv && import.meta.url === `file://${process.argv[1]}`) {
+  (async () => {
+    const { writeFile, mkdir } = await import('node:' + 'fs/promises');
+    const d = await collectRba();
+    await mkdir(new URL('../site/data/', import.meta.url), { recursive: true });
+    await writeFile(new URL('../site/data/rba.json', import.meta.url), JSON.stringify(d));
+    console.log('cash', d.cashRate.current, d.cashRate.lastChange, 'bab6m', d.market.bab6m, d.actual.titles);
+  })();
 }

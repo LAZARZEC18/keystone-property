@@ -33,7 +33,7 @@ const PAGES = {
         <li><b>Addresses you look up:</b> sent in the body of a request (not in the page address, so they don't appear in web logs) through Ownaroo's server to a map service, MapTiler or OpenStreetMap's Nominatim, to find the location. The result is cached for 30 days under a one-way code made from the address, so the address itself isn't stored, and no address is sent to any property data company.</li>
         <li><b>Your saved suburbs, deals and theme:</b> saved in your own browser, not on Ownaroo's servers, so they aren't on your other devices and are lost if you clear your browser data.</li>
         <li><b>Page views and tool use:</b> Ownaroo counts which pages are viewed and when a tool finishes, a link is copied, a plan is printed or a listing link is opened, as daily totals with no cookies and nothing that identifies you (no IP address, device ID or figures you entered), to learn which tools are useful.</li>
-        <li><b>Server logs:</b> the hosting provider (Netlify) keeps standard request logs, such as IP address and pages requested, for security and reliability.</li>
+        <li><b>Server logs:</b> the hosting provider (Cloudflare) keeps standard request logs, such as IP address and pages requested, for security and reliability.</li>
       </ul>
       <h2>Other services your browser contacts</h2>
       <p>Like most websites, pages load a few things from other companies, which receive your IP address and browser details when they do:</p>
@@ -45,7 +45,7 @@ const PAGES = {
       </ul>
       <p>Links to Google Maps, realestate.com.au, Domain, lenders and government sites only contact those sites if you click them.</p>
       <h2>Where it's stored</h2>
-      <p>Messages are stored with Netlify, which may hold data outside Australia. Ownaroo takes reasonable steps to keep it secure and deletes it when it's no longer needed.</p>
+      <p>Messages are stored with the hosting provider (Cloudflare), which may hold data outside Australia. Ownaroo takes reasonable steps to keep it secure and deletes it when it's no longer needed.</p>
       <h2>Your choices</h2>
       <p>To see, correct or delete what Ownaroo holds about you, email <a href="mailto:${h.email}">${h.email}</a> or use the <a href="/contact" data-link>contact form</a>. If you're not happy with the response, you can contact the Office of the Australian Information Commissioner (oaic.gov.au).</p>`,
   },
@@ -77,7 +77,7 @@ const PAGES = {
     body: (h) => `
       <p>Questions, corrections, data you think is wrong, or partnership enquiries (Ownaroo doesn't sell advertising, placements or rankings): email <a href="mailto:${h.email}">${h.email}</a> or send a message below. You'll get a reply by email, usually within two business days.</p>
       ${h.business}
-      <form class="card" name="contact" method="POST" data-netlify="true" netlify-honeypot="company" id="contact-form" style="max-width:620px">
+      <form class="card" name="contact" method="POST" id="contact-form" style="max-width:620px">
         <input type="hidden" name="form-name" value="contact">
         <p hidden><label>Leave empty <input name="company"></label></p>
         <div class="fields" style="grid-template-columns:1fr 1fr">
@@ -116,7 +116,7 @@ export default async function infoPage(main, params) {
     e.preventDefault();
     const status = main.querySelector('#contact-status');
     try {
-      const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() });
+      const r = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form))) });
       if (!r.ok) throw new Error(r.status);
       form.innerHTML = '<h3>Thanks, your message is in.</h3><p class="note">You\'ll get a reply by email.</p>';
     } catch {

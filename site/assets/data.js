@@ -2,7 +2,7 @@ import { normaliseRate } from './rate-rules.js';
 // Data loading and lookups shared by every page.
 const cache = new Map();
 
-// Served live by a Netlify function (cached up to an hour), falling back to the stored file.
+// Served live by a server function (cached up to an hour), falling back to the stored file.
 const LIVE = new Set(['news', 'rba']);
 /** The stored copy at once, plus the live copy when it arrives (up to 20 s), for pages that can update in place. */
 export function loadStaleFirst(name) {

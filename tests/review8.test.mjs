@@ -81,10 +81,10 @@ test('a variable comparison rate far below the rate is dropped as a feed error',
 
 test('the content security policy allows the inline theme script', () => {
   const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
-  const toml = readFileSync(new URL('../netlify.toml', import.meta.url), 'utf8');
+  const toml = readFileSync(new URL('../site/_headers', import.meta.url), 'utf8');
   const inline = html.match(/<script>([\s\S]*?)<\/script>/)[1];
   const hash = createHash('sha256').update(inline).digest('base64');
-  assert.ok(toml.includes(`'sha256-${hash}'`), 'update the CSP hash in netlify.toml after editing the inline script');
+  assert.ok(toml.includes(`'sha256-${hash}'`), 'update the CSP hash in site/_headers after editing the inline script');
   assert.ok(/frame-ancestors 'none'/.test(toml));
 });
 

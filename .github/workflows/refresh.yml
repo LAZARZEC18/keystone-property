@@ -33,7 +33,7 @@ jobs:
       - name: ABS building approvals (downloads only when a new month is released)
         run: python scripts/abs_approvals.py || echo "approvals check failed, keeping previous data"
       - name: Sitemap
-        run: node scripts/sitemap.mjs && node scripts/home.mjs
+        run: node scripts/sitemap.mjs && node scripts/home.mjs && node scripts/seo_index.mjs
         env:
           SITE_URL: ${{ vars.SITE_URL }}
       - name: Unit tests

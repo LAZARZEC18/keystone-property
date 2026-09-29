@@ -71,4 +71,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://keystone-au.netlify.app/sitemap.xml
+Sitemap: https://ownaroo.pages.dev/sitemap.xml

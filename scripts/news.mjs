@@ -1,6 +1,5 @@
 // Housing news: headlines and links (never article text) from public RSS/Atom feeds,
 // filtered to Australian property, rates and rent, de-duplicated and tagged.
-import { writeFile, mkdir } from 'node:fs/promises';
 import { getText, pool } from './lib/http.mjs';
 
 export const FEEDS = [
@@ -148,9 +147,13 @@ export async function collectNews({ now = Date.now(), timeout = 15000 } = {}) {
   };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const d = await collectNews();
-  await mkdir(new URL('../site/data/', import.meta.url), { recursive: true });
-  await writeFile(new URL('../site/data/news.json', import.meta.url), JSON.stringify(d));
-  console.log(d.items.length, 'items;', d.feeds.map((f) => `${f.source}:${f.ok ? f.count : 'x'}`).join(' '));
+// run from the command line (the refresh job); on a server host this module only exports the collector
+if (typeof process !== 'undefined' && process.argv && import.meta.url === `file://${process.argv[1]}`) {
+  (async () => {
+    const { writeFile, mkdir } = await import('node:' + 'fs/promises');
+    const d = await collectNews();
+    await mkdir(new URL('../site/data/', import.meta.url), { recursive: true });
+    await writeFile(new URL('../site/data/news.json', import.meta.url), JSON.stringify(d));
+    console.log(d.items.length, 'items;', d.feeds.map((f) => `${f.source}:${f.ok ? f.count : 'x'}`).join(' '));
+  })();
 }

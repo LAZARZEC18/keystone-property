@@ -1,5 +1,5 @@
 // Base map tiles, configured in site.js (one place to switch provider). Dark mode inverts the tiles with CSS.
-// When a MapTiler key is set in Netlify's environment (MAPTILER_KEY), /api/config hands it over and the maps use
+// When a MapTiler key is set in the host's environment variables (MAPTILER_KEY), /api/config hands it over and the maps use
 // MapTiler's tiles, which are built for production traffic; until then, OpenStreetMap's own servers (light use only).
 import { SITE } from './site.js';
 
