@@ -1,7 +1,7 @@
 import { demo, wireDemos } from '../demo.js';
 import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge, growth12, copyLinkButton, wireCopyLink } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, openRate } from '../data.js';
-import { stampDuty, lmi, borrowingPower, repayment, analyse, suburbScore, PROFILES, incomeTax } from '../engine.js';
+import { stampDuty, lmi, borrowingPower, repayment, analyse, suburbScore, PROFILES, incomeTax, comfortableRepayment } from '../engine.js';
 import { STATES, HOME_GUARANTEE, guaranteeCap, HELP_TO_BUY, helpToBuyCap, FHOG, GROWTH, STRESS, comfortableWeekly, STATE_SCHEMES, helpRepayment, CARD_LIMIT_RATE, KEYSTART } from '../rules.js';
 import { check, showErrors } from '../validate.js';
 import { attachSearch, countEvent } from '../app.js';
@@ -114,11 +114,16 @@ export default async function affordPage(main, _p, query) {
       <div class="fields" style="grid-template-columns:1fr 1fr">
         <label class="field" style="grid-column:1/-1">Deposit<select name="lvr"><option value="0.8" selected>20% deposit (no mortgage insurance)</option><option value="0.9">As low as 10% (mortgage insurance added to the loan)</option><option value="0.95">As low as 5% (mortgage insurance)</option><option value="0.95g">5% deposit, no mortgage insurance (federal 5% Deposit Scheme, first home buyers)</option><option value="htb">2% deposit with Help to Buy (government owns up to 40% of a new home, 30% of an existing one)</option><option value="ks">2% deposit with Keystart, no mortgage insurance (WA only)</option></select></label>
       </div>
-      <details class="fold more-details" ${query.debts || query.cards || query.help1 || query.help2 || query.deps ? 'open' : ''}><summary><b>Debts, HECS and other details</b> <span class="note">optional</span></summary>
-      <div class="fields" style="grid-template-columns:1fr 1fr">
+      <div class="fields" style="grid-template-columns:1fr 1fr;margin-top:10px">
+        <label class="field">Car loan repayments ($/month)<input name="car" type="number" step="1" min="0" inputmode="numeric" placeholder="0" value="${esc(q('car', ''))}"></label>
+        <label class="field">Personal loans and buy now pay later ($/month)<input name="personal" type="number" step="1" min="0" inputmode="numeric" placeholder="0" value="${esc(q('personal', q('debts', '')))}"></label>
+        <label class="field">Credit card limits, total ($)<input name="cards" type="number" step="1" min="0" inputmode="numeric" placeholder="0" value="${esc(q('cards', ''))}"><span class="help">Lenders count ${Math.round(CARD_LIMIT_RATE * 100)}% of the limit a month, even if you pay it off</span></label>
+        <label class="field">Private health insurance ($/month)<input name="insure" type="number" step="1" min="0" inputmode="numeric" placeholder="0" value="${esc(q('insure', ''))}"></label>
+        <label class="field" style="grid-column:1/-1">Household expenses ($/month)<input name="expenses" type="number" step="1" min="0" inputmode="numeric" placeholder="Leave blank for a typical figure" value="${esc(q('expenses', ''))}"><span class="help">Food, bills, transport, childcare, school, phone, other insurance, entertainment. Not rent (it stops when you buy) and not the loans above.</span></label>
         <label class="field">Dependants<input name="deps" type="number" min="0" max="10" value="${esc(q('deps', 0))}"></label>
-        <label class="field">Other loan repayments ($/mth)<input name="debts" type="number" step="1" value="${esc(q('debts', 0))}"><span class="help">Car and personal loans, buy now pay later</span></label>
-        <label class="field">Credit card limits ($)<input name="cards" type="number" step="1" value="${esc(q('cards', 0))}"><span class="help">Total limit: lenders count ${Math.round(CARD_LIMIT_RATE * 100)}% a month</span></label>
+      </div>
+      <details class="fold more-details" ${query.help1 || query.help2 ? 'open' : ''}><summary><b>HECS, rate and other details</b> <span class="note">optional</span></summary>
+      <div class="fields" style="grid-template-columns:1fr 1fr">
         <fieldset class="field checks" style="grid-column:1/-1"><legend>HECS or HELP study debt?</legend><label class="check"><input type="checkbox" name="help1" ${query.help1 ? 'checked' : ''}> I have one</label><label class="check"><input type="checkbox" name="help2" ${query.help2 ? 'checked' : ''}> My partner has one</label><span class="help">Lenders count the compulsory repayment, which is set by income, so there's no balance to enter</span></fieldset>
         <label class="check own-only" style="grid-column:1/-1"><input type="checkbox" name="notOwned5" ${query.notOwned5 ? 'checked' : ''}> No one buying has owned property in the last 5 years <span class="help" style="display:block">In the ACT this removes stamp duty (from 1 July 2026)</span></label>
         <label class="field">Interest rate (%)<input name="rate" type="number" step="0.05" value="${esc(q('rate', bestOO))}"></label>
@@ -212,7 +217,12 @@ export default async function affordPage(main, _p, query) {
     const buyer = f.buyer;
     const investor = buyer === 'investor';
     const helpMonthly = ((f.help1 ? helpRepayment(+f.income || 0) : 0) + (f.help2 ? helpRepayment(+f.income2 || 0) : 0)) / 12;
-    const debtsMonthly = (+f.debts || 0) + helpMonthly + (+f.cards || 0) * CARD_LIMIT_RATE;
+    // what you already pay each month: loans (car, personal, buy now pay later) and compulsory HECS repayments;
+    // lenders also count a share of every credit card limit whether or not it's used
+    const loansMonthly = (+f.car || 0) + (+f.personal || 0) + helpMonthly;
+    const debtsMonthly = loansMonthly + (+f.cards || 0) * CARD_LIMIT_RATE;
+    const insureMonthly = +f.insure || 0;
+    const expensesMonthly = String(f.expenses ?? '').trim() === '' ? null : +f.expenses || 0;
     const notOwned5 = buyer === 'owner' && !!f.notOwned5;
     const ksIncomeOk = (+f.income || 0) + (+f.income2 || 0) <= ((+f.income2 || 0) > 0 ? KEYSTART.income.couple : KEYSTART.income.single);
     const savings = +f.savings || 0;
@@ -226,27 +236,31 @@ export default async function affordPage(main, _p, query) {
     const ksWanted = f.lvr === 'ks' && !investor;
     const maxWeekly = +f.maxWeekly || null;
     // Borrowing power without rent (owner-occupier); investors get rent added per suburb.
-    const bpBase = borrowingPower({ grossIncome: income, couple, dependants: +f.deps || 0, otherDebtMonthly: debtsMonthly, ratePct: rate });
+    // each earner is taxed on their own income; lenders use the higher of your declared expenses and their benchmark
+    const bpArgs = { grossIncome: income, incomes: [+f.income || 0, +f.income2 || 0], couple, dependants: +f.deps || 0, declaredLivingMonthly: expensesMonthly === null ? 0 : expensesMonthly + insureMonthly };
+    const bpBase = borrowingPower({ ...bpArgs, otherDebtMonthly: debtsMonthly, ratePct: rate });
     const capFromWeekly = maxWeekly ? ((maxWeekly * 52) / 12) * (1 - (1 + rate / 1200) ** -360) / (rate / 1200) : Infinity;
     const loanCapFor = (weeklyRent) => {
       let cap = bpBase.amount;
-      if (investor && weeklyRent) cap = borrowingPower({ grossIncome: income, couple, dependants: +f.deps || 0, otherDebtMonthly: debtsMonthly, ratePct: rate, newRentWeekly: weeklyRent }).amount;
+      if (investor && weeklyRent) cap = borrowingPower({ ...bpArgs, otherDebtMonthly: debtsMonthly, ratePct: rate, newRentWeekly: weeklyRent }).amount;
       return Math.min(cap, capFromWeekly);
     };
     // the page address keeps only the choices; savings, income and debts go in a link only when you copy one
     const params = new URLSearchParams({ buyer, type: f.type, profile: f.profile, pop: f.pop, lvr: f.lvr });
     const personal = new URLSearchParams({ savings, income: +f.income || 0, income2: +f.income2 || 0, rate });
     if (+f.deps) personal.set('deps', +f.deps);
-    if (+f.debts) personal.set('debts', +f.debts);
+    for (const k of ['car', 'personal', 'insure']) if (+f[k]) personal.set(k, +f[k]);
+    if (expensesMonthly !== null) personal.set('expenses', expensesMonthly);
     if (+f.cards) personal.set('cards', +f.cards);
     if (f.help1) personal.set('help1', 1);
     if (f.help2) personal.set('help2', 1);
     if (notOwned5) personal.set('notOwned5', 1);
     if (maxWeekly) personal.set('maxWeekly', maxWeekly);
-    // comfortable: repayments within the stress threshold of before-tax household income
-    const comfyWeekly = comfortableWeekly(income);
-    const mr = rate / 1200;
-    const comfyLoan = ((comfyWeekly * 52) / 12) * (1 - (1 + mr) ** -360) / mr;
+    // comfortable: the lower of 30% of before-tax income less your other repayments, and what your take-home pay
+    // leaves after household expenses, insurance and those repayments (keeping 10% spare)
+    const comfy = comfortableRepayment({ incomes: [+f.income || 0, +f.income2 || 0], debtsMonthly: loansMonthly, expensesMonthly, insuranceMonthly: insureMonthly, dependants: +f.deps || 0, ratePct: rate });
+    const comfyWeekly = (comfy.monthly * 12) / 52;
+    const comfyLoan = comfy.loan;
     const live = f.profile === 'live' && !investor;
     const maxKm = +f.commute || 30;
     if (work && !investor) {
@@ -366,7 +380,7 @@ export default async function affordPage(main, _p, query) {
         <div class="stat"><span class="k">Highest price you could buy</span><span class="v xl">${aud((own || bestState).max, { compact: true })}</span><span class="s">in ${esc(areaName || STATES[bestState.st])} with ${aud(savings, { compact: true })} saved</span></div>
         <div class="stat"><span class="k">Suburbs with a house or unit you can afford</span><span class="v xl">${matches.length.toLocaleString()}</span><span class="s">of ${eligible.toLocaleString()} ${f.where && f.where !== 'any' ? `in ${esc(areaName)}` : 'across Australia'} with ${minPop.toLocaleString()}+ residents</span></div>
       </div>` : own ? `<div class="grid g3" style="gap:14px">
-        <div class="stat"><span class="k">A comfortable price in ${esc(areaName)}</span><span class="v xl up">${own.comfy ? aud(own.comfy, { compact: true }) : '—'}</span><span class="s">${own.cs ? `Repayments within ${STRESS.label}` : 'Not enough saved for the deposit and costs yet'}</span></div>
+        <div class="stat"><span class="k">A comfortable price in ${esc(areaName)}</span><span class="v xl up">${own.comfy ? aud(own.comfy, { compact: true }) : '—'}</span><span class="s">${own.cs ? comfyWhy(comfy, { loansMonthly, insureMonthly, actualWeekly: wk(own.cs.loan), lenderBound: own.max && own.max <= own.comfy + 1000 }) : comfy.monthly <= 0 ? 'Your expenses and repayments leave nothing spare for a mortgage yet' : 'Not enough saved for the deposit and costs yet'}</span></div>
         <div class="stat"><span class="k">Cash you need at that price</span><span class="v xl">${own.cs ? aud(own.cs.cash, { compact: true }) : '—'}</span><span class="s">${own.cs ? `${aud(own.cs.deposit, { compact: true })} deposit, ${own.cs.duty ? `${aud(own.cs.duty)} stamp duty` : 'no stamp duty'} and ${aud(OTHER_COSTS)} of fees${own.cs.lmi ? `; ${aud(own.cs.lmi)} mortgage insurance added to the loan` : ''}` : ''}</span></div>
         <div class="stat"><span class="k">Weekly repayment</span><span class="v xl">${own.cs ? aud(wk(own.cs.loan)) : '—'}</span><span class="s">${own.cs ? `on a ${aud(own.cs.loan, { compact: true })} loan at ${pct(rate, 2)} over 30 years` : ''}</span></div>
       </div>
@@ -374,7 +388,7 @@ export default async function affordPage(main, _p, query) {
         <span>The most a lender might stretch to</span><span>${own.max ? `${aud(own.max, { compact: true })}${own.s ? `, about ${aud(wk(own.s.loan))}/wk (${sharePct(own.s.loan)}% of before-tax income${sharePct(own.s.loan) > STRESS.share * 100 ? ': mortgage stress' : ''})` : ''}` : '—'}</span>
         <span>Suburbs with a home in your comfortable budget</span><span>${matches.length.toLocaleString()} in ${esc(areaName)} with ${minPop.toLocaleString()}+ residents${work ? ` within ${maxKm} km of work` : ''}</span>
       </div>` : `<div class="callout" style="margin:0"><b>Where do you want to buy?</b> Choose a city or state at the top of the form to see your comfortable price there. The table below shows every state and territory.</div>`}
-      <p class="note" style="margin-top:12px">${esc(verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea, own, areaName, areaRegion: kind === 'r' ? market.regions[code] : null, noLmi: htb || ksWanted }))}</p>
+      <p class="note" style="margin-top:12px">${esc(verdictText({ comfyWeekly, matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea, own, areaName, areaRegion: kind === 'r' ? market.regions[code] : null, noLmi: htb || ksWanted }))}</p>
       ${investor ? '' : `<p class="note" style="margin-top:8px"><a href="/first-home?${new URLSearchParams({ price: own?.comfy || '', state: areaState || '', dep: guarantee ? '0.05' : maxLvr >= 0.9 ? '0.1' : '0.2', savings, income })}#save" data-link>How long to save more, and renting versus buying, with these numbers →</a></p>`}
     </div>
 
@@ -416,7 +430,7 @@ export default async function affordPage(main, _p, query) {
     ${top.length ? '<div class="card" style="margin-top:16px"><h3>Where your top options are</h3><div id="amap" class="map short"></div></div>' : ''}
 
     <div class="card" style="margin-top:16px" id="stretch"><h3>Ways to stretch your budget</h3>
-      <ul class="pros">${levers({ savings, income, couple, deps: +f.deps || 0, debts: debtsMonthly, type: f.type, rate, maxLvr, buyer, guarantee, loanCapFor, bestState: own || bestState }).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      <ul class="pros">${levers({ bpArgs, savings, income, couple, deps: +f.deps || 0, debts: debtsMonthly, type: f.type, rate, maxLvr, buyer, guarantee, loanCapFor, bestState: own || bestState }).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
     </div>
     ${buyer === 'fhb' ? schemesCard({ income, couple, kind, code, bestState, market, areaState }) : ''}
     ${investor ? '' : `<div style="margin-top:16px">${nextStepsCard({ fhb: buyer === 'fhb' })}</div>`}
@@ -566,7 +580,7 @@ export function liveScore(s, km, maxKm) {
   return Math.round(parts.reduce((a, [v, x]) => a + v * x, 0) / w);
 }
 
-function verdictText({ matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea = false, own = null, areaName = '', areaRegion = null, noLmi = false }) {
+function verdictText({ comfyWeekly = 0, matches, stateRows, capitals, savings, income, buyer, takeHome, rate, guarantee, maxLvr, live, needArea = false, own = null, areaName = '', areaRegion = null, noLmi = false }) {
   // home buyers are judged on the comfortable price, investors on the ceiling
   const lim = (row) => (buyer !== 'investor' && row.comfy != null ? row.comfy : row.max);
   const word = buyer !== 'investor' ? 'your comfortable price' : 'your budget';
@@ -597,20 +611,20 @@ function verdictText({ matches, stateRows, capitals, savings, income, buyer, tak
   if (top) s += `The ${live ? 'best match for living in' : 'highest-scoring suburb'} within ${word} is ${cleanName(top.s.n)} (${top.s.s}), a ${top.t === 'u' ? 'unit' : 'house'} at about ${aud(top.price, { compact: true })}${live ? `, on commute, local economy, services and growth (${top.score}/100)` : ` with an Ownaroo Score of ${top.score}`}. `;
   const top1 = own || [...stateRows].sort((a, b) => b.max - a.max)[0];
   const rep = top1?.s ? (repayment(top1.s.loan, rate, 30) * 12) / 52 : 0;
-  if (buyer !== 'investor' && (top1?.max || 0) > (top1?.comfy || 0) + 5000 && rep > comfortableWeekly(income)) s += `At the most you could stretch to, repayments of about ${aud(rep)}/wk would be over ${STRESS.label}, which is mortgage stress. The comfortable price leaves room for rate rises. `;
+  if (buyer !== 'investor' && (top1?.max || 0) > (top1?.comfy || 0) + 5000 && rep > comfyWeekly) s += `At the most you could stretch to, repayments of about ${aud(rep)}/wk would be above your comfortable ${aud(comfyWeekly)}/wk, which risks mortgage stress. The comfortable price leaves room for rate rises. `;
   if (maxLvr > 0.8 && !guarantee && !noLmi) s += 'Borrowing above 80% adds lenders mortgage insurance; it is included in these figures. ';
   return s.trim();
 }
 
-function levers({ savings, income, couple, deps, debts, rate, maxLvr, buyer, guarantee, loanCapFor, bestState, type = 'any' }) {
+function levers({ bpArgs, savings, income, couple, deps, debts, rate, maxLvr, buyer, guarantee, loanCapFor, bestState, type = 'any' }) {
   const out = [];
   const base = bestState.max;
   const alt = (o) => maxPrice({ state: bestState.st, savings, loanCap: loanCapFor(0), maxLvr, buyer, guarantee, cap: HOME_GUARANTEE.caps[bestState.st][0], ...o });
   const plus20 = alt({ savings: savings + 20000 });
   if (plus20 > base) out.push(`Saving another $20,000 lifts your ceiling in ${STATES[bestState.st]} from ${aud(base, { compact: true })} to about ${aud(plus20, { compact: true })}.`);
-  const lowerRate = borrowingPower({ grossIncome: income, couple, dependants: deps, otherDebtMonthly: debts, ratePct: rate - 0.5 }).amount;
-  out.push(`Every 0.5% cut in your rate adds roughly ${aud(lowerRate - borrowingPower({ grossIncome: income, couple, dependants: deps, otherDebtMonthly: debts, ratePct: rate }).amount, { compact: true })} to borrowing power. Compare lenders on the Rates page.`);
-  if (debts > 0) out.push(`Clearing ${aud(debts)}/month of other debt (or reducing credit card limits) could add about ${aud(borrowingPower({ grossIncome: income, couple, dependants: deps, otherDebtMonthly: 0, ratePct: rate }).amount - borrowingPower({ grossIncome: income, couple, dependants: deps, otherDebtMonthly: debts, ratePct: rate }).amount, { compact: true })} to what you can borrow.`);
+  const lowerRate = borrowingPower({ ...bpArgs, otherDebtMonthly: debts, ratePct: rate - 0.5 }).amount;
+  out.push(`Every 0.5% cut in your rate adds roughly ${aud(lowerRate - borrowingPower({ ...bpArgs, otherDebtMonthly: debts, ratePct: rate }).amount, { compact: true })} to borrowing power. Compare lenders on the Rates page.`);
+  if (debts > 0) out.push(`Clearing ${aud(debts)}/month of other debt (or reducing credit card limits) could add about ${aud(borrowingPower({ ...bpArgs, otherDebtMonthly: 0, ratePct: rate }).amount - borrowingPower({ ...bpArgs, otherDebtMonthly: debts, ratePct: rate }).amount, { compact: true })} to what you can borrow.`);
   if (maxLvr <= 0.8) out.push('Allowing a 10% deposit with LMI usually raises your ceiling a lot, at the cost of the LMI premium and more debt.');
   if (buyer === 'fhb' && !guarantee) out.push('Eligible first home buyers can use the federal 5% Deposit Scheme (Home Guarantee) to buy with 5% down and no LMI, within the scheme\'s price caps.');
   if (buyer === 'fhb' && ['QLD', 'SA'].includes(bestState.st)) out.push(`New homes are duty-free for first home buyers in ${bestState.st === 'QLD' ? 'Queensland' : 'South Australia'} regardless of price.`);
@@ -679,4 +693,13 @@ function saveNumberCard(c) {
       a.remove();
     }, 1000);
   }, 'image/png');
+}
+
+/** One line under the comfortable price saying what set it. */
+function comfyWhy(c, { loansMonthly = 0, insureMonthly = 0, actualWeekly = null, lenderBound = false } = {}) {
+  const wk = (m) => aud((m * 12) / 52);
+  // the price can be set by something other than your budget: the lender's limit or your savings
+  if (actualWeekly !== null && actualWeekly < (c.monthly * 12) / 52 - 5) return `Repayments of ${aud(actualWeekly)}/wk. Your budget would allow up to ${wk(c.monthly)}/wk, but ${lenderBound ? "the lender's limit (it counts card limits and its own living-cost benchmark)" : 'your savings for the deposit and costs'} set${lenderBound ? 's' : ''} the price here`;
+  if (c.limit === 'budget') return `Repayments of ${wk(c.monthly)}/wk: what your take-home pay of ${aud(c.netMonthly)}/month leaves after ${c.declared ? 'your' : 'typical'} household expenses (${aud(c.expenses)})${insureMonthly ? `, insurance` : ''}${loansMonthly ? `, ${aud(loansMonthly)} of other repayments` : ''} and 10% kept spare`;
+  return `Repayments of ${wk(c.monthly)}/wk: 30% of your before-tax income${loansMonthly ? `, less ${aud(loansMonthly)}/month you already repay` : ''}. Your budget after expenses would allow ${wk(Math.max(0, c.budget))}/wk`;
 }

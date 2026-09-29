@@ -149,11 +149,26 @@ export function livingBenchmark(grossIncome, { couple = false, dependants = 0 } 
   return Math.round(base + (over * 0.1) / 12);
 }
 
-export function borrowingPower({ grossIncome, otherDebtMonthly = 0, dependants = 0, couple = false, existingRentIncome = 0, newRentWeekly = 0, ratePct, years = 30, livingCostsMonthly }) {
+/**
+ * Take-home pay for a household, a year. Each person is taxed on their own income (two incomes of $95k and $60k pay
+ * far less tax than one of $155k). Rent counted by the lender is added to the higher earner.
+ */
+export function householdNet(incomes, extra = 0) {
+  const list = (incomes && incomes.length ? incomes : [0]).map((x) => Math.max(0, +x || 0));
+  const top = list.indexOf(Math.max(...list));
+  return list.reduce((t, inc, i) => {
+    const g = inc + (i === top ? extra : 0);
+    return t + g - incomeTax(g);
+  }, 0);
+}
+
+export function borrowingPower({ grossIncome, incomes, otherDebtMonthly = 0, dependants = 0, couple = false, existingRentIncome = 0, newRentWeekly = 0, ratePct, years = 30, livingCostsMonthly, declaredLivingMonthly }) {
   const assess = ratePct + RULES.serviceability.buffer;
   const shaded = (existingRentIncome + newRentWeekly * 52) * RULES.serviceability.rentShading;
-  const net = grossIncome + shaded - incomeTax(grossIncome + shaded);
-  const living = livingCostsMonthly ?? livingBenchmark(grossIncome, { couple, dependants });
+  const net = incomes ? householdNet(incomes, shaded) : grossIncome + shaded - incomeTax(grossIncome + shaded);
+  // lenders use the higher of what you declare and their benchmark for your income and household
+  const bench = livingBenchmark(grossIncome, { couple, dependants });
+  const living = livingCostsMonthly ?? Math.max(bench, declaredLivingMonthly || 0);
   const surplus = net / 12 - living - otherDebtMonthly;
   if (surplus <= 0) return { amount: 0, assessRate: assess, surplus };
   const r = assess / 100 / 12;
@@ -615,4 +630,23 @@ export function incomeFor(loan, ratePct) {
     else lo = mid;
   }
   return Math.ceil(hi / 1000) * 1000;
+}
+
+/**
+ * A comfortable monthly repayment for a home to live in: the lower of
+ *  (a) 30% of before-tax household income, less the other loan repayments you already make (car, personal, HECS), and
+ *  (b) what's left of take-home pay after household expenses, private insurance and those repayments, keeping 10% spare.
+ * Returns the repayment, the loan it supports at the rate over 30 years, and which test set it.
+ */
+export function comfortableRepayment({ incomes, grossIncome, debtsMonthly = 0, expensesMonthly = null, insuranceMonthly = 0, dependants = 0, ratePct, years = 30 }) {
+  const gross = grossIncome ?? (incomes || []).reduce((t, x) => t + (+x || 0), 0);
+  const couple = (incomes || []).filter((x) => +x > 0).length > 1;
+  const netMonthly = householdNet(incomes || [gross]) / 12;
+  const expenses = expensesMonthly ?? livingBenchmark(gross, { couple, dependants });
+  const stress = (gross * 0.3) / 12 - debtsMonthly;
+  const budget = netMonthly * 0.9 - expenses - insuranceMonthly - debtsMonthly;
+  const monthly = Math.max(0, Math.min(stress, budget));
+  const r = ratePct / 1200;
+  const loan = monthly > 0 ? (monthly * (1 - (1 + r) ** -(years * 12))) / r : 0;
+  return { monthly: Math.round(monthly), loan: Math.round(loan), limit: budget < stress ? 'budget' : 'stress', stress: Math.round(stress), budget: Math.round(budget), netMonthly: Math.round(netMonthly), expenses: Math.round(expenses), declared: expensesMonthly != null };
 }

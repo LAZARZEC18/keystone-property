@@ -1,7 +1,7 @@
 import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
 import { baseTiles } from '../map.js';
 import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch, typicalRate, openRate } from '../data.js';
-import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict, scenarioReturns } from '../engine.js';
+import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict, scenarioReturns, valueEstimate, repayment } from '../engine.js';
 import { investmentCase, regionStats, COMPONENT_HELP, COMPONENT_NAMES, listingLinks, scoreVsDeal } from '../insights.js';
 import { STATES, GROWTH } from '../rules.js';
 import { liveListings } from './listings.js';
@@ -47,6 +47,12 @@ export default async function suburbPage(main, params) {
   // Quick deal at the suburb's typical price
   const quickIn = { state: s.s, price: ic.price, weeklyRent: ic.rent || 0, deposit: 0.2, ratePct: typicalRate(rba, 'INV').rate, income: 120000, hold: 10, growth: GROWTH.base, perth: s.rg === 'PER', newBuild: false, strata: s.pt === 'u' ? 3200 : 0, landValuePct: s.pt === 'u' ? 0.25 : 0.55 };
   const quick = analyse(quickIn);
+  // condition spread for the main home type: needs work, typical, renovated
+  const condType = s.pt === 'u' && s.u ? 'u' : 'h';
+  const condRows = (() => {
+    const e = (c) => valueEstimate(s, { type: condType, condition: c })?.value || (condType === 'u' ? s.u : s.h);
+    return [['Needs work', e('needs-work'), 'dated, repairs due'], ['Typical', condType === 'u' ? s.u : s.h, 'the middle of sales here'], ['Renovated', e('renovated'), 'updated kitchen and bathrooms']];
+  })();
   const quickSc = scenarioReturns(quickIn);
   const qv = verdict(quick, { ...s, score: scores.balanced }, market, { depositRate: rba?.cashRate?.current ?? 4.35 });
 
@@ -116,6 +122,32 @@ export default async function suburbPage(main, params) {
       <div class="note">Ranks the area against every Australian suburb. It isn't a rating of any particular home.</div></div>
     </div>
   </div>
+
+  <section class="section card">
+    <div class="card-head"><h3>Homes for sale in ${esc(name)} now</h3><span class="note">and what homes here actually sold for</span></div>
+    <div class="row">
+      <a class="btn primary" href="${links.reaBuy}" target="_blank" rel="noopener">For sale · realestate.com.au ↗</a>
+      <a class="btn" href="${links.domainBuy}" target="_blank" rel="noopener">For sale · Domain</a>
+      <a class="btn" href="${links.reaSold}" target="_blank" rel="noopener">Recently sold · realestate.com.au</a>
+      <a class="btn" href="${links.domainSold}" target="_blank" rel="noopener">Sold · Domain</a>
+      <a class="btn" href="${links.reaRent}" target="_blank" rel="noopener">For rent</a>
+      <a class="btn ghost" href="${links.domainProfile}" target="_blank" rel="noopener">Domain suburb profile</a>
+    </div>
+    <div id="livemap" class="map short" hidden style="margin-top:16px"></div>
+    <div id="live" style="margin-top:16px"></div>
+  </section>
+
+  <section class="section card" id="condition">
+    <div class="card-head"><h3>What the typical price hides</h3><span class="note">condition matters as much as the suburb</span></div>
+    <p class="note" style="margin-top:0">The typical ${condType === 'u' ? 'unit' : 'house'} price is the middle of every sale here, from homes that need a lot of work to fully renovated ones. A low typical price can simply mean many homes need work, so compare the <b>all-in cost</b>: price plus renovation.</p>
+    <div class="grid g3" style="gap:10px">${condRows.map(([label, v, note]) => `<div class="stat"><span class="k">${label}</span><span class="v">${aud(v, { compact: true })}</span><span class="s">${note}</span></div>`).join('')}</div>
+    <form class="fields reno" data-nosubmit style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;margin-top:14px">
+      <label class="field">Price of a home that needs work ($)<input name="rp" type="number" step="1000" min="0" value="${condRows[0][1]}"></label>
+      <label class="field">Renovation it needs ($)<input name="rr" type="number" step="1000" min="0" value="${Math.round((condRows[2][1] - condRows[0][1]) / 5000) * 5000}"></label>
+      <div class="reno-out note" aria-live="polite"></div>
+    </form>
+    <p class="fine" style="margin-top:8px">Condition ranges are Ownaroo estimates from the typical price (needs work about 18% below, renovated about 7% above). Get builder's quotes and a building inspection before relying on a renovation figure. For a particular home, use the <a href="/property" data-link>price range tool</a> and set its condition.</p>
+  </section>
 
   <section class="section grid g2">
     <div class="card">
@@ -231,19 +263,6 @@ export default async function suburbPage(main, params) {
 
   <section class="section">${hazardCard(s.s, { place: name, coastKm: s.cst })}</section>
 
-  <section class="section card">
-    <div class="card-head"><h3>Property for sale and rent in ${esc(name)}</h3><span class="note">Opens the listing sites filtered to this suburb</span></div>
-    <div class="row">
-      <a class="btn" href="${links.reaBuy}" target="_blank" rel="noopener">For sale · realestate.com.au</a>
-      <a class="btn" href="${links.domainBuy}" target="_blank" rel="noopener">For sale · Domain</a>
-      <a class="btn" href="${links.reaSold}" target="_blank" rel="noopener">Recently sold</a>
-      <a class="btn" href="${links.domainSold}" target="_blank" rel="noopener">Sold · Domain</a>
-      <a class="btn" href="${links.reaRent}" target="_blank" rel="noopener">For rent</a>
-      <a class="btn ghost" href="${links.domainProfile}" target="_blank" rel="noopener">Domain suburb profile</a>
-    </div>
-    <div id="livemap" class="map short" hidden style="margin-top:16px"></div>
-    <div id="live" style="margin-top:16px"></div>
-  </section>
 
   <section class="section grid g2">
     <div class="card">
@@ -269,6 +288,18 @@ export default async function suburbPage(main, params) {
   });
   wireCharts(main, (v) => aud(v, { compact: true }), (v) => new Date(v).getFullYear());
   liveListings(main.querySelector('#live'), s, { compact: true, mapEl: main.querySelector('#livemap') });
+  // price + renovation = all-in cost, against a renovated home here
+  const reno = main.querySelector('form.reno');
+  const renoRun = () => {
+    const p = +reno.rp.value || 0;
+    const w = +reno.rr.value || 0;
+    const all = p + w;
+    const ren = condRows[2][1];
+    const diff = all - ren;
+    reno.querySelector('.reno-out').innerHTML = p ? `All-in <b>${aud(all)}</b>: ${Math.abs(diff) < 5000 ? 'about the same as' : `<b class="${diff > 0 ? 'down' : 'up'}">${aud(Math.abs(diff), { compact: true })} ${diff > 0 ? 'more' : 'less'}</b> than`} a renovated home here (about ${aud(ren, { compact: true })}). The bank lends on the purchase price, so the work usually comes from savings.` : '';
+  };
+  reno?.addEventListener('input', renoRun);
+  if (reno) renoRun();
 
   let map = null;
   const drawMap = () => {

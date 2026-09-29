@@ -817,3 +817,4 @@ table.cards-sm.name-first td:first-child, table.cards-sm.name-first td:first-chi
 .ticker b.up { color: var(--up); } .ticker b.down { color: var(--down); }
 @media (max-width: 640px) { .ticker .t-inv, .ticker .t-when { display: flex; } .ticker-in { gap: 22px; padding: 6px 11px; } .ticker-track { animation-duration: 60s; } }
 @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } .ticker { overflow-x: auto; scrollbar-width: none; } }
+@media (max-width: 700px) { form.reno { grid-template-columns: 1fr !important; } }

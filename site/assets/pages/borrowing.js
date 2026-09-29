@@ -25,7 +25,8 @@ export default async function borrowingPage(main, _p, query = {}) {
       <label class="field">Other loan repayments ($/month)<input id="b-debt" type="number" step="1" value="0"><span class="help">Car and personal loans, other mortgages, buy now pay later</span></label>
       <label class="field">Credit card limits, total ($)<input id="b-cards" type="number" step="1" value="0"><span class="help">Lenders count about ${Math.round(CARD_LIMIT_RATE * 100)}% of the limit a month, even if the card is paid off</span></label>
       <fieldset class="field checks"><legend>HECS or HELP study debt?</legend><label class="check"><input type="checkbox" id="b-help1"> I have one</label><label class="check"><input type="checkbox" id="b-help2"> My partner has one</label><span class="help">Lenders count the compulsory repayment, set by income, not the balance</span></fieldset>
-      <label class="field">Living costs ($/month)<input id="b-live" type="number" step="1" placeholder="Benchmark"><span class="help">Leave blank for a benchmark that rises with income, as lenders' does</span></label>
+      <label class="field">Household expenses ($/month)<input id="b-live" type="number" step="1" placeholder="Benchmark"><span class="help">Food, bills, transport, childcare and the like. Lenders use the higher of this and their benchmark</span></label>
+      <label class="field">Private health insurance ($/month)<input id="b-ins" type="number" step="1" value="0"></label>
       <label class="field">Interest rate (%)<input id="b-rate" type="number" step="0.05" value="${rate}"></label>
       <label class="field">Deposit and savings ($)<input id="b-sav" type="number" step="1" value="120000"></label>
       <fieldset class="field checks" style="grid-column:1/-1"><legend>A property you already own (optional)</legend><span class="help">For a next property or an upgrade: lenders count this loan's repayments, and you may be able to borrow against its equity for the deposit. Don't also list this loan under other repayments.</span></fieldset>
@@ -66,9 +67,11 @@ export default async function borrowingPage(main, _p, query = {}) {
     const owe = Math.max(0, +$('#b-owe').value || 0);
     const ownM = owe ? repayment(owe, +$('#b-rate').value + 3, 25) : 0;
     const usable = Math.max(0, own * 0.8 - owe);
-    const living = $('#b-live').value ? +$('#b-live').value : livingBenchmark(inc1 + inc2, { couple, dependants: +$('#b-dep').value || 0 });
+    const bench = livingBenchmark(inc1 + inc2, { couple, dependants: +$('#b-dep').value || 0 });
+    const declared = $('#b-live').value ? +$('#b-live').value + (+$('#b-ins').value || 0) : 0;
+    const living = Math.max(bench, declared);
     const bp = borrowingPower({
-      grossIncome: inc1 + inc2, couple, dependants: +$('#b-dep').value, existingRentIncome: investor ? +$('#b-rent0').value : 0,
+      grossIncome: inc1 + inc2, incomes: [inc1, inc2], couple, dependants: +$('#b-dep').value, existingRentIncome: investor ? +$('#b-rent0').value : 0,
       newRentWeekly: investor ? +$('#b-rent').value : 0, otherDebtMonthly: (+$('#b-debt').value || 0) + helpM + cardM + ownM, livingCostsMonthly: living, ratePct: +$('#b-rate').value,
     });
     const sav = +$('#b-sav').value;
@@ -101,7 +104,7 @@ export default async function borrowingPage(main, _p, query = {}) {
     <span>Price you could buy with 20% down (${state})${equityUsed ? ', using equity' : ''}</span><span>${aud(price)}</span>
     ${equityUsed ? `<span>Equity drawn for the deposit and costs</span><span>${aud(equityUsed)}</span><span>Total new borrowing</span><span>${aud(price * 0.8 + equityUsed)}</span>` : ''}
     <span>Stamp duty at that price (standard rate, before any first home concession)</span><span>${aud(stampDuty(state, price).duty)}</span>
-    <span>Living costs assumed</span><span>${aud(living)}/month${$('#b-live').value ? '' : ' (benchmark)'}</span>
+    <span>Living costs assumed</span><span>${aud(living)}/month${declared > bench ? ' (yours)' : ' (benchmark)'}</span>
     ${helpM ? `<span>HECS/HELP compulsory repayment (${HELP_REPAY.year})</span><span>${aud(helpM)}/month</span>` : ''}
     ${cardM ? `<span>Credit card limits, as lenders count them</span><span>${aud(cardM)}/month</span>` : ''}</div>
     <p class="note" style="margin-top:10px">${limit === 'deposit' ? `<b>Your ${usable ? 'savings and equity are' : 'savings are'} the limit here, not the loan.</b> A ${aud(price, { compact: true })} purchase needs ${aud(price * 0.2 + stampDuty(state, price).duty + 2500, { compact: true })} for a 20% deposit, duty and costs, and uses only ${aud(price * 0.8 + equityUsed, { compact: true })} of the ${aud(bp.amount, { compact: true })} you could borrow. With a smaller deposit (and LMI) or more savings you could pay more.` : `<b>The loan is the limit here.</b> Your savings could cover a bigger deposit, but lenders cap the loan at ${aud(bp.amount, { compact: true })}.`}</p>

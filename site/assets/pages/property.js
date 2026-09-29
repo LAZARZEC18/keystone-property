@@ -152,6 +152,7 @@ export default async function propertyPage(main, _p, query) {
         <label class="field">Car spaces<input name="cars" type="number" min="0" max="6" value="${spec.cars}"></label>
         <label class="field">Land (m²)<input name="land" type="number" step="1" value="${spec.land}" placeholder="Houses"></label>
         <label class="field">Condition<select name="condition"><option value="new">Brand new</option><option value="renovated">Renovated</option><option value="average" selected>Average</option><option value="original">Original</option><option value="needs-work">Needs work</option></select></label>
+        <label class="field">Renovation it needs ($)<input name="reno" type="number" step="1000" min="0" placeholder="0" value="${esc(String(query.reno || ''))}"><span class="help">Builder's quote or your estimate</span></label>
         <label class="check" style="grid-column:1/-1"><input type="checkbox" name="pool"> Pool</label>
         <label class="field" style="grid-column:1/-1">Asking price (optional)<input name="asking" type="number" step="1" value="${esc(String(spec.asking))}" placeholder="Compare against the estimate"></label>
       </div>
@@ -211,6 +212,10 @@ export default async function propertyPage(main, _p, query) {
     const dEst = facts?.estimate?.mid;
     const newBuild = f.condition === 'new';
     const fhbDuty = stampDuty(s.s, price, { buyer: 'fhb', newBuild });
+    // price plus the work it needs, against a renovated home like it
+    const renoCost = +f.reno || 0;
+    const renovated = renoCost ? valueEstimate(s, { ...sp, condition: 'renovated' }) : null;
+    const renoNote = renoCost && renovated ? `<div class="callout" style="margin-top:14px"><b>All-in with the work: ${aud(price + renoCost)}</b> (${aud(price)} plus ${aud(renoCost)} of renovation). A renovated home like this is about ${aud(renovated.value, { compact: true })} here, so the all-in cost is ${Math.abs(price + renoCost - renovated.value) < 10000 ? 'about the same' : `${aud(Math.abs(price + renoCost - renovated.value), { compact: true })} ${price + renoCost > renovated.value ? 'more' : 'less'}`}. Banks lend on the purchase price, so budget to pay for the work from savings.</div>` : '';
     const head = `
         ${printHeader(`Price range for a typical home: ${facts?.address || q}`)}
         <div class="spread" style="align-items:flex-start">
@@ -222,6 +227,7 @@ export default async function propertyPage(main, _p, query) {
         ${edited ? '' : `<div class="callout" style="margin-top:14px"><b>This is a typical ${e.beds}-bed, ${f.baths}-bath ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))}, not this property yet.</b> Enter its bedrooms, bathrooms, land size and condition on the left, plus the asking price if it's for sale, and everything below updates for this home.</div>`}
         <div class="acc acc-${acc.level}"><b>${esc(acc.label)}.</b> ${esc(acc.text)}</div>
         ${e.rent ? `<details class="explain"><summary>Rent estimate for this home: ${aud(Math.round((e.rent * 0.9) / 5) * 5)}–${aud(Math.round((e.rent * 1.1) / 5) * 5)} a week</summary><div class="kv" style="margin-top:8px"><span>Estimated weekly rent</span><span>${aud(e.rent)}</span><span>Likely range</span><span>${aud(Math.round((e.rent * 0.9) / 5) * 5)} – ${aud(Math.round((e.rent * 1.1) / 5) * 5)}</span><span>Typical house / unit in ${esc(cleanName(s.n))}</span><span>${aud(s.rh)} / ${aud(s.ru)}</span><span>Gross yield at the estimate</span><span>${pct((e.rent * 52 * 100) / e.value, 2)}</span></div><p>${s.s === 'NSW' && String(s.hs).includes('NSW') ? 'Suburb rent from NSW bond lodgements by postcode' : `Suburb rent modelled from Census rents and price, centred on typical ${esc(R?.name || 'regional')} rents`}; the rent model's median error against official bond data is about 9% for houses and 10% for units. Adjusted for the bedrooms and condition entered. A sanity check only, not a rental appraisal: rents have moved a lot since the 2021 Census, and a local property manager's appraisal of current listings is far more reliable.</p></details>` : ''}
+        ${renoNote}
         ${vc ? `<div class="callout ${vc.cls === 'up' ? 'green' : ''}" style="margin-top:14px"><b class="${vc.cls}">${vc.label}:</b> ${acc.level === 'untested' ? `asking ${aud(asking)} against a range of ${aud(e.low, { compact: true })} – ${aud(e.high, { compact: true })}.` : `asking ${aud(asking)} is ${pct(Math.abs(gap), 1)} ${gap >= 0 ? 'above' : 'below'} the middle of the range.`} ${esc(vc.note)}${s.conf === 'high' || s.conf === 'medium' || vc.key !== 'within' ? rangeBar(asking, e) : ''}</div>` : ''}`;
     const built = `<div><h3 style="font-size:16px">How the estimate is built</h3><div class="kv">
             <span>Typical ${e.type === 'u' ? 'unit' : 'house'} in ${esc(cleanName(s.n))} ${srcBadge(e.type === 'u' ? s.us : s.hs)}</span><span>${aud(e.basis, { compact: true })}</span>
