@@ -97,7 +97,7 @@ await clip('suburb', '/suburb/wa/cottesloe-6011', async ({ wait, scroll }) => {
 });
 await clip('rates', '/rates', async ({ p, wait, scroll }) => {
   await wait(700); await scroll(380, 24, 45); await wait(700);
-  await p.selectOption('#r-purpose', 'OO'); await wait(1200); await p.check('#r-offset').catch(() => {}); await wait(1300);
+  await p.selectOption('#r-purpose', 'OO'); await wait(1200); await p.waitForSelector('#rt', { timeout: 15000 }).catch(() => {}); await p.check('#r-offset', { timeout: 1500 }).catch(() => {}); await wait(1300);
   await p.selectOption('#r-type', 'fixed'); await wait(1200); await p.selectOption('#r-term', '2'); await wait(1300);
   await scroll(460, 30, 45); await wait(1800);
 });

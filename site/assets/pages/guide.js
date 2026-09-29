@@ -1,5 +1,5 @@
 import { esc, aud, pct, setMeta } from '../ui.js';
-import { load, typicalRate } from '../data.js';
+import { load, typicalRate, openRate } from '../data.js';
 import { stampDuty, landTax, lmi, repayment } from '../engine.js';
 import { RULES, STATES } from '../rules.js';
 import { HOME_GUARANTEE, STATE_SCHEMES } from '../rules.js';
@@ -23,7 +23,7 @@ export default async function guidePage(main, params = {}) {
   const [rs, market, rba] = await Promise.all([load('rates-summary'), load('market'), load('rba').catch(() => null)]);
   const prices = [500000, 750000, 1000000, 1500000];
   const sts = Object.keys(STATES);
-  const inv = rs.best.INV_PI_variable?.[0];
+  const inv = openRate(rs, 'INV_PI_variable');
   const rate = typicalRate(rba, 'INV').rate;
 
   const toc = [
@@ -124,7 +124,7 @@ export default async function guidePage(main, params = {}) {
         <div class="steps">
           <div class="card step"><h3>Check your borrowing power</h3><p>Lenders test your repayments at the loan rate plus 3 percentage points and usually count only about 80% of rent. Use the <a href="/borrowing" data-link>borrowing power calculator</a> to get a realistic ceiling.</p></div>
           <div class="card step"><h3>Save the deposit and costs</h3><p>At 20% deposit you avoid lenders mortgage insurance (LMI). At 10% you'll pay LMI: on a ${aud(630000)} loan for a ${aud(700000)} property in Victoria that's about <b>${aud(lmi(630000, 700000, 'VIC').premium)}</b>. On top of the deposit, budget for stamp duty (see below) and about $2,000-3,500 of legal, inspection and government fees.</p></div>
-          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest advertised investor variable rate today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and the average rate on new investor variable loans (RBA) is ${pct(rate, 2)}. Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare 90+ lenders →</a></p></div>
+          <div class="card step"><h3>Choose the loan</h3><p>Investor rates are higher than owner-occupier rates. The lowest investor variable rate open to anyone today is <b>${pct(inv?.rate, 2)}</b> (${esc(inv?.lender || '')}), and the average rate on new investor variable loans (RBA) is ${pct(rate, 2)}. Decide between principal and interest (lower rate, builds equity) and interest-only (higher rate, lower repayments, often used to keep cash flow). An offset account lets your savings cut interest while staying available. <a href="/rates" data-link>Compare 90+ lenders →</a></p></div>
           <div class="card step"><h3>Get pre-approval</h3><p>Pre-approval (conditional approval) tells you what a lender will likely lend and lets you bid with confidence. It usually lasts 90 days. A mortgage broker is paid by the lender and can compare dozens of banks at no cost to you.</p></div>
         </div>
       </section>

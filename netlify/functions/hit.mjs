@@ -17,10 +17,12 @@ export default async (req) => {
   let counted = false;
   try {
     const body = await req.text();
-    const { p } = JSON.parse(body || '{}');
+    const { p, e } = JSON.parse(body || '{}');
     const day = new Date().toISOString().slice(0, 10);
     const store = getStore('analytics');
-    const key = `${day}${group(p)}`;
+    // events: a tool finished, a link copied, a plan printed, a listing link opened (names only, nothing personal)
+    const ev = e ? String(e).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) : '';
+    const key = ev ? `${day}/event/${ev}` : `${day}${group(p)}`;
     const n = Number(await store.get(key)) || 0;
     await store.set(key, String(n + 1));
     counted = true;

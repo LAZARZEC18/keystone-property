@@ -3,9 +3,10 @@
 import json, subprocess, sys, os
 
 off = json.load(open('clips-raw/offsets.json'))
+# light, calm backdrops (cream to sand, each clip with a faint tint) so the page reads as part of the site, not a screen in a screen
 cols = {
-    'budgetmap': ('0x0e4d5c', '0x07141b'), 'afford': ('0x0e6b5c', '0x0b2f3a'), 'calculator': ('0x3b3a8a', '0x0b1f33'),
-    'estimate': ('0xb0802f', '0x2a1f14'), 'suburb': ('0x2a7aa8', '0x0b1f33'), 'rates': ('0x0e6b5c', '0x1b2433'), 'firsthome': ('0xa4486b', '0x2a1426'),
+    'budgetmap': ('0xf6f4ef', '0xdfe9e5'), 'afford': ('0xf6f4ef', '0xdcebe5'), 'calculator': ('0xf6f4ef', '0xe2e1ef'),
+    'estimate': ('0xf6f4ef', '0xefe4d0'), 'suburb': ('0xf6f4ef', '0xdde7ef'), 'rates': ('0xf6f4ef', '0xdcebe5'), 'firsthome': ('0xf6f4ef', '0xf0dfe6'),
 }
 out = sys.argv[1] if len(sys.argv) > 1 else 'clips'
 only = set(filter(None, os.environ.get('ONLY', '').split(',')))
@@ -15,7 +16,7 @@ for name, o in off.items():
         continue
     ss = o['ready']
     D = round(o['end'] - ss - 0.2, 2)
-    c0, c1 = cols.get(name, ('0x0e6b5c', '0x0b2f3a'))
+    c0, c1 = cols.get(name, ('0xf6f4ef', '0xe3ddcf'))
     # foreground: the page, pushed in 4% over the clip, placed at 90% size with rounded corners and a shadow
     fc = (f"[1:v]format=rgba[bg0];[2:v]scale=1920:1080,format=rgba[sh];[bg0][sh]overlay=0:0[bg];"
           f"[0:v]fps=30,scale=w='1920*(1+0.04*t/{D})':h=-2:eval=frame:flags=lanczos,crop=1920:1080:'(iw-1920)/2':'(ih-1080)/2',scale=1728:972:flags=lanczos,format=rgba[v];"

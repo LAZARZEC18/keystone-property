@@ -213,6 +213,9 @@ export function analyse(input) {
   const buildCost = p.buildCost ?? (p.buildYear >= 1987 ? p.price * (1 - p.landValuePct) * 0.6 : 0);
   const div43 = p.buildYear >= 1987 ? buildCost * RULES.depreciation.capitalWorks : 0;
   const plant = p.newBuild ? p.plantValue || p.price * 0.02 : 0;
+  // borrowing expenses (LMI, loan establishment, mortgage registration) over $100 are deducted over 5 years (ATO)
+  const borrowTotal = lmiCost + (p.loanFees ?? 800);
+  const borrowPerYear = borrowTotal > 100 ? borrowTotal / 5 : 0;
 
   const reformStart = RULES.reform.start;
   const announced = RULES.reform.announced;
@@ -253,7 +256,8 @@ export function analyse(input) {
     }
     const dep = (y <= 40 ? div43 : 0) + (p.newBuild && y <= 8 ? plant * (y === 1 ? 0.3 : 0.15) : 0);
     div43Claimed += y <= 40 ? div43 : 0;
-    const netRental = grossRent - holding - interest - dep; // taxable rental result
+    const borrowDed = y <= 5 ? borrowPerYear : 0;
+    const netRental = grossRent - holding - interest - dep - borrowDed; // taxable rental result
     const cashBeforeTax = grossRent - holding - interest - principal;
 
     // Negative gearing test for this year (share of the year that falls before 1 July 2027)
@@ -292,7 +296,7 @@ export function analyse(input) {
     rows.push({
       year: y, start, value: Math.round(value), weeklyRent: round(rent), grossRent: Math.round(grossRent),
       mgmt: Math.round(mgmt), maintenance: Math.round(maint), landTax: land, otherCosts: Math.round(costsBase),
-      interest: Math.round(interest), principal: Math.round(principal), depreciation: Math.round(dep),
+      interest: Math.round(interest), principal: Math.round(principal), depreciation: Math.round(dep), borrowing: Math.round(borrowDed),
       netRental: Math.round(netRental), cashBeforeTax: Math.round(cashBeforeTax), taxEffect: Math.round(taxEffect),
       cashAfterTax: Math.round(cashAfterTax), quarantined: Math.round(quarantined), carried: Math.round(carried), usedOther: Math.round(usedOther),
       balance: Math.round(balance), equity: Math.round(value - balance), offsetShare: round(offsetShare, 2),
@@ -436,7 +440,7 @@ export function verdict(result, suburb = null, market = null, { depositRate = 4.
     pts -= 6;
     risks.push('Established property bought after 12 May 2026: from 1 July 2027 rental losses can no longer reduce your salary tax (they carry forward instead), so the real weekly cost rises.');
   }
-  if (s.negativeGearing === 'new-build') reasons.push('New build: keeps negative gearing and the option of the 50% CGT discount under the 2026 reforms.');
+  if (s.negativeGearing === 'new-build') reasons.push('New build: keeps negative gearing, and on sale you can choose the old 50% CGT discount or the new indexation method.');
   // 3. Yield
   if (s.grossYield >= 5.5) { pts += 8; reasons.push(`High gross yield of ${s.grossYield}%.`); }
   else if (s.grossYield >= 4.2) { pts += 3; reasons.push(`Solid gross yield of ${s.grossYield}%.`); }

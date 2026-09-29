@@ -11,9 +11,9 @@ const TMP = `${OUT}/tour-tmp`;
 mkdirSync(TMP, { recursive: true });
 const CH = [
   ['budgetmap', 'Where does your budget reach?', 'Drag a price and every suburb with a typical home under it lights up.'],
-  ['afford', 'What can you comfortably afford?', 'A comfortable price where you want to buy, the stretch price, and the schemes you qualify for.'],
+  ['afford', 'What can you comfortably afford?', 'A comfortable price where you want to buy, the cash you need, and the schemes you qualify for.'],
   ['estimate', 'What would a home like this cost?', 'A price range for a typical home like it, how far to trust it, and the cash you need.'],
-  ['calculator', 'The 2026 tax changes, in dollars', 'The weekly cost after tax and the 10-year return under the new negative gearing and CGT rules.'],
+  ['calculator', 'The 2026 tax changes, in dollars', 'The weekly cost after tax and the 10-year return, new build and established side by side.'],
   ['suburb', 'Everything about a suburb', 'Month-end prices, rents, new building, the people, the risks and the cost to buy.'],
   ['rates', 'Lender rates, from their own feeds', 'More than 90 lenders’ advertised rates, read several times a day, with offsets and fees.'],
 ];
@@ -21,9 +21,9 @@ const CARD = 2.2;
 const b = await chromium.launch({ args: [`--proxy-server=${process.env.HTTPS_PROXY}`, '--proxy-bypass-list=localhost;127.0.0.1'] });
 const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
 const card = (i, [, t, s]) => `<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<style>html,body{margin:0;width:1920px;height:1080px;background:radial-gradient(circle at 70% 40%,#12303a,#07141b 70%);color:#e8f3f1;font-family:'IBM Plex Sans',sans-serif;overflow:hidden}
-.w{position:absolute;left:150px;top:370px;right:150px}.n{font:500 30px 'IBM Plex Mono';letter-spacing:.2em;color:#34d3a6}.t{font:600 104px/1.05 Fraunces;margin:18px 0 26px;letter-spacing:-.01em}.s{font-size:40px;color:#a9c4bf;max-width:1400px;line-height:1.35}
-.k{position:absolute;right:150px;bottom:90px;font:500 26px 'IBM Plex Mono';letter-spacing:.24em;color:#7fa39d}</style></head><body><div class="w"><div class="n">${String(i + 1).padStart(2, '0')} / ${String(CH.length).padStart(2, '0')}</div><div class="t">${t}</div><div class="s">${s}</div></div><div class="k">OWNAROO</div></body></html>`;
+<style>html,body{margin:0;width:1920px;height:1080px;background:radial-gradient(circle at 70% 40%,#fbfaf6,#e9e3d5 75%);color:#15181e;font-family:'IBM Plex Sans',sans-serif;overflow:hidden}
+.w{position:absolute;left:150px;top:370px;right:150px}.n{font:500 30px 'IBM Plex Mono';letter-spacing:.2em;color:#0e6b5c}.t{font:600 104px/1.05 Fraunces;margin:18px 0 26px;letter-spacing:-.01em}.s{font-size:40px;color:#4a4f57;max-width:1400px;line-height:1.35}
+.k{position:absolute;right:150px;bottom:90px;font:500 26px 'IBM Plex Mono';letter-spacing:.24em;color:#8a8577}</style></head><body><div class="w"><div class="n">${String(i + 1).padStart(2, '0')} / ${String(CH.length).padStart(2, '0')}</div><div class="t">${t}</div><div class="s">${s}</div></div><div class="k">OWNAROO</div></body></html>`;
 const parts = [];
 const chapters = [];
 const captions = [];

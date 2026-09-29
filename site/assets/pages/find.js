@@ -114,14 +114,7 @@ export default async function findPage(main, _p, query) {
 
 /** realestate.com.au search URL with the person's type, bedrooms and budget pre-filled. */
 export function reaSearch(s, t, p = {}) {
-  const name = cleanName(s.n).toLowerCase();
-  const parts = [];
-  if (t === 'u') parts.push('property-unit+apartment+townhouse');
-  else if (t === 'h') parts.push('property-house');
-  if (p.beds) parts.push(`with-${p.beds}-bedrooms`);
-  if (p.maxPrice || p.minPrice) parts.push(`between-${p.minPrice || 0}-${p.maxPrice || 'any'}`);
-  const pre = parts.length ? `${parts.join('-')}-` : '';
-  return `https://www.realestate.com.au/buy/${pre}in-${encodeURIComponent(name)},+${s.s.toLowerCase()}+${s.pc}/list-1`;
+  return listingLinks(s, { type: t, beds: p.beds, minPrice: p.minPrice, maxPrice: p.maxPrice }).reaBuy;
 }
 
 export { listingLinks };

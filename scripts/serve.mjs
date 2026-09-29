@@ -14,12 +14,16 @@ const fns = {
   '/api/live-news': (await import('../netlify/functions/live.mjs')).default,
   '/api/live-rba': (await import('../netlify/functions/live.mjs')).default,
   '/api/photos': (await import('../netlify/functions/photos.mjs')).default,
+  '/api/config': (await import('../netlify/functions/config.mjs')).default,
 };
 
 createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`);
   if (fns[url.pathname]) {
-    const r = await fns[url.pathname](new Request(url));
+    // pass POST bodies through, as Netlify does (the address lookups send the address in the body)
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const r = await fns[url.pathname](new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(chunks) : undefined }));
     res.writeHead(r.status, Object.fromEntries(r.headers));
     res.end(await r.text());
     return;

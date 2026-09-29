@@ -11,33 +11,72 @@ const pct = (v, dp = 1, sign = false) => (v == null ? '—' : `${sign && v > 0 ?
 const STATE_NAMES = { NSW: 'New South Wales', VIC: 'Victoria', QLD: 'Queensland', WA: 'Western Australia', SA: 'South Australia', TAS: 'Tasmania', ACT: 'Australian Capital Territory', NT: 'Northern Territory' };
 const W = { cash: 22, momentum: 0, growth: 25, demand: 23, afford: 12, stability: 18 };
 
-const PAGES = {
+export const PAGES = {
   '/': ['What can you comfortably afford, and where?', 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and advertised rates from 90+ lenders.'],
   '/afford': ['What can I afford? A comfortable price, and your ceiling in every state', 'Enter your savings and income. Ownaroo works out a comfortable price where you want to buy, the most you could stretch to in every state and territory (stamp duty, mortgage insurance, lender buffers), the schemes you qualify for and the suburbs that fit.'],
   '/property': ['Price range for a typical home', 'A suburb-based price range for a typical home like the one you’re looking at, the cash you need and the repayments. Not an appraisal of a particular property.'],
   '/find': ['Search property by what you want', 'Describe what you want in plain English, like "3 bed house near the beach in Perth under $800k", and Ownaroo ranks every matching suburb.'],
   '/map': ['Highest-scoring suburbs in Australia: map', 'Suburbs scored on yield, growth drivers, rental demand, affordability and stability, ranked within each state, on one map, with how much of each score is measured.'],
   '/suburbs': ['Suburb explorer: rank every Australian suburb', 'Filter and rank Australian suburbs within each state by price, rent, yield, growth drivers, demand and risk, with every figure marked as measured or modelled.'],
-  '/analyse': ['2026 tax-change calculator for investment property', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
+  '/analyse': ['2026 tax-change investment property calculator', 'The weekly cost after tax and 10-year return of an Australian investment property under the 2026 negative gearing and CGT changes, with stamp duty, LMI, land tax and depreciation, and whether it beats a term deposit.'],
   '/borrowing': ['How much can I borrow?', 'Estimate your borrowing power the way Australian lenders do, for a home to live in or an investment: the 3-point rate buffer, living costs, existing debts and 80% of any rent.'],
   '/rates': ['Home loan rates in Australia, updated several times a day', 'Advertised home loan rates from 90+ Australian lenders, read from their Open Banking feeds, with offset accounts and fees, ranked by loan type and deposit.'],
-  '/markets': ['Australian housing market dashboard', 'Which way prices are moving in each capital, the RBA cash rate and what borrowers actually pay, lending and housing supply.'],
-  '/new-builds': ['New builds and housing supply by council', 'Monthly building approvals by state, council and area, and where new supply is heaviest.'],
-  '/weekly': ['Property market update: rates this week, prices at month-end', 'Home loan rates and the RBA outlook checked every week, capital-city values from the latest month-end index, and the week’s housing headlines.'],
-  '/news': ['Australian housing news', 'Headlines on prices, rates, rents and housing policy from Australian publishers.'],
-  '/guide': ['How to buy property in Australia: first home and investment guide (2026)', 'The whole process in order for first home buyers and investors: federal and state schemes including Keystart, stamp duty by state, finance, the 2026 tax changes and every cost.'],
-  '/first-home': ['First home tools: rent vs buy, savings planner and FHSS calculator', 'How long it will take to save a deposit, whether buying beats renting, and how much the First Home Super Saver scheme adds.'],
-  '/why': ['Why Ownaroo: what it does for home buyers and investors', 'How Ownaroo helps first home buyers, upgraders and investors work out what they can afford, what a purchase really costs and which suburbs fit.'],
+  '/markets': ['Australian housing market update', 'Which way prices are moving in each capital, the RBA cash rate, rates week by week, and the housing headlines that matter for your numbers.'],
+  '/new-builds': ['New homes and apartments: building approvals and new-build investing', 'Monthly building approvals by state, council and area, and where new supply is heaviest.'],
+  '/guide': ['How to buy property in Australia: first home and investment (2026 guide)', 'The whole process in order for first home buyers and investors: federal and state schemes including Keystart, stamp duty by state, finance, the 2026 tax changes and every cost.'],
+  '/first-home': ['First home tools: rent vs buy, savings planner, FHSS calculator', 'How long it will take to save a deposit, whether buying beats renting, and how much the First Home Super Saver scheme adds.'],
   '/compare': ['Compare suburbs side by side', 'Compare up to four Australian suburbs on price, rent, yield, growth and risk.'],
-  '/watchlist': ['Your saved suburbs and deals', 'Suburbs and deals you have saved on Ownaroo, kept only in your own browser.'],
+  '/watchlist': ['Your watchlist and saved deals', 'Suburbs and deals you have saved on Ownaroo, kept only in your own browser.'],
   '/methodology': ['Data sources and methodology', 'Where every Ownaroo figure comes from, how the price and rent models work, and their measured error.'],
-  '/about': ['About Ownaroo', 'Ownaroo is a free, independent calculator site for Australian home buyers and investors: what it does, where its numbers come from, and how it stays independent.'],
+  '/about': ['About Ownaroo', 'What Ownaroo does for home buyers and investors, who runs it, where its numbers come from and how it stays independent.'],
   '/contact': ['Contact Ownaroo', 'Contact Ownaroo with a question, a data correction or a privacy request. Every message gets a reply by email.'],
+  '/price-check': ['Listing price check: which first home buyers a price shuts out', 'Enter a listing price and suburb. See which first home buyer schemes, grants and stamp duty concessions still apply at that price, and the nearest price that brings buyers back.'],
   '/privacy': ['Privacy policy', 'What Ownaroo collects, why, and what it does with it.'],
   '/terms': ['Terms of use', 'The terms for using Ownaroo: general information and calculators, not financial, credit, tax or legal advice, and how estimates and third-party data should be used.'],
 };
 // thin or personal pages: aggregated headlines, comparisons and the browser-only watchlist
-const NOINDEX = new Set(['/compare', '/watchlist', '/news']);
+const NOINDEX = new Set(['/compare', '/watchlist']);
+
+
+// Crawler-readable content for the calculator pages: how each works, a worked example and short answers.
+// (The app replaces it with the live tool when JavaScript runs.) Worked examples are dated because rates move.
+const TOOL = {
+  '/afford': {
+    how: ['Choose where you want to buy, then enter your savings and before-tax income.', 'Ownaroo finds a comfortable price: repayments within 30% of before-tax household income, with your savings covering the deposit, stamp duty and fees.', 'It also shows the most a lender might stretch to (tested at your rate plus 3 points), the schemes you qualify for and the suburbs where a typical home fits.'],
+    example: 'Example (September 2026 rates): a first home buyer couple in Perth with $110,000 saved and $155,000 combined income. A comfortable price is about $720,000, needing about $110,000 in cash with repayments of about $894 a week; a lender might stretch to about $735,000.',
+    faq: [['What is a comfortable price?', 'The price at which repayments stay within 30% of your before-tax household income, a common measure of mortgage stress, and your savings cover the deposit, stamp duty and fees.'], ['Why is the most I could borrow different?', 'Lenders test whether you could still pay at your rate plus 3 percentage points, after living costs and debts. That limit is often higher than a comfortable price.'], ['Does it include first home schemes?', 'Yes: the 5% Deposit Scheme, Help to Buy, Keystart in WA and state first home concessions, with the price caps where you want to buy.']],
+  },
+  '/analyse': {
+    how: ['Enter the price, rent, deposit, rate and your income, or pick a suburb to fill them in.', 'Ownaroo works out stamp duty, LMI, land tax and running costs, then projects ten years of cash flow, tax and the sale.', 'It applies the 2026 rules: for established homes bought from 12 May 2026, rental losses stop reducing salary tax from 1 July 2027, and gains after that date are indexed with a 30% minimum tax. New builds keep negative gearing and can choose either CGT method.'],
+    example: 'Example (September 2026): an $850,000 NSW house renting at $650 a week, bought with a 20% deposit at 6.40% on a $120,000 salary, costs about $480 a week after tax in year one, with about $205,000 needed up front.',
+    faq: [['Does negative gearing still apply?', 'For established homes contracted from 12 May 2026, losses offset salary only until 30 June 2027, then carry forward against rental profits and the eventual gain. New builds and earlier contracts keep it.'], ['New build or established?', 'The calculator runs the same deal both ways side by side: weekly cost, tax refunds, capital gains tax and the after-tax return.'], ['What return does it show?', 'The annual after-tax return on the cash you put in (IRR), at 1%, 3% and 5% a year price growth, next to a cash-rate deposit and paying down your own home loan.']],
+  },
+  '/rates': {
+    how: ['Every Australian bank publishes its home loans in a standard Open Banking (Consumer Data Right) feed.', 'Ownaroo reads those feeds several times a day and ranks the rates by loan type, repayment type and deposit.', 'Rates from credit unions and regional lenders with membership or area rules are marked "Check eligibility", so the headline figures are ones anyone can apply for.'],
+    faq: [['Are these the rates I will get?', 'They are advertised rates. Lenders may offer less to strong applicants, and the rate depends on your deposit, loan size and purpose.'], ['What is a comparison rate?', 'The rate with most fees built in, for a $150,000 loan over 25 years. Useful for comparing, but not the exact cost of your loan.']],
+  },
+  '/borrowing': {
+    how: ['Enter your income, debts, card limits, dependants and any HECS debt.', 'Ownaroo tests repayments at your rate plus 3 points, after tax and living costs, counting 80% of any rent, the way lenders do.', 'If you already own property, it counts that loan and shows the equity you could borrow against for the next deposit.'],
+    faq: [['Why do lenders add 3%?', 'The banking regulator expects lenders to check you could still pay if rates rose by 3 percentage points.'], ['Do credit card limits count?', 'Yes. Lenders count about 3% of the limit each month, even if the card is paid off.']],
+  },
+  '/property': {
+    how: ['Type an address or suburb.', 'Ownaroo shows a price range for a typical home of that kind in the suburb, the cash needed and the repayments, plus local risks and hazard map links.', 'It is a suburb-based range, not an appraisal of a particular home.'],
+    faq: [['Is this a valuation?', 'No. It is a range for a typical home in the suburb. Only an inspection by a valuer can value a particular property.']],
+  },
+  '/first-home': {
+    how: ['See how long it takes to save a deposit at your savings rate.', 'Compare buying with renting over the years you expect to stay.', 'Work out how much the First Home Super Saver scheme adds to your deposit.'],
+    faq: [['What is the First Home Super Saver scheme?', 'You can make voluntary super contributions and later withdraw up to $50,000 of them, with earnings, for a first home deposit, taxed at a discount.']],
+  },
+  '/price-check': {
+    how: ['Enter a listing price and suburb.', 'Ownaroo shows which first home buyer schemes, grants and duty concessions still apply at that price, and the prices that bring buyers back.', 'It makes a "Can you afford this home?" link and QR code for the listing.'],
+    example: 'Example: in Perth the 5% Deposit Scheme and Help to Buy caps are both $850,000 and Keystart stops at $860,000, so a home listed at $869,000 loses every first home buyer relying on them.',
+    faq: [['Why do price caps matter to sellers?', 'Buyers using a government scheme cannot buy above its cap for the area, so a price just over it removes them from the market.']],
+  },
+};
+function toolBody(title, description, t) {
+  return `<article class="ssr"><h1>${esc(title)}</h1><p>${esc(description)}</p><h2>How it works</h2><ol>${t.how.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>${t.example ? `<h2>Worked example</h2><p>${esc(t.example)}</p>` : ''}<h2>Questions</h2>${t.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join('')}<p>General information, not financial advice.</p></article>`;
+}
+const faqLd = (t) => ({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) });
 
 /** Build lookup tables from site/data/suburbs.json and market.json. */
 
@@ -90,7 +129,7 @@ for (const [id, t, d] of GUIDE) PAGES[`/guide/${id}`] = [t, d];
 const ROUTES = [
   /^\/$/, /^\/markets$/, /^\/new-builds$/, /^\/weekly$/, /^\/suburbs$/, /^\/suburb\/[a-z]+\/[a-z0-9-]+$/, /^\/postcode\/\d{3,4}$/,
   /^\/council\/[a-z]+\/[a-z0-9-]+$/, /^\/analyse$/, /^\/afford$/, /^\/rates$/, /^\/listings$/, /^\/news$/, /^\/guide$/, /^\/guide\/[a-z0-9-]+$/, /^\/compare$/, /^\/watchlist$/,
-  /^\/borrowing$/, /^\/methodology$/, /^\/find$/, /^\/property$/, /^\/map$/, /^\/(about|privacy|terms|contact)$/, /^\/first-home$/, /^\/why$/,
+  /^\/borrowing$/, /^\/methodology$/, /^\/find$/, /^\/property$/, /^\/map$/, /^\/(about|privacy|terms|contact)$/, /^\/first-home$/, /^\/why$/, /^\/price-check$/,
 ];
 
 function nearest(ix, s, n = 8) {
@@ -138,8 +177,8 @@ export function describe(pathname, search, ix, origin) {
         { '@type': 'ListItem', position: lgaSlug ? 3 : 2, name: s.name, item: canonical },
       ] },
     ];
-    // small places with only modelled prices are thin pages: keep them usable but out of search indexes
-    const thin = s.hs === 'model' && (Number(s.pop) || 0) < 1000;
+    // places under 3,000 people with only modelled prices are thin pages: keep them usable but out of search indexes
+    const thin = s.hs === 'model' && (Number(s.pop) || 0) < 3000;
     return { ...base, title, description, body, jsonld, robots: thin ? 'noindex,follow' : base.robots };
   }
   m = path.match(/^\/postcode\/(\d{3,4})$/);
@@ -176,7 +215,9 @@ export function describe(pathname, search, ix, origin) {
           { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Ownaroo', url: `${origin}/`, potentialAction: { '@type': 'SearchAction', target: `${origin}/find?q={search_term_string}`, 'query-input': 'required name=search_term_string' } },
         ]
       : [];
-  const body = path === '/' ? null : `<article class="ssr"><h1>${esc(title)}</h1><p>${esc(description)}</p></article>`;
+  const tool = TOOL[path];
+  if (tool) jsonld.push(faqLd(tool));
+  const body = path === '/' ? null : tool ? toolBody(title, description, tool) : `<article class="ssr"><h1>${esc(title)}</h1><p>${esc(description)}</p></article>`;
   return { ...base, title, description, robots, jsonld, body, canonical: path === '/listings' ? `${origin}/property` : canonical };
 }
 

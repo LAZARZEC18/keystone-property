@@ -1,5 +1,5 @@
 import { aud, pct, setMeta } from '../ui.js';
-import { load } from '../data.js';
+import { load, openRate } from '../data.js';
 import { borrowingPower, repayment, stampDuty, livingBenchmark } from '../engine.js';
 import { STATES, helpRepayment, HELP_REPAY, CARD_LIMIT_RATE } from '../rules.js';
 import { check, showErrors } from '../validate.js';
@@ -8,7 +8,7 @@ export default async function borrowingPage(main, _p, query = {}) {
   setMeta({ title: 'How much can I borrow?', description: 'Estimate your borrowing power the way Australian lenders do, for a home to live in or an investment: the 3-point rate buffer, living costs, existing debts and 80% of any rent.' });
   const [rs, rba] = await Promise.all([load('rates-summary'), load('rba')]);
   // what investors actually pay on new variable loans (RBA), not the cheapest advertised rate
-  const invRate = rba.actual?.newInvVariable?.at(-1)?.[1] || Math.max(rs.best.INV_PI_variable?.[0]?.rate || 6.2, 6.4);
+  const invRate = rba.actual?.newInvVariable?.at(-1)?.[1] || Math.max(openRate(rs, 'INV_PI_variable')?.rate || 6.2, 6.4);
   const ooRate = rba.actual?.newOOVariable?.at(-1)?.[1] || 6.2;
   const inv = query.buyer === 'investor';
   const rate = inv ? invRate : ooRate;
@@ -28,6 +28,9 @@ export default async function borrowingPage(main, _p, query = {}) {
       <label class="field">Living costs ($/month)<input id="b-live" type="number" step="1" placeholder="Benchmark"><span class="help">Leave blank for a benchmark that rises with income, as lenders' does</span></label>
       <label class="field">Interest rate (%)<input id="b-rate" type="number" step="0.05" value="${rate}"></label>
       <label class="field">Deposit and savings ($)<input id="b-sav" type="number" step="1" value="120000"></label>
+      <fieldset class="field checks" style="grid-column:1/-1"><legend>A property you already own (optional)</legend><span class="help">For a next property or an upgrade: lenders count this loan's repayments, and you may be able to borrow against its equity for the deposit. Don't also list this loan under other repayments.</span></fieldset>
+      <label class="field">What it's worth now ($)<input id="b-own" type="number" step="1" value="${+query.own || 0}"></label>
+      <label class="field">Loan still owing on it ($)<input id="b-owe" type="number" step="1" value="${+query.owe || 0}"></label>
       <label class="field">State<select id="b-state">${Object.keys(STATES).map((s) => `<option>${s}</option>`).join('')}</select></label>
     </div></div>
     <div class="card" id="b-out"></div>
@@ -58,38 +61,50 @@ export default async function borrowingPage(main, _p, query = {}) {
     const couple = inc2 > 0;
     const helpM = ((($('#b-help1').checked ? helpRepayment(inc1) : 0) + ($('#b-help2').checked ? helpRepayment(inc2) : 0)) / 12);
     const cardM = (+$('#b-cards').value || 0) * CARD_LIMIT_RATE;
+    // a property already owned: its loan is assessed at the buffered rate over 25 years, and up to 80% of its value can be borrowed against
+    const own = Math.max(0, +$('#b-own').value || 0);
+    const owe = Math.max(0, +$('#b-owe').value || 0);
+    const ownM = owe ? repayment(owe, +$('#b-rate').value + 3, 25) : 0;
+    const usable = Math.max(0, own * 0.8 - owe);
     const living = $('#b-live').value ? +$('#b-live').value : livingBenchmark(inc1 + inc2, { couple, dependants: +$('#b-dep').value || 0 });
     const bp = borrowingPower({
       grossIncome: inc1 + inc2, couple, dependants: +$('#b-dep').value, existingRentIncome: investor ? +$('#b-rent0').value : 0,
-      newRentWeekly: investor ? +$('#b-rent').value : 0, otherDebtMonthly: (+$('#b-debt').value || 0) + helpM + cardM, livingCostsMonthly: living, ratePct: +$('#b-rate').value,
+      newRentWeekly: investor ? +$('#b-rent').value : 0, otherDebtMonthly: (+$('#b-debt').value || 0) + helpM + cardM + ownM, livingCostsMonthly: living, ratePct: +$('#b-rate').value,
     });
     const sav = +$('#b-sav').value;
     const state = $('#b-state').value;
     // Largest price where savings cover 20% deposit + duty + $2.5k costs, and the loan fits borrowing power
+    // equity drawn for the deposit is borrowed too, so it counts against the same borrowing limit
     let price = 100000;
     let limit = 'deposit';
+    let equityUsed = 0;
     for (let p = 100000; p <= 5000000; p += 5000) {
       const need = p * 0.2 + stampDuty(state, p).duty + 2500;
-      if (need > sav) {
+      const draw = Math.max(0, need - sav);
+      if (draw > usable) {
         limit = 'deposit';
         break;
       }
-      if (p * 0.8 > bp.amount) {
+      if (p * 0.8 + draw > bp.amount) {
         limit = 'loan';
         break;
       }
       price = p;
+      equityUsed = draw;
     }
     const m = repayment(bp.amount, +$('#b-rate').value, 30);
     $('#b-out').innerHTML = `<div class="stat"><span class="k">Estimated maximum loan</span><span class="v xl">${aud(bp.amount)}</span><span class="s">The loan whose repayments at ${pct(bp.assessRate, 2)} (your rate plus the 3-point buffer) would use up all of the ${aud(bp.surplus)} a month left after tax, living costs and other debts. At that loan, nothing is left over.</span></div>
     <div class="hr"></div>
     <div class="kv"><span>Repayment at ${pct(+$('#b-rate').value, 2)}</span><span>${aud(m)}/month</span>
-    <span>Price you could buy with 20% down (${state})</span><span>${aud(price)}</span>
+    ${own ? `<span>Usable equity in the property you own (80% of ${aud(own, { compact: true })}, less ${aud(owe, { compact: true })} owing)</span><span>${aud(usable)}</span>
+    <span>Its loan, as lenders assess it (at ${pct(+$('#b-rate').value + 3, 2)})</span><span>${aud(ownM)}/month</span>` : ''}
+    <span>Price you could buy with 20% down (${state})${equityUsed ? ', using equity' : ''}</span><span>${aud(price)}</span>
+    ${equityUsed ? `<span>Equity drawn for the deposit and costs</span><span>${aud(equityUsed)}</span><span>Total new borrowing</span><span>${aud(price * 0.8 + equityUsed)}</span>` : ''}
     <span>Stamp duty at that price (standard rate, before any first home concession)</span><span>${aud(stampDuty(state, price).duty)}</span>
     <span>Living costs assumed</span><span>${aud(living)}/month${$('#b-live').value ? '' : ' (benchmark)'}</span>
     ${helpM ? `<span>HECS/HELP compulsory repayment (${HELP_REPAY.year})</span><span>${aud(helpM)}/month</span>` : ''}
     ${cardM ? `<span>Credit card limits, as lenders count them</span><span>${aud(cardM)}/month</span>` : ''}</div>
-    <p class="note" style="margin-top:10px">${limit === 'deposit' ? `<b>Your savings are the limit here, not the loan.</b> A ${aud(price, { compact: true })} purchase needs ${aud(price * 0.2 + stampDuty(state, price).duty + 2500, { compact: true })} for a 20% deposit, duty and costs, and uses only ${aud(price * 0.8, { compact: true })} of the ${aud(bp.amount, { compact: true })} you could borrow. With a smaller deposit (and LMI) or more savings you could pay more.` : `<b>The loan is the limit here.</b> Your savings could cover a bigger deposit, but lenders cap the loan at ${aud(bp.amount, { compact: true })}.`}</p>
+    <p class="note" style="margin-top:10px">${limit === 'deposit' ? `<b>Your ${usable ? 'savings and equity are' : 'savings are'} the limit here, not the loan.</b> A ${aud(price, { compact: true })} purchase needs ${aud(price * 0.2 + stampDuty(state, price).duty + 2500, { compact: true })} for a 20% deposit, duty and costs, and uses only ${aud(price * 0.8 + equityUsed, { compact: true })} of the ${aud(bp.amount, { compact: true })} you could borrow. With a smaller deposit (and LMI) or more savings you could pay more.` : `<b>The loan is the limit here.</b> Your savings could cover a bigger deposit, but lenders cap the loan at ${aud(bp.amount, { compact: true })}.`}</p>
     <p class="note" style="margin-top:12px">A conservative estimate. Each lender uses its own living-expense model (usually the Household Expenditure Measure, which rises with income and household size), rental shading and treatment of other debts, so results can differ by 10-20% between banks, and many will lend a little more than this. A broker can compare lenders' calculators for you.</p>`;
   };
   main.querySelectorAll('input,select').forEach((el) => el.addEventListener('input', run));

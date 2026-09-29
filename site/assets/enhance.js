@@ -21,6 +21,16 @@ export const JARGON = {
   'offset account': 'A savings account linked to the loan: its balance is subtracted from the loan before interest is charged.',
   'depreciation': 'A tax deduction for the wear on a rental’s building and fittings, largest for new builds.',
   'Modelled': 'No official sales series for this suburb, so the figure is estimated from similar suburbs and the city trend.',
+  'mortgage insurance': 'Lenders mortgage insurance (LMI): a one-off fee, usually added to the loan, when you borrow more than about 80% of the price.',
+  'Open Banking': 'The Consumer Data Right: banks must publish their loan products and rates in a standard feed, which Ownaroo reads directly.',
+  'Consumer Data Right': 'The law that makes banks publish their products and rates in a standard feed (Open Banking).',
+  'CDR': 'Consumer Data Right: the law that makes banks publish their products and rates in a standard feed.',
+  '5% Deposit Scheme': 'Federal scheme: first home buyers can buy with a 5% deposit and no mortgage insurance, under a price cap for the area.',
+  'Help to Buy': 'Federal shared-equity scheme: the government pays up to 40% of a new home or 30% of an existing one; you need a 2% deposit.',
+  'Keystart': 'The WA Government’s home lender: 2% deposit, no mortgage insurance, with income and price limits.',
+  'pre-approval': 'A lender’s conditional yes to a loan amount, usually valid for about 90 days.',
+  'mortgage stress': 'Repayments above 30% of your before-tax household income.',
+  'serviceability': 'The lender’s test of whether you could still repay if rates rose 3 points.',
 };
 const SKIP = new Set(['A', 'ABBR', 'BUTTON', 'INPUT', 'SELECT', 'OPTION', 'TEXTAREA', 'SCRIPT', 'STYLE', 'CODE', 'SVG', 'LABEL', 'H1', 'SUMMARY']);
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -66,6 +76,7 @@ export function tableHints(root) {
   for (const w of root.querySelectorAll('.tbl-wrap')) {
     const scrolls = w.scrollWidth > w.clientWidth + 4;
     w.classList.toggle('scrolls', scrolls);
+    if (!scrolls && w.nextElementSibling?.classList.contains('scroll-hint')) w.nextElementSibling.remove();
     if (scrolls && !(w.nextElementSibling?.classList.contains('scroll-hint'))) w.insertAdjacentHTML('afterend', '<div class="scroll-hint" aria-hidden="true"><span class="sh-touch">Swipe the table sideways to see more →</span><span class="sh-mouse">Scroll the table sideways to see more →</span></div>');
   }
 }
@@ -90,8 +101,17 @@ export function wireJargonTips() {
   window.addEventListener('scroll', hide, { passive: true });
 }
 
+/** On phones, tables marked .cards-sm show each row as a card: label every cell with its column heading. */
+export function cardTables(root) {
+  for (const t of root.querySelectorAll('table.cards-sm')) {
+    const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+    for (const tr of t.querySelectorAll('tbody tr')) [...tr.children].forEach((td, i) => { if (heads[i] && !td.dataset.label) td.dataset.label = heads[i]; });
+  }
+}
+
 export function enhance(root) {
   wireDemos(root);
+  cardTables(root);
   // repeat until no new terms are found (each pass may split text nodes)
   for (let i = 0; i < 4; i++) {
     const before = root.querySelectorAll('abbr.jargon').length;

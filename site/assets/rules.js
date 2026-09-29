@@ -286,11 +286,14 @@ export const FHOG = {
   ACT: [0, 'no grant; a stamp duty concession instead'],
 };
 
+/** First Home Owner Grant price cap for a new home (null = no cap; 0 = no grant). Mirrors FHOG above. */
+export const FHOG_CAP = { NSW: 600000, VIC: 750000, QLD: 750000, WA: 800000, SA: null, TAS: null, NT: null, ACT: 0 };
+
 /**
  * Default price growth used in every projection (% a year). Base follows the major-bank consensus for 2026-27
  * (CommBank forecasts about 3% dwelling growth in both years); bear and bull are shown alongside with equal weight.
  */
-export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'CommBank economists, September 2026: about 3% dwelling price growth in 2026 and 2027' };
+export const GROWTH = { bear: 1, base: 3, bull: 5, source: 'A cautious long-run assumption; CommBank economists (September 2026) expect about 3% dwelling price growth in 2026 and 2027' };
 
 /** Mortgage stress: the one threshold used on every page. */
 export const STRESS = {
@@ -311,7 +314,7 @@ export function helpRepayment(income) {
   return h.base2 + (income - h.t2) * h.r2;
 }
 /** Keystart (WA Government lender) Low Deposit Home Loan: 2% deposit, no LMI. keystart.com.au, checked Sept 2026. */
-export const KEYSTART = { cap: 860000, income: { single: 148000, couple: 218000 }, source: 'https://www.keystart.com.au/loans/low-deposit-home-loan' };
+export const KEYSTART = { cap: 860000, income: { single: 155000, couple: 228000 }, asOf: '15 April 2026', source: 'https://www.keystart.com.au/loans/low-deposit-home-loan' };
 
 /** Lenders assess a credit card at about 3% of its limit a month, whether or not it's used. */
 export const CARD_LIMIT_RATE = 0.03;
@@ -345,7 +348,7 @@ export const runningCosts = (state, type) => {
  */
 export const STATE_SCHEMES = {
   WA: [
-    { name: 'Keystart Low Deposit Loan', text: 'The WA Government’s home lender: from a 2% deposit with no lenders mortgage insurance, for homes up to $860,000. Income limits of about $148,000 (single) and $218,000 (couples and families) apply, higher in the Pilbara and Kimberley, and Keystart’s variable rate is usually higher than the major banks’. Choose it under Deposit to see what it does for you.', url: 'https://www.keystart.com.au/loans/low-deposit-home-loan' },
+    { name: 'Keystart Low Deposit Loan', text: 'The WA Government’s home lender: from a 2% deposit with no lenders mortgage insurance, for homes up to $860,000. Income limits of $155,000 (single) and $228,000 (couples and families) apply from 15 April 2026, higher in the Pilbara and Kimberley, and Keystart’s variable rate is usually higher than the major banks’. Choose it under Deposit to see what it does for you.', url: 'https://www.keystart.com.au/loans/low-deposit-home-loan' },
     { name: 'Keystart shared equity (Urban Connect, Shared Ownership)', text: 'The state takes a share of the home (Urban Connect up to 35% or $250,000, for homes near transport), so you borrow less. Separate income and price limits.', url: 'https://www.keystart.com.au/' },
   ],
   SA: [

@@ -1,4 +1,3 @@
-import { demo } from '../demo.js';
 import { esc, aud, pct, ago, setMeta, sortable } from '../ui.js';
 import { rateRows, load } from '../data.js';
 import { repayment } from '../engine.js';
@@ -9,21 +8,14 @@ const okUrl = (u) => u && /^https?:/i.test(u) && !/\.pdf(\?|#|$)/i.test(u);
 
 export default async function ratesPage(main, _p, query) {
   setMeta({ title: 'Home loan rates in Australia, updated several times a day', description: 'Every advertised home loan rate from 90+ Australian lenders, straight from their Open Banking feeds and checked several times a day. Investor and owner-occupier, variable and fixed.' });
-  const [R, rba, rs] = await Promise.all([rateRows(), load('rba'), load('rates-summary')]);
-  const hasExtras = R.rows.some((r) => r.offset !== undefined);
-  // each lender's website, from the product pages its feed does give
+  // paint the page from the small summary first; the full list of every rate (about 1 MB) fills the table after
+  const [rba, rs] = await Promise.all([load('rba'), load('rates-summary')]);
+  const pending = rateRows();
+  let R = { rows: [], updated: rs.updated };
+  const hasExtras = true;
   const siteOf = new Map();
-  for (const r of R.rows) {
-    if (!siteOf.has(r.lender) && okUrl(r.url)) {
-      try {
-        siteOf.set(r.lender, new URL(r.url).origin);
-      } catch {
-        // skip malformed links
-      }
-    }
-  }
   const st = {
-    purpose: query.purpose || 'INV',
+    purpose: query.purpose || 'OO',
     repay: query.repay || 'PI',
     type: query.type || 'variable',
     term: query.term || '3',
@@ -37,24 +29,24 @@ export default async function ratesPage(main, _p, query) {
     asc: true,
     bestOnly: true,
   };
-  const failed = R.failed.map((f) => f.lender);
 
   main.innerHTML = `
-  <div class="page-head with-demo"><div><div class="eyebrow">Rates</div><h1>Home loan rates from ${R.lenders.length} lenders</h1>
-  <p>${R.rows.length.toLocaleString()} advertised rates from ${R.lenders.length} lenders, read directly from each lender's public Consumer Data Right (Open Banking) product feed, checked several times a day. Every bank must publish one; some non-bank lenders don't, so they aren't here. Last check ${ago(R.updated)}.</p></div>${demo('rates')}</div>
+  <div class="page-head"><div><div class="eyebrow">Rates</div><h1>Home loan rates from ${rs.lenders} lenders</h1>
+  <p>${rs.rows.toLocaleString()} advertised rates from ${rs.lenders} lenders, read directly from each lender's public Consumer Data Right (Open Banking) product feed, checked several times a day. Every bank must publish one; some non-bank lenders don't, so they aren't here. Last check ${ago(R.updated)}.</p></div></div>
   <div style="margin-bottom:16px">${rateWatchCard(rba, { compact: true })}</div>
   <div class="grid g4">
-    ${[['INV_PI_variable', 'investor variable P&I'], ['INV_PI_fixed3', 'investor 3-year fixed'], ['OO_PI_variable', 'owner-occupier variable'], ['OO_PI_fixed2', 'owner-occupier 2-year fixed']]
+    ${[['OO_PI_variable', 'owner-occupier variable'], ['OO_PI_fixed2', 'owner-occupier 2-year fixed'], ['INV_PI_variable', 'investor variable P&I'], ['INV_PI_fixed3', 'investor 3-year fixed']]
       .map(([k, l]) => {
-        const b = rs.best[k]?.[0];
-        const nb = rs.best[`${k}_national`]?.[0];
-        return `<div class="card"><div class="stat"><span class="k">Lowest ${l}</span><span class="v">${b ? pct(b.rate, 2) : '—'}</span><span class="s">${b ? `${esc(b.lender)}${checkEligibility(b) ? ' <span class="tag tag-news">check eligibility</span>' : ''} · comparison ${pct(b.comparison, 2)}` : ''}</span>${nb && nb.lender !== b?.lender ? `<span class="s" style="margin-top:4px">National lender: <b>${pct(nb.rate, 2)}</b> ${esc(nb.lender)}</span>` : ''}</div></div>`;
+        // lead with the best rate anyone can get; credit unions and regional lenders (often lower, with eligibility rules) second
+        const all = rs.best[k]?.[0];
+        const b = rs.best[`${k}_national`]?.[0] || all;
+        return `<div class="card"><div class="stat"><span class="k">Best ${l}, open to anyone</span><span class="v">${b ? pct(b.rate, 2) : '—'}</span><span class="s">${b ? `${esc(b.lender)} · comparison ${b.comparison != null ? pct(b.comparison, 2) : 'not given'}` : ''}</span>${all && all.lender !== b?.lender && all.rate < b.rate ? `<span class="s" style="margin-top:4px">Lower with eligibility rules: <b>${pct(all.rate, 2)}</b> ${esc(all.lender)}</span>` : ''}</div></div>`;
       })
       .join('')}
   </div>
   <div class="card flat tint section" style="margin-top:16px">
     <div class="fields">
-      <label class="field">Loan purpose<select id="r-purpose"><option value="INV">Investment</option><option value="OO">Owner-occupied</option></select></label>
+      <label class="field">Loan purpose<select id="r-purpose"><option value="OO">Owner-occupied (a home to live in)</option><option value="INV">Investment</option></select></label>
       <label class="field">Repayments<select id="r-repay"><option value="PI">Principal &amp; interest</option><option value="IO">Interest only</option></select></label>
       <label class="field">Rate type<select id="r-type"><option value="variable">Variable</option><option value="fixed">Fixed</option></select></label>
       <label class="field">Fixed term<select id="r-term"><option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option><option value="4">4 years</option><option value="5">5 years</option></select></label>
@@ -73,7 +65,7 @@ export default async function ratesPage(main, _p, query) {
   <div id="r-out" class="section"></div>
   <div class="grid g2 section">
     <div class="card"><h3>Advertised vs what people pay</h3><p class="note">The RBA says the average new investor variable loan in ${new Date(rba.actual.newInvVariable.at(-1)[0]).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })} was written at <b>${pct(rba.actual.newInvVariable.at(-1)[1], 2)}</b>, and owner-occupiers paid <b>${pct(rba.actual.newOOVariable.at(-1)[1], 2)}</b>. The banks' "standard variable" headline rates are ${pct(rba.indicator.invStandardVariable.at(-1)[1], 2)} for investors. If your rate is well above the lowest advertised rate at your LVR, refinance or ask your bank to match it.</p></div>
-    <div class="card"><h3>About this data</h3><p class="note">Under the Consumer Data Right every Australian bank must publish its products and rates in a standard format at a public address. Ownaroo checks all ${R.brandsChecked} registered banking brands several times a day; ${R.lenders.length} of them currently publish home loan rates. Where a product's name gives a fixed term, interest-only repayments or an LVR limit that its feed leaves out, Ownaroo goes by the name. Advertised rates exclude discretionary discounts, and eligibility, fees and features vary, so read the comparison rate and the lender's terms.${failed.length ? ` Feeds unavailable at the last check: ${failed.map(esc).join(', ')}.` : ''}</p></div>
+    <div class="card"><h3>About this data</h3><p class="note">Under the Consumer Data Right every Australian bank must publish its products and rates in a standard format at a public address. Ownaroo checks every registered banking brand several times a day; <span id="r-brands">${rs.lenders} of them currently publish</span> home loan rates. Where a product's name gives a fixed term, interest-only repayments or an LVR limit that its feed leaves out, Ownaroo goes by the name. Advertised rates exclude discretionary discounts, and eligibility, fees and features vary, so read the comparison rate and the lender's terms.<span id="r-failed"></span></p></div>
   </div>`;
   const $ = (x) => main.querySelector(x);
   $('#r-purpose').value = st.purpose;
@@ -82,6 +74,10 @@ export default async function ratesPage(main, _p, query) {
   $('#r-term').value = st.term;
 
   function draw() {
+    if (!R.rows.length) {
+      $('#r-out').innerHTML = '<div class="card"><p class="note">Loading every rate…</p></div>';
+      return;
+    }
     const q = st.q.toLowerCase();
     let rows = R.rows.filter(
       (r) =>
@@ -110,7 +106,7 @@ export default async function ratesPage(main, _p, query) {
     const years = 30;
     const cheapest = rows.length ? Math.min(...rows.map((r) => r.rate)) : null;
     $('#r-out').innerHTML = `<div class="spread" style="margin-bottom:8px"><span class="muted"><b>${rows.length}</b> ${st.bestOnly ? 'lenders' : 'rates'} match · repayments on ${aud(st.loan)} over ${years} years${st.repay === 'IO' ? ' (interest only)' : ''}</span></div>
-    <div class="tbl-wrap"><table id="rt"><thead><tr><th>#</th><th data-k="lender">Lender</th><th>Product</th><th data-k="rate" class="n">Rate</th><th data-k="comparison" class="n">Comparison</th><th class="n">LVR range</th>${hasExtras ? '<th>Offset · redraw</th><th class="n">Fees: yearly / up front</th>' : ''}<th data-k="repay" class="n">Monthly</th><th class="n" title="Extra interest and ongoing fees a year compared with the cheapest rate shown">vs cheapest / yr</th><th></th></tr></thead><tbody>
+    <div class="tbl-wrap"><table id="rt" class="cards-sm"><thead><tr><th>#</th><th data-k="lender">Lender</th><th>Product</th><th data-k="rate" class="n">Rate</th><th data-k="comparison" class="n">Comparison</th><th class="n">LVR range</th>${hasExtras ? '<th>Offset · redraw</th><th class="n">Fees: yearly / up front</th>' : ''}<th data-k="repay" class="n">Monthly</th><th class="n" title="Extra interest and ongoing fees a year compared with the cheapest rate shown">vs cheapest / yr</th><th></th></tr></thead><tbody>
     ${rows
       .slice(0, 300)
       .map((r, i) => {
@@ -151,4 +147,20 @@ export default async function ratesPage(main, _p, query) {
   bind('#r-members', 'showMembers');
   bind('#r-tailored', 'showTailored');
   draw();
+  R = await pending;
+  // each lender's website, from the product pages its feed does give
+  for (const r of R.rows) {
+    if (!siteOf.has(r.lender) && okUrl(r.url)) {
+      try {
+        siteOf.set(r.lender, new URL(r.url).origin);
+      } catch {
+        // skip malformed links
+      }
+    }
+  }
+  if (!R.rows.some((r) => r.offset !== undefined)) main.querySelectorAll('#r-offset, #r-nofee').forEach((x) => x.closest('label').remove());
+  const failed = (R.failed || []).map((f) => f.lender);
+  if (R.brandsChecked) $('#r-brands').textContent = `${R.lenders.length} of the ${R.brandsChecked} registered brands currently publish`;
+  if (failed.length) $('#r-failed').textContent = ` Feeds unavailable at the last check: ${failed.join(', ')}.`;
+  if (main.isConnected) draw();
 }

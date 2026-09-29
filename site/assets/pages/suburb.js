@@ -1,6 +1,6 @@
 import { esc, aud, pct, num, scoreBadge, bar, srcBadge, setMeta, lineChart, wireCharts, date, growth12, confBadge, cashWeek, dealContext, rankPill, returnsLine } from '../ui.js';
 import { baseTiles } from '../map.js';
-import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch, typicalRate } from '../data.js';
+import { load, suburbs, suburbDetail, suburbUrl, cleanName, nearby, watchlist, toggleWatch, typicalRate, openRate } from '../data.js';
 import { suburbScore, PROFILES, stampDuty, landTax, lmi, analyse, verdict, scenarioReturns } from '../engine.js';
 import { investmentCase, regionStats, COMPONENT_HELP, COMPONENT_NAMES, listingLinks, scoreVsDeal } from '../insights.js';
 import { STATES, GROWTH } from '../rules.js';
@@ -42,7 +42,7 @@ export default async function suburbPage(main, params) {
   const near = nearby(idx.list, s, 10, 30);
   const samePc = (idx.byPc.get(s.pc) || []).filter((x) => x !== s);
   const invRate = rs.medianInvestorVariable || 6.5;
-  const bestRate = rs.best.INV_PI_variable?.[0]?.rate;
+  const bestRate = openRate(rs, 'INV_PI_variable')?.rate;
 
   // Quick deal at the suburb's typical price
   const quickIn = { state: s.s, price: ic.price, weeklyRent: ic.rent || 0, deposit: 0.2, ratePct: typicalRate(rba, 'INV').rate, income: 120000, hold: 10, growth: GROWTH.base, perth: s.rg === 'PER', newBuild: false, strata: s.pt === 'u' ? 3200 : 0, landValuePct: s.pt === 'u' ? 0.25 : 0.55 };
@@ -112,7 +112,7 @@ export default async function suburbPage(main, params) {
     </div>
     <div class="card" style="display:flex;gap:16px;align-items:center">
       ${scoreBadge(scores.balanced, true)}
-      <div><div class="eyebrow" style="margin:0">Ownaroo Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Top-tier fundamentals' : scores.balanced >= 55 ? 'Above average' : scores.balanced >= 45 ? 'Average' : 'Below average'}</div>
+      <div><div class="eyebrow" style="margin:0">Ownaroo Score</div><div style="font-family:var(--serif);font-size:20px;font-weight:600">${scores.balanced >= 65 ? 'Strong on these measures' : scores.balanced >= 55 ? 'Solid on these measures' : scores.balanced >= 45 ? 'Mid-range on these measures' : 'Other suburbs score higher on these measures'}</div>
       <div class="note">Ranks the area against every Australian suburb. It isn't a rating of any particular home.</div></div>
     </div>
   </div>

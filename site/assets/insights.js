@@ -115,18 +115,33 @@ export const COMPONENT_HELP = {
 
 export const COMPONENT_NAMES = { cash: 'Yield', momentum: 'Price trend (not scored)', growth: 'Growth drivers', demand: 'Rental demand', afford: 'Affordability', stability: 'Stability' };
 
-export function listingLinks(s) {
+/**
+ * Links to the listing portals for a suburb. Pass the buyer's filters so they aren't lost on the way:
+ * { type: 'h'|'u', beds, minPrice, maxPrice }.
+ */
+export function listingLinks(s, f = {}) {
   const name = cleanName(s.n);
   const st = s.s.toLowerCase();
   const dslug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${st}-${s.pc}`;
-  const rea = `in-${encodeURIComponent(name.toLowerCase())},+${st}+${s.pc}`;
+  const loc = `in-${encodeURIComponent(name.toLowerCase())},+${st}+${s.pc}`;
+  const parts = [];
+  if (f.type === 'u') parts.push('property-unit+apartment+townhouse');
+  else if (f.type === 'h') parts.push('property-house');
+  if (f.beds) parts.push(`with-${f.beds}-bedrooms`);
+  if (f.maxPrice || f.minPrice) parts.push(`between-${f.minPrice || 0}-${f.maxPrice || 'any'}`);
+  const pre = parts.length ? `${parts.join('-')}-` : '';
+  const dq = new URLSearchParams();
+  if (f.type) dq.set('ptype', f.type === 'u' ? 'apartment-unit-flat,town-house' : 'house');
+  if (f.beds) dq.set('bedrooms', `${f.beds}-any`);
+  if (f.maxPrice || f.minPrice) dq.set('price', `${f.minPrice || 0}-${f.maxPrice || 'any'}`);
+  const dqs = dq.toString() ? `?${dq}` : '';
   return {
-    reaBuy: `https://www.realestate.com.au/buy/${rea}/list-1`,
-    reaRent: `https://www.realestate.com.au/rent/${rea}/list-1`,
-    reaSold: `https://www.realestate.com.au/sold/${rea}/list-1`,
-    domainBuy: `https://www.domain.com.au/sale/${dslug}/`,
+    reaBuy: `https://www.realestate.com.au/buy/${pre}${loc}/list-1`,
+    reaRent: `https://www.realestate.com.au/rent/${loc}/list-1`,
+    reaSold: `https://www.realestate.com.au/sold/${pre}${loc}/list-1`,
+    domainBuy: `https://www.domain.com.au/sale/${dslug}/${dqs}`,
     domainRent: `https://www.domain.com.au/rent/${dslug}/`,
-    domainSold: `https://www.domain.com.au/sold-listings/${dslug}/`,
+    domainSold: `https://www.domain.com.au/sold-listings/${dslug}/${dqs}`,
     domainProfile: `https://www.domain.com.au/suburb-profile/${dslug}`,
   };
 }
@@ -141,6 +156,18 @@ export function scoreVsDeal(score, grade) {
 }
 
 /** The human next step after the numbers: pre-approval. Neutral: Ownaroo doesn't refer or earn from this. */
+/** Pre-approval to settlement, with typical costs (general ranges, not quotes). */
+const JOURNEY = [
+  ['Get pre-approval', 'Before you make offers', 'Usually free'],
+  ['Building and pest inspection', 'Before you commit, or as a contract condition', '$400 to $800 each'],
+  ['Strata report (units and townhouses)', 'Before you commit', '$200 to $450'],
+  ['Conveyancer or solicitor', 'From the offer to settlement', '$1,000 to $2,500'],
+  ['Deposit', 'When contracts are signed', 'Often 5% to 10% of the price'],
+  ['Formal loan approval and valuation', 'Within the finance clause, often 14 to 21 days', '$0 to $600 in lender fees'],
+  ['Building insurance', 'From when the risk passes to you (often exchange or settlement)', '$1,000 to $2,500 a year for a house'],
+  ['Stamp duty, mortgage and transfer registration', 'At or before settlement', 'Duty as shown above, plus a few hundred dollars (more in Victoria)'],
+  ['Final inspection and moving', 'The week of settlement', '$500 to $2,000 to move'],
+];
 export function nextStepsCard({ fhb = false } = {}) {
   return `<div class="card next-steps"><div class="eyebrow">Your next step</div><h3 style="margin-top:4px">Get pre-approval before you make offers</h3>
     <ol class="note" style="padding-left:18px;margin:8px 0 0;line-height:1.6">
@@ -149,5 +176,11 @@ export function nextStepsCard({ fhb = false } = {}) {
       <li><b>Have ready:</b> photo ID, your last two payslips (or two years of tax returns if self-employed), three months of bank and savings statements, and details of any debts, cards and buy-now-pay-later accounts.</li>
       ${fhb ? '<li><b>For the 5% Deposit Scheme or Help to Buy,</b> you apply through a participating lender, not the government. Ask the broker or bank whether they offer it.</li>' : ''}
     </ol>
-    <p class="fine" style="margin-top:8px"><a href="https://moneysmart.gov.au/home-loans/choosing-a-mortgage-broker" target="_blank" rel="noopener">Moneysmart: choosing a mortgage broker ↗</a>${fhb ? ' · <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia: schemes and participating lenders ↗</a>' : ''} · Ownaroo doesn't refer you to anyone or earn anything from this.</p></div>`;
+    <details class="fold journey" style="margin-top:10px"><summary><b>From pre-approval to settlement: the steps and what they cost</b></summary>
+      <div class="tbl-wrap"><table class="cards-sm name-first"><thead><tr><th>Step</th><th>When</th><th class="n">Typical cost</th></tr></thead><tbody>
+        ${JOURNEY.map(([step, when, cost]) => `<tr><td>${step}</td><td>${when}</td><td class="n">${cost}</td></tr>`).join('')}
+      </tbody></table></div>
+      <p class="fine" style="margin-top:6px">Typical ranges for a standard home; quotes vary by state, property and provider. Stamp duty and mortgage insurance for your numbers are shown above.</p>
+    </details>
+    <p class="fine" style="margin-top:8px"><a href="https://moneysmart.gov.au/home-loans/choosing-a-mortgage-broker" target="_blank" rel="noopener">Moneysmart: choosing a mortgage broker ↗</a>${fhb ? ' · <a href="https://www.housingaustralia.gov.au/" target="_blank" rel="noopener">Housing Australia: schemes and participating lenders ↗</a>' : ''} · Ownaroo is independent: no lender or broker pays to appear here.</p></div>`;
 }

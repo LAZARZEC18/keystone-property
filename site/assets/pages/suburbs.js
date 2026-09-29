@@ -1,6 +1,6 @@
 import { esc, aud, pct, num, scoreBadge, setMeta, sortable, srcBadge, growth12 } from '../ui.js';
 import { baseTiles } from '../map.js';
-import { suburbs, suburbUrl, cleanName, load, MIN_POP, fairOrder } from '../data.js';
+import { suburbs, suburbUrl, cleanName, load, MIN_POP, stateRanks, tzState } from '../data.js';
 import { suburbScore, PROFILES, PROFILE_FILTERS } from '../engine.js';
 import { navigate } from '../app.js';
 
@@ -11,7 +11,8 @@ export default async function explorer(main, _p, query) {
   setMeta({ title: 'Suburb explorer: rank every Australian suburb', description: 'Filter and rank 11,000+ Australian suburbs by price, yield, growth, demand and the Ownaroo investment score.' });
   const [{ list }, market] = await Promise.all([suburbs(), load('market')]);
   const st = {
-    state: query.state || '',
+    // start in the visitor's own state (device time zone); '?state=all' is the whole country
+    state: query.state === 'all' ? '' : query.state || (query.region || query.lga || query.q ? '' : tzState()) || '',
     region: query.region || '',
     lga: query.lga || '',
     type: query.type || 'auto',
@@ -95,15 +96,16 @@ export default async function explorer(main, _p, query) {
       if (y === null || y === undefined) return -1;
       return (x < y ? -1 : 1) * (st.asc ? 1 : -1);
     });
-    // across Australia, rank by position within each state so states with less sales data aren't pushed down
-    fair = st.sort === 'score' && !st.asc && !st.state && !st.region;
-    if (fair) fairOrder(rows);
+    // across Australia the order is plain score; each row also shows its rank within its own state
+    fair = st.sort === 'score' && !st.state && !st.region;
+    if (fair) stateRanks(rows);
   }
   let fair = false;
 
   function syncUrl() {
     const p = new URLSearchParams();
     if (st.state) p.set('state', st.state);
+    else p.set('state', 'all');
     if (st.region) p.set('region', st.region);
     if (st.type !== 'auto') p.set('type', st.type);
     if (st.max) p.set('max', st.max);
@@ -119,16 +121,19 @@ export default async function explorer(main, _p, query) {
 
   function table() {
     const slice = rows.slice(st.page * PAGE, (st.page + 1) * PAGE);
+    // when every row on the page shares one city-wide growth figure, a column of identical numbers says nothing
+    const same = slice.length > 1 && slice.every((r) => String(r.s.g1s || '').startsWith('region') && r.s.rg === slice[0].s.rg);
+    const R0 = same ? market.regions[slice[0].s.rg] || {} : null;
     const pages = Math.ceil(rows.length / PAGE);
-    return `${fair ? `<p class="callout" style="margin:0 0 10px">Across Australia, suburbs are listed by <b>their rank within their own state</b>: the best in each state first, then the next best, and so on. Only VIC, SA and NSW publish suburb sales, so comparing raw scores across states would favour them. Pick a state for a straight ranking by score.</p>` : ''}<div class="tbl-wrap"><table id="tbl"><thead><tr>
-      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th><th data-k="g3" class="n">Area, 3m</th><th data-k="g1" class="n">12m growth</th><th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
+    return `${fair ? `<p class="callout" style="margin:0 0 10px">Across Australia, suburbs are listed by score, with each one's rank in its own state underneath. Only VIC, SA and NSW publish suburb sales; elsewhere scores lean on modelled prices, so compare within a state where you can.</p>` : ''}${same ? `<p class="note" style="margin:0 0 8px">No suburb sales series here, so every suburb on this page shares the ${esc(R0.name || '')} trend: ${pct(R0.quarterPct, 1, true)} over 3 months, ${pct(R0.annualPct, 1, true)} over 12.</p>` : ''}<div class="tbl-wrap"><table id="tbl"><thead><tr>
+      <th></th><th>#</th><th data-k="name">Suburb</th><th>Council</th><th data-k="score" class="n">Score</th><th data-k="price" class="n">Price</th><th data-k="rent" class="n">Rent / wk</th><th data-k="yld" class="n">Yield</th>${same ? '' : `<th data-k="g3" class="n">Area, 3m</th><th data-k="g1" class="n">12m growth</th>`}<th data-k="pg5" class="n">Pop. growth 20-25</th><th data-k="pti" class="n">Price / income</th><th data-k="pop" class="n">Population</th><th>Data</th></tr></thead><tbody>
       ${slice
         .map(
           (r, i) => `<tr><td><input type="checkbox" data-cmp="${r.s.id}" ${compareSet.has(r.s.id) ? 'checked' : ''} aria-label="Compare ${esc(r.s.n)}"></td><td class="faint mono">${st.page * PAGE + i + 1}${fair ? `<div class="fine" title="Rank within ${r.s.s}">#${r.stateRank} ${r.s.s}</div>` : ''}</td>
           <td><a href="${suburbUrl(r.s)}" data-link>${esc(cleanName(r.s.n))}</a> <span class="muted">${r.s.s} ${r.s.pc || ''}</span></td>
           <td class="muted">${esc(r.s.lga || '')}</td><td class="n">${scoreBadge(r.score)}</td>
           <td class="n">${aud(r.price, { compact: true })} <span class="faint">${r.type === 'u' ? 'unit' : 'house'}</span></td><td class="n">${aud(r.rent)}</td>
-          <td class="n">${pct(r.yld, 2)}</td><td class="n ${(r.s.g3 ?? 0) < 0 ? 'down' : 'up'}" title="${esc(r.s.g3p || '')}">${r.s.g3 == null ? '—' : pct(r.s.g3, 1, true)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${growth12(r.s, { suffix: '', short: true })}</td>
+          <td class="n">${pct(r.yld, 2)}</td>${same ? '' : `<td class="n ${(r.s.g3 ?? 0) < 0 ? 'down' : 'up'}" title="${esc(r.s.g3p || '')}">${r.s.g3 == null ? '—' : pct(r.s.g3, 1, true)}</td><td class="n ${r.s.g1 >= 0 ? 'up' : 'down'}">${growth12(r.s, { suffix: '', short: true })}</td>`}
           <td class="n">${pct(r.s.pg5, 1, true)}</td><td class="n">${r.s.pti ?? '—'}×</td><td class="n">${num(r.s.pop)}</td><td>${srcBadge(r.type === 'u' ? r.s.us : r.s.hs)}</td></tr>`,
         )
         .join('')}
@@ -166,7 +171,7 @@ export default async function explorer(main, _p, query) {
   function draw() {
     compute();
     syncUrl();
-    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> of ${list.length.toLocaleString()} suburbs match your filters${st.popMin ? ` (including ${st.popMin.toLocaleString()}+ residents)` : ''} · <span class="area-tag">city-wide</span> / <span class="area-tag">region-wide</span> = the 12-month figure for the whole city or region (no suburb sales data) · ${fair ? `ordered by rank within each state (${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score), best of each state first` : `ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`}`;
+    $f('#count').innerHTML = `<b>${rows.length.toLocaleString()}</b> of ${list.length.toLocaleString()} suburbs match your filters${st.popMin ? ` (including ${st.popMin.toLocaleString()}+ residents)` : ''} · <span class="area-tag">city-wide</span> / <span class="area-tag">region-wide</span> = the 12-month figure for the whole city or region (no suburb sales data) · ${fair ? `ranked by ${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score, with each suburb's rank in its state` : `ranked by ${st.sort === 'score' ? `${$f('#f-profile').selectedOptions[0].text.toLowerCase()} score` : st.sort}`}`;
     if (map) {
       map.remove();
       map = null;

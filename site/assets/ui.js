@@ -49,7 +49,7 @@ export const scoreBadge = (v, big = false) => `<span class="score ${scoreClass(v
 
 export function srcBadge(src) {
   if (!src) return '';
-  if (src === 'model') return '<span class="tag tag-model" title="Ownaroo estimate: calibrated model anchored to current regional medians">Modelled</span>';
+  if (src === 'model') return '<span class="tag tag-model" title="Ownaroo estimate: calibrated model anchored to current regional medians">Estimate</span>';
   if (src === 'region') return '<span class="tag tag-model" title="Regional figure (Cotality)">Region</span>';
   const pc = src.includes('postcode');
   return `<span class="tag tag-official" title="Official ${src.split(' ')[0]} government sales data${pc ? ' for the postcode' : ''}">Official${pc ? ' · postcode' : ''}</span>`;
@@ -59,9 +59,9 @@ export function srcBadge(src) {
 export function confBadge(s) {
   const priceOfficial = s.hs && s.hs !== 'model' && s.hs !== 'region';
   const growthLocal = s.g1s && !String(s.g1s).startsWith('region');
-  if (priceOfficial && growthLocal && !String(s.hs).includes('postcode')) return '<span class="tag tag-conf tag-conf-h" title="Price and 12-month change come from official sales for this suburb">Measured</span>';
-  if (priceOfficial || growthLocal) return `<span class="tag tag-conf tag-conf-m" title="${priceOfficial ? 'Price from official sales' : 'Price is modelled'}${String(s.hs).includes('postcode') ? ' for the postcode' : ''}; ${growthLocal ? '12-month change measured locally' : '12-month change is the city or regional index'}. Rent is modelled.">Partly measured</span>`;
-  return '<span class="tag tag-conf tag-conf-l" title="No official suburb sales series here: price and rent are modelled and the 12-month change is the city or regional index. Treat the ranking as a guide.">Modelled</span>';
+  if (priceOfficial && growthLocal && !String(s.hs).includes('postcode')) return '<span class="tag tag-conf tag-conf-h" title="Price and 12-month change come from official sales for this suburb">Measured · high confidence</span>';
+  if (priceOfficial || growthLocal) return `<span class="tag tag-conf tag-conf-m" title="${priceOfficial ? 'Price from official sales' : 'Price is modelled'}${String(s.hs).includes('postcode') ? ' for the postcode' : ''}; ${growthLocal ? '12-month change measured locally' : '12-month change is the city or regional index'}. Rent is modelled.">Estimate · medium confidence</span>`;
+  return '<span class="tag tag-conf tag-conf-l" title="No official suburb sales series here: price and rent are modelled and the 12-month change is the city or regional index. Treat the ranking as a guide.">Estimate · low confidence</span>';
 }
 
 export function bar(v, max = 100) {
@@ -281,7 +281,7 @@ export function dealContext(v) {
 export function returnsLine(sc, v) {
   if (!sc) return '';
   const f = (x) => (x === null || x === undefined ? '—' : pct(x, 1));
-  return `<div class="returns-line"><div class="rl-head">Return on your cash after tax, a year, if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div${sc[k].yours ? ' class="rl-yours"' : ''}><span class="k">${sc[k].growth}% a year${sc[k].yours ? ' (your input)' : ''}</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">${sc.base.yours ? 'The middle figure uses your own growth input and matches every other return on this page. ' : ''}3% is the major banks' forecast for 2026-27; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
+  return `<div class="returns-line"><div class="rl-head">Annual after-tax return on the cash you put in (<abbr title="Internal rate of return: deposit, costs, yearly cash flow after tax, and the sale after tax, as one yearly rate">IRR</abbr>), if prices grow</div><div class="rl-grid">${['bear', 'base', 'bull'].map((k) => `<div${sc[k].yours ? ' class="rl-yours"' : ''}><span class="k">${sc[k].growth}% a year${sc[k].yours ? ' (your input)' : ''}</span><b class="${(sc[k].irr ?? 0) < 0 ? 'down' : ''}">${f(sc[k].irr)}</b></div>`).join('')}<div><span class="k">Deposit at the cash rate</span><b>${f(v?.tdAfterTax)}</b></div></div><p class="fine">${sc.base.yours ? 'The middle figure uses your own growth input and matches every other return on this page. ' : ''}3% a year is a cautious long-run assumption, below the last 30 years' average; nobody knows which path prices will take. The deposit figure is a ${pct(v?.depositRate ?? 4.35, 2)} cash-rate deposit after tax at your rate, with no price risk; most term deposits pay a little less.</p></div>`;
 }
 
 /** A button that copies a link holding every input (income included), so sharing personal numbers is a choice. */
@@ -293,6 +293,7 @@ export function wireCopyLink(root, getUrl) {
     const b = e.target.closest('[data-copy-link]');
     if (!b) return;
     const url = new URL(getUrl(), location.origin).href;
+    import('./app.js').then((m) => m.countEvent('copy-link')).catch(() => {});
     let ok = false;
     try {
       await navigator.clipboard.writeText(url);

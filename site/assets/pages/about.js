@@ -1,22 +1,24 @@
 import { setMeta, esc } from '../ui.js';
 import { SITE } from '../site.js';
+import { WHO, tourFigure, wireTour } from './why.js';
 
 const PAGES = {
   about: {
     title: 'About Ownaroo',
-    description: 'What Ownaroo is, where its numbers come from, and how it is funded.',
+    description: 'What Ownaroo does for home buyers and investors, who runs it, where its numbers come from and how it stays independent.',
     body: (h) => `
-      <p class="lead" style="font-size:18px">Ownaroo is a free, independent calculator site for Australian home buyers and investors. It works out what you can comfortably afford in each state, the schemes you qualify for, the real weekly cost of a purchase under the 2026 tax rules, and advertised rates from more than 90 lenders. It gives suburb-based price ranges as a guide, not valuations.</p>
-      <h2>Why it exists</h2>
-      <p>Most property tools either sell you something or only show part of the picture. Ownaroo puts official sales, census, building approval and lending data in one place, shows its working, and is honest when the numbers are weak: it shows when a deal ranks in the bottom 30% as plainly as the top 15%, and it tells you when a suburb figure is really a city-wide index or a model.</p>
-      <h2>Where the numbers come from</h2>
-      <p>State valuer-general and government sales medians (Victoria, New South Wales, South Australia), the ABS Census and building approvals, Cotality's monthly Home Value Index, SQM Research vacancy rates, the RBA, and the public Open Banking product feeds of more than 90 lenders. Lender rates are checked several times a day, RBA data and news several times a day, market figures each month-end, and suburb figures are rebuilt monthly. The full method, including the price and rent models and their measured error, is on the <a href="/methodology" data-link>methodology page</a>.</p>
+      <p class="lead" style="font-size:18px">Ownaroo is a free, independent calculator site for Australian home buyers and investors. It answers four questions: what can I afford, what will this investment really cost, what is this suburb like, and what rate can I get.</p>
+      ${h.tour}
+      <h2>Built for people buying a home</h2>
+      <div class="grid g3 why-who" style="margin-bottom:8px">${WHO.map(([t, d, href]) => `<a class="card product" href="${href}" data-link><h3>${t}</h3><p class="muted">${d}</p></a>`).join('')}</div>
       <h2>Who runs it</h2>
-      <p>Ownaroo is built and run independently from ${h.location || 'Perth, Western Australia'}. It isn't owned by a bank, lender, agency or property portal, and nobody pays to be ranked. The business details below will show the registered business name and ABN once they're issued. Questions go straight to the person who builds it: use the <a href="/contact" data-link>contact form</a>.</p>
+      ${h.owner}
+      <h2>Where the numbers come from</h2>
+      <p>Official sales medians where states publish them (Victoria, NSW, South Australia), the ABS Census, income, labour force and building approvals, the RBA, Cotality's month-end Home Value Index, and the Open Banking product feeds of more than 90 lenders. Rates and RBA data are checked several times a day, market figures each month-end, and suburb figures are rebuilt monthly. Every price says how sure it is. The <a href="/methodology" data-link>methodology page</a> shows the method and its tested error.</p>
       <h2>Independence</h2>
-      <p>Ownaroo is not a lender, broker, agent or financial adviser, and no lender pays to appear in the rate tables: they're ranked by rate alone. If Ownaroo ever earns money from a referral or a paid feature, it will be labelled clearly where it appears, and it will never change a rating.</p>
+      <p>Ownaroo isn't a lender, broker, agent or financial adviser. Rankings are never paid for: rates are ranked by rate alone, and suburbs by the same formula everywhere.</p>
       <h2>General information only</h2>
-      <p>Everything on Ownaroo is general information. It doesn't consider your objectives, finances or needs, and it isn't financial, credit, tax or legal advice. Talk to a licensed adviser or broker before making a decision. See the <a href="/terms" data-link>terms of use</a>.</p>
+      <p>Everything here is general information, not financial, credit, tax or legal advice. See the <a href="/terms" data-link>terms of use</a>.</p>
       ${h.business}
       <p><a class="btn primary" href="/contact" data-link>Contact Ownaroo</a></p>`,
   },
@@ -31,17 +33,17 @@ const PAGES = {
       <ul>
         <li><b>What you type into the calculators</b> (savings, income, debts, prices) stays in your browser. It isn't sent to Ownaroo or stored. The page address keeps your choices (such as the state and deposit type) but not your savings or income; those go into a link only if you press "Copy link with my numbers".</li>
         <li><b>If you send a message:</b> your name, email and message, used only to reply.</li>
-        <li><b>Addresses you look up:</b> sent through Ownaroo's server to OpenStreetMap's Nominatim service to find the location. Ownaroo doesn't store them, and no address is sent to any property data company.</li>
+        <li><b>Addresses you look up:</b> sent in the body of a request (not in the page address, so they don't appear in web logs) through Ownaroo's server to a map service, MapTiler or OpenStreetMap's Nominatim, to find the location. The result is cached for 30 days under a one-way code made from the address, so the address itself isn't stored, and no address is sent to any property data company.</li>
         <li><b>Your saved suburbs, deals and theme:</b> saved in your own browser, not on Ownaroo's servers, so they aren't on your other devices and are lost if you clear your browser data.</li>
-        <li><b>Page views:</b> Ownaroo counts which pages are viewed, with no cookies and nothing that identifies you (no IP address or device ID is kept), to learn which tools are useful.</li>
+        <li><b>Page views and tool use:</b> Ownaroo counts which pages are viewed and when a tool finishes, a link is copied, a plan is printed or a listing link is opened, as daily totals with no cookies and nothing that identifies you (no IP address, device ID or figures you entered), to learn which tools are useful.</li>
         <li><b>Server logs:</b> the hosting provider (Netlify) keeps standard request logs, such as IP address and pages requested, for security and reliability.</li>
       </ul>
       <h2>Other services your browser contacts</h2>
       <p>Like most websites, pages load a few things from other companies, which receive your IP address and browser details when they do:</p>
       <ul>
         <li><b>Google Fonts</b> (fonts.googleapis.com, fonts.gstatic.com), for the typefaces.</li>
-        <li><b>cdnjs</b> (Cloudflare), for the Leaflet map library.</li>
-        <li><b>OpenStreetMap's tile servers</b>, for the map images.</li>
+        <li><b>cdnjs</b> (Cloudflare), for the Leaflet map library and the QR code maker.</li>
+        <li><b>MapTiler</b> or <b>OpenStreetMap's tile servers</b>, for the map images.</li>
         <li><b>Wikimedia Commons</b>, for photos of a suburb on its report.</li>
       </ul>
       <p>Links to Google Maps, realestate.com.au, Domain, lenders and government sites only contact those sites if you click them.</p>
@@ -62,7 +64,7 @@ const PAGES = {
       <h2>Third-party data</h2>
       <p>Figures from Cotality, the ABS, the RBA, SQM Research, state governments and lenders are credited where they appear and belong to their owners. Interest rates are advertised rates from lenders' public product feeds and may not be the rate you're offered. Tax and duty rules are summarised; check the official source.</p>
       <h2>Using and copying the site</h2>
-      <p>You can use Ownaroo for your own decisions and share links to its pages. You may not copy, scrape, download in bulk or republish its data, scores or estimates, or use automated tools to collect them, without written permission. Some of the data behind the figures is licensed for display on this site only, which is why suburb data can't be downloaded.</p>
+      <p>You can use Ownaroo for your own decisions and share links to its pages. You may not copy, scrape, download in bulk or republish its data, scores or estimates, or use automated tools to collect them, without written permission. Third-party figures belong to their owners and are shown with credit; they aren't Ownaroo's to pass on, which is why suburb data can't be downloaded.</p>
       <h2>Hazards</h2>
       <p>Ownaroo doesn't assess flood, bushfire, storm-tide, coastal erosion or other hazards, and its scores don't include them. Check the official hazard maps linked on each suburb and address page, the council's planning certificate and an insurance quote before you buy.</p>
       <h2>Liability</h2>
@@ -73,7 +75,7 @@ const PAGES = {
       <p>These terms may be updated; the date above shows the latest version.</p>`,
   },
   contact: {
-    title: 'Contact',
+    title: 'Contact Ownaroo',
     description: 'Contact Ownaroo with a question, a data correction or a privacy request. Every message gets a reply by email.',
     body: (h) => `
       <p>Questions, corrections, data you think is wrong, or partnership enquiries (Ownaroo doesn't sell advertising, placements or rankings): email <a href="mailto:${h.email}">${h.email}</a> or send a message below. You'll get a reply by email, usually within two business days.</p>
@@ -97,10 +99,15 @@ export default async function infoPage(main, params) {
   const key = params.page;
   const P = PAGES[key];
   setMeta({ title: P.title, description: P.description });
+  const o = SITE.owner || {};
+  const owner = o.name
+    ? `<div class="owner card flat">${o.photo ? `<img src="${esc(o.photo)}" alt="${esc(o.name)}" width="96" height="96">` : ''}<div><h3 style="margin:0">${esc(o.name)}</h3>${o.role ? `<p class="muted" style="margin:2px 0 6px">${esc(o.role)}</p>` : ''}<p style="margin:0">${esc(o.bio || '')}</p>${o.linkedin ? `<p style="margin:6px 0 0"><a href="${esc(o.linkedin)}" target="_blank" rel="noopener">LinkedIn ↗</a></p>` : ''}</div></div>`
+    : `<p>Ownaroo is built and run independently in ${esc(SITE.location || 'Perth, Western Australia')}. It isn't owned by a bank, lender, agency or property portal. Questions and corrections go straight to the person who builds it, through the <a href="/contact" data-link>contact form</a>.</p>`;
   const business = SITE.abn || SITE.email || SITE.businessName
     ? `<div class="card flat tint" style="margin:18px 0"><div class="kv">${SITE.businessName ? `<span>Business</span><span>${esc(SITE.businessName)}</span>` : ''}${SITE.abn ? `<span>ABN</span><span>${esc(SITE.abn)}</span>` : ''}${SITE.email ? `<span>Email</span><span><a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></span>` : ''}${SITE.location ? `<span>Based in</span><span>${esc(SITE.location)}</span>` : ''}</div></div>`
     : '';
-  main.innerHTML = `<div class="page-head"><div class="eyebrow">Ownaroo</div><h1>${P.title}</h1></div><div class="prose" style="max-width:760px">${P.body({ business, updated: SITE.policyUpdated, abn: esc(SITE.abn || ''), entity: esc(SITE.entity || SITE.businessName), email: esc(SITE.email), location: esc(SITE.location), law: esc(SITE.governingLaw || 'Western Australia') })}</div>`;
+  main.innerHTML = `<div class="page-head"><div class="eyebrow">Ownaroo</div><h1>${P.title}</h1></div><div class="prose" style="max-width:760px">${P.body({ business, owner, tour: key === 'about' ? tourFigure() : '', updated: SITE.policyUpdated, abn: esc(SITE.abn || ''), entity: esc(SITE.entity || SITE.businessName), email: esc(SITE.email), location: esc(SITE.location), law: esc(SITE.governingLaw || 'Western Australia') })}</div>`;
+  if (key === 'about') wireTour(main);
   const form = main.querySelector('#contact-form');
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();

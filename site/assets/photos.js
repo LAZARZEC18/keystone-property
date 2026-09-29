@@ -25,7 +25,7 @@ export function photoCard(p, inner, { href = '', alt = '' } = {}) {
 export function seeTheArea(lat, lng, { place = '', sold = '' } = {}) {
   const sv = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
   const sat = `https://www.google.com/maps/@?api=1&map_action=map&center=${lat},${lng}&zoom=16&basemap=satellite`;
-  return `<div class="see-area"><div><b>See the streets and homes${place ? ` in ${esc(place)}` : ''}</b><p class="note" style="margin:2px 0 0">Walk the streets or look from above before you inspect. Opens in a new tab.</p></div><div class="row"><a class="btn" href="${sv}" target="_blank" rel="noopener">Street View ↗</a><a class="btn" href="${sat}" target="_blank" rel="noopener">Satellite view ↗</a>${sold ? `<a class="btn" href="${esc(sold)}" target="_blank" rel="noopener">Photos of recently sold homes ↗</a>` : ''}</div></div>`;
+  return `<div class="see-area"><div><b>${place && /^\d|\b(street|st|road|rd|avenue|ave|drive|dr|place|pl|court|ct|crescent|cres|way|lane|parade|terrace|close)\b/i.test(place) ? `See the street around ${esc(place)}` : `See the streets and homes${place ? ` in ${esc(place)}` : ''}`}</b><p class="note" style="margin:2px 0 0">Walk the streets or look from above before you inspect. Opens in a new tab.</p></div><div class="row"><a class="btn" href="${sv}" target="_blank" rel="noopener">Street View ↗</a><a class="btn" href="${sat}" target="_blank" rel="noopener">Satellite view ↗</a>${sold ? `<a class="btn" href="${esc(sold)}" target="_blank" rel="noopener">Photos of recently sold homes ↗</a>` : ''}</div></div>`;
 }
 
 // ---- Curated photos: responsive images, a swipeable strip and a full-screen viewer with zoom

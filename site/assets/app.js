@@ -1,6 +1,6 @@
 // Ownaroo single-page app: router, global search, rate strip, theme.
 import { $, $$, esc, aud, pct, ago } from './ui.js';
-import { load, suburbs, searchSuburbs, cleanName, suburbUrl } from './data.js';
+import { load, suburbs, searchSuburbs, cleanName, suburbUrl, openRate } from './data.js';
 import { looksLikeAddress } from './intent.js';
 import { wirePhotos } from './photos.js';
 
@@ -9,7 +9,7 @@ const routes = [
   [/^\/live\/?$/, () => Promise.resolve({ default: () => navigate('/markets', true) })],
   [/^\/markets\/?$/, () => import('./pages/markets.js')],
   [/^\/new-builds\/?$/, () => import('./pages/newbuilds.js')],
-  [/^\/weekly\/?$/, () => import('./pages/weekly.js')],
+  [/^\/weekly\/?$/, () => Promise.resolve({ default: () => navigate('/markets#weekly', true) })],
   [/^\/suburbs\/?$/, () => import('./pages/suburbs.js')],
   [/^\/suburb\/(?<state>[a-z]+)\/(?<slug>[a-z0-9-]+)\/?$/, () => import('./pages/suburb.js')],
   [/^\/postcode\/(?<pc>\d{3,4})\/?$/, () => import('./pages/postcode.js')],
@@ -18,7 +18,7 @@ const routes = [
   [/^\/afford\/?$/, () => import('./pages/afford.js')],
   [/^\/rates\/?$/, () => import('./pages/rates.js')],
   [/^\/listings\/?$/, () => Promise.resolve({ default: () => navigate(`/property${location.search.includes('q=') ? location.search : ''}`, true) })],
-  [/^\/news\/?$/, () => import('./pages/news.js')],
+  [/^\/news\/?$/, () => Promise.resolve({ default: () => navigate('/markets#news', true) })],
   [/^\/guide(?:\/(?<section>[a-z0-9-]+))?\/?$/, () => import('./pages/guide.js')],
   [/^\/compare\/?$/, () => import('./pages/compare.js')],
   [/^\/watchlist\/?$/, () => import('./pages/watchlist.js')],
@@ -29,7 +29,8 @@ const routes = [
   [/^\/map\/?$/, () => import('./pages/topmap.js')],
   [/^\/(?<page>about|privacy|terms|contact)\/?$/, () => import('./pages/about.js')],
   [/^\/first-home\/?$/, () => import('./pages/firsthome.js')],
-  [/^\/why\/?$/, () => import('./pages/why.js')],
+  [/^\/price-check\/?$/, () => import('./pages/pricecheck.js')],
+  [/^\/why\/?$/, () => Promise.resolve({ default: () => navigate('/about', true) })],
 ];
 
 let current = null;
@@ -44,6 +45,23 @@ function countView(path) {
     // never let counting break a page
   }
 }
+
+/** Cookie-free event count: tool completions, copied links, prints, listing clicks. Only the event name is sent. */
+export function countEvent(name) {
+  if (!/netlify\.app$|ownaroo/.test(location.hostname) || navigator.webdriver) return;
+  try {
+    navigator.sendBeacon?.('/api/hit', JSON.stringify({ e: name }));
+  } catch {
+    // never let counting break a page
+  }
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest?.('a[href], [data-ev]');
+  if (!a) return;
+  if (a.dataset.ev) countEvent(a.dataset.ev);
+  else if (/realestate\.com\.au|domain\.com\.au/.test(a.getAttribute('href') || '')) countEvent('listing-link');
+});
+window.addEventListener('beforeprint', () => countEvent(`print-${(location.pathname.split('/')[1] || 'home')}`));
 
 async function render() {
   const path = location.pathname.replace(/\/+$/, '') || '/';
@@ -66,6 +84,7 @@ async function render() {
   if (current?.destroy) current.destroy();
   if (!match) {
     main.innerHTML = `<div class="empty"><h1>Page not found</h1><p>Try the <a href="/suburbs" data-link>suburb explorer</a> or search above.</p></div>`;
+    document.title = 'Page not found · Ownaroo';
     return;
   }
   const params = path.match(match[0]).groups || {};
@@ -248,14 +267,25 @@ $('.quick').addEventListener('submit', (e) => e.preventDefault());
 async function ticker() {
   try {
     const [rs, rba, market] = await Promise.all([load('rates-summary'), load('rba'), load('market')]);
-    // the same "lowest advertised" figures as the top of the rates page, so the site quotes one number for each
-    const bestOO = rs.best.OO_PI_variable?.[0];
-    const bestInv = rs.best.INV_PI_variable?.[0];
-    const next = market.cashRate?.nextMeeting;
+    // the lowest rate anyone can apply for (national lenders), the same figure as the top of the rates page
+    const bestOO = openRate(rs, 'OO_PI_variable');
+    const bestInv = openRate(rs, 'INV_PI_variable');
+    // the next decision comes from the RBA's published schedule, so the strip moves on by itself at 2.30pm Sydney time
+    const { nextDecision, recentDecision } = await import('./ratewatch.js');
+    const next = nextDecision();
+    const recent = recentDecision();
+    const day = (d) => new Date(`${d}T12:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    let after = '';
+    if (recent) {
+      // a change takes effect the day after the announcement, so compare dates, not equality
+      const moved = (rba.cashRate.lastChange || '') >= recent;
+      const known = moved || (rba.cashRate.published || '') >= recent;
+      after = known ? ` · ${moved ? 'changed' : 'held'} ${day(recent)}` : ` · ${day(recent)} decision announced, updating`;
+    }
     const items = [
-      `<a href="/markets" data-link><span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b>${next ? ` <span>· next decision ${esc(new Date(next).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }))}</span>` : ''}</a>`,
-      bestOO && `<a href="/rates" data-link><span>Lowest advertised owner-occupier variable</span> <b>${pct(bestOO.rate, 2)}</b></a>`,
-      bestInv && `<a href="/rates" data-link class="t-inv"><span>Lowest advertised investor variable</span> <b>${pct(bestInv.rate, 2)}</b></a>`,
+      `<a href="/markets" data-link><span>RBA cash rate</span> <b>${pct(rba.cashRate.current, 2)}</b><span>${after}${next ? ` · next decision ${day(next)}` : ''}</span></a>`,
+      bestOO && `<a href="/rates" data-link><span>Lowest owner-occupier variable, open to anyone</span> <b>${pct(bestOO.rate, 2)}</b></a>`,
+      bestInv && `<a href="/rates" data-link class="t-inv"><span>Lowest investor variable, open to anyone</span> <b>${pct(bestInv.rate, 2)}</b></a>`,
       `<span class="t-when">Rates checked ${ago(rs.updated)}</span>`,
     ].filter(Boolean);
     $('#ticker').innerHTML = `<div class="ticker-in">${items.map((i) => `<div>${i}</div>`).join('')}</div>`;
@@ -264,6 +294,12 @@ async function ticker() {
   }
 }
 ticker();
+// keep the strip right on a page left open over an announcement
+setInterval(async () => {
+  const { reload } = await import('./data.js');
+  await Promise.all([reload('rba'), reload('rates-summary')]).catch(() => {});
+  ticker();
+}, 10 * 60 * 1000);
 wirePhotos(document);
 // calculator forms never submit (inline onsubmit handlers are blocked by the content security policy)
 document.addEventListener('submit', (e) => {

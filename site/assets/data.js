@@ -36,6 +36,18 @@ export async function load(name) {
   }
 }
 
+/** The lowest advertised rate open to anyone in Australia (national lenders), the figure quoted across the site.
+ * Credit unions and regional lenders can be lower, but you usually have to join or live in their area. */
+export function openRate(rs, key) {
+  return rs?.best?.[`${key}_national`]?.[0] || rs?.best?.[key]?.[0] || null;
+}
+
+/** Forget a cached file and load it again (for long-open pages). */
+export function reload(name) {
+  cache.delete(name);
+  return load(name);
+}
+
 let suburbIndex = null;
 /** All suburbs as objects, with lookup maps. */
 export async function suburbs() {
@@ -218,5 +230,39 @@ export function fairOrder(rows, scoreOf = (r) => r.score, stateOf = (r) => r.s.s
   return rows.sort((a, b) => a.statePct - b.statePct || scoreOf(b) - scoreOf(a));
 }
 
+/** Each row's rank within its own state, without changing the order. */
+export function stateRanks(rows, scoreOf = (r) => r.score, stateOf = (r) => r.s.s) {
+  const by = {};
+  for (const r of rows) (by[stateOf(r)] ||= []).push(r);
+  for (const arr of Object.values(by)) [...arr].sort((a, b) => scoreOf(b) - scoreOf(a)).forEach((r, i) => (r.stateRank = i + 1));
+  return rows;
+}
+
 /** One slug for council pages everywhere (matches the server's). 'Campbelltown (NSW)' -> 'campbelltown-nsw'. */
 export const lgaSlug = (x) => String(x || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+/** The visitor's likely state from their device's time zone (no location request, nothing sent anywhere). */
+const TZ_STATE = { Perth: 'WA', Eucla: 'WA', Brisbane: 'QLD', Lindeman: 'QLD', Sydney: 'NSW', Melbourne: 'VIC', Adelaide: 'SA', Broken_Hill: 'NSW', Hobart: 'TAS', Currie: 'TAS', Darwin: 'NT', Canberra: 'ACT', ACT: 'ACT', Lord_Howe: 'NSW' };
+export function tzState() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    const m = tz.match(/^Australia\/(.+)$/);
+    return (m && TZ_STATE[m[1]]) || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Everything saved in this browser as one JSON object, and back again. */
+export function exportSaved() {
+  return { app: 'ownaroo', version: 1, exported: new Date().toISOString(), watchlist: watchlist(), deals: savedDeals() };
+}
+export function importSaved(obj) {
+  if (!obj || obj.app !== 'ownaroo') throw new Error('This file is not an Ownaroo export.');
+  const w = new Set([...watchlist(), ...(Array.isArray(obj.watchlist) ? obj.watchlist.map(String) : [])]);
+  const byUrl = new Map(savedDeals().map((d) => [d.url, d]));
+  for (const d of Array.isArray(obj.deals) ? obj.deals : []) if (d && typeof d.url === 'string' && d.url.startsWith('/analyse')) byUrl.set(d.url, d);
+  localStorage.setItem(WL, JSON.stringify([...w]));
+  localStorage.setItem(DEALS, JSON.stringify([...byUrl.values()].slice(0, 50)));
+  return { watchlist: w.size, deals: byUrl.size };
+}

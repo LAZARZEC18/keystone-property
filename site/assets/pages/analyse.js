@@ -1,11 +1,10 @@
-import { demo } from '../demo.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine, copyLinkButton, wireCopyLink } from '../ui.js';
-import { suburbs, cleanName, suburbUrl, load, saveDeal } from '../data.js';
+import { suburbs, cleanName, suburbUrl, load, saveDeal, savedDeals, openRate, tzState } from '../data.js';
 import { analyse, verdict, suburbScore, borrowingPower } from '../engine.js';
 import { RULES, STATES, GROWTH, runningCosts } from '../rules.js';
 import { check, fromQuery, showErrors } from '../validate.js';
-import { attachSearch } from '../app.js';
+import { attachSearch, countEvent } from '../app.js';
 
 const SCEN = { bear: { growth: GROWTH.bear, rentGrowth: 2.5 }, base: { growth: GROWTH.base, rentGrowth: 3.5 }, bull: { growth: GROWTH.bull, rentGrowth: 4.5 } };
 // every numeric input, checked the same way whether it came from the form or the link
@@ -21,17 +20,21 @@ export default async function analysePage(main, _p, query) {
   setMeta({ title: '2026 tax-change investment property calculator', description: 'Stamp duty, LMI, land tax, the weekly cost after tax and a 10-year after-tax return for any Australian property, under the 2026 negative gearing and CGT rules.' });
   const [idx, market, rs, rba] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba')]);
   let sub = query.suburb ? idx.byId.get(query.suburb) : null;
-  const best = rs.best.INV_PI_variable?.[0];
+  const best = openRate(rs, 'INV_PI_variable');
   const typical = rba.actual.newInvVariable.at(-1)?.[1];
   const type = query.type || sub?.pt || 'h';
   const q = (k, d) => fromQuery(query, k, d);
-  const st0 = { state: sub?.s || query.state || 'NSW' };
+  // with no suburb chosen, start from the visitor's own state (device time zone) and its capital's typical price and rent
+  const st0 = { state: sub?.s || query.state || tzState() || 'NSW' };
+  const cap = Object.values(market.regions).find((r) => r.capital && r.state === st0.state);
+  const capPrice = cap ? Math.round((type === 'u' ? cap.medianUnit : cap.medianHouse) / 10000) * 10000 : 850000;
+  const capRent = cap ? Math.round((type === 'u' ? cap.rentUnit : cap.rentHouse) / 5) * 5 : 650;
   const rc = runningCosts(st0.state, type);
   const st = {
     addr: query.addr || '',
     state: st0.state,
-    price: q('price', sub ? ((type === 'u' && sub.u ? sub.u : sub.h) || 850000) : 850000),
-    weeklyRent: q('rent', sub ? (type === 'u' ? sub.ru : sub.rh) : 650),
+    price: q('price', sub ? ((type === 'u' && sub.u ? sub.u : sub.h) || capPrice) : capPrice),
+    weeklyRent: q('rent', sub ? (type === 'u' ? sub.ru : sub.rh) : capRent),
     type,
     newBuild: query.new === '1',
     buildYear: q('built', query.new === '1' ? new Date().getFullYear() : ''),
@@ -62,8 +65,8 @@ export default async function analysePage(main, _p, query) {
 
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${esc(String(value ?? ''))}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
-  <div class="page-head with-demo"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
-  <p>Enter a property and Ownaroo works out every cost: stamp duty for your state, LMI, land tax, rates, strata and management. It projects 10 years of cash flow, tax, equity and sale, applies the 2026 negative gearing and CGT rules, shows the weekly cost after tax, whether the projected return beats a term deposit, and how the numbers rank against the typical home across Australia, with every reason listed. It describes the numbers; it isn’t a recommendation to buy or not buy.</p></div>${demo('calculator')}</div>
+  <div class="page-head"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
+  <p class="lede-short">Enter a property. Ownaroo works out every cost, the weekly cost after tax and a 10-year return under the 2026 rules, for an established home and a new build. It describes the numbers; it doesn't tell you to buy.</p></div></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">
@@ -91,7 +94,7 @@ export default async function analysePage(main, _p, query) {
           ${field('a-term', 'Loan term (years)', st.years, 'type="number" min="5" max="40"')}
         </div>
         <div class="row" style="margin-top:10px">
-          ${best ? `<button class="btn sm" data-rate="${best.rate}">Lowest advertised ${pct(best.rate, 2)} (${esc(best.lender)})</button>` : ''}
+          ${best ? `<button class="btn sm" data-rate="${best.rate}">Lowest open to anyone ${pct(best.rate, 2)} (${esc(best.lender)})</button>` : ''}
           ${typical ? `<button class="btn sm" data-rate="${typical}">Typical new investor loan ${pct(typical, 2)} (RBA)</button>` : ''}
           <a class="note" href="/rates" data-link>Compare all rates →</a>
         </div>
@@ -111,7 +114,7 @@ export default async function analysePage(main, _p, query) {
       </div>
       <div class="card" style="margin-top:16px">
         <h3>Assumptions</h3>
-        <div class="seg" id="a-scen" style="margin-bottom:12px" role="group" aria-label="Growth scenario"><button type="button" data-s="bear">Low ${GROWTH.bear}%</button><button type="button" data-s="base" class="on">Forecast ${GROWTH.base}%</button><button type="button" data-s="bull">High ${GROWTH.bull}%</button></div>
+        <div class="seg" id="a-scen" style="margin-bottom:12px" role="group" aria-label="Growth scenario"><button type="button" data-s="bear">Low ${GROWTH.bear}%</button><button type="button" data-s="base" class="on">Cautious ${GROWTH.base}%</button><button type="button" data-s="bull">High ${GROWTH.bull}%</button></div>
         <div class="fields">
           ${field('a-growth', 'Capital growth (%/yr)', st.growth, 'type="number" step="0.5"')}
           ${field('a-rg', 'Rent growth (%/yr)', st.rentGrowth, 'type="number" step="0.5"')}
@@ -150,6 +153,7 @@ export default async function analysePage(main, _p, query) {
   };
 
   let shareUrl = '';
+  let counted = false;
   wireCopyLink(main, () => shareUrl);
   function run() {
     const res = read();
@@ -163,6 +167,19 @@ export default async function analysePage(main, _p, query) {
     const scen = { bear: analyse({ ...st, ...SCEN.bear }).summary, base: s, bull: analyse({ ...st, ...SCEN.bull }).summary };
     const rateUp = [0, 1, 2].map((dd) => ({ dd, s: analyse({ ...st, ratePct: st.ratePct + dd }).summary }));
     const bp = borrowingPower({ grossIncome: st.income, ratePct: st.ratePct, newRentWeekly: st.weeklyRent });
+    if (!counted) {
+      counted = true;
+      countEvent('analyse-run');
+    }
+    // the same deal both ways: the defining question under the 2026 rules
+    const yr = new Date().getFullYear();
+    const nb = analyse({ ...st, newBuild: true, buildYear: yr });
+    const est = analyse({ ...st, newBuild: false, buildYear: st.newBuild ? '' : st.buildYear });
+    const sumTax = (x) => x.rows.reduce((t, y) => t + y.taxEffect, 0);
+    // benchmarks: paying down your own home loan saves interest tax-free; a share index fund is a long-run assumption
+    const ooRate = openRate(rs, 'OO_PI_variable')?.rate;
+    const deals = savedDeals().filter((d) => typeof d.irr === 'number' && d.url.split('?')[1] !== location.search.slice(1));
+    const ranked = deals.length ? [...deals.map((d) => ({ name: d.name, irr: d.irr, url: d.url })), { name: 'This deal', irr: s.irr, me: true }].sort((a, b) => b.irr - a.irr) : [];
     const ngText = {
       restricted: `Established property contracted on or after 12 May 2026. Losses offset your salary only for the part of the first year before 1 July 2027 (${Math.round(y1.offsetShare * 100)}% of year 1). After that they carry forward against rental profits (from this or your other properties) and the capital gain when you sell.${st.otherRental ? ` ${aud(r.rows.reduce((t, x) => t + x.usedOther, 0))} of losses are used against your other properties' rental profit over ${st.hold} years.` : ' If you own other rental properties that make a profit, enter it under "You" to use the losses against it.'} By the sale you'll have ${aud(r.rows.at(-1).carried)} of carried-forward losses.`,
       grandfathered: 'Contracted before 12 May 2026, so grandfathered: rental losses keep reducing your salary tax.',
@@ -199,17 +216,31 @@ export default async function analysePage(main, _p, query) {
       [y1.taxEffect >= 0 ? 'Tax refund (negative gearing)' : 'Extra tax on rental profit', y1.taxEffect],
       ['Cash flow after tax', y1.cashAfterTax, 'tot'],
     ];
-    $('#out').innerHTML = `${example ? '<div class="callout" style="margin:0 0 12px"><b>These are example numbers</b> for an $850k home. Search a suburb or type in the property you\'re looking at, and the results update as you type.</div>' : ''}
+    $('#out').innerHTML = `${example ? `<div class="callout" style="margin:0 0 12px"><b>These are example numbers</b> for a ${aud(st.price, { compact: true })} ${st.type === 'u' ? 'unit' : 'house'} renting at ${aud(st.weeklyRent)} a week, about typical for ${esc(cap?.name || st.state)}. Search a suburb or type in the property you're looking at, and the results update as you type.</div>` : ''}
       <div class="card">
         <div><div class="eyebrow" style="margin:0">Each week in year 1, after tax${st.addr ? ` · ${esc(st.addr)}` : ''}</div>
           <div class="lead-nums"><div class="cost-head ${s.weeklyCashAfterTax >= 0 ? 'up' : 'down'}">${cashWeek(s.weeklyCashAfterTax)}</div><div class="lead-cash"><span class="k">Cash needed up front</span><b>${aud(r.upfront.total, { compact: true })}</b><span class="s">deposit, stamp duty and fees · loan ${aud(s.loan, { compact: true })}</span></div></div>
           <div class="note">${sub ? `<a href="${suburbUrl(sub)}" data-link>${esc(cleanName(sub.n))}</a> · ` : ''}${aud(st.price)} · ${aud(st.weeklyRent)}/wk · ${Math.round(st.deposit * 100)}% deposit at ${pct(st.ratePct, 2)} · projections below use ${st.growth}% a year growth</div>
           ${returnsLine({ bear: { growth: GROWTH.bear, irr: scen.bear.irr }, base: { growth: st.growth, irr: s.irr, yours: true }, bull: { growth: GROWTH.bull, irr: scen.bull.irr } }, v)}
-          <p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)}</p></div>
+          <div class="bench"><span class="k">Compare with</span>
+            ${ooRate ? `<span>Paying down your own home loan: <b>${pct(ooRate, 2)}</b> a year, tax-free (the interest you stop paying)</span>` : ''}
+            <span>A share index fund: about <b>7%</b> a year before tax (a long-run assumption, not a forecast)</span></div>
+          ${ranked.length ? `<p class="note" style="margin:8px 0 0"><b>Against your saved deals:</b> this one ranks ${ranked.findIndex((x) => x.me) + 1} of ${ranked.length} by after-tax return. ${ranked.slice(0, 4).map((x) => (x.me ? `<b>This deal ${pct(x.irr, 1)}</b>` : `<a href="${esc(x.url)}" data-link>${esc(x.name)}</a> ${pct(x.irr, 1)}`)).join(' · ')}</p>` : `<p class="note" style="margin:8px 0 0">${rankPill(v)} ${dealContext(v)} Save a few deals and they'll be ranked against each other here.</p>`}</div>
         <div class="grid ${v.reasons.length && v.risks.length ? 'g2' : ''}" style="margin-top:12px;gap:8px 20px">
           ${v.reasons.length ? `<div><ul class="pros">${v.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
           ${v.risks.length ? `<div><ul class="cons">${v.risks.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
         </div>
+      </div>
+      <div class="card" id="newvsold" style="margin-top:16px"><div class="card-head"><h3>New build or established?</h3><span class="note">the same price, rent and loan, both ways</span></div>
+        <div class="tbl-wrap"><table class="cards-sm name-first"><thead><tr><th></th><th class="n">Established</th><th class="n">New build</th></tr></thead><tbody>
+          <tr><td>Each week in year 1, after tax</td><td class="n">${cashWeek(est.summary.weeklyCashAfterTax, { short: true })}</td><td class="n">${cashWeek(nb.summary.weeklyCashAfterTax, { short: true })}</td></tr>
+          <tr><td>Rental losses against your salary</td><td class="n">${est.summary.negativeGearing === 'restricted' ? 'Until 1 July 2027 only' : 'Yes (grandfathered)'}</td><td class="n">Yes, kept</td></tr>
+          <tr><td>Tax refunds over ${st.hold} years</td><td class="n">${aud(sumTax(est))}</td><td class="n">${aud(sumTax(nb))}</td></tr>
+          <tr><td>Stamp duty</td><td class="n">${aud(est.upfront.duty)}</td><td class="n">${aud(nb.upfront.duty)}</td></tr>
+          <tr><td>Capital gains tax at sale</td><td class="n">${aud(est.sale.cgt.tax)}</td><td class="n">${aud(nb.sale.cgt.tax)}</td></tr>
+          <tr><td>Annual after-tax return (IRR)</td><td class="n"><b>${pct(est.summary.irr, 1)}</b></td><td class="n"><b>${pct(nb.summary.irr, 1)}</b></td></tr>
+        </tbody></table></div>
+        <p class="fine" style="margin-top:8px">New builds keep negative gearing, claim depreciation on the building and fittings, and at sale can choose the 50% discount or the new indexation method. They often cost more for the same rent, so try the new-build price in the form above too.</p>
       </div>
       <details class="fold card" style="margin-top:16px" id="breakdown"><summary><h3 style="display:inline">The full breakdown</h3> <span class="note">up-front costs, year-1 cash flow, equity, tax year by year, the sale, scenarios and rate rises</span></summary>
       <div class="grid g2" style="margin-top:16px">
@@ -237,8 +268,8 @@ export default async function analysePage(main, _p, query) {
 
       <div class="card" style="margin-top:16px"><h3>Negative gearing and tax</h3>
         <div class="callout ${s.negativeGearing === 'restricted' ? '' : 'green'}">${esc(ngText)}</div>
-        <div class="tbl-wrap"><table><thead><tr><th>Year</th><th class="n">Rent</th><th class="n">Costs</th><th class="n">Interest</th><th class="n">Depreciation</th><th class="n">Taxable result</th><th class="n">Tax effect</th><th class="n">Cash after tax</th><th class="n">Losses carried</th><th class="n">Value</th><th class="n">Equity</th></tr></thead><tbody>
-          ${r.rows.map((x) => `<tr><td>${x.year}</td><td class="n">${aud(x.grossRent, { compact: true })}</td><td class="n">${aud(x.mgmt + x.otherCosts + x.maintenance + x.landTax, { compact: true })}</td><td class="n">${aud(x.interest, { compact: true })}</td><td class="n">${aud(x.depreciation, { compact: true })}</td><td class="n ${x.netRental < 0 ? 'down' : 'up'}">${aud(x.netRental, { compact: true })}</td><td class="n">${aud(x.taxEffect, { compact: true })}</td><td class="n ${x.cashAfterTax < 0 ? 'down' : 'up'}">${aud(x.cashAfterTax, { compact: true })}</td><td class="n">${aud(x.carried, { compact: true })}</td><td class="n">${aud(x.value, { compact: true })}</td><td class="n">${aud(x.equity, { compact: true })}</td></tr>`).join('')}
+        <div class="tbl-wrap"><table><thead><tr><th>Year</th><th class="n">Rent</th><th class="n">Costs</th><th class="n">Interest</th><th class="n"><abbr title="Building and fittings depreciation, plus borrowing costs such as LMI and loan fees, which are deducted over 5 years">Depreciation, borrowing</abbr></th><th class="n">Taxable result</th><th class="n">Tax effect</th><th class="n">Cash after tax</th><th class="n">Losses carried</th><th class="n">Value</th><th class="n">Equity</th></tr></thead><tbody>
+          ${r.rows.map((x) => `<tr><td>${x.year}</td><td class="n">${aud(x.grossRent, { compact: true })}</td><td class="n">${aud(x.mgmt + x.otherCosts + x.maintenance + x.landTax, { compact: true })}</td><td class="n">${aud(x.interest, { compact: true })}</td><td class="n">${aud(x.depreciation + (x.borrowing || 0), { compact: true })}</td><td class="n ${x.netRental < 0 ? 'down' : 'up'}">${aud(x.netRental, { compact: true })}</td><td class="n">${aud(x.taxEffect, { compact: true })}</td><td class="n ${x.cashAfterTax < 0 ? 'down' : 'up'}">${aud(x.cashAfterTax, { compact: true })}</td><td class="n">${aud(x.carried, { compact: true })}</td><td class="n">${aud(x.value, { compact: true })}</td><td class="n">${aud(x.equity, { compact: true })}</td></tr>`).join('')}
         </tbody></table></div>
       </div>
 

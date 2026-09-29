@@ -1,7 +1,6 @@
 import { esc, aud, pct, setMeta, date } from '../ui.js';
 import { load, typicalRate, suburbs, suburbUrl } from '../data.js';
 import { navigate } from '../app.js';
-import { rateWatchCard } from '../ratewatch.js';
 import { RULES } from '../rules.js';
 import { demo, wireDemos } from '../demo.js';
 import { trendWord } from '../live.js';
@@ -9,92 +8,65 @@ import { photoCard, figure, strip, photo, photoCredits } from '../photos.js';
 import { budgetMapHtml, wireBudgetMap } from '../budgetmap.js';
 import { comfortableWeekly } from '../rules.js';
 
-// The home page leads with the two tools Ownaroo does best: what you can afford, and the 2026 tax-change numbers.
+// The home page: the affordability hero, the four jobs people come with, one proof point, one widget and one demo.
 // Suburb scores and estimates sit behind them until the suburb data is licensed and measured everywhere.
 export default async function home(main) {
   setMeta({ title: 'What can you comfortably afford, and where?', description: 'Free and independent for Australian home buyers: a comfortable price where you want to buy, the schemes you qualify for (5% Deposit Scheme, Help to Buy, Keystart and state schemes), the real weekly cost of an investment under the 2026 tax rules, and advertised rates from 90+ lenders.' });
   const [market, rs, rba, idx] = await Promise.all([load('market'), load('rates-summary'), load('rba'), suburbs()]);
-  const oo = rs.best.OO_PI_variable?.[0];
   const caps = Object.entries(market.regions).filter(([, r]) => r.capital);
-  const inv = typicalRate(rba, 'INV');
   const ooRate = typicalRate(rba, 'OO');
   const measured = idx.list.filter((s) => s.conf === 'high' || s.conf === 'medium').length;
 
-  const paths = [
-    ['First home', 'sherwood-queenslander', 'Buying your first home', 'A comfortable price where you want to live, the cash you need, which schemes you qualify for (including Keystart in WA), how long saving takes and whether buying beats renting.', [['/afford?buyer=fhb', 'What can I afford?'], ['/first-home', 'Rent vs buy and saving'], ['/guide/fhb', 'First home guide']]],
-    ['Moving', 'fremantle-coast', 'Selling and buying again', 'What you can comfortably afford for the next home, the full cost of moving (duty, fees, the new loan) and a price range for a typical home like the one you want.', [['/afford?buyer=owner', 'What can I afford?'], ['/property', 'Price range for a home'], ['/rates', 'Compare loan rates']]],
-    ['Investing', 'paddington-fiveways', 'Buying to rent out', 'The weekly cost after tax and the 10-year return under the 2026 negative gearing and CGT rules, with your other properties, for one owner or two, and whether it beats a term deposit.', [['/analyse', '2026 tax-change calculator'], ['/rates', 'Rates from 90+ lenders'], ['/guide/tax-2026', 'What changed in 2026']]],
+  // the four jobs people come with
+  const jobs = [
+    ['Afford', 'sherwood-queenslander', 'What can I afford?', 'A comfortable price where you want to buy, the cash you need and the schemes you qualify for, including Keystart in WA.', [['/afford?buyer=fhb', 'Work it out'], ['/first-home', 'Rent vs buy'], ['/guide/fhb', 'First home guide']]],
+    ['Invest', 'paddington-fiveways', 'What will this investment cost me?', 'The weekly cost after tax and the 10-year return under the 2026 rules, new build and established side by side.', [['/analyse', 'Run the numbers'], ['/analyse#newvsold', 'New vs established'], ['/guide/tax-2026', 'What changed']]],
+    ['Suburbs', 'fremantle-coast', "What's this suburb like?", 'Prices, rents, growth and risks for every suburb, with how sure each figure is.', [['/suburbs', 'Explore suburbs'], ['/property', 'Price range for a home'], ['/price-check', 'Listing price check']]],
+    ['Rates', 'melbourne-southbank', 'What rate can I get?', `Advertised rates from ${rs.lenders} lenders, from their own feeds several times a day, and how much a lender might lend.`, [['/rates', 'Compare rates'], ['/borrowing', 'Borrowing power'], ['/markets', 'Market update']]],
   ];
 
   main.innerHTML = `
   <section class="home-hero">
     <div>
-      <div class="eyebrow">Free · independent · for Australian home buyers</div>
+      <div class="eyebrow">Free · independent · rankings never paid for</div>
       <h1>What can you comfortably afford, <em>and where?</em></h1>
-      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income: Ownaroo works out a comfortable price where you want to buy, the cash you need, and the schemes you qualify for.</p>
+      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income for a comfortable price, the cash you need and your schemes.</p>
       <div class="row hero-cta"><a class="btn primary lg" href="/afford?buyer=fhb" data-link id="hero-cta">Work out what I can afford →</a></div>
       <p class="hero-alt">Buying to invest? <a href="/analyse" data-link>Run the 2026 tax-change numbers →</a></p>
     </div>
     <div>${budgetMapHtml({ budget: 750000, city: 'AU' })}</div>
   </section>
 
+  <section class="section">
+    <div class="grid g4 paths">${jobs.map(([tag, ph, t, d, links]) => `<div class="card path">${figure(ph, { cls: 'path-photo', sizes: '(max-width: 900px) 100vw, 25vw' })}<span class="tag tag-official">${tag}</span><h3>${t}</h3><p class="muted">${d}</p><div class="path-links">${links.map(([href, l], i) => `<a class="${i ? '' : 'btn primary sm'}" href="${href}" data-link>${l}${i ? ' →' : ''}</a>`).join('')}</div></div>`).join('')}</div>
+  </section>
+
   <section class="section trust" aria-label="What Ownaroo is built on">
-    <div><b>${rs.lenders}</b><span>lenders' rates, read from their Open Banking feeds several times a day</span></div>
+    <div><b>${rs.lenders}</b><span>lenders' rates, from their Open Banking feeds several times a day</span></div>
     <div><b>8 of 8</b><span>states and territories: stamp duty, first home concessions and land tax</span></div>
-    <div><b>${measured.toLocaleString()}</b><span>suburbs with official sales data; the rest are modelled and labelled that way</span></div>
-    <div><b>$0</b><span>No sign-up, no ads, and no lender pays to be listed</span></div>
-  </section>
-
-  <section class="section">
-    <div class="hero-steps card how-row">
-      <div class="eyebrow">How it works</div>
-      <ol class="how-steps">
-        <li><b>Your numbers.</b> Where you want to buy, your savings, income and debts.</li>
-        <li><b>A comfortable price,</b> with repayments under 30% of your income, and the most a lender might stretch to.</li>
-        <li><b>The real cost.</b> Cash up front, repayments against your rent now, or an investment's weekly cost after tax.</li>
-        <li><b>Your next step:</b> pre-approval from a lender or broker. Ownaroo doesn't sell loans or refer you anywhere.</li>
-      </ol>
-      <p class="fine">Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}. <a href="/why" data-link>Two-minute tour →</a></p>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>Where are you starting?</h2>
-    <div class="grid g3 paths">${paths.map(([tag, ph, t, d, links]) => `<div class="card path">${figure(ph, { cls: 'path-photo', sizes: '(max-width: 900px) 100vw, 33vw' })}<span class="tag tag-official">${tag}</span><h3>${t}</h3><p class="muted">${d}</p><div class="path-links">${links.map(([href, l], i) => `<a class="${i ? '' : 'btn primary sm'}" href="${href}" data-link>${l}${i ? ' →' : ''}</a>`).join('')}</div></div>`).join('')}</div>
+    <div><b>${measured.toLocaleString()}</b><span>suburbs with official sales data; the rest are modelled and labelled</span></div>
+    <div><b>Independent</b><span>Rankings are never paid for</span></div>
   </section>
 
   <section class="section card">
-    <div class="spread"><div><div class="eyebrow">Try it</div><h2 style="margin:4px 0 4px">What a household income comfortably buys in each capital</h2></div><a href="/afford?buyer=fhb" data-link>Use your own numbers →</a></div>
+    <div class="spread"><div><div class="eyebrow">Same income, different cities</div><h2 style="margin:4px 0 4px">What one household income comfortably buys in each capital</h2></div><a href="/afford?buyer=fhb" data-link>Use your own numbers →</a></div>
     <div class="inc-controls">
       <label><span>Household income</span><b id="inc-val">$110k</b><input id="inc" type="range" min="50000" max="400000" step="5000" value="110000" aria-label="Household income before tax"></label>
       <div class="seg" id="inc-dep" role="group" aria-label="Deposit"><button type="button" data-d="0.2" class="on">20% deposit</button><button type="button" data-d="0.05">5% deposit</button></div>
     </div>
     <div class="incbars" id="incbars"></div>
-    <p class="fine" style="margin-top:12px">Comfortable price: repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (the RBA's average rate on new owner-occupier loans, ${esc(ooRate.month)}), over 30 years, plus the deposit. It ignores savings, debts and stamp duty, which the full tool includes. Markers show the median house and unit (Cotality, month-end ${esc(market.indexMonth || '')}).</p>
+    <p class="note" style="margin:10px 0 0">The comfortable price is the same in every city; what changes is how far it goes against each city's median.</p>
+    <p class="fine" style="margin-top:12px">Repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (RBA average on new owner-occupier loans, ${esc(ooRate.month)}), 30 years, plus the deposit. Savings, debts and stamp duty are in the full tool. Medians: Cotality, month-end ${esc(market.indexMonth || '')}.</p>
   </section>
 
   <section class="section">
-    <div class="spread"><h2>See it in action</h2><a href="/why" data-link>The full Two-minute tour →</a></div>
-    <div class="seg" id="demo-tabs" role="tablist">${[['afford', 'What can I afford?'], ['calculator', '2026 tax calculator'], ['estimate', 'Price range for a home'], ['suburb', 'Suburb report']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}">${l}</button>`).join('')}</div>
+    <div class="spread"><h2>See it in action</h2><a href="/about" data-link>Two-minute tour →</a></div>
     <div class="demo-stage" id="demo-stage">${demo('afford')}</div>
-    <p class="fine" style="margin-top:6px">Recorded with example inputs in September 2026; the live figures change as the data updates.</p>
+    <p class="fine" style="margin-top:6px">Recorded with example inputs in September 2026.</p>
   </section>
 
   <section class="section">
-    <div class="card tax-band">
-      <div><div class="eyebrow">The 2026 tax changes, in numbers</div><h2 style="margin:4px 0 8px">Know what an investment property costs you each week</h2>
-      <p class="muted" style="margin:0">Established homes bought after 12 May 2026 can offset rental losses against your salary only until 30 June 2027; after that, losses carry forward or offset rental profit from your other properties. From 1 July 2027 the 50% CGT discount is replaced by indexation with a 30% minimum tax. New builds keep the old treatment. The calculator applies all of it, with stamp duty, mortgage insurance, land tax and depreciation.</p></div>
-      <div class="tax-cta"><a class="btn primary" href="/analyse" data-link>Run the numbers →</a><a class="fine" href="/guide/tax-2026" data-link>What changed, in plain English</a></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="spread"><h2>Rates and the RBA</h2><a href="/markets" data-link>Market dashboard →</a></div>
-    ${rateWatchCard(rba, { compact: true })}
-  </section>
-
-  <section class="section">
-    <p class="fine" style="margin-top:12px">Ownaroo is general information, not financial advice: it doesn’t know your circumstances and isn’t a lender, broker or agent. Rates last checked ${date(rs.updated)}.</p>
+    <p class="fine" style="margin-top:12px">General information, not financial advice. Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}; rates checked ${date(rs.updated)}.</p>
   </section>`;
 
   const destroyMap = wireBudgetMap(main, idx.list, {
@@ -104,13 +76,7 @@ export default async function home(main) {
       main.querySelector('#hero-cta').setAttribute('href', `/afford?buyer=fhb${where}`);
     },
   });
-  main.querySelector('#demo-tabs').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-demo-tab]');
-    if (!b) return;
-    main.querySelectorAll('#demo-tabs button').forEach((x) => x.classList.toggle('on', x === b));
-    main.querySelector('#demo-stage').innerHTML = demo(b.dataset.demoTab);
-    wireDemos(main);
-  });
+  wireDemos(main);
 
   // income slider: comfortable price vs median house and unit in each capital
   let dep = 0.2;

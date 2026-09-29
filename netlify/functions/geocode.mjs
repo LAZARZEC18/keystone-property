@@ -1,5 +1,9 @@
-// Address lookup via OpenStreetMap Nominatim (server-side so we can send an identifying
-// User-Agent and cache results, as Nominatim's usage policy requires). One lookup per search, no autocomplete.
+// Address lookup. With a MAPTILER_KEY set in Netlify's environment variables it uses MapTiler's geocoder (built for
+// production traffic); otherwise OpenStreetMap Nominatim, server-side with an identifying User-Agent and a cache, as
+// its usage policy requires. One lookup per search, never autocomplete. The address arrives in the request body, so
+// it isn't written into request logs, and results are cached by a hash of the address, not the address itself.
+import { getStore } from '@netlify/blobs';
+import { createHash } from 'node:crypto';
 const UA = 'OwnarooAU/1.0 (+https://keystone-au.netlify.app; property research site)';
 
 const json = (body, status = 200) =>
@@ -24,10 +28,52 @@ async function nominatim(q) {
   throw new Error('geocoder busy');
 }
 
+async function maptiler(q, key) {
+  const r = await fetch(`https://api.maptiler.com/geocoding/${encodeURIComponent(q)}.json?${new URLSearchParams({ key, country: 'au', limit: '3', language: 'en' })}`, { signal: AbortSignal.timeout(8000) });
+  if (!r.ok) throw new Error(`geocoder ${r.status}`);
+  const d = await r.json();
+  const ctx = (f, id) => (f.context || []).find((c) => String(c.id || '').startsWith(id))?.text || null;
+  return (d.features || []).map((f) => ({
+    label: f.place_name,
+    lat: f.center[1],
+    lng: f.center[0],
+    precision: f.address ? 'address' : (f.place_type || []).includes('street') ? 'street' : 'area',
+    number: f.address || null,
+    street: (f.place_type || []).some((t) => t === 'address' || t === 'street') ? f.text : null,
+    suburb: ctx(f, 'place') || ctx(f, 'locality') || ctx(f, 'municipal_district') || null,
+    postcode: ctx(f, 'postal_code'),
+    state: ctx(f, 'region'),
+  }));
+}
+
+async function readQuery(req) {
+  if (req.method === 'POST') {
+    const b = await req.json().catch(() => ({}));
+    return String(b.q || '');
+  }
+  return new URL(req.url).searchParams.get('q') || '';
+}
+
 export default async (req) => {
-  const q = (new URL(req.url).searchParams.get('q') || '').trim().slice(0, 160);
+  const q = (await readQuery(req)).trim().slice(0, 160);
   if (q.length < 4) return json({ error: 'address too short' }, 400);
+  const key = createHash('sha256').update(q.toLowerCase()).digest('hex').slice(0, 32);
+  let store = null;
   try {
+    store = getStore('geocode');
+    const hit = await store.get(key, { type: 'json' });
+    if (hit && Date.now() - hit.at < 30 * 864e5) return json(hit.body);
+  } catch {
+    store = null; // no cache available (local dev)
+  }
+  const mt = process.env.MAPTILER_KEY;
+  try {
+    if (mt) {
+      const results = await maptiler(q, mt);
+      const body = { results, attribution: '© MapTiler © OpenStreetMap contributors' };
+      await store?.setJSON(key, { at: Date.now(), body }).catch(() => {});
+      return json(body);
+    }
     let res = await nominatim(q);
     let fallback = false;
     if (!res.length) {
@@ -48,7 +94,9 @@ export default async (req) => {
       postcode: x.address?.postcode || null,
       state: x.address?.state || null,
     }));
-    return json({ results: out, attribution: 'Address data © OpenStreetMap contributors (ODbL)' });
+    const body = { results: out, attribution: 'Address data © OpenStreetMap contributors (ODbL)' };
+    await store?.setJSON(key, { at: Date.now(), body }).catch(() => {});
+    return json(body);
   } catch (e) {
     return json({ error: String(e.message || e) }, 502);
   }

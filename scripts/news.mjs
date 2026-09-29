@@ -14,12 +14,7 @@ export const FEEDS = [
   { source: 'The Guardian', url: 'https://www.theguardian.com/australia-news/rss' },
   { source: 'Broker News', url: 'https://www.brokernews.com.au/rss' },
   { source: 'SBS News', url: 'https://www.sbs.com.au/news/topic/australia/feed' },
-  {
-    source: 'Google News',
-    url: 'https://news.google.com/rss/search?q=(australia+house+prices)+OR+(australia+property+market)+OR+(RBA+interest+rates)+OR+(australia+rents)+when:3d&hl=en-AU&gl=AU&ceid=AU:en',
-    all: true,
-    aggregator: true,
-  },
+  // Google News was dropped: its links go through news.google.com redirects rather than to the publisher
 ];
 
 // A headline must be about the market, lending, renting or housing policy, not just mention a home.

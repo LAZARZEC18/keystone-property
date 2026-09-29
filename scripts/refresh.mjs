@@ -129,8 +129,9 @@ await job('weekly', async () => {
     indexMonth: market?.indexMonth || null,
     updated: now.toISOString(),
     cash: rba?.cashRate?.current ?? null,
-    bestInv: rs?.best?.INV_PI_variable?.[0] ?? null,
-    bestOO: rs?.best?.OO_PI_variable?.[0] ?? null,
+    // the lowest rate open to anyone (national lenders), as quoted across the site
+    bestInv: rs?.best?.INV_PI_variable_national?.[0] ?? rs?.best?.INV_PI_variable?.[0] ?? null,
+    bestOO: rs?.best?.OO_PI_variable_national?.[0] ?? rs?.best?.OO_PI_variable?.[0] ?? null,
     medianInv: rs?.medianInvestorVariable ?? null,
     headlines: (news?.items || []).slice(0, 8).map(({ title, link, source, date }) => ({ title, link, source, date })),
   };

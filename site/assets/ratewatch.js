@@ -35,8 +35,9 @@ export function rateWatchCard(rba, { compact = false } = {}) {
   // the outlook line is only shown before its decision is announced, so it can never go stale
   const outlook = next && RBA_OUTLOOK.date === next ? RBA_OUTLOOK : null;
   const recent = recentDecision();
-  const moved = recent && rba.cashRate?.lastChange === recent;
-  const justIn = recent ? (moved ? `On ${fmtDay(recent)} the RBA moved the cash rate to ${pct(rba.cashRate.current, 2)}.` : `The RBA announced its ${fmtDay(recent)} decision at 2.30pm; the cash rate shown (${pct(rba.cashRate.current, 2)}) is refreshed from the RBA within a few hours.`) : '';
+  const moved = recent && (rba.cashRate?.lastChange || '') >= recent;
+  const held = recent && !moved && (rba.cashRate?.published || '') >= recent;
+  const justIn = recent ? (moved ? `On ${fmtDay(recent)} the RBA moved the cash rate to ${pct(rba.cashRate.current, 2)}.` : held ? `On ${fmtDay(recent)} the RBA held the cash rate at ${pct(rba.cashRate.current, 2)}.` : `The RBA announced its ${fmtDay(recent)} decision at 2.30pm; the cash rate shown (${pct(rba.cashRate.current, 2)}) is refreshed from the RBA within a few hours.`) : '';
   if (compact) {
     const mid = rows[1];
     return `<div class="callout rate-watch">${justIn ? `<b>${esc(justIn)}</b> ` : ''}<b>${next ? `Next RBA decision: ${fmtDay(next)}, 2.30pm Sydney time.` : 'RBA decisions.'}</b> ${outlook ? `${esc(outlook.text)} ${srcLinks(outlook)} ` : ''}A 0.25-point rise adds about <b>${aud(mid.up25)} a month</b> to a ${aud(mid.loan, { compact: true })} loan at today's average ${pct(avg, 2)} variable rate. <a href="/weekly#rate-watch" data-link>What it does to your repayments →</a></div>`;

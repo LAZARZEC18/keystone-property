@@ -1,4 +1,3 @@
-import { demo } from '../demo.js';
 import { esc, aud, pct, scoreBadge, setMeta, srcBadge, date, growth12, cashWeek, returnsLine } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, haversine, nearby, typicalRate } from '../data.js';
 import { suburbScore, valueEstimate, analyse, verdict, stampDuty, lmi, repayment, scenarioReturns, incomeFor } from '../engine.js';
@@ -35,18 +34,37 @@ export function suburbFromText(q, list) {
 }
 
 export default async function propertyPage(main, _p, query) {
-  const q = (query.q || '').trim();
-  setMeta({ title: q ? `${q}: suburb price range for a typical home` : 'Price range for a typical home', description: 'Enter any Australian address for a likely price range for a typical home like it, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
+  // the address isn't kept in the page address (or in server logs): it's parked in this tab and looked up by POST
+  const stash = (text) => {
+    try {
+      const id = Math.random().toString(36).slice(2, 10);
+      sessionStorage.setItem(`addr:${id}`, text);
+      return `/property?a=${id}`;
+    } catch {
+      return `/property?q=${encodeURIComponent(text)}`;
+    }
+  };
+  let q = (query.q || '').trim();
+  if (!q && query.a) {
+    try {
+      q = sessionStorage.getItem(`addr:${query.a}`) || '';
+    } catch {
+      q = '';
+    }
+  }
+  // an address with a house number that arrived in the link: move it out of the address bar
+  if (query.q && /^\s*(unit\s*)?\d/i.test(query.q)) history.replaceState(null, '', stash(query.q.trim()));
+  setMeta({ title: 'Price range for a typical home', description: 'Enter any Australian address for a likely price range for a typical home like it, the cash and repayments to buy it, or the investment numbers, plus comparable suburbs nearby.' });
   const [idx, market, rs, rba, model] = await Promise.all([suburbs(), load('market'), load('rates-summary'), load('rba'), load('model').catch(() => null)]);
   const index = null;
 
   main.innerHTML = `
-  <div class="page-head${q ? "" : " with-demo"}"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
-  <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div>${q ? '' : demo('estimate')}</div>
+  <div class="page-head"><div><div class="eyebrow">Price range for a typical home</div><h1>What would a home like this cost?</h1>
+  <p>Enter an address. Ownaroo checks the street exists, then estimates what a typical home with these features costs in that suburb, from the suburb's price data. It is not an appraisal of the particular property: it can't see its condition, position or recent sales in the street. Buying to live in, it shows the cash you need, repayments against rent and what a rate rise would cost; buying to invest, it runs the rent, yield, after-tax cost and 10-year numbers. Add the asking price to see whether it sits inside the likely range.</p></div></div>
   <form class="hero-search" id="pf" style="max-width:none" data-nosubmit><input id="pq" type="search" value="${esc(q)}" placeholder="e.g. 14 Smith Street, Collingwood VIC 3066" aria-label="Property address"></form>
   <div id="pout"></div>`;
   const input = main.querySelector('#pq');
-  const go = () => input.value.trim() && navigate(`/property?q=${encodeURIComponent(input.value.trim())}`);
+  const go = () => input.value.trim() && navigate(/^\s*(unit\s*)?\d/i.test(input.value) ? stash(input.value.trim()) : `/property?q=${encodeURIComponent(input.value.trim())}`);
   input.addEventListener('keydown', (e) => e.key === 'Enter' && go());
   if (!q) {
     main.querySelector('#pout').innerHTML = '<p class="note">Include the suburb and postcode for the best match, for example "12 Smith Street, Bayswater WA 6053".</p>';
@@ -57,8 +75,8 @@ export default async function propertyPage(main, _p, query) {
 
   let s = suburbFromText(q, idx.list);
   const [geo, prop] = await Promise.all([
-    fetch(`/api/geocode?q=${encodeURIComponent(q)}`).then((r) => r.json()).catch(() => null),
-    fetch(`/api/property?q=${encodeURIComponent(q)}`).then((r) => r.json()).catch(() => null),
+    fetch('/api/geocode', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q }) }).then((r) => r.json()).catch(() => null),
+    fetch('/api/property', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q }) }).then((r) => r.json()).catch(() => null),
   ]);
   // Only trust the geocoder when its suburb or postcode actually appears in what was typed:
   // it fuzzy-matches anything ("asdfgh nowhere" -> Nowhere Creek VIC), which must not produce a valuation.

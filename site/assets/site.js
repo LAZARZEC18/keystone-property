@@ -1,6 +1,8 @@
 // Business details shown on About, Contact and Terms. Leave a value empty to hide it.
 export const SITE = {
   businessName: 'Ownaroo',
+  // The person behind Ownaroo, shown on About when a name is filled in (photo: a file in site/assets/media)
+  owner: { name: '', role: '', bio: '', photo: '', linkedin: '' },
   // registered entity (e.g. 'Ownaroo Pty Ltd' or the sole trader's name) and ABN, once issued
   entity: '',
   abn: '',

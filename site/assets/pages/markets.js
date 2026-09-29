@@ -1,9 +1,13 @@
-import { esc, aud, pct, date, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
-import { load } from '../data.js';
+import { esc, aud, pct, date, ago, setMeta, lineChart, wireCharts, hbars } from '../ui.js';
+import { load, loadStaleFirst } from '../data.js';
+import { lenderName } from '../rate-rules.js';
+import { nextDecision } from '../ratewatch.js';
 
 export default async function markets(main) {
-  setMeta({ title: 'Australian housing market dashboard', description: 'Which way prices are moving in each capital, the RBA cash rate and what borrowers actually pay, lending and housing supply.' });
-  const [market, rba, rs] = await Promise.all([load('market'), load('rba'), load('rates-summary')]);
+  setMeta({ title: 'Australian housing market update', description: 'Which way prices are moving in each capital, the RBA cash rate, rates week by week, and the housing headlines that matter for your numbers.' });
+  const { stored: newsStored, live: newsLive } = loadStaleFirst('news');
+  const [market, rba, rs, weekly, news0] = await Promise.all([load('market'), load('rba'), load('rates-summary'), load('weekly').catch(() => []), newsStored.catch(() => ({ items: [] }))]);
+  let news = news0;
   const R = market.regions;
   const caps = Object.entries(R).filter(([, r]) => r.capital);
   const abs = market.abs;
@@ -22,7 +26,7 @@ export default async function markets(main) {
 
   <div class="grid g4">
     <div class="card"><div class="stat"><span class="k">National median dwelling</span><span class="v">${aud(Math.round(market.national.medianDwelling / 1000) * 1000, { compact: true })}</span><span class="s"><span class="${market.national.annualPct >= 0 ? 'up' : 'down'}">${pct(market.national.annualPct, 1, true)}</span> y/y · ${pct(market.national.fromPeakPct, 1)} from peak</span></div></div>
-    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last changed ${date(rba.cashRate.lastChange)}` : `Last changed ${date(rba.cashRate.lastChange)}`} · next decision ${date(market.cashRate.nextMeeting)}</span></div></div>
+    <div class="card"><div class="stat"><span class="k">RBA cash rate</span><span class="v">${pct(rba.cashRate.current, 2)}</span><span class="s">${rba.cashRate.published && rba.cashRate.published > rba.cashRate.lastChange ? `Held on ${date(rba.cashRate.published)}; last changed ${date(rba.cashRate.lastChange)}` : `Last changed ${date(rba.cashRate.lastChange)}`} ${nextDecision() ? ` · next decision ${date(nextDecision())}` : ''}</span></div></div>
     <div class="card"><div class="stat"><span class="k">Average new investor variable (RBA)</span><span class="v">${pct(rba.actual.newInvVariable.at(-1)?.[1], 2)}</span><span class="s">Lowest advertised ${pct(rs.best.INV_PI_variable?.[0]?.rate, 2)}</span></div></div>
     <div class="card"><div class="stat"><span class="k">National rent growth</span><span class="v">${pct(market.national.rentAnnualPct, 1, true)}</span><span class="s">Vacancy ${pct(market.national.vacancySQM, 1)} (SQM)</span></div></div>
   </div>
@@ -88,9 +92,45 @@ export default async function markets(main) {
     <div class="card"><h3>Reading the market</h3><p class="note">${commentary(market, rba)}</p></div>
   </section>
 
+  <section class="section" id="weekly"><h2>Rates week by week</h2>
+    <div class="card"><div class="tbl-wrap"><table><thead><tr><th>Week of</th><th class="n">Cash rate</th><th class="n">Lowest owner-occupier variable</th><th class="n">Lowest investor variable</th></tr></thead><tbody>${[...weekly].reverse().slice(0, 12).map((x, i) => `<tr><td>${date(x.week)}${i === 0 ? ' <span class="fine">(this week)</span>' : ''}</td><td class="n">${pct(x.cash, 2)}</td><td class="n">${pct(x.bestOO?.rate, 2)}${x.bestOO?.lender ? ` <span class="fine">${esc(lenderName(x.bestOO.lender))}</span>` : ''}</td><td class="n">${pct(x.bestInv?.rate, 2)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="fine" style="margin-top:8px">A snapshot is saved each week from the lenders' own feeds and the RBA. <a href="/rates" data-link>Today's rates →</a></p></div>
+  </section>
+
+  <section class="section" id="news"><div class="spread"><h2>Housing news</h2><span class="note" id="n-when"></span></div>
+    <div class="seg" id="nt" role="group" aria-label="Filter headlines">${['All', 'Rates', 'Prices', 'Rents', 'Policy', 'Supply', 'Lending'].map((t, i) => `<button type="button" data-t="${t}" class="${i ? '' : 'on'}" aria-pressed="${!i}">${t}</button>`).join('')}</div>
+    <div class="card" style="margin-top:10px"><div class="news-list" id="nl"></div></div>
+    <p class="fine" style="margin-top:8px">Headlines only, linking straight to the publisher. Sport, celebrity and crime stories are left out.</p>
+  </section>
+
   <section class="section"><h3>Sources</h3><ul class="note">${market.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}<li><a href="https://www.rba.gov.au/statistics/tables/" target="_blank" rel="noopener">RBA statistical tables A2, F1.1, F5, F6</a> (auto-updated ${date(rba.updated)})</li></ul>
   <p class="fine">${market.caveats.map(esc).join(' ')}</p></section>`;
   wireCharts(main, (v) => `${v.toFixed(2)}%`);
+  // headlines: straight publisher links only, with a pointer to the tool that turns each kind of story into your numbers
+  const CTA = { Rates: ['What a rate change does to your repayment', '/rates'], Lending: ['How lenders test what you can borrow', '/borrowing'], Prices: ['What you can comfortably afford now', '/afford'], Rents: ['Renting versus buying for you', '/first-home#rvb'], Policy: ['The 2026 tax changes in dollars', '/analyse'], Supply: ['Where new homes are being approved', '/new-builds'] };
+  let tag = 'All';
+  const drawNews = () => {
+    const items = (news.items || []).filter((x) => !/news\.google\./.test(x.link) && (tag === 'All' || x.tags.includes(tag))).slice(0, 12);
+    const when = main.querySelector('#n-when');
+    if (when) when.textContent = news.updated ? `Updated ${ago(news.updated)}` : '';
+    main.querySelector('#nl').innerHTML = items.length
+      ? items.map((x) => { const c = CTA[x.tags.find((t) => CTA[t])]; return `<div class="news-item"><div><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.title)}</a><div class="meta"><span>${esc(x.source)}</span><span>·</span><span>${ago(x.date)}</span>${c ? `<span>·</span><a class="news-cta" href="${c[1]}" data-link>${c[0]} →</a>` : ''}</div></div></div>`; }).join('')
+      : '<p class="empty">No headlines in this category right now.</p>';
+  };
+  main.querySelector('#nt').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    tag = b.dataset.t;
+    main.querySelectorAll('#nt button').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+    drawNews();
+  });
+  drawNews();
+  newsLive.then((d) => {
+    if (d?.items?.length && main.isConnected && Date.parse(d.updated) > Date.parse(news.updated || 0)) {
+      news = d;
+      drawNews();
+    }
+  });
 
 }
 

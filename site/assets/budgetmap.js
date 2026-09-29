@@ -151,7 +151,11 @@ export function wireBudgetMap(root, list, { onPick, onChange, budget = 750000, c
       g.stroke();
     }
     const where = st.city === 'AU' ? 'across Australia' : `in and around ${CITIES[st.city].name}`;
-    countEl.innerHTML = `<b>${nIn.toLocaleString()}</b> of the ${n.toLocaleString()} suburbs ${where} with a ${st.type === 'u' ? 'unit' : 'house'} price have a typical ${st.type === 'u' ? 'unit' : 'house'} under <b>${aud(st.budget, { compact: true })}</b>`;
+    // across Australia, count against every suburb Ownaroo covers so the total matches the explorer
+    const total = st.city === 'AU' ? list.length : n;
+    countEl.innerHTML = st.city === 'AU'
+      ? `<b>${nIn.toLocaleString()}</b> of Australia's ${total.toLocaleString()} suburbs have a typical ${st.type === 'u' ? 'unit' : 'house'} under <b>${aud(st.budget, { compact: true })}</b>`
+      : `<b>${nIn.toLocaleString()}</b> of the ${n.toLocaleString()} suburbs ${where} with a ${st.type === 'u' ? 'unit' : 'house'} price have a typical ${st.type === 'u' ? 'unit' : 'house'} under <b>${aud(st.budget, { compact: true })}</b>`;
   }
 
   let raf = 0;

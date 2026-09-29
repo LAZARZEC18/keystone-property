@@ -17,7 +17,7 @@ export default async (req) => {
   const key = process.env.DOMAIN_API_KEY;
   // not set up yet: answer normally (no console error) and don't cache, so adding the key takes effect at once
   if (!key) return json({ configured: false }, 200, { 'netlify-cdn-cache-control': 'no-store' });
-  const q = (new URL(req.url).searchParams.get('q') || '').trim().slice(0, 160);
+  const q = String(req.method === 'POST' ? (await req.json().catch(() => ({}))).q || '' : new URL(req.url).searchParams.get('q') || '').trim().slice(0, 160);
   if (q.length < 5) return json({ error: 'address too short' }, 400);
   const h = { 'X-Api-Key': key, accept: 'application/json' };
   try {

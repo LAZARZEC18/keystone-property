@@ -1,5 +1,4 @@
 import { check, showErrors } from '../validate.js';
-import { demo } from '../demo.js';
 import { nextStepsCard } from '../insights.js';
 import { esc, aud, pct, setMeta, lineChart, wireCharts } from '../ui.js';
 import { load } from '../data.js';
@@ -88,8 +87,8 @@ export default async function firstHomePage(main, _p, query = {}) {
   const stOpts = Object.keys(STATES).map((s) => `<option value="${s}" ${s === 'WA' ? 'selected' : ''}>${s}</option>`).join('');
 
   main.innerHTML = `
-  <div class="page-head with-demo"><div><div class="eyebrow">First home tools</div><h1>Plan your first home</h1>
-  <p>Three calculators for the questions that come before the property search: how long it will take to save, whether buying beats renting over the years you'll stay, and how much faster the First Home Super Saver scheme gets you there. When you're ready, the <a href="/afford?buyer=fhb" data-link>affordability tool</a> finds where you can buy.</p></div>${demo('firsthome')}</div>
+  <div class="page-head"><div><div class="eyebrow">First home tools</div><h1>Plan your first home</h1>
+  <p>Three calculators for the questions that come before the property search: how long it will take to save, whether buying beats renting over the years you'll stay, and how much faster the First Home Super Saver scheme gets you there. When you're ready, the <a href="/afford?buyer=fhb" data-link>affordability tool</a> finds where you can buy.</p></div></div>
   <div class="row" style="margin-bottom:16px"><a class="pill" href="#save">How long to save</a><a class="pill" href="#rvb">Rent vs buy</a><a class="pill" href="#fhss">First Home Super Saver</a></div>
 
   <section class="section card" id="save"><h2>How long will it take to save?</h2>
