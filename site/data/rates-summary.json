@@ -1,7 +1,7 @@
 {
- "updated": "2026-09-28T21:53:47.173Z",
+ "updated": "2026-09-29T01:51:06.052Z",
  "lenders": 93,
- "rows": 8083,
+ "rows": 8079,
  "best": {
   "INV_PI_variable": [
    {
@@ -29,20 +29,20 @@
     "url": "https://www.nicu.com.au/home-loans/dream-home-loan"
    },
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - Investment LVR 80% (Principal and Interest)",
-    "rate": 5.99,
-    "comparison": 6.37,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-investment/"
-   },
-   {
     "lender": "Virgin Money",
     "product": "Lite Home Loan",
     "rate": 5.99,
     "comparison": 6.01,
     "lvrMax": 80,
     "url": "https://virginmoney.com.au/home-loans"
+   },
+   {
+    "lender": "Unloan",
+    "product": "Home Loan",
+    "rate": 6.04,
+    "comparison": 5.95,
+    "lvrMax": 80,
+    "url": "https://www.unloan.com.au/"
    }
   ],
   "INV_PI_fixed1": [
@@ -239,20 +239,20 @@
     "url": "https://www.bankofchina.com/au/en/pbservice/pb2/201801/t20180131_11319422.html"
    },
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - Investment LVR 80% (Interest Only)",
-    "rate": 6.14,
-    "comparison": 6.57,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-investment/"
-   },
-   {
     "lender": "Queensland Country Bank",
     "product": "Home Loan-Package",
     "rate": 6.19,
     "comparison": 6.2,
     "lvrMax": 80,
     "url": "https://www.queenslandcountry.bank/Banking/home-loans/"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Non Offset)",
+    "rate": 6.24,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_IO_fixed1": [
