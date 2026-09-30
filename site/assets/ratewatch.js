@@ -45,8 +45,10 @@ export function rateWatchCard(rba, { compact = false } = {}) {
   const held = recent && !moved && (rba.cashRate?.published || '') >= recent;
   const justIn = recent ? (moved ? `The RBA ${verb} the cash rate to ${pct(rba.cashRate.current, 2)} on ${shortDay(recent)}${eff}.` : held ? `On ${fmtDay(recent)} the RBA held the cash rate at ${pct(rba.cashRate.current, 2)}.` : `The RBA announced its ${fmtDay(recent)} decision at 2.30pm; the cash rate shown (${pct(rba.cashRate.current, 2)}) is refreshed from the RBA within a few hours.`) : '';
   if (compact) {
+    // one calm line; the forecasts and sources live on the Markets page
     const mid = rows[1];
-    return `<div class="callout rate-watch">${justIn ? `<b>${esc(justIn)}</b> ` : ''}<b>${next ? `Next RBA decision: ${fmtDay(next)}, 2.30pm Sydney time.` : 'RBA decisions.'}</b> ${outlook ? `${esc(outlook.text)} ${srcLinks(outlook)} ` : ''}A 0.25-point rise adds about <b>${aud(mid.up25)} a month</b> to a ${aud(mid.loan, { compact: true })} loan at a typical new-loan variable rate of ${pct(avg, 2)}. <a href="/markets#rate-watch" data-link>What it does to your repayments →</a></div>`;
+    const moveLine = justIn && moved ? `${esc(justIn.replace(/\.$/, ''))}.` : `Cash rate ${pct(rba.cashRate.current, 2)}.`;
+    return `<div class="rate-line"><span class="rate-dot" aria-hidden="true"></span><span>${moveLine}${next ? ` Next decision ${shortDay(next)}.` : ''} Each 0.25 rise adds about <b>${aud(mid.up25)}/month</b> on ${aud(mid.loan, { compact: true })}.</span> <a href="/markets" data-link>More →</a></div>`;
   }
   return `<div class="card" id="rate-watch"><div class="card-head"><h3>Rate watch</h3>${next ? `<span class="pill">Next decision ${fmtDay(next)}, 2.30pm Sydney time</span>` : ''}</div>
     <p class="note" style="margin-top:0">${justIn ? `<b>${esc(justIn)}</b> ` : ''}Cash rate ${pct(rba.cashRate.current, 2)}.${outlook ? ` ${esc(outlook.text)} ${srcLinks(outlook)}` : ''} Repayment changes below use a typical new owner-occupier variable rate of ${pct(avg, 2)}: ${esc(typ.label)}. 30-year principal and interest.</p>

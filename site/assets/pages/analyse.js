@@ -1,4 +1,4 @@
-import { demo } from '../demo.js';
+import { demo, demoPeek } from '../demo.js';
 import { printHeader, brandPanel, wireBrand } from '../brand.js';
 import { esc, aud, pct, num, setMeta, lineChart, wireCharts, stack, date, cashWeek, dealContext, rankPill, returnsLine, copyLinkButton, wireCopyLink } from '../ui.js';
 import { suburbs, cleanName, suburbUrl, load, saveDeal, savedDeals, openRate, tzState, typicalRate } from '../data.js';
@@ -66,8 +66,8 @@ export default async function analysePage(main, _p, query) {
 
   const field = (id, label, value, attrs = '', help = '') => `<label class="field">${label}<input id="${id}" value="${esc(String(value ?? ''))}" ${attrs}>${help ? `<span class="help">${help}</span>` : ''}</label>`;
   main.innerHTML = `
-  <div class="page-head with-demo"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
-  <p class="lede-short">Enter a property. Ownaroo works out every cost, the weekly cost after tax and a 10-year return under the 2026 rules, for an established home and a new build. It describes the numbers; it doesn't tell you to buy.</p></div>${demo('calculator')}</div>
+  <div class="page-head"><div><div class="eyebrow">2026 tax-change calculator</div><h1>What would an investment property really cost you?</h1>
+  <p class="lede-short">Enter a property. Ownaroo works out every cost, the weekly cost after tax and a 10-year return under the 2026 rules, for an established home and a new build. It describes the numbers; it doesn't tell you to buy.</p>${demoPeek('calculator')}</div></div>
   <div class="grid g-side" style="grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)">
     <div>
       <div class="card">

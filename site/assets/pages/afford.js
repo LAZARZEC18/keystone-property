@@ -1,4 +1,4 @@
-import { demo, wireDemos } from '../demo.js';
+import { demoPeek, wireDemos } from '../demo.js';
 import { esc, aud, pct, num, scoreBadge, setMeta, srcBadge, growth12, copyLinkButton, wireCopyLink, confLabel, confBadge } from '../ui.js';
 import { suburbs, suburbUrl, cleanName, load, openRate, typicalRate } from '../data.js';
 import { stampDuty, lmi, borrowingPower, repayment, analyse, suburbScore, PROFILES, incomeTax, comfortableRepayment } from '../engine.js';
@@ -205,7 +205,7 @@ export default async function affordPage(main, _p, query) {
     const out = main.querySelector('#out');
     const missing = !String(f.savings).trim() || !String(f.income).trim();
     if ((!String(f.savings).trim() && !String(f.income).trim()) || (missing && !asked && !example)) {
-      out.innerHTML = `<div class="card"><h3 style="margin-top:0">Start with where you want to buy, your savings and your income</h3><p class="note">Ownaroo then works out a comfortable price there, the most a lender might let you stretch to, the cash you need, and the schemes you qualify for. Nothing you type is stored or sent anywhere.</p><button class="btn" type="button" id="aff-example">Or try it with example numbers</button></div>${demo('afford', { caption: 'See it in action: a Perth couple with $110k saved.' })}`;
+      out.innerHTML = `<div class="card"><h3 style="margin-top:0">Start with where you want to buy, your savings and your income</h3><p class="note">Ownaroo then works out a comfortable price there, the most a lender might let you stretch to, the cash you need, and the schemes you qualify for. Nothing you type is stored or sent anywhere.</p><div class="row"><button class="btn" type="button" id="aff-example">Try it with example numbers</button></div>${demoPeek('afford', 'Watch a Perth couple try it')}</div>`;
       wireDemos(out);
       out.querySelector('#aff-example').addEventListener('click', () => {
         form.savings.value = 110000;

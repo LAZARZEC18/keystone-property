@@ -1,4 +1,4 @@
-import { wireDemos } from './demo.js';
+import { wireDemos, wirePeeks } from './demo.js';
 // Page-wide enhancements applied after every render: plain-English explanations for jargon,
 // and a scroll hint on tables wider than the screen.
 
@@ -115,6 +115,7 @@ export function cardTables(root) {
 
 export function enhance(root) {
   wireDemos(root);
+  wirePeeks(root);
   cardTables(root);
   // repeat until no new terms are found (each pass may split text nodes)
   for (let i = 0; i < 4; i++) {
@@ -123,4 +124,29 @@ export function enhance(root) {
     if (root.querySelectorAll('abbr.jargon').length === before) break;
   }
   tableHints(root);
+  reveal(root);
+}
+
+/** Scroll reveal: blocks below the fold fade up as they come into view. Nothing is hidden without motion support. */
+let revealer = null;
+export function reveal(root) {
+  if (!document.documentElement.classList.contains('motion') || !('IntersectionObserver' in window)) return;
+  revealer ??= new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.classList.add('rv-in');
+      revealer.unobserve(e.target);
+    }
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  const els = root.querySelectorAll(':scope > section, :scope > .section, :scope > div.section, .paths-clean > *, .duo > *, .sec-head, [data-reveal]');
+  const fold = window.innerHeight;
+  els.forEach((el) => {
+    if (el.dataset.rv) return;
+    el.dataset.rv = '1';
+    if (el.getBoundingClientRect().top < fold * 0.92) return; // already on screen: leave it be
+    const i = [...(el.parentElement?.children || [])].indexOf(el);
+    if (el.parentElement?.matches('.paths-clean, .duo')) el.style.setProperty('--rv-delay', `${Math.min(i, 4) * 0.08}s`);
+    el.classList.add('rv');
+    revealer.observe(el);
+  });
 }

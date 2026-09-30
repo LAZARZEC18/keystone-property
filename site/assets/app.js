@@ -95,6 +95,10 @@ async function render() {
     if (!(firstRender && path === '/')) main.innerHTML = '<div class="loading">Loading…</div>';
     firstRender = false;
     current = (await mod.default(main, params, query)) || null;
+    // a soft entrance for each new page
+    main.classList.remove('page-in');
+    void main.offsetWidth;
+    main.classList.add('page-in');
   } catch (e) {
     console.error(e);
     main.innerHTML = `<div class="empty"><h2>Something went wrong loading this page.</h2><p class="muted">${esc(e.message)}</p><p><a href="/" data-link>Back to the home page</a></p></div>`;
@@ -118,6 +122,19 @@ document.addEventListener('click', (e) => {
   navigate(href);
 });
 window.addEventListener('popstate', render);
+
+// ---- motion: on unless the visitor prefers less movement
+{
+  const mq = matchMedia('(prefers-reduced-motion: reduce)');
+  const set = () => document.documentElement.classList.toggle('motion', !mq.matches);
+  set();
+  mq.addEventListener?.('change', set);
+  const top = document.querySelector('.top');
+  const onScroll = () => top?.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  window.addEventListener('beforeprint', () => document.querySelectorAll('.rv').forEach((el) => el.classList.add('rv-in')));
+}
 
 // ---- theme
 $('#theme').addEventListener('click', () => {

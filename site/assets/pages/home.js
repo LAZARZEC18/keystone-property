@@ -1,11 +1,11 @@
-import { rateWatchCard } from '../ratewatch.js';
+import { nextDecision, sensitivity } from '../ratewatch.js';
 import { esc, aud, pct, setMeta, date } from '../ui.js';
 import { load, typicalRate, suburbs, suburbUrl } from '../data.js';
 import { navigate } from '../app.js';
-import { RULES } from '../rules.js';
+import { RULES, RBA_DECISIONS } from '../rules.js';
 import { demo, wireDemos } from '../demo.js';
 import { trendWord } from '../live.js';
-import { photoCard, figure, strip, photo, photoCredits } from '../photos.js';
+import { photoCard, img, photo } from '../photos.js';
 import { budgetMapHtml, wireBudgetMap } from '../budgetmap.js';
 import { comfortableWeekly } from '../rules.js';
 
@@ -18,71 +18,65 @@ export default async function home(main) {
   const ooRate = typicalRate(rba, 'OO');
   const measured = idx.list.filter((s) => s.conf === 'high' || s.conf === 'medium').length;
 
-  // the four jobs people come with
+  // the four jobs people come with: a photo, one question, one line, one link
   const jobs = [
-    ['Afford', 'sherwood-queenslander', 'What can I afford?', 'A comfortable price where you want to buy, the cash you need and the schemes you qualify for, including Keystart in WA.', [['/afford?buyer=fhb', 'Work it out'], ['/first-home', 'Rent vs buy'], ['/guide/fhb', 'First home guide']]],
-    ['Invest', 'paddington-fiveways', 'What will this investment cost me?', 'The weekly cost after tax and the 10-year return under the 2026 rules, new build and established side by side.', [['/analyse', 'Run the numbers'], ['/analyse#newvsold', 'New vs established'], ['/guide/tax-2026', 'What changed']]],
-    ['Suburbs', 'fremantle-coast', "What's this suburb like?", 'Prices, rents, growth and risks for every suburb, with how sure each figure is.', [['/suburbs', 'Explore suburbs'], ['/property', 'Price range for a home'], ['/price-check', 'Listing price check']]],
-    ['Rates', 'melbourne-southbank', 'What rate can I get?', `Advertised rates from ${rs.lenders} lenders, from their own feeds several times a day, and how much a lender might lend.`, [['/rates', 'Compare rates'], ['/borrowing', 'Borrowing power'], ['/markets', 'Market update']]],
+    ['sherwood-queenslander', 'What can I afford?', 'A comfortable price, the cash you need and your schemes.', '/afford?buyer=fhb', 'Work it out'],
+    ['paddington-fiveways', 'What will an investment cost me?', 'The weekly cost after tax under the 2026 rules.', '/analyse', 'Run the numbers'],
+    ['fremantle-coast', "What's this suburb like?", 'Prices, rents, growth and risks, with how sure each figure is.', '/suburbs', 'Explore suburbs'],
+    ['melbourne-southbank', 'What rate can I get?', `Today's rates from ${rs.lenders} lenders, straight from their feeds.`, '/rates', 'Compare rates'],
   ];
+  const credits = jobs.map(([id]) => photo(id)).filter(Boolean);
+  const next = nextDecision();
+  const last = (rba.cashRate?.decisions || []).at(-1);
+  const per25 = sensitivity(ooRate.rate, [750000])[0].up25;
+  const shortDay = (d) => new Date(`${d}T12:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
 
   main.innerHTML = `
   <section class="home-hero">
     <div>
-      <div class="eyebrow">Free · independent · rankings never paid for</div>
+      <div class="eyebrow">Free · independent</div>
       <h1>What can you comfortably afford, <em>and where?</em></h1>
-      <p class="lead">Drag the budget on the map to see where a typical home is within reach. Then enter your savings and income for a comfortable price, the cash you need and your schemes.</p>
+      <p class="lead">Drag the budget on the map. Then put in your savings and income for a price that won't stretch you.</p>
       <div class="row hero-cta"><a class="btn primary lg" href="/afford?buyer=fhb" data-link id="hero-cta">Work out what I can afford →</a></div>
-      <p class="hero-alt">Buying to invest? <a href="/analyse" data-link>Run the 2026 tax-change numbers →</a></p>
+      <p class="hero-alt">Investing? <a href="/analyse" data-link>Run the 2026 numbers →</a></p>
     </div>
     <div>${budgetMapHtml({ budget: 750000, city: 'AU' })}</div>
   </section>
 
-  <section class="section">
-    <div class="grid g4 paths">${jobs.map(([tag, ph, t, d, links]) => `<div class="card path">${figure(ph, { cls: 'path-photo', sizes: '(max-width: 900px) 100vw, 25vw' })}<span class="tag tag-official">${tag}</span><h3>${t}</h3><p class="muted">${d}</p><div class="path-links">${links.map(([href, l], i) => `<a class="${i ? '' : 'btn primary sm'}" href="${href}" data-link>${l}${i ? ' →' : ''}</a>`).join('')}</div></div>`).join('')}</div>
+  <section class="section-lg">
+    <div class="paths-clean">${jobs.map(([ph, t, d, href, cta]) => `<a class="path-clean" href="${href}" data-link><div class="path-img">${img(ph, { sizes: '(max-width: 900px) 50vw, 25vw' })}</div><h3>${t}</h3><p>${d}</p><span class="path-go">${cta} <span aria-hidden="true">→</span></span></a>`).join('')}</div>
+    <p class="trust-line">${rs.lenders} lenders' rates <span>·</span> Every state's duty and first home rules <span>·</span> ${measured.toLocaleString()} suburbs with official sales data <span>·</span> Rankings never paid for</p>
   </section>
 
-  <section class="section trust" aria-label="What Ownaroo is built on">
-    <div><b>${rs.lenders}</b><span>lenders' rates, from their Open Banking feeds several times a day</span></div>
-    <div><b>8 of 8</b><span>states and territories: stamp duty, first home concessions and land tax</span></div>
-    <div><b>${measured.toLocaleString()}</b><span>suburbs with official sales data; the rest are modelled and labelled</span></div>
-    <div><b>Independent</b><span>Rankings are never paid for</span></div>
-  </section>
-
-  <section class="section card">
-    <div class="spread"><div><div class="eyebrow">Same income, different cities</div><h2 style="margin:4px 0 4px">What one household income comfortably buys in each capital</h2></div><a href="/afford?buyer=fhb" data-link>Use your own numbers →</a></div>
-    <div class="inc-controls">
-      <label><span>Household income</span><b id="inc-val">$110k</b><input id="inc" type="range" min="50000" max="400000" step="5000" value="110000" aria-label="Household income before tax"></label>
-      <div class="seg" id="inc-dep" role="group" aria-label="Deposit"><button type="button" data-d="0.05" class="on" aria-pressed="true">5% deposit (first home)</button><button type="button" data-d="0.2" aria-pressed="false">20% deposit</button></div>
-    </div>
-    <div class="incbars" id="incbars"></div>
-    <p class="note" style="margin:10px 0 0">The comfortable price is the same in every city; what changes is how far it goes against each city's median.</p>
-    <p class="fine" style="margin-top:12px">Repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (${esc(ooRate.label)}), 30 years, plus the deposit (a 5% deposit assumes the 5% Deposit Scheme: no mortgage insurance, up to each area's price cap). Savings, debts and stamp duty are in the full tool. Medians: Cotality, month-end ${esc(market.indexMonth || '')}.</p>
-  </section>
-
-  <section class="section">
-    <div class="spread"><h2>See it in action</h2><a href="/about" data-link>The full two-minute tour →</a></div>
-    <div class="seg" id="demo-tabs" role="tablist">${[['afford', 'What can I afford?'], ['calculator', '2026 tax calculator'], ['budgetmap', 'Budget map'], ['estimate', 'Price range for a home'], ['suburb', 'Suburb report'], ['rates', 'Rates']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}">${l}</button>`).join('')}</div>
-    <div class="demo-stage" id="demo-stage">${demo('afford')}</div>
-    <p class="fine" style="margin-top:6px">Recorded with example inputs on 29 September 2026; the live figures change as the data updates.</p>
-  </section>
-
-  <section class="section">
-    <div class="card tax-band">
-      <div><div class="eyebrow">The 2026 tax changes, in numbers</div><h2 style="margin:4px 0 8px">Know what an investment property costs you each week</h2>
-      <p class="muted" style="margin:0">Established homes bought after 12 May 2026 can offset rental losses against your salary only until 30 June 2027; after that, losses carry forward or offset rental profit from your other properties. From 1 July 2027 the 50% CGT discount is replaced by indexation with a 30% minimum tax. New builds keep negative gearing and, on sale, can choose the old 50% discount or the new method. The calculator runs your deal both ways, side by side.</p></div>
-      <div class="tax-cta"><a class="btn primary" href="/analyse" data-link>Run the numbers →</a><a class="fine" href="/guide/tax-2026" data-link>What changed, in plain English</a></div>
+  <section class="section-lg">
+    <div class="sec-head"><div class="eyebrow">Same income, different cities</div><h2>How far one income goes in each capital</h2></div>
+    <div class="card calm">
+      <div class="inc-controls">
+        <label><span>Household income</span><b id="inc-val">$110k</b><input id="inc" type="range" min="50000" max="400000" step="5000" value="110000" aria-label="Household income before tax"></label>
+        <div class="seg" id="inc-dep" role="group" aria-label="Deposit"><button type="button" data-d="0.05" class="on" aria-pressed="true">5% deposit</button><button type="button" data-d="0.2" aria-pressed="false">20% deposit</button></div>
+      </div>
+      <p class="inc-summary">Comfortably buys about <b id="inc-price">—</b> in any city. <span class="inc-legend"><span><i class="unit"></i>median unit</span><span><i></i>median house</span></span></p>
+      <div class="incbars clean" id="incbars"></div>
+      <details class="quiet-more"><summary>How this is worked out</summary><p class="fine">Repayments within 30% of before-tax income at ${pct(ooRate.rate, 2)} (${esc(ooRate.label)}), 30 years, plus the deposit (a 5% deposit assumes the 5% Deposit Scheme: no mortgage insurance, up to each area's price cap). The marks show each city's median unit and house (Cotality, month-end ${esc(market.indexMonth || '')}). Savings, debts and stamp duty are in the <a href="/afford?buyer=fhb" data-link>full tool</a>.</p></details>
     </div>
   </section>
 
-  <section class="section">
-    <div class="spread"><h2>Rates and the RBA</h2><a href="/markets" data-link>Market update →</a></div>
-    ${rateWatchCard(rba, { compact: true })}
+  <section class="section-lg">
+    <div class="sec-head spread"><div><div class="eyebrow">See it in action</div><h2>Twenty seconds each</h2></div><a href="/about" data-link>Full tour →</a></div>
+    <div class="seg seg-quiet" id="demo-tabs" role="tablist">${[['afford', 'Afford'], ['calculator', 'Investment'], ['suburb', 'Suburb report'], ['rates', 'Rates']].map(([k, l], i) => `<button type="button" role="tab" data-demo-tab="${k}" class="${i ? '' : 'on'}" aria-selected="${!i}">${l}</button>`).join('')}</div>
+    <div class="demo-stage" id="demo-stage">${demo('afford', { caption: '' })}</div>
   </section>
 
-  <section class="section">
-    <p class="fine" style="margin-top:12px">General information, not financial advice. Tax, duty and scheme rules checked ${esc(date(RULES.asOf))}; rates checked ${date(rs.updated)}.</p>
-  </section>`;
+  <section class="section-lg">
+    <div class="duo">
+      <a class="duo-card" href="/analyse" data-link><div class="eyebrow">2026 tax changes</div><h3>Know what an investment really costs each week</h3><p>Established homes bought after 12 May 2026 lose the salary tax refund from 1 July 2027. See your deal both ways, new and established.</p><span class="path-go">Run the numbers <span aria-hidden="true">→</span></span></a>
+      <a class="duo-card" href="/markets" data-link><div class="eyebrow">Rates and the RBA</div>
+        <div class="rate-trio"><div><b>${pct(rba.cashRate.current, 2)}</b><span>cash rate${last?.change ? `, ${last.change > 0 ? 'raised' : 'cut'} ${shortDay(RBA_DECISIONS.filter((d) => d < (rba.cashRate.lastChange || '')).at(-1) || rba.cashRate.lastChange)}` : ''}</span></div><div><b>${next ? shortDay(next) : '—'}</b><span>next decision</span></div><div><b>+${aud(per25)}</b><span>a month per 0.25 rise on $750k</span></div></div>
+        <span class="path-go">Market update <span aria-hidden="true">→</span></span></a>
+    </div>
+  </section>
+
+  <p class="fine home-foot">General information, not financial advice. Rules checked ${esc(date(RULES.asOf))}; rates checked ${date(rs.updated)}. Photos from Wikimedia Commons: ${credits.map((p) => `<a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.author)}</a>`).join(', ')} (${[...new Set(credits.map((p) => p.license))].map(esc).join(', ')}).</p>`;
 
   const destroyMap = wireBudgetMap(main, idx.list, {
     onPick: (s) => navigate(suburbUrl(s)),
@@ -95,8 +89,12 @@ export default async function home(main) {
   main.querySelector('#demo-tabs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-demo-tab]');
     if (!b) return;
-    main.querySelectorAll('#demo-tabs button').forEach((x) => x.classList.toggle('on', x === b));
-    main.querySelector('#demo-stage').innerHTML = demo(b.dataset.demoTab);
+    main.querySelectorAll('#demo-tabs button').forEach((x) => (x.classList.toggle('on', x === b), x.setAttribute('aria-selected', String(x === b))));
+    const stage = main.querySelector('#demo-stage');
+    stage.innerHTML = demo(b.dataset.demoTab, { caption: '' });
+    stage.classList.remove('swap');
+    void stage.offsetWidth;
+    stage.classList.add('swap');
     wireDemos(main);
   });
 
@@ -105,9 +103,11 @@ export default async function home(main) {
   const bars = () => {
     const income = +main.querySelector('#inc').value;
     main.querySelector('#inc-val').textContent = aud(income, { compact: true });
+    const priceOut = main.querySelector('#inc-price');
     const r = ooRate.rate / 1200;
     const loan = ((comfortableWeekly(income) * 52) / 12) * (1 - (1 + r) ** -360) / r;
     const price = loan / (1 - dep);
+    if (priceOut) priceOut.textContent = aud(price, { compact: true });
     const top = Math.max(...caps.map(([, c]) => c.medianHouse || 0), price) * 1.05;
     main.querySelector('#incbars').innerHTML = caps
       .sort((a, b) => (a[1].medianHouse || 0) - (b[1].medianHouse || 0))
@@ -115,7 +115,8 @@ export default async function home(main) {
         const h = c.medianHouse || c.medianDwelling;
         const u = c.medianUnit;
         const verdict = price >= h ? 'A median house is within reach' : u && price >= u ? `A median unit is within reach; a median house needs ${aud(h - price, { compact: true })} more` : `${aud((u || h) - price, { compact: true })} short of a median ${u ? 'unit' : 'home'}`;
-        return `<div class="incbar"><span>${esc(c.name)}</span><div class="incbar-track"><div class="incbar-fill" style="width:${(price / top) * 100}%"></div><span class="incbar-val">${aud(price, { compact: true })}</span><i class="incbar-mark" style="left:${(h / top) * 100}%" data-l="house ${aud(h, { compact: true })}"></i>${u ? `<i class="incbar-mark unit" style="left:${(u / top) * 100}%" data-l="unit ${aud(u, { compact: true })}"></i>` : ''}</div><span class="incbar-verdict">${verdict}. <span class="incbar-meds">Median unit ${u ? aud(u, { compact: true }) : '—'} · house ${aud(h, { compact: true })}</span></span></div>`;
+        const tag = price >= h ? ['House ✓', 'ok'] : u && price >= u ? ['Unit ✓', 'ok'] : [`−${aud((u || h) - price, { compact: true })}`, 'short'];
+        return `<div class="incbar" title="${esc(`${verdict}. Median unit ${u ? aud(u, { compact: true }) : '—'}, house ${aud(h, { compact: true })}`)}"><span class="incbar-name">${esc(c.name)}</span><div class="incbar-track"><div class="incbar-fill" style="width:${(price / top) * 100}%"></div><i class="incbar-mark" style="left:${(h / top) * 100}%" data-l="house ${aud(h, { compact: true })}"></i>${u ? `<i class="incbar-mark unit" style="left:${(u / top) * 100}%" data-l="unit ${aud(u, { compact: true })}"></i>` : ''}</div><span class="incbar-tag ${tag[1]}">${tag[0]}</span></div>`;
       })
       .join('');
   };

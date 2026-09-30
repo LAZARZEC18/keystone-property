@@ -94,3 +94,19 @@ export function wireDemos(root) {
     else io.observe(v);
   });
 }
+
+/** A quiet "see how it works" button that opens the demo clip in place, instead of a video playing beside the heading. */
+export function demoPeek(name, label = 'See how it works') {
+  return `<details class="demo-peek" data-demo-peek><summary><span class="demo-peek-icon" aria-hidden="true">▶</span>${esc(label)} <span class="faint">· 20 sec</span></summary><div class="demo-peek-body">${demo(name)}</div></details>`;
+}
+
+/** Wire every demoPeek in a page: the clip loads and plays only once it's opened. */
+export function wirePeeks(root) {
+  root.querySelectorAll('details[data-demo-peek]:not([data-wired])').forEach((d) => {
+    d.dataset.wired = '1';
+    d.addEventListener('toggle', () => {
+      if (d.open) wireDemos(d);
+      else d.querySelectorAll('video').forEach((v) => v.pause());
+    });
+  });
+}

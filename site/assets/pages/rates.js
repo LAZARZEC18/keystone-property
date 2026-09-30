@@ -1,4 +1,4 @@
-import { demo } from '../demo.js';
+import { demo, demoPeek } from '../demo.js';
 import { esc, aud, pct, ago, setMeta, sortable } from '../ui.js';
 import { rateRows, load } from '../data.js';
 import { repayment } from '../engine.js';
@@ -35,8 +35,8 @@ export default async function ratesPage(main, _p, query) {
   };
 
   main.innerHTML = `
-  <div class="page-head with-demo"><div><div class="eyebrow">Rates</div><h1>Home loan rates from ${rs.lenders} lenders</h1>
-  <p>${rs.rows.toLocaleString()} advertised rates from ${rs.lenders} lenders, read directly from each lender's public Consumer Data Right (Open Banking) product feed, checked several times a day. Every bank must publish one; some non-bank lenders don't, so they aren't here. Last check ${ago(R.updated)}.</p></div>${demo('rates')}</div>
+  <div class="page-head"><div><div class="eyebrow">Rates</div><h1>Home loan rates from ${rs.lenders} lenders</h1>
+  <p>${rs.rows.toLocaleString()} advertised rates from ${rs.lenders} lenders, read directly from each lender's public Consumer Data Right (Open Banking) product feed, checked several times a day. Every bank must publish one; some non-bank lenders don't, so they aren't here. Last check ${ago(R.updated)}.</p>${demoPeek('rates')}</div></div>
   <div style="margin-bottom:16px">${rateWatchCard(rba, { compact: true })}</div>
   <div class="grid g4">
     ${[['OO_PI_variable', 'owner-occupier variable'], ['OO_PI_fixed2', 'owner-occupier 2-year fixed'], ['INV_PI_variable', 'investor variable P&I'], ['INV_PI_fixed3', 'investor 3-year fixed']]
