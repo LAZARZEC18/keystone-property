@@ -1,7 +1,7 @@
 {
- "updated": "2026-09-30T12:28:47.505Z",
+ "updated": "2026-09-30T22:14:55.549Z",
  "lenders": 93,
- "rows": 8079,
+ "rows": 8073,
  "best": {
   "INV_PI_variable": [
    {
@@ -1021,14 +1021,6 @@
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Investment",
-    "rate": 6.59,
-    "comparison": 7.73,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Easy Home Loan",
     "rate": 6.59,
@@ -1049,6 +1041,14 @@
     "product": "Tiimely Offset Home Loan",
     "rate": 6.59,
     "comparison": 6.62,
+    "lvrMax": 80,
+    "url": "https://www.bendigobank.com.au/partner/tiimely-home/features/"
+   },
+   {
+    "lender": "Tiimely Home",
+    "product": "Tiimely Basic Home Loan",
+    "rate": 6.59,
+    "comparison": 6.46,
     "lvrMax": 80,
     "url": "https://www.bendigobank.com.au/partner/tiimely-home/features/"
    }
@@ -1231,14 +1231,6 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Interest Only Investment",
-    "rate": 6.69,
-    "comparison": 7.77,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "IMB Bank",
     "product": "5 year Fixed Rate Home Loan",
     "rate": 6.69,
@@ -1261,6 +1253,14 @@
     "comparison": 6.44,
     "lvrMax": 80,
     "url": "https://www.brokers.bendigobank.com.au/"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
+    "rate": 6.69,
+    "comparison": 7.8,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "OO_PI_variable_national": [
