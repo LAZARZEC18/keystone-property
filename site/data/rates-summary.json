@@ -1,7 +1,7 @@
 {
- "updated": "2026-09-30T05:26:54.804Z",
- "lenders": 92,
- "rows": 7932,
+ "updated": "2026-09-30T12:28:47.505Z",
+ "lenders": 93,
+ "rows": 8079,
  "best": {
   "INV_PI_variable": [
    {
@@ -223,22 +223,6 @@
     "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
    },
    {
-    "lender": "Bank of China",
-    "product": "Discount Plus Investment Home Loan (with Interest Only Repayment)",
-    "rate": 6.13,
-    "comparison": 6.51,
-    "lvrMax": null,
-    "url": "https://www.bankofchina.com/au/en/pbservice/pb2/201801/t20180131_11319422.html"
-   },
-   {
-    "lender": "Bank of China",
-    "product": "Discount Investment Home Loan (with Interest Only Repayment)",
-    "rate": 6.13,
-    "comparison": 6.33,
-    "lvrMax": null,
-    "url": "https://www.bankofchina.com/au/en/pbservice/pb2/201801/t20180131_11319422.html"
-   },
-   {
     "lender": "Queensland Country Bank",
     "product": "Home Loan-Package",
     "rate": 6.19,
@@ -253,6 +237,22 @@
     "comparison": 6.27,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Auswide Bank",
+    "product": "Basic Home Loan",
+    "rate": 6.24,
+    "comparison": 6.27,
+    "lvrMax": 80,
+    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
+   },
+   {
+    "lender": "Coastline Bank",
+    "product": "Interest Only (Investment)",
+    "rate": 6.24,
+    "comparison": 6.31,
+    "lvrMax": 80,
+    "url": "https://www.coastline.com.au/personal/home-loans"
    }
   ],
   "INV_IO_fixed1": [
