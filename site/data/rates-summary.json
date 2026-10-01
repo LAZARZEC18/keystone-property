@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-01T05:44:11.731Z",
- "lenders": 91,
- "rows": 7751,
+ "updated": "2026-10-01T13:05:10.473Z",
+ "lenders": 93,
+ "rows": 8088,
  "best": {
   "INV_PI_variable": [
    {
@@ -55,14 +55,6 @@
     "url": "https://www.coastline.com.au/personal/home-loans"
    },
    {
-    "lender": "Laboratories Credit Union",
-    "product": "Intelligent Mortgage Investment Loan 1 Year Fixed Rate",
-    "rate": 6.25,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://lcu.com.au/product/property-investment-mortgage-fixed/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Premium Home Loan",
     "rate": 6.29,
@@ -84,6 +76,14 @@
     "rate": 6.29,
     "comparison": 6.49,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.29,
+    "comparison": 6.49,
+    "lvrMax": 80,
     "url": null
    }
   ],
