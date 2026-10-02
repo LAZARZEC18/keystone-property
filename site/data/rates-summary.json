@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-02T12:25:45.545Z",
- "lenders": 92,
- "rows": 7898,
+ "updated": "2026-10-02T22:09:36.596Z",
+ "lenders": 93,
+ "rows": 8087,
  "best": {
   "INV_PI_variable": [
    {
@@ -11,14 +11,6 @@
     "comparison": 5.98,
     "lvrMax": null,
     "url": "https://www.nicu.com.au/home-loans/value-home-loan"
-   },
-   {
-    "lender": "Easy Street",
-    "product": "Street Smart Variable Home Loan Special - Investment (Principal and Interest)",
-    "rate": 5.95,
-    "comparison": 6,
-    "lvrMax": null,
-    "url": "https://easystreet.com.au/variable-home-loan"
    },
    {
     "lender": "Northern Inland Credit Union",
@@ -43,6 +35,14 @@
     "comparison": 5.95,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Basic Variable Investment Loan",
+    "rate": 6.09,
+    "comparison": 6.15,
+    "lvrMax": null,
+    "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
    }
   ],
   "INV_PI_fixed1": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.7
+ "medianInvestorVariable": 6.74
 }
