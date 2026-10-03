@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-02T22:09:36.596Z",
- "lenders": 93,
- "rows": 8087,
+ "updated": "2026-10-03T05:11:50.290Z",
+ "lenders": 91,
+ "rows": 7793,
  "best": {
   "INV_PI_variable": [
    {
@@ -21,14 +21,6 @@
     "url": "https://www.nicu.com.au/home-loans/dream-home-loan"
    },
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 5.99,
-    "comparison": 6.01,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 6.04,
@@ -43,6 +35,14 @@
     "comparison": 6.15,
     "lvrMax": null,
     "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Eco Investment Home Loan",
+    "rate": 6.09,
+    "comparison": 6.15,
+    "lvrMax": null,
+    "url": "https://www.summerland.com.au/loans-interest"
    }
   ],
   "INV_PI_fixed1": [
@@ -299,30 +299,6 @@
   ],
   "INV_IO_fixed2": [
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.72,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.32,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.39,
-    "comparison": 6.24,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
-   {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
@@ -331,39 +307,39 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.39,
-    "comparison": 6.59,
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.42,
+    "comparison": 6.3,
     "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Suncorp Bank",
+    "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
+    "rate": 6.49,
+    "comparison": 6.66,
+    "lvrMax": 80,
+    "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.49,
+    "comparison": 6.55,
+    "lvrMax": 95,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.49,
+    "comparison": 6.55,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
    }
   ],
   "INV_IO_fixed3": [
-   {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.73,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.35,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.44,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
    {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
@@ -373,12 +349,36 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.44,
-    "comparison": 6.61,
+    "lender": "Community First Bank",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Interest Only)",
+    "rate": 6.49,
+    "comparison": 6.7,
     "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed Home Loan Package Interest Only",
+    "rate": 6.49,
+    "comparison": 7.36,
+    "lvrMax": null,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.54,
+    "comparison": 7.93,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+   },
+   {
+    "lender": "Orange Credit Union",
+    "product": "Premium Home Loan Fixed 36 mths Interest Only Investment",
+    "rate": 6.54,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
    }
   ],
   "INV_IO_fixed5": [
@@ -457,12 +457,12 @@
     "url": "https://www.summerland.com.au/loans-interest"
    },
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 5.84,
-    "comparison": 5.86,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 5.89,
+    "comparison": 6.02,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
    }
   ],
   "OO_PI_fixed1": [
@@ -845,14 +845,6 @@
   ],
   "INV_PI_variable_national": [
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 5.99,
-    "comparison": 6.01,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 6.04,
@@ -877,12 +869,20 @@
     "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    },
    {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
+    "lender": "Newcastle Permanent",
+    "product": "Real Deal Home Loan Investment Principal and Interest",
     "rate": 6.19,
-    "comparison": 6.21,
+    "comparison": 6.23,
     "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
+   },
+   {
+    "lender": "Suncorp Bank",
+    "product": "Back to Basics Variable Rate Better Together Special Offer",
+    "rate": 6.23,
+    "comparison": 6.24,
+    "lvrMax": 80,
+    "url": "https://www.suncorpbank.com.au/home-loans/basics.html"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -937,36 +937,36 @@
     "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    },
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.73,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.33,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.39,
-    "comparison": 6.25,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
-   {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
     "comparison": 6.43,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.42,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Investment",
+    "rate": 6.49,
+    "comparison": 8.06,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.49,
+    "comparison": 7.42,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ],
   "INV_PI_fixed3_national": [
@@ -979,36 +979,36 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.75,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.35,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.44,
-    "comparison": 6.28,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
-   {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.44,
     "comparison": 6.46,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Investment",
+    "rate": 6.49,
+    "comparison": 7.73,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Standard Home Loan - Fixed 3 Year Investment",
+    "rate": 6.49,
+    "comparison": 7.85,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "Suncorp Bank",
+    "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
+    "rate": 6.49,
+    "comparison": 6.69,
+    "lvrMax": 80,
+    "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
    }
   ],
   "INV_PI_fixed5_national": [
@@ -1079,20 +1079,20 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    },
    {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.29,
-    "comparison": 6.3,
+    "lender": "ING Bank",
+    "product": "Mortgage Simplifier",
+    "rate": 6.34,
+    "comparison": 6.28,
     "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
+    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    },
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
     "rate": 6.34,
-    "comparison": 6.69,
+    "comparison": 6.29,
     "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1139,30 +1139,6 @@
   ],
   "INV_IO_fixed2_national": [
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.72,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.39,
-    "comparison": 6.32,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.39,
-    "comparison": 6.24,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
-   {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.39,
@@ -1171,39 +1147,39 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.39,
-    "comparison": 6.59,
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.42,
+    "comparison": 6.3,
     "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Suncorp Bank",
+    "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
+    "rate": 6.49,
+    "comparison": 6.66,
+    "lvrMax": 80,
+    "url": "https://www.suncorpbank.com.au/home-loans/home-loan-experts.html"
+   },
+   {
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.54,
+    "comparison": 7.58,
+    "lvrMax": 80,
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Investment",
+    "rate": 6.59,
+    "comparison": 8.07,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    }
   ],
   "INV_IO_fixed3_national": [
-   {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.73,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.44,
-    "comparison": 6.35,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.44,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
    {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
@@ -1213,12 +1189,36 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.54,
+    "comparison": 7.93,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+   },
+   {
     "lender": "Bank of Queensland",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.44,
-    "comparison": 6.61,
+    "product": "Fixed Rate Home Loan",
+    "rate": 6.54,
+    "comparison": 6.66,
+    "lvrMax": 90,
+    "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.57,
+    "comparison": 6.36,
     "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.59,
+    "comparison": 7.77,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    }
   ],
   "INV_IO_fixed5_national": [
@@ -1273,14 +1273,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 5.84,
-    "comparison": 5.86,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 5.89,
@@ -1303,6 +1295,14 @@
     "comparison": 5.98,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 5.95,
+    "comparison": 5.95,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1349,22 +1349,6 @@
   ],
   "OO_PI_fixed2_national": [
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.24,
-    "comparison": 6.5,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.24,
-    "comparison": 6.1,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
     "lender": "Suncorp Bank",
     "product": "1,2,3 or 5 Year Fixed Rate - Home Package Plus Special Offers",
     "rate": 6.24,
@@ -1374,46 +1358,38 @@
    },
    {
     "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.24,
-    "comparison": 6.13,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
-   {
-    "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
     "rate": 6.24,
     "comparison": 6.28,
     "lvrMax": 80,
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "AMP",
+    "product": "First Home Loan",
+    "rate": 6.38,
+    "comparison": 6.38,
+    "lvrMax": 90,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Owner Occupied",
+    "rate": 6.39,
+    "comparison": 7.74,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.39,
+    "comparison": 7.4,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ],
   "OO_PI_fixed3_national": [
-   {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.29,
-    "comparison": 6.53,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.29,
-    "comparison": 6.13,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Essential Home Loan",
-    "rate": 6.29,
-    "comparison": 6.16,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
-   },
    {
     "lender": "Bank of Queensland",
     "product": "Fixed Rate Home Loan",
@@ -1423,12 +1399,36 @@
     "url": "https://www.boq.com.au/personal/home-loans/fixed-rate-home-loan"
    },
    {
-    "lender": "Bank of Queensland",
-    "product": "BOQ Plus Home Loan",
-    "rate": 6.29,
-    "comparison": 6.47,
-    "lvrMax": 80,
-    "url": "https://www.boq.com.au/personal/home-loans/myboq-home-loans"
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Owner Occupied",
+    "rate": 6.34,
+    "comparison": 7.62,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.35,
+    "comparison": 6.06,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Owner Occupied",
+    "rate": 6.39,
+    "comparison": 7.44,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Standard Home Loan - Fixed 3 Year Owner Occupied",
+    "rate": 6.39,
+    "comparison": 7.66,
+    "lvrMax": null,
+    "url": null
    }
   ],
   "OO_PI_fixed5_national": [
@@ -1625,20 +1625,20 @@
     "url": null
    },
    {
-    "lender": "ME Bank",
-    "product": "CompleteME Home Loan",
-    "rate": 6.49,
-    "comparison": 6.74,
-    "lvrMax": 90,
-    "url": "https://www.mebank.com.au/home-loans/"
+    "lender": "AMP",
+    "product": "First Home Loan",
+    "rate": 6.64,
+    "comparison": 6.45,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    },
    {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.49,
-    "comparison": 6.4,
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.64,
+    "comparison": 6.29,
     "lvrMax": 90,
-    "url": "https://www.mebank.com.au/home-loans/"
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "OO_IO_fixed5_national": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.74
+ "medianInvestorVariable": 6.79
 }
