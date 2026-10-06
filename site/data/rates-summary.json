@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-06T00:01:04.841Z",
+ "updated": "2026-10-06T06:13:34.169Z",
  "lenders": 93,
  "rows": 8087,
  "best": {
@@ -761,14 +761,6 @@
   ],
   "OO_IO_fixed3": [
    {
-    "lender": "Orange Credit Union",
-    "product": "Premium Home Loan Fixed 36 mths Interest Only Owner Occupied",
-    "rate": 6.29,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Premium Home Loan",
     "rate": 6.39,
@@ -798,6 +790,14 @@
     "rate": 6.39,
     "comparison": 6.41,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
+    "rate": 6.39,
+    "comparison": 6.41,
+    "lvrMax": 95,
     "url": null
    }
   ],
