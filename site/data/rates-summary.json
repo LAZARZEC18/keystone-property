@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-05T14:28:41.927Z",
+ "updated": "2026-10-06T00:01:04.841Z",
  "lenders": 93,
- "rows": 7947,
+ "rows": 8087,
  "best": {
   "INV_PI_variable": [
    {
@@ -583,12 +583,12 @@
     "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
    },
    {
-    "lender": "Unity Bank",
-    "product": "Fixed Rate Home Loan - Owner Occupier - P&I - 36 mths",
+    "lender": "Bank WAW",
+    "product": "Flexible Choice Owner Occupied",
     "rate": 6.15,
-    "comparison": 6.23,
-    "lvrMax": null,
-    "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
+    "comparison": 6.81,
+    "lvrMax": 80,
+    "url": "https://www.bankwaw.com.au/Loans"
    }
   ],
   "OO_PI_fixed5": [
