@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-06T12:02:01.325Z",
- "lenders": 92,
- "rows": 7897,
+ "updated": "2026-10-06T18:19:24.249Z",
+ "lenders": 93,
+ "rows": 8087,
  "best": {
   "INV_PI_variable": [
    {
@@ -457,12 +457,12 @@
     "url": "https://www.summerland.com.au/loans-interest"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Express Home Loan",
+    "lender": "Summerland Bank",
+    "product": "Basic Variable Home Loan",
     "rate": 5.89,
-    "comparison": 6.02,
+    "comparison": 5.95,
     "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+    "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
    }
   ],
   "OO_PI_fixed1": [
@@ -1087,12 +1087,12 @@
     "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Easy Home Loan",
-    "rate": 6.34,
-    "comparison": 6.29,
+    "lender": "Suncorp Bank",
+    "product": "Back to Basics Variable Rate Better Together Special Offer",
+    "rate": 6.38,
+    "comparison": 6.3,
     "lvrMax": 80,
-    "url": "https://www.brokers.bendigobank.com.au/"
+    "url": "https://www.suncorpbank.com.au/home-loans/basics.html"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1273,14 +1273,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Express Home Loan",
-    "rate": 5.89,
-    "comparison": 6.02,
-    "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 5.89,
@@ -1303,6 +1295,14 @@
     "comparison": 5.95,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "LiteBlue Deposit Scheme O/Occ P+I (up to 98%LVR)",
+    "rate": 5.99,
+    "comparison": 6,
+    "lvrMax": 98,
+    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1507,12 +1507,12 @@
     "url": "https://bankofus.com.au/home-loans"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "First Home Buyers (Bendigo Complete Home Loan)",
-    "rate": 6.18,
-    "comparison": 6.4,
-    "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/government-support/"
+    "lender": "Newcastle Permanent",
+    "product": "Real Deal Home Loan Interest Only",
+    "rate": 6.19,
+    "comparison": 6.08,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
    }
   ],
   "OO_IO_fixed1_national": [
