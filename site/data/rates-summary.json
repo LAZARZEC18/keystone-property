@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-07T13:14:40.747Z",
+ "updated": "2026-10-07T23:03:22.151Z",
  "lenders": 92,
  "rows": 8004,
  "best": {
@@ -113,19 +113,19 @@
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan-investment/"
    },
    {
-    "lender": "Credit Union SA",
-    "product": "2-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 6.34,
-    "comparison": 7.41,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
-   {
     "lender": "GMCU",
     "product": "Fixed Rate Home Loan - Investment",
     "rate": 6.34,
     "comparison": 6.54,
     "lvrMax": 80,
+    "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
+   },
+   {
+    "lender": "GMCU",
+    "product": "Fixed Rate Home Loan - Investment",
+    "rate": 6.34,
+    "comparison": 6.86,
+    "lvrMax": 95,
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
    }
   ],
@@ -137,14 +137,6 @@
     "comparison": 6.63,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 6.24,
-    "comparison": 7.3,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    },
    {
     "lender": "Easy Street",
@@ -169,6 +161,14 @@
     "comparison": 6.42,
     "lvrMax": 80,
     "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 6.39,
+    "comparison": null,
+    "lvrMax": null,
+    "url": null
    }
   ],
   "INV_PI_fixed5": [
@@ -357,14 +357,6 @@
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
    },
    {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed Home Loan Package Interest Only",
-    "rate": 6.49,
-    "comparison": 7.36,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
     "rate": 6.54,
@@ -379,6 +371,14 @@
     "comparison": 6.26,
     "lvrMax": null,
     "url": "https://easystreet.com.au/fixed-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.57,
+    "comparison": 6.36,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_IO_fixed5": [
@@ -509,22 +509,6 @@
   ],
   "OO_PI_fixed2": [
    {
-    "lender": "Credit Union SA",
-    "product": "2-Year Fixed XL Home Loan Package",
-    "rate": 6.09,
-    "comparison": 7.17,
-    "lvrMax": 80,
-    "url": "https://www.creditunionsa.com.au/xl-hl"
-   },
-   {
-    "lender": "Credit Union SA",
-    "product": "2-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 6.09,
-    "comparison": 6.62,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
-   {
     "lender": "SWSbank",
     "product": "Optimum 2 Year Fixed Rate Home Loan",
     "rate": 6.1,
@@ -547,25 +531,25 @@
     "comparison": 6.35,
     "lvrMax": 80,
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
+   },
+   {
+    "lender": "GMCU",
+    "product": "Fixed Rate Home Loan",
+    "rate": 6.19,
+    "comparison": 6.67,
+    "lvrMax": 95,
+    "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
+   },
+   {
+    "lender": "Bank WAW",
+    "product": "Flexible Choice Owner Occupied",
+    "rate": 6.2,
+    "comparison": 6.89,
+    "lvrMax": 80,
+    "url": "https://www.bankwaw.com.au/Loans"
    }
   ],
   "OO_PI_fixed3": [
-   {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed XL Home Loan Package",
-    "rate": 5.99,
-    "comparison": 7.06,
-    "lvrMax": 80,
-    "url": "https://www.creditunionsa.com.au/xl-hl"
-   },
-   {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 5.99,
-    "comparison": 6.57,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
    {
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
@@ -589,17 +573,25 @@
     "comparison": 6.81,
     "lvrMax": 80,
     "url": "https://www.bankwaw.com.au/Loans"
+   },
+   {
+    "lender": "Community First Bank",
+    "product": "GO Basic 3 Year Fixed Home Loan - Owner-Occupied LVR 80% (Principal and Interest)",
+    "rate": 6.19,
+    "comparison": 6.07,
+    "lvrMax": 80,
+    "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed XL Home Loan Package",
+    "rate": 6.24,
+    "comparison": 7.3,
+    "lvrMax": 80,
+    "url": "https://www.creditunionsa.com.au/xl-hl"
    }
   ],
   "OO_PI_fixed5": [
-   {
-    "lender": "Bank First",
-    "product": "Premier Package Home Loan Owner Occupied 5 year fixed LVR <80%",
-    "rate": 6.44,
-    "comparison": 6.69,
-    "lvrMax": 80,
-    "url": "https://www.bankfirst.com.au/loans/home-loans/premier-package-home-loan"
-   },
    {
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
@@ -631,6 +623,14 @@
     "comparison": 6.77,
     "lvrMax": 98,
     "url": "https://www.australianmilitarybank.com.au//products/5-year-fixed-rate-home-loan"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
+    "rate": 6.49,
+    "comparison": 7.54,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "OO_IO_variable": [
@@ -1433,14 +1433,6 @@
   ],
   "OO_PI_fixed5_national": [
    {
-    "lender": "Bank First",
-    "product": "Premier Package Home Loan Owner Occupied 5 year fixed LVR <80%",
-    "rate": 6.44,
-    "comparison": 6.69,
-    "lvrMax": 80,
-    "url": "https://www.bankfirst.com.au/loans/home-loans/premier-package-home-loan"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
     "rate": 6.49,
@@ -1471,6 +1463,14 @@
     "comparison": 7.46,
     "lvrMax": null,
     "url": null
+   },
+   {
+    "lender": "People First and Heritage Bank",
+    "product": "Standard Fixed Rate Home Loans - Owner Occupied",
+    "rate": 6.54,
+    "comparison": 7.82,
+    "lvrMax": 95,
+    "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
    }
   ],
   "OO_IO_variable_national": [
