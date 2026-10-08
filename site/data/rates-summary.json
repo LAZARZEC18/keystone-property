@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-08T05:55:23.646Z",
+ "updated": "2026-10-08T13:21:04.914Z",
  "lenders": 92,
- "rows": 8000,
+ "rows": 8010,
  "best": {
   "INV_PI_variable": [
    {
@@ -441,14 +441,6 @@
     "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
-    "rate": 5.84,
-    "comparison": 5.85,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Eco Home Loan",
     "rate": 5.84,
@@ -463,6 +455,14 @@
     "comparison": 5.95,
     "lvrMax": null,
     "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
+   },
+   {
+    "lender": "Gateway Bank",
+    "product": "Low Rate Essentials",
+    "rate": 5.89,
+    "comparison": 5.91,
+    "lvrMax": null,
+    "url": "https://www.gatewaybank.com.au/home-buying/owner-occupied-home-loans/low-rate-essentials-home-loan-owner-occupied/"
    }
   ],
   "OO_PI_fixed1": [
@@ -635,14 +635,6 @@
   ],
   "OO_IO_variable": [
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
-    "rate": 5.94,
-    "comparison": 5.89,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
     "lender": "Queensland Country Bank",
     "product": "Home Loan-Package",
     "rate": 5.99,
@@ -673,6 +665,14 @@
     "comparison": null,
     "lvrMax": null,
     "url": null
+   },
+   {
+    "lender": "Horizon Bank",
+    "product": "First Home Buyer Loan - Interest Only",
+    "rate": 6.09,
+    "comparison": 6.09,
+    "lvrMax": 90,
+    "url": "https://horizonbank.com.au/loans/owner-occupied-loans/first-home-buyer-loan-interest-only/"
    }
   ],
   "OO_IO_fixed1": [
@@ -853,14 +853,6 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Investment",
-    "rate": 6.19,
-    "comparison": 6.2,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
     "lender": "ING Bank",
     "product": "Mortgage Simplifier",
     "rate": 6.19,
@@ -883,6 +875,14 @@
     "comparison": 6.29,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Special Residential Variable Loan",
+    "rate": 6.24,
+    "comparison": 6.29,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1063,14 +1063,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Investment",
-    "rate": 6.29,
-    "comparison": 6.24,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
     "lender": "ING Bank",
     "product": "Mortgage Simplifier",
     "rate": 6.34,
@@ -1093,6 +1085,14 @@
     "comparison": 6.44,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
+   },
+   {
+    "lender": "ING Bank",
+    "product": "Orange Advantage",
+    "rate": 6.44,
+    "comparison": 6.62,
+    "lvrMax": 80,
+    "url": "https://www.ing.com.au/home-loans/orange-advantage.html"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1265,14 +1265,6 @@
   ],
   "OO_PI_variable_national": [
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
-    "rate": 5.84,
-    "comparison": 5.85,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 5.89,
@@ -1303,6 +1295,14 @@
     "comparison": 6,
     "lvrMax": 95,
     "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Non Offset)",
+    "rate": 6.04,
+    "comparison": 6.07,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1475,14 +1475,6 @@
   ],
   "OO_IO_variable_national": [
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
-    "rate": 5.94,
-    "comparison": 5.89,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.09,
@@ -1505,6 +1497,14 @@
     "comparison": 6.11,
     "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
+    "rate": 6.19,
+    "comparison": 6.14,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
     "lender": "Newcastle Permanent",
