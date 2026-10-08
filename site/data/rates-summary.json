@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-07T23:03:22.151Z",
+ "updated": "2026-10-08T05:55:23.646Z",
  "lenders": 92,
- "rows": 8004,
+ "rows": 8000,
  "best": {
   "INV_PI_variable": [
    {
@@ -239,20 +239,20 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Auswide Bank",
-    "product": "Basic Home Loan",
-    "rate": 6.24,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
-   },
-   {
     "lender": "Coastline Bank",
     "product": "Interest Only (Investment)",
     "rate": 6.24,
     "comparison": 6.31,
     "lvrMax": 80,
     "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
+    "lender": "Easy Street",
+    "product": "Street Smart Variable Home Loan - Investment (Interest Only)",
+    "rate": 6.24,
+    "comparison": 6.2,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/variable-home-loan"
    }
   ],
   "INV_IO_fixed1": [
@@ -1063,14 +1063,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Auswide Bank",
-    "product": "Basic Home Loan",
-    "rate": 6.24,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Discounted Great Rate Home Loan - Variable Interest Only Investment",
     "rate": 6.29,
@@ -1093,6 +1085,14 @@
     "comparison": 6.44,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Special Residential Variable Loan",
+    "rate": 6.39,
+    "comparison": 6.44,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    }
   ],
   "INV_IO_fixed1_national": [
