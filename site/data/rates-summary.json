@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-08T23:18:29.311Z",
- "lenders": 91,
- "rows": 7999,
+ "updated": "2026-10-09T06:01:29.568Z",
+ "lenders": 92,
+ "rows": 8011,
  "best": {
   "INV_PI_variable": [
    {
@@ -89,14 +89,6 @@
   ],
   "INV_PI_fixed2": [
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
-    "rate": 6.24,
-    "comparison": 6.65,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
     "lender": "Coastline Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.29,
@@ -127,17 +119,17 @@
     "comparison": 6.86,
     "lvrMax": 95,
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
+   },
+   {
+    "lender": "Easy Street",
+    "product": "2 Year Fixed Home Loan - Investment (Principal and Interest)",
+    "rate": 6.34,
+    "comparison": 6.19,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/fixed-home-loan"
    }
   ],
   "INV_PI_fixed3": [
-   {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
-    "rate": 6.19,
-    "comparison": 6.63,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
    {
     "lender": "Easy Street",
     "product": "3 Year Fixed Home Loan - Investment (Principal and Interest)",
@@ -161,6 +153,14 @@
     "comparison": 6.42,
     "lvrMax": 80,
     "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
+    "lender": "Community First Bank",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
+    "rate": 6.39,
+    "comparison": 6.83,
+    "lvrMax": 80,
+    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
    },
    {
     "lender": "MoveBank",
@@ -307,14 +307,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Interest Only)",
-    "rate": 6.54,
-    "comparison": 6.7,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
@@ -337,17 +329,17 @@
     "comparison": 6.57,
     "lvrMax": 80,
     "url": "https://cairnsbank.com.au/classic-vs-plus/"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
+    "rate": 6.59,
+    "comparison": 6.39,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    }
   ],
   "INV_IO_fixed3": [
-   {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Interest Only)",
-    "rate": 6.49,
-    "comparison": 6.7,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
@@ -379,6 +371,14 @@
     "comparison": 7.77,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Standard Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.59,
+    "comparison": 7.89,
+    "lvrMax": null,
+    "url": null
    }
   ],
   "INV_IO_fixed5": [
@@ -486,7 +486,7 @@
     "lender": "TMCU",
     "product": "1 Year Fixed Rate Loan",
     "rate": 5.99,
-    "comparison": 6.09,
+    "comparison": 6.56,
     "lvrMax": null,
     "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
    },
@@ -517,14 +517,6 @@
     "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
    },
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 2 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
-    "rate": 6.19,
-    "comparison": 6.48,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
-   },
-   {
     "lender": "GMCU",
     "product": "Fixed Rate Home Loan",
     "rate": 6.19,
@@ -547,17 +539,17 @@
     "comparison": 6.89,
     "lvrMax": 80,
     "url": "https://www.bankwaw.com.au/Loans"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.24,
+    "comparison": 6.34,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "OO_PI_fixed3": [
-   {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
-    "rate": 6.09,
-    "comparison": 6.47,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
-   },
    {
     "lender": "SWSbank",
     "product": "Optimum 3 Year Fixed Rate Home Loan",
@@ -589,6 +581,14 @@
     "comparison": 7.3,
     "lvrMax": 80,
     "url": "https://www.creditunionsa.com.au/xl-hl"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed Home Loan Package Principal and Interest",
+    "rate": 6.24,
+    "comparison": 6.82,
+    "lvrMax": null,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    }
   ],
   "OO_PI_fixed5": [
