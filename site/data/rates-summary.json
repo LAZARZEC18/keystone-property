@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-10T21:36:41.522Z",
- "lenders": 91,
- "rows": 7864,
+ "updated": "2026-10-11T05:39:35.962Z",
+ "lenders": 92,
+ "rows": 8011,
  "best": {
   "INV_PI_variable": [
    {
@@ -467,28 +467,12 @@
   ],
   "OO_PI_fixed1": [
    {
-    "lender": "TMCU",
-    "product": "1 Year Fixed Rate Loan",
-    "rate": 5.89,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
-   },
-   {
     "lender": "Northern Inland Credit Union",
     "product": "Value Fixed Home Loan 12M",
     "rate": 5.99,
     "comparison": 5.87,
     "lvrMax": null,
     "url": "https://www.nicu.com.au/home-loans/value-home-loan-1-year-fixed-special-offer"
-   },
-   {
-    "lender": "TMCU",
-    "product": "1 Year Fixed Rate Loan",
-    "rate": 5.99,
-    "comparison": 6.56,
-    "lvrMax": null,
-    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
    },
    {
     "lender": "Southern Cross Credit Union",
@@ -501,6 +485,22 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
+    "rate": 6.14,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.14,
+    "comparison": 6.3,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 80,
