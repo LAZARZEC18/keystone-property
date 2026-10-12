@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-12T05:49:24.589Z",
- "lenders": 91,
- "rows": 7863,
+ "updated": "2026-10-12T15:14:41.997Z",
+ "lenders": 92,
+ "rows": 8011,
  "best": {
   "INV_PI_variable": [
    {
@@ -877,12 +877,12 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Beyond Bank Australia",
-    "product": "Invest Total Home Loan Package",
+    "lender": "Bank First",
+    "product": "Basic Investment Loan Variable LVR 70-80%",
     "rate": 6.24,
-    "comparison": 6.59,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
+    "comparison": 6.29,
+    "lvrMax": 80,
+    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1468,7 +1468,7 @@
     "lender": "People First and Heritage Bank",
     "product": "Standard Fixed Rate Home Loans - Owner Occupied",
     "rate": 6.54,
-    "comparison": 7.82,
+    "comparison": 7.95,
     "lvrMax": 95,
     "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
    }
