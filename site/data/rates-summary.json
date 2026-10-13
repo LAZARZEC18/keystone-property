@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-13T14:06:11.225Z",
+ "updated": "2026-10-13T22:40:07.105Z",
  "lenders": 92,
- "rows": 8011,
+ "rows": 8013,
  "best": {
   "INV_PI_variable": [
    {
@@ -223,14 +223,6 @@
     "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
    },
    {
-    "lender": "Queensland Country Bank",
-    "product": "Home Loan-Package",
-    "rate": 6.19,
-    "comparison": 6.2,
-    "lvrMax": 80,
-    "url": "https://www.queenslandcountry.bank/Banking/home-loans/"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Non Offset)",
     "rate": 6.24,
@@ -253,6 +245,14 @@
     "comparison": 6.2,
     "lvrMax": null,
     "url": "https://easystreet.com.au/variable-home-loan"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.33,
+    "comparison": 6.56,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "INV_IO_fixed1": [
@@ -310,7 +310,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
-    "comparison": 7.21,
+    "comparison": 7.4,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
@@ -334,7 +334,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
-    "comparison": 6.39,
+    "comparison": 6.59,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    }
@@ -425,22 +425,6 @@
   ],
   "OO_PI_variable": [
    {
-    "lender": "Maitland Mutual",
-    "product": "Budget Home Loan",
-    "rate": 5.79,
-    "comparison": 5.79,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
-   },
-   {
-    "lender": "Maitland Mutual",
-    "product": "Budget Home Loan",
-    "rate": 5.79,
-    "comparison": 5.79,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Eco Home Loan",
     "rate": 5.84,
@@ -463,6 +447,22 @@
     "comparison": 5.89,
     "lvrMax": 80,
     "url": "https://www.coastline.com.au/personal/first-home-buyers"
+   },
+   {
+    "lender": "Coastline Bank",
+    "product": "First Home Buyer Loan",
+    "rate": 5.89,
+    "comparison": 5.89,
+    "lvrMax": null,
+    "url": "https://www.coastline.com.au/personal/first-home-buyers"
+   },
+   {
+    "lender": "Unloan",
+    "product": "Home Loan",
+    "rate": 5.89,
+    "comparison": 5.8,
+    "lvrMax": 80,
+    "url": "https://www.unloan.com.au/"
    }
   ],
   "OO_PI_fixed1": [
@@ -635,14 +635,6 @@
   ],
   "OO_IO_variable": [
    {
-    "lender": "Queensland Country Bank",
-    "product": "Home Loan-Package",
-    "rate": 5.99,
-    "comparison": 6,
-    "lvrMax": 80,
-    "url": "https://www.queenslandcountry.bank/Banking/home-loans/"
-   },
-   {
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
     "rate": 5.99,
@@ -672,6 +664,14 @@
     "rate": 6.09,
     "comparison": 6.16,
     "lvrMax": null,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.09,
+    "comparison": 6.11,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -906,7 +906,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment P+I (60.01 - 80.00% LVR)",
     "rate": 6.49,
-    "comparison": 6.36,
+    "comparison": 6.58,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -956,7 +956,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment P+I (60.01 - 80.00% LVR)",
     "rate": 6.49,
-    "comparison": 6.37,
+    "comparison": 6.57,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1079,20 +1079,20 @@
     "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    },
    {
-    "lender": "Hume Bank",
-    "product": "LiteBlue Investor I/O (60%-80% LVR)",
-    "rate": 6.44,
-    "comparison": 6.34,
-    "lvrMax": 80,
-    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Offset)",
     "rate": 6.45,
     "comparison": 6.48,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Bank First",
+    "product": "Basic Investment Loan Variable IO LVR 70-80%",
+    "rate": 6.49,
+    "comparison": 6.4,
+    "lvrMax": 80,
+    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1116,7 +1116,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
-    "comparison": 6.37,
+    "comparison": 6.59,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1158,7 +1158,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
-    "comparison": 6.39,
+    "comparison": 6.59,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1273,22 +1273,6 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Hume Bank",
-    "product": "LiteBlue Deposit Scheme O/Occ P+I (up to 98%LVR)",
-    "rate": 5.99,
-    "comparison": 6,
-    "lvrMax": 98,
-    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
-   },
-   {
-    "lender": "Hume Bank",
-    "product": "LiteBlue Fhb Non Scheme O/Occ P+I (up to 95%LVR)",
-    "rate": 5.99,
-    "comparison": 6,
-    "lvrMax": 95,
-    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Non Offset)",
     "rate": 6.04,
@@ -1303,6 +1287,22 @@
     "comparison": 6.1,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+   },
+   {
+    "lender": "Bank First",
+    "product": "Basic Home Loan Variable LVR 70-80%",
+    "rate": 6.09,
+    "comparison": 6.14,
+    "lvrMax": 80,
+    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-owner-occupied"
+   },
+   {
+    "lender": "Macquarie Bank",
+    "product": "Macquarie Basic Home Loan",
+    "rate": 6.09,
+    "comparison": 6.11,
+    "lvrMax": 80,
+    "url": "https://www.macquarie.com.au/home-loans/basic-home-loan.html"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1342,7 +1342,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix O/Occ P+I (60.01 -80.00% LVR)",
     "rate": 6.39,
-    "comparison": 6.21,
+    "comparison": 6.43,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    }
@@ -1376,7 +1376,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix O/Occ P+I (60.01 - 80.00% LVR)",
     "rate": 6.39,
-    "comparison": 6.23,
+    "comparison": 6.43,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1384,7 +1384,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue Deposit Scheme 2 Year Fix O/Occ P+I (up to 98% LVR)",
     "rate": 6.39,
-    "comparison": 6.15,
+    "comparison": 6.35,
     "lvrMax": 98,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    }
