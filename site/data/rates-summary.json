@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-12T15:14:41.997Z",
+ "updated": "2026-10-13T00:35:03.979Z",
  "lenders": 92,
  "rows": 8011,
  "best": {
@@ -562,17 +562,9 @@
     "lender": "Community First Bank",
     "product": "GO Basic 3 Year Fixed Home Loan - Owner-Occupied LVR 80% (Principal and Interest)",
     "rate": 6.19,
-    "comparison": 6.07,
+    "comparison": 6.27,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan/"
-   },
-   {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed XL Home Loan Package",
-    "rate": 6.24,
-    "comparison": 7.3,
-    "lvrMax": 80,
-    "url": "https://www.creditunionsa.com.au/xl-hl"
    },
    {
     "lender": "Credit Union SA",
@@ -581,6 +573,14 @@
     "comparison": 6.82,
     "lvrMax": null,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed XL Home Loan Package",
+    "rate": 6.24,
+    "comparison": 7.3,
+    "lvrMax": 80,
+    "url": "https://www.creditunionsa.com.au/xl-hl"
    },
    {
     "lender": "MoveBank",
@@ -1297,12 +1297,12 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "BCU Bank",
-    "product": "Omg Home Loan (P&I) LVR>60-80",
-    "rate": 6.04,
-    "comparison": 6.07,
-    "lvrMax": 80,
-    "url": "https://www.bcu.com.au/home-loans/owner-occupier/omg-home-loan/"
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
+    "rate": 6.09,
+    "comparison": 6.1,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1552,7 +1552,7 @@
     "lender": "BCU Bank",
     "product": "Fixed IO Home Loan",
     "rate": 6.59,
-    "comparison": 6.29,
+    "comparison": 6.52,
     "lvrMax": null,
     "url": "https://www.bcu.com.au/home-loans/owner-occupier/fixed-rate-home-loan/"
    }
@@ -1594,7 +1594,7 @@
     "lender": "BCU Bank",
     "product": "Fixed IO Home Loan",
     "rate": 6.59,
-    "comparison": 6.33,
+    "comparison": 6.53,
     "lvrMax": null,
     "url": "https://www.bcu.com.au/home-loans/owner-occupier/fixed-rate-home-loan/"
    }
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.84
+ "medianInvestorVariable": 6.89
 }
