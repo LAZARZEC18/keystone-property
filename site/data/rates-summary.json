@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-13T22:40:07.105Z",
+ "updated": "2026-10-14T04:46:53.076Z",
  "lenders": 92,
  "rows": 8013,
  "best": {
@@ -468,7 +468,7 @@
   "OO_PI_fixed1": [
    {
     "lender": "Northern Inland Credit Union",
-    "product": "Value Fixed Home Loan 12M",
+    "product": "Value Home Loan - Fixed 12M",
     "rate": 5.99,
     "comparison": 5.87,
     "lvrMax": null,
@@ -643,14 +643,6 @@
     "url": null
    },
    {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
-    "rate": 6.09,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
-   },
-   {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.09,
@@ -673,6 +665,14 @@
     "comparison": 6.11,
     "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.13,
+    "comparison": 6.37,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "OO_IO_fixed1": [
@@ -854,19 +854,19 @@
    },
    {
     "lender": "MyState Bank",
-    "product": "Basic Variable Loan",
-    "rate": 6.24,
-    "comparison": 6.29,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
-   },
-   {
-    "lender": "MyState Bank",
     "product": "Special Residential Variable Loan",
     "rate": 6.24,
     "comparison": 6.29,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Basic Variable Loan",
+    "rate": 6.24,
+    "comparison": 6.29,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
    },
    {
     "lender": "Regional Australia Bank",
@@ -1064,19 +1064,19 @@
    },
    {
     "lender": "MyState Bank",
-    "product": "Basic Variable Loan",
-    "rate": 6.39,
-    "comparison": 6.44,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
-   },
-   {
-    "lender": "MyState Bank",
     "product": "Special Residential Variable Loan",
     "rate": 6.39,
     "comparison": 6.44,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Basic Variable Loan",
+    "rate": 6.39,
+    "comparison": 6.44,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
    },
    {
     "lender": "Regional Australia Bank",
