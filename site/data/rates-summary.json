@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-14T04:46:53.076Z",
- "lenders": 92,
- "rows": 8013,
+ "updated": "2026-10-14T11:45:11.258Z",
+ "lenders": 91,
+ "rows": 7854,
  "best": {
   "INV_PI_variable": [
    {
@@ -155,20 +155,20 @@
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
    },
    {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
-    "rate": 6.39,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
-   },
-   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 3 Year Investment",
     "rate": 6.44,
     "comparison": 8.07,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Investment",
+    "rate": 6.49,
+    "comparison": 7.9,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    }
   ],
   "INV_PI_fixed5": [
@@ -179,14 +179,6 @@
     "comparison": 7.86,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
-    "rate": 6.59,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
    },
    {
     "lender": "Newcastle Permanent",
@@ -211,6 +203,14 @@
     "comparison": 7.76,
     "lvrMax": null,
     "url": null
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Fixed Rate Home Loan Investment Principal and Interest",
+    "rate": 6.69,
+    "comparison": 7.82,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "INV_IO_variable": [
@@ -415,12 +415,12 @@
     "url": null
    },
    {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "lender": "Newcastle Permanent",
+    "product": "Fixed Rate Home Loan Investment Interest Only",
     "rate": 6.79,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
+    "comparison": 7.88,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "OO_PI_variable": [
@@ -575,31 +575,23 @@
     "url": "https://www.creditunionsa.com.au/xl-hl"
    },
    {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
-    "rate": 6.24,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
-   },
-   {
     "lender": "Easy Street",
     "product": "3 Year Fixed Home Loan - Owner-Occupied (Principal and Interest)",
     "rate": 6.24,
     "comparison": 6.18,
     "lvrMax": null,
     "url": "https://easystreet.com.au/fixed-home-loan"
+   },
+   {
+    "lender": "Community First Bank",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
+    "rate": 6.29,
+    "comparison": 6.66,
+    "lvrMax": 80,
+    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
    }
   ],
   "OO_PI_fixed5": [
-   {
-    "lender": "MoveBank",
-    "product": "Everyday Home Loan",
-    "rate": 6.44,
-    "comparison": null,
-    "lvrMax": null,
-    "url": null
-   },
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
@@ -631,13 +623,21 @@
     "comparison": 7.67,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 5 Year Owner Occupied",
+    "rate": 6.54,
+    "comparison": 7.41,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    }
   ],
   "OO_IO_variable": [
    {
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
-    "rate": 5.99,
+    "rate": 6.09,
     "comparison": null,
     "lvrMax": null,
     "url": null
