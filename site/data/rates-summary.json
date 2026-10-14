@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-14T17:05:26.512Z",
- "lenders": 92,
- "rows": 7989,
+ "updated": "2026-10-14T21:37:57.975Z",
+ "lenders": 91,
+ "rows": 7799,
  "best": {
   "INV_PI_variable": [
    {
@@ -644,6 +644,14 @@
    },
    {
     "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.09,
+    "comparison": 6.11,
+    "lvrMax": 80,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.09,
     "comparison": 6.13,
@@ -656,14 +664,6 @@
     "rate": 6.09,
     "comparison": 6.16,
     "lvrMax": null,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
-    "rate": 6.09,
-    "comparison": 6.11,
-    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    },
    {
@@ -1297,12 +1297,12 @@
     "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-owner-occupied"
    },
    {
-    "lender": "Macquarie Bank",
-    "product": "Macquarie Basic Home Loan",
+    "lender": "Virgin Money",
+    "product": "Lite Home Loan",
     "rate": 6.09,
     "comparison": 6.11,
     "lvrMax": 80,
-    "url": "https://www.macquarie.com.au/home-loans/basic-home-loan.html"
+    "url": "https://virginmoney.com.au/home-loans"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1476,6 +1476,14 @@
   "OO_IO_variable_national": [
    {
     "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.09,
+    "comparison": 6.11,
+    "lvrMax": 80,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.09,
     "comparison": 6.13,
@@ -1488,14 +1496,6 @@
     "rate": 6.09,
     "comparison": 6.16,
     "lvrMax": null,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
-    "rate": 6.09,
-    "comparison": 6.11,
-    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    },
    {
@@ -1550,10 +1550,10 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "product": "Flexidiscount Home Loan",
     "rate": 6.59,
-    "comparison": 6.18,
-    "lvrMax": 90,
+    "comparison": 6.17,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1592,10 +1592,10 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "product": "Flexidiscount Home Loan",
     "rate": 6.59,
-    "comparison": 6.23,
-    "lvrMax": 90,
+    "comparison": 6.21,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1626,18 +1626,18 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "product": "Flexidiscount Home Loan",
     "rate": 6.64,
-    "comparison": 6.29,
-    "lvrMax": 90,
+    "comparison": 6.27,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    },
    {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.64,
-    "comparison": 6.31,
-    "lvrMax": null,
+    "comparison": 6.29,
+    "lvrMax": 90,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
