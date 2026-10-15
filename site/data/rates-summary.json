@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-14T21:37:57.975Z",
- "lenders": 91,
- "rows": 7799,
+ "updated": "2026-10-15T04:29:33.312Z",
+ "lenders": 92,
+ "rows": 7990,
  "best": {
   "INV_PI_variable": [
    {
@@ -47,14 +47,6 @@
   ],
   "INV_PI_fixed1": [
    {
-    "lender": "Coastline Bank",
-    "product": "Fixed Rate Investment Loan",
-    "rate": 6.24,
-    "comparison": 6.39,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/home-loans"
-   },
-   {
     "lender": "Cairns Bank",
     "product": "Investment Plus HL Fixed 1yr 60-80 LVR PI",
     "rate": 6.34,
@@ -85,17 +77,17 @@
     "comparison": 6.5,
     "lvrMax": 95,
     "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.34,
+    "comparison": 6.5,
+    "lvrMax": 80,
+    "url": null
    }
   ],
   "INV_PI_fixed2": [
-   {
-    "lender": "Coastline Bank",
-    "product": "Fixed Rate Investment Loan",
-    "rate": 6.29,
-    "comparison": 6.4,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/home-loans"
-   },
    {
     "lender": "GMCU",
     "product": "Fixed Rate Home Loan - Investment",
@@ -127,6 +119,14 @@
     "comparison": 6.38,
     "lvrMax": 80,
     "url": "https://cairnsbank.com.au/classic-vs-plus/"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.42,
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_PI_fixed3": [
@@ -137,14 +137,6 @@
     "comparison": 6.18,
     "lvrMax": null,
     "url": "https://easystreet.com.au/fixed-home-loan"
-   },
-   {
-    "lender": "Coastline Bank",
-    "product": "Fixed Rate Investment Loan",
-    "rate": 6.34,
-    "comparison": 6.42,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/home-loans"
    },
    {
     "lender": "Community First Bank",
@@ -169,6 +161,14 @@
     "comparison": 7.9,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "Community First Bank",
+    "product": "GO Basic 3 Year Fixed Home Loan - Investment LVR 80% (Principal and Interest)",
+    "rate": 6.49,
+    "comparison": 6.47,
+    "lvrMax": 80,
+    "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan-investment/"
    }
   ],
   "INV_PI_fixed5": [
@@ -231,14 +231,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Coastline Bank",
-    "product": "Interest Only (Investment)",
-    "rate": 6.24,
-    "comparison": 6.31,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/home-loans"
-   },
-   {
     "lender": "Easy Street",
     "product": "Street Smart Variable Home Loan - Investment (Interest Only)",
     "rate": 6.24,
@@ -252,6 +244,14 @@
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.33,
+    "comparison": 6.56,
+    "lvrMax": 80,
     "url": null
    }
   ],
@@ -441,28 +441,28 @@
     "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
    },
    {
-    "lender": "Coastline Bank",
-    "product": "First Home Buyer Loan",
-    "rate": 5.89,
-    "comparison": 5.89,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/first-home-buyers"
-   },
-   {
-    "lender": "Coastline Bank",
-    "product": "First Home Buyer Loan",
-    "rate": 5.89,
-    "comparison": 5.89,
-    "lvrMax": null,
-    "url": "https://www.coastline.com.au/personal/first-home-buyers"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 5.89,
     "comparison": 5.8,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
+   },
+   {
+    "lender": "The Mac",
+    "product": "First Home Buyers Owner Occupied P&I",
+    "rate": 5.92,
+    "comparison": 5.98,
+    "lvrMax": null,
+    "url": "https://themaccu.com.au/solutions/home-loans/all-home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "OO_PI_fixed1": [
@@ -560,19 +560,19 @@
    },
    {
     "lender": "Credit Union SA",
-    "product": "3-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 6.24,
-    "comparison": 6.82,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
-   },
-   {
-    "lender": "Credit Union SA",
     "product": "3-Year Fixed XL Home Loan Package",
     "rate": 6.24,
     "comparison": 7.3,
     "lvrMax": 80,
     "url": "https://www.creditunionsa.com.au/xl-hl"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed Home Loan Package Principal and Interest",
+    "rate": 6.24,
+    "comparison": 6.82,
+    "lvrMax": null,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    },
    {
     "lender": "Easy Street",
@@ -643,35 +643,35 @@
     "url": null
    },
    {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
-    "rate": 6.09,
-    "comparison": 6.11,
-    "lvrMax": 80,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
-    "rate": 6.09,
-    "comparison": 6.13,
-    "lvrMax": 90,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
-    "rate": 6.09,
-    "comparison": 6.16,
-    "lvrMax": null,
-    "url": "https://bankofus.com.au/home-loans"
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.13,
+    "comparison": 6.37,
+    "lvrMax": 95,
+    "url": null
    },
    {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.13,
     "comparison": 6.37,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.13,
+    "comparison": 6.37,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.13,
+    "comparison": 6.37,
+    "lvrMax": 80,
     "url": null
    }
   ],
@@ -1475,30 +1475,6 @@
   ],
   "OO_IO_variable_national": [
    {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
-    "rate": 6.09,
-    "comparison": 6.11,
-    "lvrMax": 80,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
-    "rate": 6.09,
-    "comparison": 6.13,
-    "lvrMax": 90,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
-    "lender": "Bank of us",
-    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
-    "rate": 6.09,
-    "comparison": 6.16,
-    "lvrMax": null,
-    "url": "https://bankofus.com.au/home-loans"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
     "rate": 6.19,
@@ -1507,12 +1483,36 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Non Offset)",
-    "rate": 6.29,
-    "comparison": 6.09,
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.19,
+    "comparison": 6.19,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.19,
+    "comparison": 6.19,
+    "lvrMax": null,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.19,
+    "comparison": 6.19,
     "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.19,
+    "comparison": 6.19,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "OO_IO_fixed1_national": [
@@ -1550,10 +1550,10 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.59,
-    "comparison": 6.17,
-    "lvrMax": 80,
+    "comparison": 6.23,
+    "lvrMax": 90,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1592,10 +1592,10 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.59,
-    "comparison": 6.21,
-    "lvrMax": 80,
+    "comparison": 6.27,
+    "lvrMax": 90,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1626,18 +1626,18 @@
    },
    {
     "lender": "Bank of us",
-    "product": "Flexidiscount Home Loan",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.64,
-    "comparison": 6.27,
-    "lvrMax": 80,
+    "comparison": 6.32,
+    "lvrMax": 90,
     "url": "https://bankofus.com.au/home-loans"
    },
    {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.64,
-    "comparison": 6.29,
-    "lvrMax": 90,
+    "comparison": 6.39,
+    "lvrMax": null,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.89
+ "medianInvestorVariable": 6.94
 }
