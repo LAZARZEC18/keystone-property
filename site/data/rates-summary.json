@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-15T16:54:17.887Z",
- "lenders": 91,
- "rows": 7843,
+ "updated": "2026-10-15T21:19:05.749Z",
+ "lenders": 92,
+ "rows": 7992,
  "best": {
   "INV_PI_variable": [
    {
@@ -11,14 +11,6 @@
     "comparison": 5.98,
     "lvrMax": null,
     "url": "https://www.nicu.com.au/home-loans/value-home-loan"
-   },
-   {
-    "lender": "Unloan",
-    "product": "Home Loan",
-    "rate": 6.04,
-    "comparison": 5.95,
-    "lvrMax": 80,
-    "url": "https://www.unloan.com.au/"
    },
    {
     "lender": "Summerland Bank",
@@ -43,6 +35,14 @@
     "comparison": 6.14,
     "lvrMax": null,
     "url": "https://easystreet.com.au/variable-home-loan"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.13,
+    "comparison": 6.48,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "INV_PI_fixed1": [
@@ -441,14 +441,6 @@
     "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
    },
    {
-    "lender": "Unloan",
-    "product": "Home Loan",
-    "rate": 5.89,
-    "comparison": 5.8,
-    "lvrMax": 80,
-    "url": "https://www.unloan.com.au/"
-   },
-   {
     "lender": "The Mac",
     "product": "First Home Buyers Owner Occupied P&I",
     "rate": 5.92,
@@ -462,6 +454,14 @@
     "rate": 5.93,
     "comparison": 6.28,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 80,
     "url": null
    }
   ],
@@ -845,14 +845,6 @@
   ],
   "INV_PI_variable_national": [
    {
-    "lender": "Unloan",
-    "product": "Home Loan",
-    "rate": 6.04,
-    "comparison": 5.95,
-    "lvrMax": 80,
-    "url": "https://www.unloan.com.au/"
-   },
-   {
     "lender": "MyState Bank",
     "product": "Special Residential Variable Loan",
     "rate": 6.24,
@@ -877,12 +869,20 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Bank First",
-    "product": "Basic Investment Loan Variable LVR 70-80%",
+    "lender": "Virgin Money",
+    "product": "Lite Home Loan",
     "rate": 6.24,
-    "comparison": 6.29,
+    "comparison": 6.26,
     "lvrMax": 80,
-    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
+    "url": "https://virginmoney.com.au/home-loans"
+   },
+   {
+    "lender": "Unloan",
+    "product": "Home Loan",
+    "rate": 6.29,
+    "comparison": 6.2,
+    "lvrMax": 80,
+    "url": "https://www.unloan.com.au/"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1087,12 +1087,12 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Bank First",
-    "product": "Basic Investment Loan Variable IO LVR 70-80%",
+    "lender": "Auswide Bank",
+    "product": "Basic Home Loan",
     "rate": 6.49,
-    "comparison": 6.4,
+    "comparison": 6.53,
     "lvrMax": 80,
-    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
+    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1265,14 +1265,6 @@
   ],
   "OO_PI_variable_national": [
    {
-    "lender": "Unloan",
-    "product": "Home Loan",
-    "rate": 5.89,
-    "comparison": 5.8,
-    "lvrMax": 80,
-    "url": "https://www.unloan.com.au/"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Non Offset)",
     "rate": 6.04,
@@ -1289,20 +1281,28 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Bank First",
-    "product": "Basic Home Loan Variable LVR 70-80%",
-    "rate": 6.09,
-    "comparison": 6.14,
-    "lvrMax": 80,
-    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-owner-occupied"
-   },
-   {
     "lender": "Virgin Money",
     "product": "Lite Home Loan",
     "rate": 6.09,
     "comparison": 6.11,
     "lvrMax": 80,
     "url": "https://virginmoney.com.au/home-loans"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.14,
+    "comparison": 6.27,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Unloan",
+    "product": "Home Loan",
+    "rate": 6.14,
+    "comparison": 6.05,
+    "lvrMax": 80,
+    "url": "https://www.unloan.com.au/"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.9
+ "medianInvestorVariable": 6.94
 }
