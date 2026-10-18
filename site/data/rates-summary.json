@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-18T15:49:09.124Z",
- "lenders": 91,
- "rows": 7846,
+ "updated": "2026-10-18T20:35:47.021Z",
+ "lenders": 90,
+ "rows": 7656,
  "best": {
   "INV_PI_variable": [
    {
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.9
+ "medianInvestorVariable": 6.89
 }
