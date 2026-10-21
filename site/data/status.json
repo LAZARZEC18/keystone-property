@@ -1,36 +1,36 @@
 {
- "started": "2026-10-20T21:33:10.131Z",
+ "started": "2026-10-21T04:35:18.090Z",
  "jobs": {
   "rates": {
    "ok": true,
-   "ms": 69400,
-   "note": "7993 rates, 92 lenders"
+   "ms": 83330,
+   "note": "7994 rates, 92 lenders"
   },
   "rba": {
    "ok": true,
-   "ms": 2539,
+   "ms": 2203,
    "note": "cash 4.6"
   },
   "news": {
    "ok": true,
-   "ms": 5057,
-   "note": "10 headlines"
+   "ms": 1286,
+   "note": "11 headlines"
   },
   "index": {
    "ok": true,
-   "ms": 882,
+   "ms": 874,
    "note": "2026-10-21: month-end 30 September 2026"
   },
   "publish-market": {
    "ok": true,
-   "ms": 3,
+   "ms": 1,
    "note": null
   },
   "weekly": {
    "ok": true,
-   "ms": 3,
+   "ms": 4,
    "note": "2026-10-19"
   }
  },
- "finished": "2026-10-20T21:34:28.017Z"
+ "finished": "2026-10-21T04:36:45.790Z"
 }
