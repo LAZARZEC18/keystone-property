@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-21T17:07:19.202Z",
+ "updated": "2026-10-21T21:36:37.007Z",
  "lenders": 91,
  "rows": 7847,
  "best": {
@@ -113,20 +113,20 @@
     "url": "https://cairnsbank.com.au/classic-vs-plus/"
    },
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Fixed Investor)",
-    "rate": 6.42,
-    "comparison": 6.3,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.44,
     "comparison": 6.85,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.44,
+    "comparison": 6.54,
+    "lvrMax": 95,
+    "url": null
    }
   ],
   "INV_PI_fixed3": [
@@ -223,14 +223,6 @@
     "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
    },
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Non Offset)",
-    "rate": 6.24,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.33,
@@ -253,6 +245,14 @@
     "comparison": 6.56,
     "lvrMax": 95,
     "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
+    "rate": 6.33,
+    "comparison": 6.56,
+    "lvrMax": 80,
+    "url": null
    }
   ],
   "INV_IO_fixed1": [
@@ -260,7 +260,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.54,
-    "comparison": 6.3,
+    "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -299,20 +299,20 @@
   ],
   "INV_IO_fixed2": [
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Fixed Investor)",
-    "rate": 6.42,
-    "comparison": 6.3,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
     "comparison": 7.4,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.57,
+    "comparison": 6.53,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
     "lender": "Greater Bank",
@@ -352,7 +352,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.57,
-    "comparison": 6.36,
+    "comparison": 6.54,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -861,14 +861,6 @@
     "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
    },
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Non Offset)",
-    "rate": 6.24,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "Virgin Money",
     "product": "Lite Home Loan",
     "rate": 6.24,
@@ -883,6 +875,14 @@
     "comparison": 6.2,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.35,
+    "comparison": 6.35,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -922,20 +922,12 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.54,
-    "comparison": 6.3,
+    "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_PI_fixed2_national": [
-   {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Fixed Investor)",
-    "rate": 6.42,
-    "comparison": 6.3,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 2 Year Investment",
@@ -967,6 +959,14 @@
     "comparison": 8.09,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Investor)",
+    "rate": 6.57,
+    "comparison": 6.53,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_PI_fixed3_national": [
@@ -998,7 +998,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.57,
-    "comparison": 6.36,
+    "comparison": 6.54,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1055,14 +1055,6 @@
   ],
   "INV_IO_variable_national": [
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Non Offset)",
-    "rate": 6.24,
-    "comparison": 6.27,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "MyState Bank",
     "product": "Special Residential Variable Loan",
     "rate": 6.39,
@@ -1080,9 +1072,9 @@
    },
    {
     "lender": "Regional Australia Bank",
-    "product": "Home Loan (Offset)",
-    "rate": 6.45,
-    "comparison": 6.48,
+    "product": "Home Loan (Non Offset)",
+    "rate": 6.49,
+    "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1093,6 +1085,14 @@
     "comparison": 6.53,
     "lvrMax": 80,
     "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Interest Only Investment",
+    "rate": 6.54,
+    "comparison": 6.49,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1100,7 +1100,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.54,
-    "comparison": 6.3,
+    "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1141,8 +1141,8 @@
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
-    "rate": 6.42,
-    "comparison": 6.3,
+    "rate": 6.57,
+    "comparison": 6.53,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1192,7 +1192,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.57,
-    "comparison": 6.36,
+    "comparison": 6.54,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1265,14 +1265,6 @@
   ],
   "OO_PI_variable_national": [
    {
-    "lender": "Regional Australia Bank",
-    "product": "Home Loan (Non Offset)",
-    "rate": 6.04,
-    "comparison": 6.07,
-    "lvrMax": 80,
-    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
     "rate": 6.09,
@@ -1303,6 +1295,14 @@
     "comparison": 6.05,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Special Residential Variable Loan",
+    "rate": 6.19,
+    "comparison": 6.24,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1318,7 +1318,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Owner Occupied)",
     "rate": 6.39,
-    "comparison": 6.1,
+    "comparison": 6.33,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1418,7 +1418,7 @@
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Owner Occupied)",
     "rate": 6.41,
-    "comparison": 6.17,
+    "comparison": 6.35,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.9
+ "medianInvestorVariable": 6.93
 }
