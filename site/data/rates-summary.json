@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-21T21:36:37.007Z",
+ "updated": "2026-10-22T04:35:06.564Z",
  "lenders": 91,
  "rows": 7847,
  "best": {
@@ -13,22 +13,6 @@
     "url": "https://www.nicu.com.au/home-loans/value-home-loan"
    },
    {
-    "lender": "Summerland Bank",
-    "product": "Basic Variable Investment Loan",
-    "rate": 6.09,
-    "comparison": 6.15,
-    "lvrMax": null,
-    "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
-   },
-   {
-    "lender": "Summerland Bank",
-    "product": "Eco Investment Home Loan",
-    "rate": 6.09,
-    "comparison": 6.15,
-    "lvrMax": null,
-    "url": "https://www.summerland.com.au/loans-interest"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.13,
@@ -39,6 +23,22 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
+    "rate": 6.13,
+    "comparison": 6.48,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
+    "rate": 6.13,
+    "comparison": 6.48,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 80,
@@ -425,22 +425,6 @@
   ],
   "OO_PI_variable": [
    {
-    "lender": "Summerland Bank",
-    "product": "Eco Home Loan",
-    "rate": 5.84,
-    "comparison": 5.9,
-    "lvrMax": null,
-    "url": "https://www.summerland.com.au/loans-interest"
-   },
-   {
-    "lender": "Summerland Bank",
-    "product": "Basic Variable Home Loan",
-    "rate": 5.89,
-    "comparison": 5.95,
-    "lvrMax": null,
-    "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
-   },
-   {
     "lender": "The Mac",
     "product": "First Home Buyers Owner Occupied P&I",
     "rate": 5.92,
@@ -459,6 +443,22 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
     "rate": 5.93,
     "comparison": 6.28,
     "lvrMax": 80,
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.93
+ "medianInvestorVariable": 6.94
 }
