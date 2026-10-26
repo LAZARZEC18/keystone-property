@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-26T12:51:25.564Z",
+ "updated": "2026-10-26T22:37:48.682Z",
  "lenders": 91,
  "rows": 7971,
  "best": {
@@ -845,22 +845,6 @@
   ],
   "INV_PI_variable_national": [
    {
-    "lender": "MyState Bank",
-    "product": "Special Residential Variable Loan",
-    "rate": 6.24,
-    "comparison": 6.29,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
-   },
-   {
-    "lender": "MyState Bank",
-    "product": "Basic Variable Loan",
-    "rate": 6.24,
-    "comparison": 6.29,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
-   },
-   {
     "lender": "Virgin Money",
     "product": "Lite Home Loan",
     "rate": 6.24,
@@ -883,6 +867,22 @@
     "comparison": 6.35,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Investment",
+    "rate": 6.44,
+    "comparison": 6.45,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "ING Bank",
+    "product": "Mortgage Simplifier",
+    "rate": 6.44,
+    "comparison": 6.47,
+    "lvrMax": 80,
+    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1055,22 +1055,6 @@
   ],
   "INV_IO_variable_national": [
    {
-    "lender": "MyState Bank",
-    "product": "Special Residential Variable Loan",
-    "rate": 6.39,
-    "comparison": 6.44,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
-   },
-   {
-    "lender": "MyState Bank",
-    "product": "Basic Variable Loan",
-    "rate": 6.39,
-    "comparison": 6.44,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Non Offset)",
     "rate": 6.49,
@@ -1093,6 +1077,22 @@
     "comparison": 6.49,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "ME Bank",
+    "product": "EconoME Home Loan",
+    "rate": 6.54,
+    "comparison": 6.55,
+    "lvrMax": 80,
+    "url": "https://www.mebank.com.au/home-loans/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Special Residential Variable Loan",
+    "rate": 6.59,
+    "comparison": 6.64,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1297,12 +1297,12 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "MyState Bank",
-    "product": "Special Residential Variable Loan",
+    "lender": "Newcastle Permanent",
+    "product": "Real Deal Home Loan Principal and Interest",
     "rate": 6.19,
-    "comparison": 6.24,
+    "comparison": 6.23,
     "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
    }
   ],
   "OO_PI_fixed1_national": [
