@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-25T20:46:42.367Z",
- "lenders": 92,
- "rows": 7998,
+ "updated": "2026-10-26T04:38:07.810Z",
+ "lenders": 90,
+ "rows": 7824,
  "best": {
   "INV_PI_variable": [
    {
@@ -215,14 +215,6 @@
   ],
   "INV_IO_variable": [
    {
-    "lender": "The Mac",
-    "product": "Govt Low Dep Variable Ooc PI",
-    "rate": 5.92,
-    "comparison": 5.98,
-    "lvrMax": null,
-    "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.33,
@@ -252,6 +244,14 @@
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.33,
+    "comparison": 6.56,
+    "lvrMax": 95,
     "url": null
    }
   ],
@@ -425,14 +425,6 @@
   ],
   "OO_PI_variable": [
    {
-    "lender": "The Mac",
-    "product": "First Home Buyers Owner Occupied P&I",
-    "rate": 5.92,
-    "comparison": 5.98,
-    "lvrMax": null,
-    "url": "https://themaccu.com.au/solutions/home-loans/all-home-loans/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 5.93,
@@ -462,6 +454,14 @@
     "rate": 5.93,
     "comparison": 6.28,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 95,
     "url": null
    }
   ],
