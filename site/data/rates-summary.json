@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-27T12:03:05.507Z",
- "lenders": 90,
- "rows": 7945,
+ "updated": "2026-10-27T17:57:27.026Z",
+ "lenders": 91,
+ "rows": 7969,
  "best": {
   "INV_PI_variable": [
    {
@@ -408,19 +408,19 @@
    },
    {
     "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.88,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
     "rate": 6.79,
     "comparison": 7.98,
     "lvrMax": 90,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Fixed Rate Home Loan Investment Interest Only",
+    "rate": 6.79,
+    "comparison": 7.88,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "OO_PI_variable": [
@@ -1248,19 +1248,19 @@
    },
    {
     "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.88,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
     "rate": 6.79,
     "comparison": 7.98,
     "lvrMax": 90,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Fixed Rate Home Loan Investment Interest Only",
+    "rate": 6.79,
+    "comparison": 7.88,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "OO_PI_variable_national": [
@@ -1466,11 +1466,11 @@
    },
    {
     "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
+    "product": "Fixed Rate Home Loan Principal and Interest",
     "rate": 6.59,
-    "comparison": 7.71,
-    "lvrMax": 95,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "comparison": 7.59,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
    }
   ],
   "OO_IO_variable_national": [
