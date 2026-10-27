@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-26T22:37:48.682Z",
+ "updated": "2026-10-27T04:56:04.597Z",
  "lenders": 91,
  "rows": 7971,
  "best": {
@@ -1063,14 +1063,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Auswide Bank",
-    "product": "Basic Home Loan",
-    "rate": 6.49,
-    "comparison": 6.53,
-    "lvrMax": 80,
-    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Discounted Great Rate Home Loan - Variable Interest Only Investment",
     "rate": 6.54,
@@ -1085,6 +1077,14 @@
     "comparison": 6.55,
     "lvrMax": 80,
     "url": "https://www.mebank.com.au/home-loans/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Basic Variable Loan",
+    "rate": 6.59,
+    "comparison": 6.64,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
    },
    {
     "lender": "MyState Bank",
