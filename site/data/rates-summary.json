@@ -1,18 +1,10 @@
 {
- "updated": "2026-10-28T05:31:01.774Z",
- "lenders": 91,
- "rows": 7976,
+ "updated": "2026-10-28T12:43:43.563Z",
+ "lenders": 90,
+ "rows": 7973,
  "best": {
   "INV_PI_variable": [
    {
-    "lender": "Northern Inland Credit Union",
-    "product": "Value Home Loan - Investment",
-    "rate": 5.94,
-    "comparison": 5.98,
-    "lvrMax": null,
-    "url": "https://www.nicu.com.au/home-loans/value-home-loan"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.13,
@@ -42,6 +34,14 @@
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.13,
+    "comparison": 6.48,
+    "lvrMax": 95,
     "url": null
    }
   ],
@@ -467,14 +467,6 @@
   ],
   "OO_PI_fixed1": [
    {
-    "lender": "Northern Inland Credit Union",
-    "product": "Value Home Loan - Fixed 12M",
-    "rate": 5.99,
-    "comparison": 5.87,
-    "lvrMax": null,
-    "url": "https://www.nicu.com.au/home-loans/value-home-loan-1-year-fixed-special-offer"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.14,
@@ -504,6 +496,14 @@
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.14,
+    "comparison": 6.3,
+    "lvrMax": 95,
     "url": null
    }
   ],
