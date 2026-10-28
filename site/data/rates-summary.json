@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-27T22:08:32.309Z",
- "lenders": 90,
- "rows": 7824,
+ "updated": "2026-10-28T05:31:01.774Z",
+ "lenders": 91,
+ "rows": 7976,
  "best": {
   "INV_PI_variable": [
    {
@@ -47,14 +47,6 @@
   ],
   "INV_PI_fixed1": [
    {
-    "lender": "Cairns Bank",
-    "product": "Investment Plus HL Fixed 1yr 60-80 LVR PI",
-    "rate": 6.34,
-    "comparison": 6.4,
-    "lvrMax": 80,
-    "url": "https://cairnsbank.com.au/classic-vs-plus/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.34,
@@ -84,6 +76,14 @@
     "rate": 6.34,
     "comparison": 6.5,
     "lvrMax": 80,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Broker Home Loan",
+    "rate": 6.34,
+    "comparison": 6.5,
+    "lvrMax": 95,
     "url": null
    }
   ],
@@ -105,14 +105,6 @@
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
    },
    {
-    "lender": "Cairns Bank",
-    "product": "Investment Plus HL Fixed 2yr 60-80 LVR PI",
-    "rate": 6.39,
-    "comparison": 6.38,
-    "lvrMax": 80,
-    "url": "https://cairnsbank.com.au/classic-vs-plus/"
-   },
-   {
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.44,
@@ -126,6 +118,14 @@
     "rate": 6.44,
     "comparison": 6.54,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Emoney Home Loan",
+    "rate": 6.44,
+    "comparison": 6.54,
+    "lvrMax": 80,
     "url": null
    }
   ],
@@ -265,14 +265,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Cairns Bank",
-    "product": "Investment Plus HL Fixed 1yr 60-80 LVR IO",
-    "rate": 6.54,
-    "comparison": 6.6,
-    "lvrMax": 80,
-    "url": "https://cairnsbank.com.au/classic-vs-plus/"
-   },
-   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.54,
@@ -294,6 +286,14 @@
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 95,
+    "url": null
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Ljh 5star Home Loan",
+    "rate": 6.54,
+    "comparison": 6.52,
+    "lvrMax": 80,
     "url": null
    }
   ],
@@ -323,20 +323,20 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "Cairns Bank",
-    "product": "Investment Plus HL Fixed 2yr 60-80 LVR IO",
-    "rate": 6.59,
-    "comparison": 6.57,
-    "lvrMax": 80,
-    "url": "https://cairnsbank.com.au/classic-vs-plus/"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
     "comparison": 6.59,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
+    "rate": 6.59,
+    "comparison": 8.33,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "INV_IO_fixed3": [
@@ -560,19 +560,19 @@
    },
    {
     "lender": "Credit Union SA",
-    "product": "3-Year Fixed XL Home Loan Package",
-    "rate": 6.24,
-    "comparison": 7.3,
-    "lvrMax": 80,
-    "url": "https://www.creditunionsa.com.au/xl-hl"
-   },
-   {
-    "lender": "Credit Union SA",
     "product": "3-Year Fixed Home Loan Package Principal and Interest",
     "rate": 6.24,
     "comparison": 6.82,
     "lvrMax": null,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed 40 Year Home Loan Package",
+    "rate": 6.24,
+    "comparison": 7.3,
+    "lvrMax": 80,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/40-year-home-loan"
    },
    {
     "lender": "Community First Bank",
