@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-29T22:43:18.360Z",
- "lenders": 89,
- "rows": 7795,
+ "updated": "2026-10-30T05:38:48.058Z",
+ "lenders": 90,
+ "rows": 7822,
  "best": {
   "INV_PI_variable": [
    {
@@ -215,6 +215,14 @@
   ],
   "INV_IO_variable": [
    {
+    "lender": "The Mac",
+    "product": "Govt Low Dep Variable Ooc PI",
+    "rate": 6.17,
+    "comparison": 5.98,
+    "lvrMax": null,
+    "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
+   },
+   {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.33,
@@ -244,14 +252,6 @@
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
-    "rate": 6.33,
-    "comparison": 6.56,
-    "lvrMax": 95,
     "url": null
    }
   ],
