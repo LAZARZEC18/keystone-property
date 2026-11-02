@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-01T21:59:07.891Z",
+ "updated": "2026-11-02T05:54:18.026Z",
  "lenders": 92,
- "rows": 8025,
+ "rows": 8059,
  "best": {
   "INV_PI_variable": [
    {
@@ -218,7 +218,7 @@
     "lender": "The Mac",
     "product": "Govt Low Dep Variable Ooc PI",
     "rate": 6.17,
-    "comparison": 5.98,
+    "comparison": 6.24,
     "lvrMax": null,
     "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
    },
