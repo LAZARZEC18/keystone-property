@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-03T12:46:47.101Z",
- "lenders": 91,
- "rows": 7869,
+ "updated": "2026-11-03T14:03:38.934Z",
+ "lenders": 89,
+ "rows": 7738,
  "best": {
   "INV_PI_variable": [
    {
@@ -131,14 +131,6 @@
   ],
   "INV_PI_fixed3": [
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
-    "rate": 6.39,
-    "comparison": 6.83,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 3 Year Investment",
     "rate": 6.44,
@@ -169,6 +161,14 @@
     "comparison": 6.47,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan-investment/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed Home Loan Package Principal and Interest",
+    "rate": 6.49,
+    "comparison": 7.55,
+    "lvrMax": null,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    }
   ],
   "INV_PI_fixed5": [
