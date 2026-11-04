@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-03T23:15:51.473Z",
+ "updated": "2026-11-04T06:06:32.430Z",
  "lenders": 91,
- "rows": 7912,
+ "rows": 8040,
  "best": {
   "INV_PI_variable": [
    {
@@ -14,23 +14,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 95,
@@ -38,7 +38,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.13,
     "comparison": 6.48,
     "lvrMax": 80,
@@ -48,6 +48,22 @@
   "INV_PI_fixed1": [
    {
     "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.34,
+    "comparison": 6.5,
+    "lvrMax": 95,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.34,
+    "comparison": 6.5,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.34,
     "comparison": 6.5,
@@ -65,22 +81,6 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Ljh 5star Home Loan",
-    "rate": 6.34,
-    "comparison": 6.5,
-    "lvrMax": 95,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
-    "rate": 6.34,
-    "comparison": 6.5,
-    "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
     "rate": 6.34,
     "comparison": 6.5,
     "lvrMax": 95,
@@ -114,19 +114,19 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.44,
     "comparison": 6.54,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.44,
     "comparison": 6.54,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    }
   ],
   "INV_PI_fixed3": [
@@ -224,23 +224,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 95,
@@ -248,7 +248,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.33,
     "comparison": 6.56,
     "lvrMax": 80,
@@ -266,23 +266,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 95,
@@ -290,7 +290,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 80,
@@ -426,6 +426,22 @@
   "OO_PI_variable": [
    {
     "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 95,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 5.93,
+    "comparison": 6.28,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 5.93,
     "comparison": 6.28,
@@ -443,22 +459,6 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Ljh 5star Home Loan",
-    "rate": 5.93,
-    "comparison": 6.28,
-    "lvrMax": 95,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
-    "rate": 5.93,
-    "comparison": 6.28,
-    "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
     "rate": 5.93,
     "comparison": 6.28,
     "lvrMax": 95,
@@ -476,23 +476,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 95,
@@ -500,7 +500,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.14,
     "comparison": 6.3,
     "lvrMax": 80,
@@ -534,19 +534,19 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.24,
     "comparison": 6.34,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.24,
     "comparison": 6.34,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    }
   ],
   "OO_PI_fixed3": [
@@ -644,23 +644,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.13,
     "comparison": 6.37,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.13,
     "comparison": 6.37,
     "lvrMax": 80,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.13,
     "comparison": 6.37,
     "lvrMax": 95,
@@ -668,7 +668,7 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
+    "product": "Emoney Home Loan",
     "rate": 6.13,
     "comparison": 6.37,
     "lvrMax": 80,
@@ -678,6 +678,22 @@
   "OO_IO_fixed1": [
    {
     "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.34,
+    "comparison": 6.32,
+    "lvrMax": 95,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.34,
+    "comparison": 6.32,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.34,
     "comparison": 6.32,
@@ -695,22 +711,6 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Ljh 5star Home Loan",
-    "rate": 6.34,
-    "comparison": 6.32,
-    "lvrMax": 95,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
-    "rate": 6.34,
-    "comparison": 6.32,
-    "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
     "rate": 6.34,
     "comparison": 6.32,
     "lvrMax": 95,
@@ -720,6 +720,22 @@
   "OO_IO_fixed2": [
    {
     "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.44,
+    "comparison": 6.38,
+    "lvrMax": 95,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.44,
+    "comparison": 6.38,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
     "rate": 6.44,
     "comparison": 6.38,
@@ -737,22 +753,6 @@
    {
     "lender": "Southern Cross Credit Union",
     "product": "Ljh 5star Home Loan",
-    "rate": 6.44,
-    "comparison": 6.38,
-    "lvrMax": 95,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
-    "rate": 6.44,
-    "comparison": 6.38,
-    "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
     "rate": 6.44,
     "comparison": 6.38,
     "lvrMax": 95,
@@ -778,23 +778,23 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.54,
     "comparison": 6.45,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.54,
+    "comparison": 6.45,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
    },
    {
     "lender": "Southern Cross Credit Union",
     "product": "Emoney Home Loan",
-    "rate": 6.54,
-    "comparison": 6.45,
-    "lvrMax": 80,
-    "url": null
-   },
-   {
-    "lender": "Southern Cross Credit Union",
-    "product": "Ljh 5star Home Loan",
     "rate": 6.54,
     "comparison": 6.45,
     "lvrMax": 95,
@@ -819,14 +819,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "P&N Bank",
-    "product": "Fixed Home Loan (IO) LVR <80",
-    "rate": 6.79,
-    "comparison": 6.68,
-    "lvrMax": 80,
-    "url": "https://www.pnbank.com.au/home-loans/owner-occupied/fixed-rate-home-loan/"
-   },
-   {
     "lender": "Unity Bank",
     "product": "Fixed Rate Home Loan - Owner Occupier - I/O - 60 mths",
     "rate": 6.8,
@@ -836,11 +828,19 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Emoney Home Loan",
+    "product": "Premium Home Loan",
     "rate": 6.84,
     "comparison": 6.68,
     "lvrMax": 95,
-    "url": null
+    "url": "https://www.sccu.com.au/home-loans/"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.84,
+    "comparison": 6.68,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
    }
   ],
   "INV_PI_variable_national": [
@@ -1533,14 +1533,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "BCU Bank",
-    "product": "Fixed IO Home Loan",
-    "rate": 6.59,
-    "comparison": 6.52,
-    "lvrMax": null,
-    "url": "https://www.bcu.com.au/home-loans/owner-occupier/fixed-rate-home-loan/"
-   },
-   {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.59,
@@ -1554,6 +1546,14 @@
     "rate": 6.59,
     "comparison": 6.3,
     "lvrMax": null,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.59,
+    "comparison": 6.23,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1575,14 +1575,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "BCU Bank",
-    "product": "Fixed IO Home Loan",
-    "rate": 6.59,
-    "comparison": 6.53,
-    "lvrMax": null,
-    "url": "https://www.bcu.com.au/home-loans/owner-occupier/fixed-rate-home-loan/"
-   },
-   {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.59,
@@ -1596,6 +1588,14 @@
     "rate": 6.59,
     "comparison": 6.34,
     "lvrMax": null,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.59,
+    "comparison": 6.27,
+    "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
    }
   ],
@@ -1667,20 +1667,20 @@
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "BCU Bank",
-    "product": "Fixed IO Home Loan",
-    "rate": 6.89,
-    "comparison": 6.69,
-    "lvrMax": null,
-    "url": "https://www.bcu.com.au/home-loans/owner-occupier/fixed-rate-home-loan/"
-   },
-   {
     "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Interest Only",
     "rate": 6.89,
     "comparison": 7.84,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "AMP",
+    "product": "First Home Loan",
+    "rate": 6.93,
+    "comparison": 6.62,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ]
  },
