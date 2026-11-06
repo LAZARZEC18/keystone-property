@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-05T19:54:50.123Z",
- "lenders": 90,
- "rows": 7779,
+ "updated": "2026-11-06T06:31:17.944Z",
+ "lenders": 91,
+ "rows": 7792,
  "best": {
   "INV_PI_variable": [
    {
@@ -1675,12 +1675,12 @@
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    },
    {
-    "lender": "AMP",
-    "product": "First Home Loan",
-    "rate": 6.93,
-    "comparison": 6.62,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.94,
+    "comparison": 6.52,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ]
  },
