@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06T19:19:11.014Z",
+ "updated": "2026-11-07T05:51:31.373Z",
  "lenders": 92,
  "rows": 8072,
  "best": {
@@ -845,14 +845,6 @@
   ],
   "INV_PI_variable_national": [
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 6.24,
-    "comparison": 6.26,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 6.29,
@@ -883,6 +875,14 @@
     "comparison": 6.45,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "ING Bank",
+    "product": "Mortgage Simplifier",
+    "rate": 6.44,
+    "comparison": 6.47,
+    "lvrMax": 80,
+    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1071,14 +1071,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    },
    {
-    "lender": "ME Bank",
-    "product": "EconoME Home Loan",
-    "rate": 6.54,
-    "comparison": 6.55,
-    "lvrMax": 80,
-    "url": "https://www.mebank.com.au/home-loans/"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.54,
@@ -1093,6 +1085,14 @@
     "comparison": 6.64,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
+   },
+   {
+    "lender": "MyState Bank",
+    "product": "Special Residential Variable Loan",
+    "rate": 6.59,
+    "comparison": 6.64,
+    "lvrMax": 80,
+    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1273,14 +1273,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Virgin Money",
-    "product": "Lite Home Loan",
-    "rate": 6.09,
-    "comparison": 6.11,
-    "lvrMax": 80,
-    "url": "https://virginmoney.com.au/home-loans"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.14,
@@ -1303,6 +1295,14 @@
     "comparison": 6.23,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.2,
+    "comparison": 6.2,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.94
+ "medianInvestorVariable": 6.99
 }
