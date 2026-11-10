@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-10T13:27:59.225Z",
- "lenders": 92,
- "rows": 8024,
+ "updated": "2026-11-10T19:41:10.989Z",
+ "lenders": 91,
+ "rows": 8022,
  "best": {
   "INV_PI_variable": [
    {
@@ -853,14 +853,6 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Express Home Loan",
-    "rate": 6.34,
-    "comparison": 6.49,
-    "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
-   },
-   {
     "lender": "Up",
     "product": "Home Loan",
     "rate": 6.35,
@@ -883,6 +875,14 @@
     "comparison": 6.47,
     "lvrMax": 80,
     "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
+   },
+   {
+    "lender": "IMB Bank",
+    "product": "Budget Home Loan",
+    "rate": 6.44,
+    "comparison": 6.5,
+    "lvrMax": 80,
+    "url": "https://www.imb.com.au/home-loans/living-in/budget-home-loan"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1071,14 +1071,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Express Home Loan",
-    "rate": 6.54,
-    "comparison": 6.56,
-    "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
-   },
-   {
     "lender": "MyState Bank",
     "product": "Basic Variable Loan",
     "rate": 6.59,
@@ -1093,6 +1085,14 @@
     "comparison": 6.64,
     "lvrMax": 80,
     "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
+   },
+   {
+    "lender": "ING Bank",
+    "product": "Mortgage Simplifier",
+    "rate": 6.59,
+    "comparison": 6.53,
+    "lvrMax": 80,
+    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1273,14 +1273,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "Bendigo Bank",
-    "product": "Bendigo Express Home Loan",
-    "rate": 6.14,
-    "comparison": 6.29,
-    "lvrMax": null,
-    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
-   },
-   {
     "lender": "Unloan",
     "product": "Home Loan",
     "rate": 6.14,
@@ -1303,6 +1295,14 @@
     "comparison": 6.2,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "LiteBlue Deposit Scheme O/Occ P+I (up to 98%LVR)",
+    "rate": 6.24,
+    "comparison": 6.25,
+    "lvrMax": 98,
+    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
    }
   ],
   "OO_PI_fixed1_national": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 6.99
+ "medianInvestorVariable": 7
 }
