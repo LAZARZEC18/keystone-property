@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-10T19:41:10.989Z",
- "lenders": 91,
- "rows": 8022,
+ "updated": "2026-11-11T06:01:22.345Z",
+ "lenders": 92,
+ "rows": 8025,
  "best": {
   "INV_PI_variable": [
    {
@@ -231,28 +231,28 @@
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
    {
-    "lender": "SWSbank",
-    "product": "Investment Home Loan - Interest Only",
-    "rate": 6.4,
-    "comparison": 6.4,
-    "lvrMax": null,
-    "url": "https://www.swsbank.com.au/loans/investor-home-loans/all-investment-home-loans/"
-   },
-   {
-    "lender": "SWSbank",
-    "product": "Investment Home Loan - Interest Only",
-    "rate": 6.4,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.swsbank.com.au/loans/investor-home-loans/all-investment-home-loans/"
-   },
-   {
     "lender": "Queensland Country Bank",
     "product": "Home Loan-Package",
     "rate": 6.44,
     "comparison": 6.45,
     "lvrMax": 80,
     "url": "https://www.queenslandcountry.bank/Banking/home-loans/"
+   },
+   {
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 6.44,
+    "comparison": null,
+    "lvrMax": null,
+    "url": null
+   },
+   {
+    "lender": "Easy Street",
+    "product": "Street Smart Variable Home Loan - Investment (Interest Only)",
+    "rate": 6.44,
+    "comparison": 6.4,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/variable-home-loan"
    }
   ],
   "INV_IO_fixed1": [
