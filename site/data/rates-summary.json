@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11T06:01:22.345Z",
+ "updated": "2026-11-11T14:08:04.957Z",
  "lenders": 92,
  "rows": 8025,
  "best": {
@@ -26,7 +26,7 @@
     "rate": 6.24,
     "comparison": null,
     "lvrMax": null,
-    "url": null
+    "url": "https://digital.move.bank/signup"
    },
    {
     "lender": "Easy Street",
@@ -244,7 +244,7 @@
     "rate": 6.44,
     "comparison": null,
     "lvrMax": null,
-    "url": null
+    "url": "https://digital.move.bank/signup"
    },
    {
     "lender": "Easy Street",
@@ -640,7 +640,7 @@
     "rate": 6.09,
     "comparison": null,
     "lvrMax": null,
-    "url": null
+    "url": "https://digital.move.bank/signup"
    },
    {
     "lender": "Greater Bank",
@@ -656,7 +656,7 @@
     "rate": 6.19,
     "comparison": null,
     "lvrMax": null,
-    "url": null
+    "url": "https://digital.move.bank/signup"
    },
    {
     "lender": "Bank of us",
@@ -853,14 +853,6 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Up",
-    "product": "Home Loan",
-    "rate": 6.35,
-    "comparison": 6.35,
-    "lvrMax": null,
-    "url": "https://up.com.au/home-loans"
-   },
-   {
     "lender": "Greater Bank",
     "product": "Discounted Great Rate Home Loan - Variable Investment",
     "rate": 6.44,
@@ -883,6 +875,14 @@
     "comparison": 6.5,
     "lvrMax": 80,
     "url": "https://www.imb.com.au/home-loans/living-in/budget-home-loan"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Real Deal Home Loan Investment Principal and Interest",
+    "rate": 6.44,
+    "comparison": 6.48,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1071,28 +1071,28 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    },
    {
-    "lender": "MyState Bank",
-    "product": "Basic Variable Loan",
-    "rate": 6.59,
-    "comparison": 6.64,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/basic-variable-home-loan/"
-   },
-   {
-    "lender": "MyState Bank",
-    "product": "Special Residential Variable Loan",
-    "rate": 6.59,
-    "comparison": 6.64,
-    "lvrMax": 80,
-    "url": "https://mystate.com.au/home-loans/special-residential-home-loan/"
-   },
-   {
     "lender": "ING Bank",
     "product": "Mortgage Simplifier",
     "rate": 6.59,
     "comparison": 6.53,
     "lvrMax": 80,
     "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
+   },
+   {
+    "lender": "Beyond Bank Australia",
+    "product": "Invest Total Home Loan Package",
+    "rate": 6.59,
+    "comparison": 6.94,
+    "lvrMax": null,
+    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
+   },
+   {
+    "lender": "Auswide Bank",
+    "product": "Basic Home Loan",
+    "rate": 6.59,
+    "comparison": 6.63,
+    "lvrMax": 80,
+    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1289,19 +1289,19 @@
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
    },
    {
-    "lender": "Up",
-    "product": "Home Loan",
-    "rate": 6.2,
-    "comparison": 6.2,
-    "lvrMax": null,
-    "url": "https://up.com.au/home-loans"
-   },
-   {
     "lender": "Hume Bank",
     "product": "LiteBlue Deposit Scheme O/Occ P+I (up to 98%LVR)",
     "rate": 6.24,
     "comparison": 6.25,
     "lvrMax": 98,
+    "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "LiteBlue Fhb Non Scheme O/Occ P+I (up to 95%LVR)",
+    "rate": 6.24,
+    "comparison": 6.25,
+    "lvrMax": 95,
     "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
    }
   ],
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 7
+ "medianInvestorVariable": 7.04
 }
