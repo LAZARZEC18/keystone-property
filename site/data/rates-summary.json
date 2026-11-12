@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-12T00:34:39.979Z",
+ "updated": "2026-11-12T15:05:10.371Z",
  "lenders": 92,
- "rows": 8025,
+ "rows": 8015,
  "best": {
   "INV_PI_variable": [
    {
@@ -24,9 +24,9 @@
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
     "rate": 6.24,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://digital.move.bank/signup"
+    "comparison": 6.3,
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
    },
    {
     "lender": "Easy Street",
@@ -71,20 +71,20 @@
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Investment",
-    "rate": 6.49,
-    "comparison": 8.43,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.49,
     "comparison": 6.82,
     "lvrMax": null,
     "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Coastline Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.49,
+    "comparison": 6.65,
+    "lvrMax": 80,
+    "url": "https://www.coastline.com.au/personal/home-loans"
    }
   ],
   "INV_PI_fixed2": [
@@ -105,14 +105,6 @@
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
    },
    {
-    "lender": "Community First Bank",
-    "product": "Boost Package Home Loan - 2 Year Fixed - Investment LVR 80% (Principal and Interest)",
-    "rate": 6.44,
-    "comparison": 6.85,
-    "lvrMax": 80,
-    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
     "lender": "The Capricornian",
     "product": "Premium Choice Investment Loan",
     "rate": 6.44,
@@ -121,12 +113,20 @@
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Investment",
+    "lender": "Hume Bank",
+    "product": "MyBlue 2 Year Fix Investment P+I (60.01 - 80.00% LVR)",
     "rate": 6.49,
-    "comparison": 8.25,
+    "comparison": 6.57,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.51,
+    "comparison": 6.79,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+    "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
    }
   ],
   "INV_PI_fixed3": [
@@ -134,17 +134,9 @@
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.39,
-    "comparison": 6.83,
+    "comparison": 7,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Investment",
-    "rate": 6.44,
-    "comparison": 8.07,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
     "lender": "Easy Street",
@@ -155,62 +147,70 @@
     "url": "https://easystreet.com.au/fixed-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Investment",
-    "rate": 6.49,
-    "comparison": 7.9,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
     "lender": "Community First Bank",
     "product": "GO Basic 3 Year Fixed Home Loan - Investment LVR 80% (Principal and Interest)",
     "rate": 6.49,
     "comparison": 6.65,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan-investment/"
+   },
+   {
+    "lender": "Credit Union SA",
+    "product": "3-Year Fixed Home Loan Package Principal and Interest",
+    "rate": 6.49,
+    "comparison": 7.72,
+    "lvrMax": null,
+    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.51,
+    "comparison": 6.77,
+    "lvrMax": null,
+    "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
    }
   ],
   "INV_PI_fixed5": [
    {
+    "lender": "People First and Heritage Bank",
+    "product": "Standard Fixed Rate Home Loans - Investment",
+    "rate": 6.74,
+    "comparison": 8.32,
+    "lvrMax": 90,
+    "url": "https://www.heritage.com.au/loans/home-loans/fixed-interest-rate"
+   },
+   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Investment",
-    "rate": 6.59,
-    "comparison": 7.86,
+    "rate": 6.79,
+    "comparison": 8.07,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.59,
-    "comparison": 7.89,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "lender": "IMB Bank",
+    "product": "5 year Fixed Rate Home Loan",
+    "rate": 6.79,
+    "comparison": 7.01,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Investment",
-    "rate": 6.64,
-    "comparison": 7.66,
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.79,
+    "comparison": 6.83,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.69,
-    "comparison": 7.82,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.69,
-    "comparison": 7.93,
-    "lvrMax": 95,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "lender": "Dnister",
+    "product": "Premier HL Fixed Interest Rate",
+    "rate": 6.79,
+    "comparison": 6.94,
+    "lvrMax": null,
+    "url": "https://www.dnister.com.au/portfolio-items/premier-home-loan/"
    }
   ],
   "INV_IO_variable": [
@@ -243,8 +243,8 @@
     "product": "Everyday Home Loan",
     "rate": 6.44,
     "comparison": null,
-    "lvrMax": null,
-    "url": "https://digital.move.bank/signup"
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
    },
    {
     "lender": "Easy Street",
@@ -273,14 +273,6 @@
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 8.44,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
@@ -289,12 +281,20 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.51,
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.64,
+    "comparison": 8.15,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+   },
+   {
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Property Investor - I/O - 12 mths",
+    "rate": 6.65,
+    "comparison": 6.75,
+    "lvrMax": null,
+    "url": "https://www.unity.bank/home-loans/invest-in-property/fixed-rate-home-loan-property-investor/"
    }
   ],
   "INV_IO_fixed2": [
@@ -315,14 +315,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 8.27,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
@@ -331,23 +323,23 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.33,
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Property Investor - I/O - 24 mths",
+    "rate": 6.65,
+    "comparison": 6.75,
+    "lvrMax": null,
+    "url": "https://www.unity.bank/home-loans/invest-in-property/fixed-rate-home-loan-property-investor/"
+   },
+   {
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.69,
+    "comparison": 8,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    }
   ],
   "INV_IO_fixed3": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
-    "rate": 6.54,
-    "comparison": 8.1,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
@@ -357,70 +349,78 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 7.94,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.17,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
-   {
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.64,
     "comparison": 7.37,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
+   },
+   {
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Property Investor - I/O - 36 mths",
+    "rate": 6.65,
+    "comparison": 6.75,
+    "lvrMax": null,
+    "url": "https://unity.bank/home-loans/invest-in-property/fixed-rate-home-loan-property-investor/"
+   },
+   {
+    "lender": "Community First Bank",
+    "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Interest Only)",
+    "rate": 6.69,
+    "comparison": 7.08,
+    "lvrMax": 80,
+    "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
+   },
+   {
+    "lender": "Australian Military Bank",
+    "product": "3 Year Fixed Rate Investment Home Loan",
+    "rate": 6.69,
+    "comparison": 7.04,
+    "lvrMax": 80,
+    "url": "https://www.australianmilitarybank.com.au/home-loans/fixed-rate-investment-loan"
    }
   ],
   "INV_IO_fixed5": [
    {
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Property Investor - I/O - 60 mths",
+    "rate": 6.8,
+    "comparison": 6.9,
+    "lvrMax": null,
+    "url": "https://www.gcmutual.bank/products/home-loans/fixed-rate-home-loan-property-investor/"
+   },
+   {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Interest Only Investment",
-    "rate": 6.69,
-    "comparison": 7.9,
+    "rate": 6.89,
+    "comparison": 8.12,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.69,
-    "comparison": 7.93,
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.89,
+    "comparison": 7.7,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Interest Only Investment",
-    "rate": 6.74,
-    "comparison": 7.73,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.88,
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.89,
+    "comparison": 7.47,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.98,
-    "lvrMax": 90,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "lender": "Hume Bank",
+    "product": "MyBlue 5 Year Fix Investment I/O (60.01 - 80.00% LVR)",
+    "rate": 6.89,
+    "comparison": 6.72,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
    }
   ],
   "OO_PI_variable": [
@@ -457,12 +457,12 @@
     "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
+    "lender": "Summerland Bank",
+    "product": "Eco Home Loan",
     "rate": 6.09,
-    "comparison": 6.1,
+    "comparison": 6.15,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+    "url": "https://www.summerland.com.au/loans-interest"
    }
   ],
   "OO_PI_fixed1": [
@@ -583,23 +583,15 @@
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Owner Occupied",
-    "rate": 6.34,
-    "comparison": 7.79,
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Owner Occupier - P&I - 36 mths",
+    "rate": 6.35,
+    "comparison": 6.44,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+    "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
    }
   ],
   "OO_PI_fixed5": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
-    "rate": 6.49,
-    "comparison": 7.61,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
    {
     "lender": "Australian Military Bank",
     "product": "Dhoas 5 Year Fixed Rate Home Loan",
@@ -617,20 +609,28 @@
     "url": "https://www.australianmilitarybank.com.au//products/5-year-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
-    "rate": 6.49,
-    "comparison": 7.67,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "lender": "People First and Heritage Bank",
+    "product": "Standard Fixed Rate Home Loans - Owner Occupied",
+    "rate": 6.54,
+    "comparison": 7.95,
+    "lvrMax": 95,
+    "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
+   },
+   {
+    "lender": "Unity Bank",
+    "product": "Fixed Rate Home Loan - Owner Occupier - P&I - 60 mths",
+    "rate": 6.55,
+    "comparison": 6.65,
+    "lvrMax": null,
+    "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
    },
    {
     "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.41,
+    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
+    "rate": 6.59,
+    "comparison": 7.79,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    }
   ],
   "OO_IO_variable": [
@@ -639,24 +639,16 @@
     "product": "Everyday Home Loan",
     "rate": 6.09,
     "comparison": null,
-    "lvrMax": null,
-    "url": "https://digital.move.bank/signup"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
-    "rate": 6.19,
-    "comparison": 6.14,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
    },
    {
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
     "rate": 6.19,
     "comparison": null,
-    "lvrMax": null,
-    "url": "https://digital.move.bank/signup"
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
    },
    {
     "lender": "Bank of us",
@@ -673,17 +665,17 @@
     "comparison": 6.19,
     "lvrMax": null,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Loan",
+    "rate": 6.19,
+    "comparison": 6.19,
+    "lvrMax": 80,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "OO_IO_fixed1": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 8.1,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
    {
     "lender": "Horizon Bank",
     "product": "1 Year Fixed Home Loan - Interest Only",
@@ -691,14 +683,6 @@
     "comparison": 7.13,
     "lvrMax": 90,
     "url": "https://horizonbank.com.au/help/rates-fees/interest-rates#Text-922a3-Home_Loans"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 1 Year Interest Only Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.95,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
     "lender": "Orange Credit Union",
@@ -715,6 +699,22 @@
     "comparison": null,
     "lvrMax": null,
     "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Owner Occupied",
+    "rate": 6.59,
+    "comparison": 8.32,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+   },
+   {
+    "lender": "Southern Cross Credit Union",
+    "product": "Premium Home Loan",
+    "rate": 6.59,
+    "comparison": 6.57,
+    "lvrMax": 80,
+    "url": "https://www.sccu.com.au/home-loans/"
    }
   ],
   "OO_IO_fixed2": [
@@ -727,14 +727,6 @@
     "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 7.95,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
-   {
     "lender": "Queensland Country Bank",
     "product": "Home Loan-Package Fixed Rate",
     "rate": 6.49,
@@ -743,39 +735,31 @@
     "url": "https://www.queenslandcountry.bank/banking/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 2 Year Interest Only Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.8,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
     "lender": "Orange Credit Union",
     "product": "Premium Home Loan Fixed 24 mths Interest Only Owner Occupied",
     "rate": 6.54,
     "comparison": null,
     "lvrMax": null,
     "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
-   }
-  ],
-  "OO_IO_fixed3": [
+   },
    {
     "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Owner Occupied",
-    "rate": 6.44,
-    "comparison": 7.81,
+    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Owner Occupied",
+    "rate": 6.59,
+    "comparison": 8.17,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 7.65,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
+    "lender": "Horizon Bank",
+    "product": "2 Year Fixed Home Loan - Interest Only",
+    "rate": 6.59,
+    "comparison": 7.09,
+    "lvrMax": 90,
+    "url": "https://horizonbank.com.au/help/rates-fees/interest-rates#Text-922a3-Home_Loans"
+   }
+  ],
+  "OO_IO_fixed3": [
    {
     "lender": "Orange Credit Union",
     "product": "Premium Home Loan Fixed 36 mths Interest Only Owner Occupied",
@@ -783,6 +767,22 @@
     "comparison": null,
     "lvrMax": null,
     "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Owner Occupied",
+    "rate": 6.59,
+    "comparison": 8.03,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Owner Occupied",
+    "rate": 6.64,
+    "comparison": 7.86,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
     "lender": "Bank of us",
@@ -805,16 +805,16 @@
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Interest Only Owner Occupied",
-    "rate": 6.59,
-    "comparison": 7.65,
+    "rate": 6.69,
+    "comparison": 7.83,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
     "lender": "Greater Bank",
     "product": "Great Rate Home Loan - Fixed 5 Year Interest Only Owner Occupied",
-    "rate": 6.64,
-    "comparison": 7.48,
+    "rate": 6.74,
+    "comparison": 7.65,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
@@ -830,17 +830,17 @@
     "lender": "IMB Bank",
     "product": "5 year Fixed Rate Home Loan",
     "rate": 6.89,
-    "comparison": 6.75,
+    "comparison": 6.89,
     "lvrMax": 90,
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Interest Only",
-    "rate": 6.89,
-    "comparison": 7.84,
+    "lender": "AMP",
+    "product": "First Home Loan",
+    "rate": 6.93,
+    "comparison": 6.76,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ],
   "INV_PI_variable_national": [
@@ -853,47 +853,39 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Investment",
-    "rate": 6.44,
-    "comparison": 6.45,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "ING Bank",
-    "product": "Mortgage Simplifier",
-    "rate": 6.44,
-    "comparison": 6.47,
-    "lvrMax": 80,
-    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
-   },
-   {
-    "lender": "IMB Bank",
-    "product": "Budget Home Loan",
-    "rate": 6.44,
+    "lender": "Westpac",
+    "product": "Flexi First: Our lowest online variable home loan rate (Investor)",
+    "rate": 6.49,
     "comparison": 6.5,
     "lvrMax": 80,
-    "url": "https://www.imb.com.au/home-loans/living-in/budget-home-loan"
+    "url": "https://www.westpac.com.au/home-loans/variable/basic-variable-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Real Deal Home Loan Investment Principal and Interest",
-    "rate": 6.44,
-    "comparison": 6.48,
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Non Offset)",
+    "rate": 6.49,
+    "comparison": 6.52,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Beyond Bank Australia",
+    "product": "Invest Total Home Loan Package",
+    "rate": 6.49,
+    "comparison": 6.84,
+    "lvrMax": null,
+    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
+   },
+   {
+    "lender": "Beyond Bank Australia",
+    "product": "Purple Basic Vbl Home Loan-Inv",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": null,
+    "url": "https://www.beyondbank.com.au/home-loans/purple-basic-variable-investment-home-loan/"
    }
   ],
   "INV_PI_fixed1_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Investment",
-    "rate": 6.49,
-    "comparison": 8.43,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
    {
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment P+I (60.01 - 80.00% LVR)",
@@ -903,39 +895,39 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.49,
-    "comparison": 8.5,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 1 Year Investment",
-    "rate": 6.54,
-    "comparison": 8.28,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.54,
     "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "IMB Bank",
+    "product": "1 year Fixed Rate Home Loan",
+    "rate": 6.59,
+    "comparison": 7.06,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.59,
+    "comparison": 6.74,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.6,
+    "comparison": 6.6,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "INV_PI_fixed2_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Investment",
-    "rate": 6.49,
-    "comparison": 8.25,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
    {
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment P+I (60.01 - 80.00% LVR)",
@@ -945,55 +937,39 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.49,
-    "comparison": 8.31,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 2 Year Investment",
-    "rate": 6.54,
-    "comparison": 8.09,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.57,
     "comparison": 6.53,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "IMB Bank",
+    "product": "2 year Fixed Rate Home Loan",
+    "rate": 6.59,
+    "comparison": 7.02,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.59,
+    "comparison": 6.74,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.6,
+    "comparison": 6.6,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "INV_PI_fixed3_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Investment",
-    "rate": 6.44,
-    "comparison": 8.07,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Investment",
-    "rate": 6.49,
-    "comparison": 7.9,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.49,
-    "comparison": 8.14,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
@@ -1006,51 +982,75 @@
     "lender": "IMB Bank",
     "product": "3 year Fixed Rate Home Loan",
     "rate": 6.59,
-    "comparison": 6.81,
+    "comparison": 6.99,
     "lvrMax": 90,
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   }
-  ],
-  "INV_PI_fixed5_national": [
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 3 Year Fix Investment P+I (60.01 - 80.00% LVR)",
+    "rate": 6.59,
+    "comparison": 6.59,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
+   },
    {
     "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Investment",
-    "rate": 6.59,
-    "comparison": 7.86,
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Investment",
+    "rate": 6.64,
+    "comparison": 8.3,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.59,
-    "comparison": 7.89,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Investment",
+    "rate": 6.69,
+    "comparison": 8.13,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   }
+  ],
+  "INV_PI_fixed5_national": [
+   {
+    "lender": "People First and Heritage Bank",
+    "product": "Standard Fixed Rate Home Loans - Investment",
+    "rate": 6.74,
+    "comparison": 8.32,
+    "lvrMax": 90,
+    "url": "https://www.heritage.com.au/loans/home-loans/fixed-interest-rate"
    },
    {
     "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Investment",
-    "rate": 6.64,
-    "comparison": 7.66,
+    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Investment",
+    "rate": 6.79,
+    "comparison": 8.07,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.69,
-    "comparison": 7.82,
+    "lender": "IMB Bank",
+    "product": "5 year Fixed Rate Home Loan",
+    "rate": 6.79,
+    "comparison": 7.01,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.79,
+    "comparison": 6.83,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 5 Year Fix Investment P+I (60.01 - 80.00% LVR)",
+    "rate": 6.79,
+    "comparison": 6.68,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
-    "rate": 6.69,
-    "comparison": 7.93,
-    "lvrMax": 95,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
    }
   ],
   "INV_IO_variable_national": [
@@ -1061,22 +1061,6 @@
     "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Investment",
-    "rate": 6.54,
-    "comparison": 6.49,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "ING Bank",
-    "product": "Mortgage Simplifier",
-    "rate": 6.59,
-    "comparison": 6.53,
-    "lvrMax": 80,
-    "url": "https://www.ing.com.au/home-loans/mortgage-simplifier.html"
    },
    {
     "lender": "Beyond Bank Australia",
@@ -1093,6 +1077,22 @@
     "comparison": 6.74,
     "lvrMax": 80,
     "url": "https://www.brokers.bendigobank.com.au/"
+   },
+   {
+    "lender": "Macquarie Bank",
+    "product": "Macquarie Offset Home Loan",
+    "rate": 6.64,
+    "comparison": 6.89,
+    "lvrMax": 80,
+    "url": "https://www.macquarie.com.au/home-loans/offset-home-loan.html"
+   },
+   {
+    "lender": "Macquarie Bank",
+    "product": "Macquarie Basic Home Loan",
+    "rate": 6.64,
+    "comparison": 6.67,
+    "lvrMax": 80,
+    "url": "https://www.macquarie.com.au/home-loans/basic-home-loan.html"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1105,14 +1105,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 8.44,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
@@ -1121,20 +1113,28 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.51,
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.64,
+    "comparison": 8.15,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 1 Year Interest Only Investment",
-    "rate": 6.64,
-    "comparison": 8.3,
+    "lender": "IMB Bank",
+    "product": "1 year Fixed Rate Home Loan",
+    "rate": 6.69,
+    "comparison": 7.07,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.74,
+    "comparison": 6.81,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
    }
   ],
   "INV_IO_fixed2_national": [
@@ -1147,14 +1147,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 8.27,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.59,
@@ -1163,31 +1155,31 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.33,
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.69,
+    "comparison": 8,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 2 Year Interest Only Investment",
-    "rate": 6.64,
-    "comparison": 8.12,
+    "lender": "IMB Bank",
+    "product": "2 year Fixed Rate Home Loan",
+    "rate": 6.69,
+    "comparison": 7.04,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.74,
+    "comparison": 6.81,
     "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
    }
   ],
   "INV_IO_fixed3_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
-    "rate": 6.54,
-    "comparison": 8.1,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
@@ -1197,81 +1189,81 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Investment",
-    "rate": 6.59,
-    "comparison": 7.94,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.59,
-    "comparison": 8.17,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 3 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.69,
     "comparison": 6.62,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.74,
+    "comparison": 8.33,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Investment",
+    "rate": 6.79,
+    "comparison": 8.17,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "IMB Bank",
+    "product": "3 year Fixed Rate Home Loan",
+    "rate": 6.79,
+    "comparison": 7.05,
+    "lvrMax": 90,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    }
   ],
   "INV_IO_fixed5_national": [
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Interest Only Investment",
-    "rate": 6.69,
-    "comparison": 7.9,
+    "rate": 6.89,
+    "comparison": 8.12,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
+    "lender": "ANZ",
+    "product": "Fixed Rate home loan",
+    "rate": 6.89,
+    "comparison": 7.7,
+    "lvrMax": 80,
+    "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.89,
+    "comparison": 7.47,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 5 Year Fix Investment I/O (60.01 - 80.00% LVR)",
+    "rate": 6.89,
+    "comparison": 6.72,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   },
+   {
     "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.69,
-    "comparison": 7.93,
+    "rate": 6.89,
+    "comparison": 8.15,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Interest Only Investment",
-    "rate": 6.74,
-    "comparison": 7.73,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.88,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
-    "rate": 6.79,
-    "comparison": 7.98,
-    "lvrMax": 90,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "OO_PI_variable_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Owner Occupied",
-    "rate": 6.09,
-    "comparison": 6.1,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
    {
     "lender": "Unloan",
     "product": "Home Loan",
@@ -1279,14 +1271,6 @@
     "comparison": 6.05,
     "lvrMax": 80,
     "url": "https://www.unloan.com.au/"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Real Deal Home Loan Principal and Interest",
-    "rate": 6.19,
-    "comparison": 6.23,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/real-deal-home-loan"
    },
    {
     "lender": "Hume Bank",
@@ -1303,17 +1287,25 @@
     "comparison": 6.25,
     "lvrMax": 95,
     "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Topline Home Loan",
+    "rate": 6.24,
+    "comparison": 6.24,
+    "lvrMax": 80,
+    "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Topline Home Loan",
+    "rate": 6.24,
+    "comparison": 6.24,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "OO_PI_fixed1_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 1 Year Owner Occupied",
-    "rate": 6.39,
-    "comparison": 8.09,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Owner Occupied)",
@@ -1345,17 +1337,17 @@
     "comparison": 6.35,
     "lvrMax": 95,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.45,
+    "comparison": 6.45,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "OO_PI_fixed2_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 2 Year Owner Occupied",
-    "rate": 6.39,
-    "comparison": 7.94,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
    {
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix O/Occ P+I (60.01 - 80.00% LVR)",
@@ -1381,39 +1373,23 @@
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
-    "rate": 6.39,
-    "comparison": 8.03,
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Fixed Owner Occupied)",
+    "rate": 6.42,
+    "comparison": 6.34,
     "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.45,
+    "comparison": 6.45,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "OO_PI_fixed3_national": [
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Owner Occupied",
-    "rate": 6.34,
-    "comparison": 7.79,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 3 Year Owner Occupied",
-    "rate": 6.39,
-    "comparison": 7.61,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
-    "rate": 6.39,
-    "comparison": 7.88,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   },
    {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Owner Occupied)",
@@ -1423,39 +1399,39 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "3 year Fixed Rate Home Loan",
-    "rate": 6.49,
-    "comparison": 6.57,
-    "lvrMax": 95,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   }
-  ],
-  "OO_PI_fixed5_national": [
-   {
     "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
+    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Owner Occupied",
     "rate": 6.49,
-    "comparison": 7.61,
+    "comparison": 8,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
+    "lender": "IMB Bank",
+    "product": "3 year Fixed Rate Home Loan",
     "rate": 6.49,
-    "comparison": 7.67,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+    "comparison": 6.74,
+    "lvrMax": 95,
+    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 5 Year Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.41,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
+    "lender": "Hume Bank",
+    "product": "MyBlue 3 Year Fix O/Occ P+I (60.01 - 80.00% LVR)",
+    "rate": 6.49,
+    "comparison": 6.45,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
    },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue Deposit Scheme 3 Year Fix O/Occ P+I (up to 98% LVR)",
+    "rate": 6.49,
+    "comparison": 6.38,
+    "lvrMax": 98,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   }
+  ],
+  "OO_PI_fixed5_national": [
    {
     "lender": "People First and Heritage Bank",
     "product": "Standard Fixed Rate Home Loans - Owner Occupied",
@@ -1465,23 +1441,39 @@
     "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
    },
    {
+    "lender": "Greater Bank",
+    "product": "Ultimate Packaged Home Loan - Fixed 5 Year Owner Occupied",
+    "rate": 6.59,
+    "comparison": 7.79,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
+   },
+   {
     "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
     "rate": 6.59,
-    "comparison": 7.71,
-    "lvrMax": 95,
+    "comparison": 7.84,
+    "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
-   }
-  ],
-  "OO_IO_variable_national": [
+   },
    {
     "lender": "Greater Bank",
-    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
-    "rate": 6.19,
-    "comparison": 6.14,
+    "product": "Great Rate Home Loan - Fixed 5 Year Owner Occupied",
+    "rate": 6.64,
+    "comparison": 7.59,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.65,
+    "comparison": 6.53,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
+   }
+  ],
+  "OO_IO_variable_national": [
    {
     "lender": "Bank of us",
     "product": "Flexidiscount Home Guarantee Scheme Home Loan",
@@ -1513,24 +1505,24 @@
     "comparison": 6.19,
     "lvrMax": 90,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Discounted Great Rate Home Loan - Variable Interest Only Owner Occupied",
+    "rate": 6.44,
+    "comparison": 6.39,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    }
   ],
   "OO_IO_fixed1_national": [
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 1 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 8.1,
+    "rate": 6.59,
+    "comparison": 8.32,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 1 Year Interest Only Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.95,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
     "lender": "Bank of us",
@@ -1555,24 +1547,24 @@
     "comparison": 6.23,
     "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 1 Year Interest Only Owner Occupied",
+    "rate": 6.64,
+    "comparison": 8.18,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    }
   ],
   "OO_IO_fixed2_national": [
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 2 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 7.95,
+    "rate": 6.59,
+    "comparison": 8.17,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Great Rate Home Loan - Fixed 2 Year Interest Only Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.8,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
     "lender": "Bank of us",
@@ -1597,22 +1589,30 @@
     "comparison": 6.27,
     "lvrMax": 80,
     "url": "https://bankofus.com.au/home-loans"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 2 Year Interest Only Owner Occupied",
+    "rate": 6.64,
+    "comparison": 8.01,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    }
   ],
   "OO_IO_fixed3_national": [
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Owner Occupied",
-    "rate": 6.44,
-    "comparison": 7.81,
+    "rate": 6.59,
+    "comparison": 8.03,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
     "lender": "Greater Bank",
     "product": "Great Rate Home Loan - Fixed 3 Year Interest Only Owner Occupied",
-    "rate": 6.49,
-    "comparison": 7.65,
+    "rate": 6.64,
+    "comparison": 7.86,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
@@ -1645,16 +1645,16 @@
    {
     "lender": "Greater Bank",
     "product": "Ultimate Packaged Home Loan - Fixed 5 Year Interest Only Owner Occupied",
-    "rate": 6.59,
-    "comparison": 7.65,
+    "rate": 6.69,
+    "comparison": 7.83,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
     "lender": "Greater Bank",
     "product": "Great Rate Home Loan - Fixed 5 Year Interest Only Owner Occupied",
-    "rate": 6.64,
-    "comparison": 7.48,
+    "rate": 6.74,
+    "comparison": 7.65,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
@@ -1662,17 +1662,9 @@
     "lender": "IMB Bank",
     "product": "5 year Fixed Rate Home Loan",
     "rate": 6.89,
-    "comparison": 6.75,
+    "comparison": 6.89,
     "lvrMax": 90,
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Newcastle Permanent",
-    "product": "Premium Plus Package Fixed Rate Home Loan Interest Only",
-    "rate": 6.89,
-    "comparison": 7.84,
-    "lvrMax": 80,
-    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    },
    {
     "lender": "AMP",
@@ -1681,8 +1673,16 @@
     "comparison": 6.76,
     "lvrMax": 80,
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.94,
+    "comparison": 7.49,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
   ]
  },
- "medianInvestorVariable": 7.04
+ "medianInvestorVariable": 7.08
 }
