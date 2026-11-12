@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11T14:08:04.957Z",
+ "updated": "2026-11-12T00:34:39.979Z",
  "lenders": 92,
  "rows": 8025,
  "best": {
@@ -533,20 +533,20 @@
     "url": "https://www.queenslandcountry.bank/banking/"
    },
    {
-    "lender": "Credit Union SA",
-    "product": "2-Year Fixed 40 Year Home Loan Package",
+    "lender": "The Capricornian",
+    "product": "Premium Choice Home Loan",
     "rate": 6.34,
-    "comparison": 7.41,
+    "comparison": 6.95,
     "lvrMax": 80,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/40-year-home-loan"
+    "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
    {
-    "lender": "Credit Union SA",
-    "product": "2-Year Fixed Home Loan Package Principal and Interest",
+    "lender": "Orange Credit Union",
+    "product": "Premium Home Loan Fixed 24 mths P&I Owner Occupied",
     "rate": 6.34,
-    "comparison": 6.86,
+    "comparison": 6.43,
     "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
+    "url": "https://www.bankorange.com.au/online-forms/home-loan-application/"
    }
   ],
   "OO_PI_fixed3": [
@@ -562,7 +562,7 @@
     "lender": "Credit Union SA",
     "product": "3-Year Fixed 40 Year Home Loan Package",
     "rate": 6.24,
-    "comparison": 7.3,
+    "comparison": 7.47,
     "lvrMax": 80,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/40-year-home-loan"
    },
@@ -570,7 +570,7 @@
     "lender": "Credit Union SA",
     "product": "3-Year Fixed Home Loan Package Principal and Interest",
     "rate": 6.24,
-    "comparison": 6.82,
+    "comparison": 6.99,
     "lvrMax": null,
     "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    },
@@ -578,7 +578,7 @@
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
     "rate": 6.29,
-    "comparison": 6.66,
+    "comparison": 6.84,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed/"
    },
@@ -1087,12 +1087,12 @@
     "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
    },
    {
-    "lender": "Auswide Bank",
-    "product": "Basic Home Loan",
-    "rate": 6.59,
-    "comparison": 6.63,
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Flex Home Loan",
+    "rate": 6.64,
+    "comparison": 6.74,
     "lvrMax": 80,
-    "url": "https://auswidebank.com.au/home-loans/compare-home-loans/"
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_IO_fixed1_national": [
