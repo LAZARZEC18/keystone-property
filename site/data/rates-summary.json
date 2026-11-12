@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-12T15:05:10.371Z",
- "lenders": 92,
- "rows": 8015,
+ "updated": "2026-11-12T23:33:23.331Z",
+ "lenders": 91,
+ "rows": 7953,
  "best": {
   "INV_PI_variable": [
    {
@@ -63,14 +63,6 @@
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
    },
    {
-    "lender": "The Capricornian",
-    "product": "Premium Choice Investment Loan",
-    "rate": 6.44,
-    "comparison": 7.2,
-    "lvrMax": 80,
-    "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.49,
@@ -85,6 +77,14 @@
     "comparison": 6.65,
     "lvrMax": 80,
     "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 1 Year Fix Investment P+I (60.01 - 80.00% LVR)",
+    "rate": 6.49,
+    "comparison": 6.58,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    }
   ],
   "INV_PI_fixed2": [
@@ -108,7 +108,7 @@
     "lender": "The Capricornian",
     "product": "Premium Choice Investment Loan",
     "rate": 6.44,
-    "comparison": 7.13,
+    "comparison": 7.32,
     "lvrMax": 80,
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
@@ -499,12 +499,12 @@
     "url": "https://www.gmcu.com.au/loans/home-loans/view-all-home-loans/"
    },
    {
-    "lender": "The Capricornian",
-    "product": "Premium Choice Home Loan",
+    "lender": "TMCU",
+    "product": "1 Year Fixed Rate Loan",
     "rate": 6.24,
-    "comparison": 7,
-    "lvrMax": 80,
-    "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
+    "comparison": 6.56,
+    "lvrMax": null,
+    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
    }
   ],
   "OO_PI_fixed2": [
@@ -536,7 +536,7 @@
     "lender": "The Capricornian",
     "product": "Premium Choice Home Loan",
     "rate": 6.34,
-    "comparison": 6.95,
+    "comparison": 7.14,
     "lvrMax": 80,
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
@@ -710,11 +710,11 @@
    },
    {
     "lender": "Southern Cross Credit Union",
-    "product": "Premium Home Loan",
+    "product": "Broker Home Loan",
     "rate": 6.59,
     "comparison": 6.57,
     "lvrMax": 80,
-    "url": "https://www.sccu.com.au/home-loans/"
+    "url": null
    }
   ],
   "OO_IO_fixed2": [
@@ -853,14 +853,6 @@
     "url": "https://www.unloan.com.au/"
    },
    {
-    "lender": "Westpac",
-    "product": "Flexi First: Our lowest online variable home loan rate (Investor)",
-    "rate": 6.49,
-    "comparison": 6.5,
-    "lvrMax": 80,
-    "url": "https://www.westpac.com.au/home-loans/variable/basic-variable-home-loan"
-   },
-   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Non Offset)",
     "rate": 6.49,
@@ -883,6 +875,14 @@
     "comparison": 6.52,
     "lvrMax": null,
     "url": "https://www.beyondbank.com.au/home-loans/purple-basic-variable-investment-home-loan/"
+   },
+   {
+    "lender": "Bank First",
+    "product": "Basic Investment Loan Variable LVR 70-80%",
+    "rate": 6.49,
+    "comparison": 6.54,
+    "lvrMax": 80,
+    "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1684,5 +1684,5 @@
    }
   ]
  },
- "medianInvestorVariable": 7.08
+ "medianInvestorVariable": 7.09
 }
