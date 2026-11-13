@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T23:33:23.331Z",
+ "updated": "2026-11-13T06:31:30.830Z",
  "lenders": 91,
  "rows": 7953,
  "best": {
@@ -709,12 +709,12 @@
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
-    "lender": "Southern Cross Credit Union",
-    "product": "Broker Home Loan",
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.59,
-    "comparison": 6.57,
-    "lvrMax": 80,
-    "url": null
+    "comparison": 6.23,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "OO_IO_fixed2": [
