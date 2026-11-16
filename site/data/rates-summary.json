@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16T06:16:16.449Z",
+ "updated": "2026-11-16T21:57:38.574Z",
  "lenders": 91,
  "rows": 7969,
  "best": {
@@ -173,14 +173,6 @@
   ],
   "INV_PI_fixed5": [
    {
-    "lender": "People First and Heritage Bank",
-    "product": "Standard Fixed Rate Home Loans - Investment",
-    "rate": 6.74,
-    "comparison": 8.32,
-    "lvrMax": 90,
-    "url": "https://www.heritage.com.au/loans/home-loans/fixed-interest-rate"
-   },
-   {
     "lender": "IMB Bank",
     "product": "5 year Fixed Rate Home Loan",
     "rate": 6.79,
@@ -211,6 +203,14 @@
     "comparison": 6.54,
     "lvrMax": null,
     "url": "https://move.bank/loans/home-loans"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue 5 Year Fix Investment P+I (60.01 - 80.00% LVR)",
+    "rate": 6.79,
+    "comparison": 6.68,
+    "lvrMax": 80,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
    }
   ],
   "INV_IO_variable": [
@@ -609,14 +609,6 @@
     "url": "https://www.australianmilitarybank.com.au//products/5-year-fixed-rate-home-loan"
    },
    {
-    "lender": "People First and Heritage Bank",
-    "product": "Standard Fixed Rate Home Loans - Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.95,
-    "lvrMax": 95,
-    "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
-   },
-   {
     "lender": "Unity Bank",
     "product": "Fixed Rate Home Loan - Owner Occupier - P&I - 60 mths",
     "rate": 6.55,
@@ -631,6 +623,14 @@
     "comparison": 6.74,
     "lvrMax": null,
     "url": "https://www.dnister.com.au/portfolio-items/premier-home-loan/"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
+    "rate": 6.59,
+    "comparison": 7.84,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "OO_IO_variable": [
@@ -861,28 +861,28 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Beyond Bank Australia",
-    "product": "Invest Total Home Loan Package",
-    "rate": 6.49,
-    "comparison": 6.84,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
-   },
-   {
-    "lender": "Beyond Bank Australia",
-    "product": "Purple Basic Vbl Home Loan-Inv",
-    "rate": 6.49,
-    "comparison": 6.52,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/purple-basic-variable-investment-home-loan/"
-   },
-   {
     "lender": "Bank First",
     "product": "Basic Investment Loan Variable LVR 70-80%",
     "rate": 6.49,
     "comparison": 6.54,
     "lvrMax": 80,
     "url": "https://www.bankfirst.com.au/loans/home-loans/basic-home-loan-investment"
+   },
+   {
+    "lender": "Macquarie Bank",
+    "product": "Macquarie Offset Home Loan",
+    "rate": 6.49,
+    "comparison": 6.74,
+    "lvrMax": 80,
+    "url": "https://www.macquarie.com.au/home-loans/offset-home-loan.html"
+   },
+   {
+    "lender": "Macquarie Bank",
+    "product": "Macquarie Basic Home Loan",
+    "rate": 6.49,
+    "comparison": 6.52,
+    "lvrMax": 80,
+    "url": "https://www.macquarie.com.au/home-loans/basic-home-loan.html"
    }
   ],
   "INV_PI_fixed1_national": [
@@ -1013,14 +1013,6 @@
   ],
   "INV_PI_fixed5_national": [
    {
-    "lender": "People First and Heritage Bank",
-    "product": "Standard Fixed Rate Home Loans - Investment",
-    "rate": 6.74,
-    "comparison": 8.32,
-    "lvrMax": 90,
-    "url": "https://www.heritage.com.au/loans/home-loans/fixed-interest-rate"
-   },
-   {
     "lender": "IMB Bank",
     "product": "5 year Fixed Rate Home Loan",
     "rate": 6.79,
@@ -1051,6 +1043,14 @@
     "comparison": 8.11,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.8,
+    "comparison": 6.69,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "INV_IO_variable_national": [
@@ -1061,14 +1061,6 @@
     "comparison": 6.52,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
-    "lender": "Beyond Bank Australia",
-    "product": "Invest Total Home Loan Package",
-    "rate": 6.59,
-    "comparison": 6.94,
-    "lvrMax": null,
-    "url": "https://www.beyondbank.com.au/home-loans/investment-total-home-loan-package/"
    },
    {
     "lender": "Macquarie Bank",
@@ -1093,6 +1085,14 @@
     "comparison": 6.59,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/liteblue-variable-rate-home-loan"
+   },
+   {
+    "lender": "Regional Australia Bank",
+    "product": "Home Loan (Offset)",
+    "rate": 6.7,
+    "comparison": 6.73,
+    "lvrMax": 80,
+    "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    }
   ],
   "INV_IO_fixed1_national": [
@@ -1433,20 +1433,20 @@
   ],
   "OO_PI_fixed5_national": [
    {
-    "lender": "People First and Heritage Bank",
-    "product": "Standard Fixed Rate Home Loans - Owner Occupied",
-    "rate": 6.54,
-    "comparison": 7.95,
-    "lvrMax": 95,
-    "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
-   },
-   {
     "lender": "Newcastle Permanent",
     "product": "Premium Plus Package Fixed Rate Home Loan Principal and Interest",
     "rate": 6.59,
     "comparison": 7.84,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "People First and Heritage Bank",
+    "product": "Standard Fixed Rate Home Loans - Owner Occupied",
+    "rate": 6.64,
+    "comparison": 8.12,
+    "lvrMax": 95,
+    "url": "https://www.heritage.com.au/loans/~/link.aspx?_id=FA40E665C2874EAF8BDA8938CBACCD1B&_z=z"
    },
    {
     "lender": "Up",
