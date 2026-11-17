@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-17T14:22:11.373Z",
+ "updated": "2026-11-17T20:49:06.338Z",
  "lenders": 92,
- "rows": 8049,
+ "rows": 8029,
  "best": {
   "INV_PI_variable": [
    {
@@ -124,7 +124,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
-    "comparison": 7.41,
+    "comparison": 7.6,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    }
@@ -223,14 +223,6 @@
     "url": "https://themaccu.com.au/home-loans/first-home-buyers/australian-government-5-deposit-scheme/"
    },
    {
-    "lender": "Maitland Mutual",
-    "product": "Package Home Loan",
-    "rate": 6.39,
-    "comparison": 6.73,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
-   },
-   {
     "lender": "MoveBank",
     "product": "Everyday Home Loan",
     "rate": 6.44,
@@ -247,12 +239,20 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "Maitland Mutual",
-    "product": "Package Home Loan",
-    "rate": 6.49,
-    "comparison": 6.83,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 6.54,
+    "comparison": null,
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
+   },
+   {
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 6.59,
+    "comparison": null,
+    "lvrMax": 90,
+    "url": "https://move.bank/loans/home-loans"
    }
   ],
   "INV_IO_fixed1": [
@@ -268,7 +268,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
-    "comparison": 7.47,
+    "comparison": 7.69,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
@@ -302,7 +302,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.54,
-    "comparison": 7.4,
+    "comparison": 7.6,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
@@ -352,7 +352,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.64,
-    "comparison": 7.37,
+    "comparison": 7.54,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
@@ -441,28 +441,28 @@
     "url": "https://brokenhill.bank/choice-home-loan"
    },
    {
-    "lender": "Maitland Mutual",
-    "product": "Budget Home Loan",
-    "rate": 6.04,
-    "comparison": 6.04,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
-   },
-   {
-    "lender": "Maitland Mutual",
-    "product": "Budget Home Loan",
-    "rate": 6.04,
-    "comparison": 6.04,
-    "lvrMax": null,
-    "url": "https://www.themutual.com.au/borrow/home-loans/budget-home-loan/"
-   },
-   {
     "lender": "Summerland Bank",
     "product": "Eco Home Loan",
     "rate": 6.09,
     "comparison": 6.15,
     "lvrMax": null,
     "url": "https://www.summerland.com.au/loans-interest"
+   },
+   {
+    "lender": "MoveBank",
+    "product": "Everyday Home Loan",
+    "rate": 6.09,
+    "comparison": 6.15,
+    "lvrMax": 80,
+    "url": "https://move.bank/loans/home-loans"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Basic Variable Home Loan",
+    "rate": 6.14,
+    "comparison": 6.2,
+    "lvrMax": null,
+    "url": "https://summerland.com.au/my-banking/home-loans/basic-home-loan"
    }
   ],
   "OO_PI_fixed1": [
@@ -536,7 +536,7 @@
     "lender": "Maitland Mutual",
     "product": "Package Home Loan",
     "rate": 6.34,
-    "comparison": 6.86,
+    "comparison": 7.06,
     "lvrMax": null,
     "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
    },
@@ -550,14 +550,6 @@
    }
   ],
   "OO_PI_fixed3": [
-   {
-    "lender": "SWSbank",
-    "product": "Optimum 3 Year Fixed Rate Home Loan",
-    "rate": 6.1,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
-   },
    {
     "lender": "Credit Union SA",
     "product": "3-Year Fixed 40 Year Home Loan Package",
@@ -589,6 +581,14 @@
     "comparison": 6.44,
     "lvrMax": null,
     "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
+   },
+   {
+    "lender": "SWSbank",
+    "product": "Optimum 3 Year Fixed Rate Home Loan",
+    "rate": 6.35,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
    }
   ],
   "OO_PI_fixed5": [
