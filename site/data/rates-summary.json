@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20T07:03:16.724Z",
+ "updated": "2026-11-20T20:03:35.875Z",
  "lenders": 91,
  "rows": 8042,
  "best": {
@@ -671,7 +671,7 @@
     "product": "Everyday Home Loan",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 95,
+    "lvrMax": 90,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
