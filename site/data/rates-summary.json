@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-21T06:57:58.775Z",
- "lenders": 91,
- "rows": 8042,
+ "updated": "2026-11-21T19:07:58.835Z",
+ "lenders": 90,
+ "rows": 7990,
  "best": {
   "INV_PI_variable": [
    {
@@ -181,14 +181,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "5 year Fixed Rate Home Loan",
-    "rate": 6.79,
-    "comparison": 7.01,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.79,
@@ -211,6 +203,14 @@
     "comparison": 6.82,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Investment Principal and Interest",
+    "rate": 6.79,
+    "comparison": 8.11,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "INV_IO_variable": [
@@ -827,18 +827,18 @@
     "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
    },
    {
-    "lender": "IMB Bank",
-    "product": "5 year Fixed Rate Home Loan",
-    "rate": 6.89,
-    "comparison": 6.89,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "AMP",
     "product": "First Home Loan",
     "rate": 6.93,
     "comparison": 6.76,
+    "lvrMax": 80,
+    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "AMP",
+    "product": "Professional Package",
+    "rate": 6.94,
+    "comparison": 7.49,
     "lvrMax": 80,
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
    }
@@ -903,14 +903,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "1 year Fixed Rate Home Loan",
-    "rate": 6.59,
-    "comparison": 7.06,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.59,
@@ -925,6 +917,14 @@
     "comparison": 6.6,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
+    "rate": 6.64,
+    "comparison": 6.74,
+    "lvrMax": 80,
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_PI_fixed2_national": [
@@ -945,14 +945,6 @@
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "2 year Fixed Rate Home Loan",
-    "rate": 6.59,
-    "comparison": 7.02,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.59,
@@ -967,6 +959,14 @@
     "comparison": 6.6,
     "lvrMax": null,
     "url": "https://up.com.au/home-loans"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
+    "rate": 6.64,
+    "comparison": 6.73,
+    "lvrMax": 80,
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_PI_fixed3_national": [
@@ -977,14 +977,6 @@
     "comparison": 6.72,
     "lvrMax": 80,
     "url": "https://www.regionalaustraliabank.com.au/home-loans/regional-australia-bank-home-loan"
-   },
-   {
-    "lender": "IMB Bank",
-    "product": "3 year Fixed Rate Home Loan",
-    "rate": 6.59,
-    "comparison": 6.99,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
     "lender": "Hume Bank",
@@ -1009,6 +1001,14 @@
     "comparison": 8.13,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Express Home Loan",
+    "rate": 6.69,
+    "comparison": 6.77,
+    "lvrMax": null,
+    "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
    }
   ],
   "INV_PI_fixed5_national": [
@@ -1019,14 +1019,6 @@
     "comparison": 8.07,
     "lvrMax": null,
     "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
-   },
-   {
-    "lender": "IMB Bank",
-    "product": "5 year Fixed Rate Home Loan",
-    "rate": 6.79,
-    "comparison": 7.01,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
     "lender": "Bendigo Bank",
@@ -1051,6 +1043,14 @@
     "comparison": 8.11,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Up",
+    "product": "Home Loan",
+    "rate": 6.8,
+    "comparison": 6.69,
+    "lvrMax": null,
+    "url": "https://up.com.au/home-loans"
    }
   ],
   "INV_IO_variable_national": [
@@ -1121,20 +1121,20 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "IMB Bank",
-    "product": "1 year Fixed Rate Home Loan",
-    "rate": 6.69,
-    "comparison": 7.07,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.74,
     "comparison": 6.81,
     "lvrMax": null,
     "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
+    "rate": 6.74,
+    "comparison": 6.75,
+    "lvrMax": 80,
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_IO_fixed2_national": [
@@ -1163,20 +1163,20 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "IMB Bank",
-    "product": "2 year Fixed Rate Home Loan",
-    "rate": 6.69,
-    "comparison": 7.04,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Bendigo Bank",
     "product": "Bendigo Express Home Loan",
     "rate": 6.74,
     "comparison": 6.81,
     "lvrMax": null,
     "url": "https://www.bendigobank.com.au/personal/home-loans/express-home-loan/"
+   },
+   {
+    "lender": "Bendigo Bank",
+    "product": "Bendigo Easy Home Loan",
+    "rate": 6.74,
+    "comparison": 6.75,
+    "lvrMax": 80,
+    "url": "https://www.brokers.bendigobank.com.au/"
    }
   ],
   "INV_IO_fixed3_national": [
@@ -1407,14 +1407,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/ultimate-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "3 year Fixed Rate Home Loan",
-    "rate": 6.49,
-    "comparison": 6.74,
-    "lvrMax": 95,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 3 Year Fix O/Occ P+I (60.01 - 80.00% LVR)",
     "rate": 6.49,
@@ -1428,6 +1420,14 @@
     "rate": 6.49,
     "comparison": 6.56,
     "lvrMax": 98,
+    "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   },
+   {
+    "lender": "Hume Bank",
+    "product": "MyBlue Fhb Non Scheme 3 Year Fix O/Occ P+I (up to 95% LVR)",
+    "rate": 6.49,
+    "comparison": 6.56,
+    "lvrMax": 95,
     "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
    }
   ],
@@ -1659,14 +1659,6 @@
     "url": "https://www.greater.com.au/personal/home-loans/great-rate-home-loan"
    },
    {
-    "lender": "IMB Bank",
-    "product": "5 year Fixed Rate Home Loan",
-    "rate": 6.89,
-    "comparison": 6.89,
-    "lvrMax": 90,
-    "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
-   },
-   {
     "lender": "AMP",
     "product": "First Home Loan",
     "rate": 6.93,
@@ -1681,6 +1673,14 @@
     "comparison": 7.49,
     "lvrMax": 80,
     "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+   },
+   {
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.94,
+    "comparison": 6.71,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ]
  },
