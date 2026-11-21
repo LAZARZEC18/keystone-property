@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20T20:03:35.875Z",
+ "updated": "2026-11-21T06:57:58.775Z",
  "lenders": 91,
  "rows": 8042,
  "best": {
@@ -475,22 +475,6 @@
     "url": "https://www.nicu.com.au/home-loans/value-home-loan-1-year-fixed-special-offer"
    },
    {
-    "lender": "TMCU",
-    "product": "1 Year Fixed Rate Loan",
-    "rate": 6.14,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
-   },
-   {
-    "lender": "TMCU",
-    "product": "1 Year Fixed Rate Loan",
-    "rate": 6.24,
-    "comparison": 6.56,
-    "lvrMax": null,
-    "url": "https://www.transportmutual.com.au/loans/home-loans/fixed-home-loan/"
-   },
-   {
     "lender": "Northern Inland Credit Union",
     "product": "Smart Home Loan Fixed 12M",
     "rate": 6.29,
@@ -505,6 +489,22 @@
     "comparison": 7.24,
     "lvrMax": 80,
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
+   },
+   {
+    "lender": "Maitland Mutual",
+    "product": "Package Home Loan",
+    "rate": 6.34,
+    "comparison": 7.1,
+    "lvrMax": null,
+    "url": "https://www.themutual.com.au/borrow/home-loans/package-home-loan/"
+   },
+   {
+    "lender": "Summerland Bank",
+    "product": "Fixed Rate Loan",
+    "rate": 6.35,
+    "comparison": 6.62,
+    "lvrMax": null,
+    "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
    }
   ],
   "OO_PI_fixed2": [
@@ -551,6 +551,14 @@
   ],
   "OO_PI_fixed3": [
    {
+    "lender": "SWSbank",
+    "product": "Optimum 3 Year Fixed Rate Home Loan",
+    "rate": 6.1,
+    "comparison": null,
+    "lvrMax": null,
+    "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
+   },
+   {
     "lender": "Credit Union SA",
     "product": "3-Year Fixed 40 Year Home Loan Package",
     "rate": 6.24,
@@ -581,14 +589,6 @@
     "comparison": 6.44,
     "lvrMax": null,
     "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
-   },
-   {
-    "lender": "SWSbank",
-    "product": "Optimum 3 Year Fixed Rate Home Loan",
-    "rate": 6.35,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
    }
   ],
   "OO_PI_fixed5": [
@@ -671,7 +671,7 @@
     "product": "Everyday Home Loan",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 90,
+    "lvrMax": 95,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
