@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-22T06:36:59.128Z",
- "lenders": 91,
- "rows": 8042,
+ "updated": "2026-11-22T19:30:54.461Z",
+ "lenders": 90,
+ "rows": 7762,
  "best": {
   "INV_PI_variable": [
    {
@@ -407,20 +407,20 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "AMP",
-    "product": "Professional Package",
-    "rate": 6.89,
-    "comparison": 7.47,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 5 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.89,
     "comparison": 6.86,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/homes/myblue-fixed-rate/"
+   },
+   {
+    "lender": "Newcastle Permanent",
+    "product": "Premium Plus Package Fixed Rate Home Loan Investment Interest Only",
+    "rate": 6.89,
+    "comparison": 8.15,
+    "lvrMax": 80,
+    "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
    }
   ],
   "OO_PI_variable": [
@@ -671,7 +671,7 @@
     "product": "Everyday Home Loan",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 90,
+    "lvrMax": 95,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
@@ -835,12 +835,12 @@
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "AMP",
-    "product": "First Home Loan",
-    "rate": 6.93,
-    "comparison": 6.76,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.94,
+    "comparison": 6.71,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ],
   "INV_PI_variable_national": [
@@ -1239,14 +1239,6 @@
     "url": "https://www.anz.com.au/personal/home-loans/fixed-rate/?CID=af:obank:hl"
    },
    {
-    "lender": "AMP",
-    "product": "Professional Package",
-    "rate": 6.89,
-    "comparison": 7.47,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
-   },
-   {
     "lender": "Hume Bank",
     "product": "MyBlue 5 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.89,
@@ -1261,6 +1253,14 @@
     "comparison": 8.15,
     "lvrMax": 80,
     "url": "https://www.newcastlepermanent.com.au/personal/home-loans/premium-plus-package-fixed"
+   },
+   {
+    "lender": "Greater Bank",
+    "product": "Great Rate Home Loan - Fixed 5 Year Interest Only Investment",
+    "rate": 6.94,
+    "comparison": 7.95,
+    "lvrMax": null,
+    "url": "https://www.greater.com.au/personal/home-loans/investment-great-rate-home-loan"
    }
   ],
   "OO_PI_variable_national": [
@@ -1667,20 +1667,20 @@
     "url": "https://www.imb.com.au/home-loans/living-in/fixed-rate-home-loan"
    },
    {
-    "lender": "AMP",
-    "product": "First Home Loan",
-    "rate": 6.93,
-    "comparison": 6.76,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
+    "rate": 6.94,
+    "comparison": 6.71,
+    "lvrMax": 90,
+    "url": "https://bankofus.com.au/home-loans"
    },
    {
-    "lender": "AMP",
-    "product": "Professional Package",
+    "lender": "Bank of us",
+    "product": "Flexidiscount Home Guarantee Scheme Home Loan",
     "rate": 6.94,
-    "comparison": 7.49,
-    "lvrMax": 80,
-    "url": "https://www.amp.com.au/home-loans/interest-rates-fees"
+    "comparison": 6.73,
+    "lvrMax": null,
+    "url": "https://bankofus.com.au/home-loans"
    }
   ]
  },
