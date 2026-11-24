@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-24T09:45:37.987Z",
+ "updated": "2026-11-24T15:52:10.769Z",
  "lenders": 90,
- "rows": 7991,
+ "rows": 7983,
  "best": {
   "INV_PI_variable": [
    {
@@ -671,7 +671,7 @@
     "product": "Everyday Home Loan",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 90,
+    "lvrMax": 95,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
