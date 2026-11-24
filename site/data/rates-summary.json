@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23T23:48:57.028Z",
+ "updated": "2026-11-24T09:45:37.987Z",
  "lenders": 90,
  "rows": 7991,
  "best": {
@@ -671,7 +671,7 @@
     "product": "Everyday Home Loan",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 95,
+    "lvrMax": 90,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
@@ -914,7 +914,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment P+I (60.01 - 80.00% LVR)",
     "rate": 6.59,
-    "comparison": 6.8,
+    "comparison": 6.81,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -956,7 +956,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment P+I (60.01 - 80.00% LVR)",
     "rate": 6.59,
-    "comparison": 6.77,
+    "comparison": 6.79,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1124,7 +1124,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 1 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.69,
-    "comparison": 6.81,
+    "comparison": 6.82,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
@@ -1166,7 +1166,7 @@
     "lender": "Hume Bank",
     "product": "MyBlue 2 Year Fix Investment I/O (60.01 - 80.00% LVR)",
     "rate": 6.69,
-    "comparison": 6.79,
+    "comparison": 6.81,
     "lvrMax": 80,
     "url": "https://www.humebank.com.au/personal/home-loans/myblue-fixed-rate-home-loan"
    },
