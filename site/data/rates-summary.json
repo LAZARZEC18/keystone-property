@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-24T22:20:28.716Z",
+ "updated": "2026-11-25T08:20:29.427Z",
  "lenders": 90,
- "rows": 7991,
+ "rows": 7993,
  "best": {
   "INV_PI_variable": [
    {
@@ -14,7 +14,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor P&I No Offset Mortgage",
     "rate": 6.24,
     "comparison": 6.3,
     "lvrMax": 80,
@@ -22,7 +22,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor P&I No Offset Mortgage",
     "rate": 6.34,
     "comparison": null,
     "lvrMax": 80,
@@ -30,7 +30,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor P&I No Offset Mortgage",
     "rate": 6.39,
     "comparison": 6.45,
     "lvrMax": 90,
@@ -38,7 +38,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Offset Home Loan",
+    "product": "Investor P&I With Offset Mortgage",
     "rate": 6.44,
     "comparison": 6.5,
     "lvrMax": 80,
@@ -97,20 +97,20 @@
     "url": "https://www.capricornian.com.au/loans/home-loans/premium-choice-loan/"
    },
    {
+    "lender": "Coastline Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.49,
+    "comparison": 6.85,
+    "lvrMax": 80,
+    "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.51,
     "comparison": 6.79,
     "lvrMax": null,
     "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Coastline Bank",
-    "product": "Fixed Rate Investment Loan",
-    "rate": 6.54,
-    "comparison": 6.86,
-    "lvrMax": 80,
-    "url": "https://www.coastline.com.au/personal/home-loans"
    },
    {
     "lender": "Maitland Mutual",
@@ -155,20 +155,20 @@
     "url": "https://www.communityfirst.com.au/products/go-basic-fixed-home-loan-investment/"
    },
    {
+    "lender": "Coastline Bank",
+    "product": "Fixed Rate Investment Loan",
+    "rate": 6.49,
+    "comparison": 6.82,
+    "lvrMax": 80,
+    "url": "https://www.coastline.com.au/personal/home-loans"
+   },
+   {
     "lender": "Summerland Bank",
     "product": "Fixed Rate Investment Loan",
     "rate": 6.51,
     "comparison": 6.77,
     "lvrMax": null,
     "url": "https://summerland.com.au/my-banking/home-loans/fixed-rate-home-loan"
-   },
-   {
-    "lender": "Credit Union SA",
-    "product": "3-Year Fixed Home Loan Package Principal and Interest",
-    "rate": 6.54,
-    "comparison": 7.73,
-    "lvrMax": null,
-    "url": "https://www.creditunionsa.com.au/loans/home-loans/home-loan-package/"
    }
   ],
   "INV_PI_fixed5": [
@@ -198,7 +198,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor P&I No Offset Mortgage",
     "rate": 6.79,
     "comparison": 6.54,
     "lvrMax": null,
@@ -224,7 +224,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor IO No Offset Mortgage",
     "rate": 6.44,
     "comparison": null,
     "lvrMax": 80,
@@ -232,7 +232,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor IO No Offset Mortgage",
     "rate": 6.54,
     "comparison": null,
     "lvrMax": 80,
@@ -240,7 +240,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Investor IO No Offset Mortgage",
     "rate": 6.59,
     "comparison": null,
     "lvrMax": 90,
@@ -248,7 +248,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Offset Home Loan",
+    "product": "Investor IO With Offset Mortgage",
     "rate": 6.64,
     "comparison": null,
     "lvrMax": 80,
@@ -434,7 +434,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier P&I No Offset Mortgage",
     "rate": 6.09,
     "comparison": 6.15,
     "lvrMax": 80,
@@ -450,7 +450,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier P&I No Offset Mortgage",
     "rate": 6.19,
     "comparison": null,
     "lvrMax": 80,
@@ -458,10 +458,10 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Offset Home Loan",
+    "product": "Owner Occupier P&I No Offset Mortgage",
     "rate": 6.29,
     "comparison": 6.35,
-    "lvrMax": 80,
+    "lvrMax": 90,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
@@ -636,7 +636,7 @@
   "OO_IO_variable": [
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.09,
     "comparison": null,
     "lvrMax": 80,
@@ -644,7 +644,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.19,
     "comparison": null,
     "lvrMax": 80,
@@ -652,7 +652,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Offset Home Loan",
+    "product": "Owner Occupier IO With Offset Mortgage",
     "rate": 6.29,
     "comparison": null,
     "lvrMax": 80,
@@ -660,7 +660,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.29,
     "comparison": null,
     "lvrMax": 90,
@@ -668,7 +668,7 @@
    },
    {
     "lender": "MoveBank",
-    "product": "Everyday Home Loan",
+    "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.39,
     "comparison": null,
     "lvrMax": 95,
