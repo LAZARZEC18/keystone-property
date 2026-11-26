@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25T21:37:12.416Z",
+ "updated": "2026-11-26T08:06:26.328Z",
  "lenders": 90,
  "rows": 7993,
  "best": {
@@ -131,20 +131,20 @@
   ],
   "INV_PI_fixed3": [
    {
+    "lender": "Easy Street",
+    "product": "3 Year Fixed Home Loan - Investment (Principal and Interest)",
+    "rate": 6.24,
+    "comparison": 6.56,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/fixed-home-loan"
+   },
+   {
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Investment LVR 80% (Principal and Interest)",
     "rate": 6.39,
     "comparison": 7,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
-    "lender": "Easy Street",
-    "product": "3 Year Fixed Home Loan - Investment (Principal and Interest)",
-    "rate": 6.44,
-    "comparison": 6.56,
-    "lvrMax": null,
-    "url": "https://easystreet.com.au/fixed-home-loan"
    },
    {
     "lender": "Community First Bank",
@@ -341,6 +341,14 @@
   ],
   "INV_IO_fixed3": [
    {
+    "lender": "Easy Street",
+    "product": "3 Year Fixed Home Loan - Investment (Interest Only)",
+    "rate": 6.54,
+    "comparison": 6.64,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/fixed-home-loan"
+   },
+   {
     "lender": "Regional Australia Bank",
     "product": "Home Loan (Fixed Investor)",
     "rate": 6.57,
@@ -371,14 +379,6 @@
     "comparison": 7.08,
     "lvrMax": 80,
     "url": "https://www.communityfirst.com.au/products/boost-package-home-loan-fixed-investment/"
-   },
-   {
-    "lender": "Greater Bank",
-    "product": "Ultimate Packaged Home Loan - Fixed 3 Year Interest Only Investment",
-    "rate": 6.74,
-    "comparison": 8.33,
-    "lvrMax": null,
-    "url": "https://www.greater.com.au/personal/home-loans/investment-ultimate-home-loan"
    }
   ],
   "INV_IO_fixed5": [
@@ -551,6 +551,14 @@
   ],
   "OO_PI_fixed3": [
    {
+    "lender": "Easy Street",
+    "product": "3 Year Fixed Home Loan - Owner-Occupied (Principal and Interest)",
+    "rate": 6.24,
+    "comparison": 6.56,
+    "lvrMax": null,
+    "url": "https://easystreet.com.au/fixed-home-loan"
+   },
+   {
     "lender": "Community First Bank",
     "product": "Boost Package Home Loan - 3 Year Fixed - Owner-Occupied LVR 80% (Principal and Interest)",
     "rate": 6.29,
@@ -581,14 +589,6 @@
     "comparison": 6.44,
     "lvrMax": null,
     "url": "https://www.unity.bank/home-loans/buy-or-refinance/fixed-rate-home-loan/"
-   },
-   {
-    "lender": "SWSbank",
-    "product": "Optimum 3 Year Fixed Rate Home Loan",
-    "rate": 6.35,
-    "comparison": null,
-    "lvrMax": null,
-    "url": "https://www.swsbank.com.au/loans/owner-occupied-home-loans/all-owner-occupied-home-loans/"
    }
   ],
   "OO_PI_fixed5": [
@@ -671,7 +671,7 @@
     "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 95,
+    "lvrMax": 90,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
