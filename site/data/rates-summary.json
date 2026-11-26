@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26T08:06:26.328Z",
+ "updated": "2026-11-26T21:26:29.425Z",
  "lenders": 90,
  "rows": 7993,
  "best": {
@@ -671,7 +671,7 @@
     "product": "Owner Occupier IO No Offset Mortgage",
     "rate": 6.39,
     "comparison": null,
-    "lvrMax": 90,
+    "lvrMax": 95,
     "url": "https://move.bank/loans/home-loans"
    }
   ],
